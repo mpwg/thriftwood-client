@@ -8,7 +8,8 @@
       "Bash(npm run generate:*)",
       "Read(//Users/mat/.pub-cache/hosted/pub.dev/**)",
       "Read(//Users/mat/.pub-cache/**)",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub:*)"
     ],
     "deny": [],
     "ask": []
