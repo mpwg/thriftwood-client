@@ -9,7 +9,7 @@ class TautulliCommandHandlerHistory {
   /// Create a history command handler using an initialized [Dio] client.
   TautulliCommandHandlerHistory(this._client);
 
-  /// Handler for [delete_history](https://github.com/Tautulli/Tautulli/blob/master/API.md#delete_history).
+  /// Handler for [delete_history](https://github.com/Tautulli/Tautulli/blob/main/API.md#delete_history).
   ///
   /// Delete history rows from Tautulli.
   ///
@@ -20,7 +20,7 @@ class TautulliCommandHandlerHistory {
   }) async =>
       _commandDeleteHistory(_client, rowIds: rowIds);
 
-  /// Handler for [get_history](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_history).
+  /// Handler for [get_history](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_history).
   ///
   /// Get the Tautulli history.
   ///
@@ -79,7 +79,7 @@ class TautulliCommandHandlerHistory {
         search: search,
       );
 
-  /// Handler for [get_home_stats](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_home_stats).
+  /// Handler for [get_home_stats](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_home_stats).
   ///
   /// Get the homepage watch statistics.
   ///
@@ -100,7 +100,7 @@ class TautulliCommandHandlerHistory {
           statsType: statsType,
           statsCount: statsCount);
 
-  /// Handler for [get_plays_by_date](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_plays_by_date).
+  /// Handler for [get_plays_by_date](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_plays_by_date).
   ///
   /// Get graph data by date.
   ///
@@ -121,7 +121,7 @@ class TautulliCommandHandlerHistory {
           grouping: grouping,
           yAxis: yAxis);
 
-  /// Handler for [get_plays_by_dayofweek](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_plays_by_dayofweek).
+  /// Handler for [get_plays_by_dayofweek](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_plays_by_dayofweek).
   ///
   /// Get graph data by day of the week.
   ///
@@ -142,7 +142,7 @@ class TautulliCommandHandlerHistory {
           grouping: grouping,
           yAxis: yAxis);
 
-  /// Handler for [get_plays_by_hourofday](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_plays_by_hourofday).
+  /// Handler for [get_plays_by_hourofday](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_plays_by_hourofday).
   ///
   /// Get graph data by hour of the day.
   ///
@@ -163,7 +163,7 @@ class TautulliCommandHandlerHistory {
           grouping: grouping,
           yAxis: yAxis);
 
-  /// Handler for [get_plays_by_source_resolution](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_plays_by_source_resolution).
+  /// Handler for [get_plays_by_source_resolution](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_plays_by_source_resolution).
   ///
   /// Get graph data by source resolution.
   ///
@@ -184,7 +184,7 @@ class TautulliCommandHandlerHistory {
           grouping: grouping,
           yAxis: yAxis);
 
-  /// Handler for [get_plays_by_stream_resolution](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_plays_by_stream_resolution).
+  /// Handler for [get_plays_by_stream_resolution](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_plays_by_stream_resolution).
   ///
   /// Get graph data by stream resolution.
   ///
@@ -205,7 +205,7 @@ class TautulliCommandHandlerHistory {
           grouping: grouping,
           yAxis: yAxis);
 
-  /// Handler for [get_plays_by_stream_type](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_plays_by_stream_type).
+  /// Handler for [get_plays_by_stream_type](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_plays_by_stream_type).
   ///
   /// Get graph data by stream type by date.
   ///
@@ -226,7 +226,7 @@ class TautulliCommandHandlerHistory {
           grouping: grouping,
           yAxis: yAxis);
 
-  /// Handler for [get_plays_by_top_10_platforms](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_plays_by_top_10_platforms).
+  /// Handler for [get_plays_by_top_10_platforms](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_plays_by_top_10_platforms).
   ///
   /// Get graph data by top 10 platforms.
   ///
@@ -247,7 +247,7 @@ class TautulliCommandHandlerHistory {
           grouping: grouping,
           yAxis: yAxis);
 
-  /// Handler for [get_plays_by_top_10_users](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_plays_by_top_10_users).
+  /// Handler for [get_plays_by_top_10_users](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_plays_by_top_10_users).
   ///
   /// Get graph data by top 10 users.
   ///
@@ -268,7 +268,7 @@ class TautulliCommandHandlerHistory {
           grouping: grouping,
           yAxis: yAxis);
 
-  /// Handler for [get_plays_per_month](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_plays_per_month).
+  /// Handler for [get_plays_per_month](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_plays_per_month).
   ///
   /// Get graph data by month.
   ///
@@ -289,7 +289,7 @@ class TautulliCommandHandlerHistory {
           grouping: grouping,
           yAxis: yAxis);
 
-  /// Handler for [get_stream_data](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_stream_data).
+  /// Handler for [get_stream_data](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_stream_data).
   ///
   /// Get the stream details from history or current stream.
   ///
@@ -302,7 +302,7 @@ class TautulliCommandHandlerHistory {
   }) async =>
       _commandGetStreamData(_client, rowId: rowId, sessionKey: sessionKey);
 
-  /// Handler for [get_stream_type_by_top_10_users](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_stream_type_by_top_10_users).
+  /// Handler for [get_stream_type_by_top_10_users](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_stream_type_by_top_10_users).
   ///
   /// Get graph data by stream type by top 10 users.
   ///
@@ -323,7 +323,7 @@ class TautulliCommandHandlerHistory {
           grouping: grouping,
           yAxis: yAxis);
 
-  /// Handler for [get_stream_type_by_top_10_platforms](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_stream_type_by_top_10_platforms).
+  /// Handler for [get_stream_type_by_top_10_platforms](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_stream_type_by_top_10_platforms).
   ///
   /// Get graph data by stream type by top 10 platforms.
   ///
