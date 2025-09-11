@@ -9,7 +9,7 @@ class TautulliCommandHandlerNotifications {
   /// Create a notification command handler using an initialized [Dio] client.
   TautulliCommandHandlerNotifications(this._client);
 
-  /// Handler for [add_newsletter_config](https://github.com/Tautulli/Tautulli/blob/master/API.md#add_newsletter_config).
+  /// Handler for [add_newsletter_config](https://github.com/Tautulli/Tautulli/blob/main/API.md#add_newsletter_config).
   ///
   /// Add a new notification agent.
   ///
@@ -20,7 +20,7 @@ class TautulliCommandHandlerNotifications {
   }) async =>
       _commandAddNewsletterConfig(_client, agentId: agentId);
 
-  /// Handler for [add_notifier_config](https://github.com/Tautulli/Tautulli/blob/master/API.md#add_notifier_config).
+  /// Handler for [add_notifier_config](https://github.com/Tautulli/Tautulli/blob/main/API.md#add_notifier_config).
   ///
   /// Add a new notification agent.
   ///
@@ -31,7 +31,7 @@ class TautulliCommandHandlerNotifications {
   }) async =>
       _commandAddNotifierConfig(_client, agentId: agentId);
 
-  /// Handler for [delete_mobile_device](https://github.com/Tautulli/Tautulli/blob/master/API.md#delete_mobile_device).
+  /// Handler for [delete_mobile_device](https://github.com/Tautulli/Tautulli/blob/main/API.md#delete_mobile_device).
   ///
   /// Remove a mobile device from the database.
   ///
@@ -42,7 +42,7 @@ class TautulliCommandHandlerNotifications {
   }) async =>
       _commandDeleteMobileDevice(_client, mobileDeviceId: mobileDeviceId);
 
-  /// Handler for [delete_newsletter](https://github.com/Tautulli/Tautulli/blob/master/API.md#delete_newsletter).
+  /// Handler for [delete_newsletter](https://github.com/Tautulli/Tautulli/blob/main/API.md#delete_newsletter).
   ///
   /// Remove a newsletter from the database.
   ///
@@ -53,7 +53,7 @@ class TautulliCommandHandlerNotifications {
   }) async =>
       _commandDeleteNewsletter(_client, newsletterId: newsletterId);
 
-  /// Handler for [delete_notifier](https://github.com/Tautulli/Tautulli/blob/master/API.md#delete_notifier).
+  /// Handler for [delete_notifier](https://github.com/Tautulli/Tautulli/blob/main/API.md#delete_notifier).
   ///
   /// Remove a notifier from the database.
   ///
@@ -64,7 +64,7 @@ class TautulliCommandHandlerNotifications {
   }) async =>
       _commandDeleteNotifier(_client, notifierId: notifierId);
 
-  /// Handler for [get_newsletter_config](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_newsletter_config).
+  /// Handler for [get_newsletter_config](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_newsletter_config).
   ///
   /// Get the configuration for an existing newsletter.
   ///
@@ -75,7 +75,7 @@ class TautulliCommandHandlerNotifications {
   }) async =>
       _commandGetNewsletterConfig(_client, newsletterId: newsletterId);
 
-  /// Handler for [get_newsletter_log](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_newsletter_log).
+  /// Handler for [get_newsletter_log](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_newsletter_log).
   ///
   /// Get the data on the Tautulli newsletter logs table.
   ///
@@ -101,13 +101,13 @@ class TautulliCommandHandlerNotifications {
         search: search,
       );
 
-  /// Handler for [get_newsletters](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_newsletters).
+  /// Handler for [get_newsletters](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_newsletters).
   ///
   /// Get a list of configured newsletters.
   Future<List<TautulliNewsletter>> getNewsletters() async =>
       _commandGetNewsletters(_client);
 
-  /// Handler for [get_notification_log](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_notification_log).
+  /// Handler for [get_notification_log](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_notification_log).
   ///
   /// Get the data on the Tautulli notification logs table.
   ///
@@ -133,7 +133,7 @@ class TautulliCommandHandlerNotifications {
         search: search,
       );
 
-  /// Handler for [get_notifier_config](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_notifier_config).
+  /// Handler for [get_notifier_config](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_notifier_config).
   ///
   /// Get the configuration for an existing notification agent.
   ///
@@ -144,13 +144,13 @@ class TautulliCommandHandlerNotifications {
   }) async =>
       _commandGetNotifierConfig(_client, notifierId: notifierId);
 
-  /// Handler for [get_notifier_parameters](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_notifier_parameters).
+  /// Handler for [get_notifier_parameters](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_notifier_parameters).
   ///
   /// Get the list of available notification parameters.
   Future<List<TautulliNotifierParameter>> getNotifierParameters() async =>
       _commandGetNotifierParameters(_client);
 
-  /// Handler for [get_notifiers](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_notifiers).
+  /// Handler for [get_notifiers](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_notifiers).
   ///
   /// Get a list of configured notifiers.
   ///
@@ -161,7 +161,7 @@ class TautulliCommandHandlerNotifications {
   }) async =>
       _commandGetNotifiers(_client, notifyAction: notifyAction);
 
-  /// Handler for [notify](https://github.com/Tautulli/Tautulli/blob/master/API.md#notify).
+  /// Handler for [notify](https://github.com/Tautulli/Tautulli/blob/main/API.md#notify).
   ///
   /// Send a notification using Tautulli.
   ///
@@ -187,7 +187,7 @@ class TautulliCommandHandlerNotifications {
           headers: headers,
           scriptArgs: scriptArgs);
 
-  /// Handler for [notify_newsletter](https://github.com/Tautulli/Tautulli/blob/master/API.md#notify_newsletter).
+  /// Handler for [notify_newsletter](https://github.com/Tautulli/Tautulli/blob/main/API.md#notify_newsletter).
   ///
   /// Send a newsletter using Tautulli.
   ///
@@ -210,7 +210,7 @@ class TautulliCommandHandlerNotifications {
           body: body,
           message: message);
 
-  /// Handler for [notify_recently_added](https://github.com/Tautulli/Tautulli/blob/master/API.md#notify_recently_added).
+  /// Handler for [notify_recently_added](https://github.com/Tautulli/Tautulli/blob/main/API.md#notify_recently_added).
   ///
   /// Send a recently added notification using Tautulli.
   ///
@@ -226,7 +226,7 @@ class TautulliCommandHandlerNotifications {
       _commandNotifyRecentlyAdded(_client,
           ratingKey: ratingKey, notifierId: notifierId);
 
-  /// Handler for [register_device](https://github.com/Tautulli/Tautulli/blob/master/API.md#register_device).
+  /// Handler for [register_device](https://github.com/Tautulli/Tautulli/blob/main/API.md#register_device).
   ///
   /// Registers the Tautulli Android app for notifications.
   ///
@@ -246,7 +246,7 @@ class TautulliCommandHandlerNotifications {
           deviceName: deviceName,
           friendlyName: friendlyName);
 
-  /// Handler for [set_mobile_device_config](https://github.com/Tautulli/Tautulli/blob/master/API.md#set_mobile_device_config).
+  /// Handler for [set_mobile_device_config](https://github.com/Tautulli/Tautulli/blob/main/API.md#set_mobile_device_config).
   ///
   /// Configure an existing mobile device agent.
   ///
@@ -262,7 +262,7 @@ class TautulliCommandHandlerNotifications {
       _commandSetMobileDeviceConfig(_client,
           mobileDeviceId: mobileDeviceId, friendlyName: friendlyName);
 
-  /// Handler for [set_newsletter_config](https://github.com/Tautulli/Tautulli/blob/master/API.md#set_newsletter_config).
+  /// Handler for [set_newsletter_config](https://github.com/Tautulli/Tautulli/blob/main/API.md#set_newsletter_config).
   ///
   /// Configure an existing newsletter agent.
   ///
@@ -280,7 +280,7 @@ class TautulliCommandHandlerNotifications {
           agentId: agentId,
           newsletterOptions: newsletterOptions);
 
-  /// Handler for [set_notifier_config](https://github.com/Tautulli/Tautulli/blob/master/API.md#set_notifier_config).
+  /// Handler for [set_notifier_config](https://github.com/Tautulli/Tautulli/blob/main/API.md#set_notifier_config).
   ///
   /// Configure an existing notification agent.
   ///

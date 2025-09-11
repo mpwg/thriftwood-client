@@ -20,14 +20,14 @@ on:
 jobs:
   prepare:
     name: Prepare
-    uses: mpwg/thriftwood-client/.github/workflows/prepare.yml@master
+    uses: mpwg/thriftwood-client/.github/workflows/prepare.yml@main
     with:
       flavor: ${{ inputs.flavor }}
 
   build-android:
     name: Build Android
     needs: [prepare]
-    uses: mpwg/thriftwood-client/.github/workflows/build_android.yml@master
+    uses: mpwg/thriftwood-client/.github/workflows/build_android.yml@main
     with:
       build-number: ${{ needs.prepare.outputs.build-number }}
     secrets:
@@ -37,7 +37,7 @@ jobs:
   build-ios:
     name: Build iOS
     needs: [prepare]
-    uses: mpwg/thriftwood-client/.github/workflows/build_ios.yml@master
+    uses: mpwg/thriftwood-client/.github/workflows/build_ios.yml@main
     with:
       build-number: ${{ needs.prepare.outputs.build-number }}
     secrets:
@@ -53,7 +53,7 @@ jobs:
   build-linux:
     name: Build Linux
     needs: [prepare]
-    uses: mpwg/thriftwood-client/.github/workflows/build_linux.yml@master
+    uses: mpwg/thriftwood-client/.github/workflows/build_linux.yml@main
     with:
       build-number: ${{ needs.prepare.outputs.build-number }}
       build-version: ${{ needs.prepare.outputs.build-version }}
@@ -61,7 +61,7 @@ jobs:
   build-macos:
     name: Build macOS
     needs: [prepare]
-    uses: mpwg/thriftwood-client/.github/workflows/build_macos.yml@master
+    uses: mpwg/thriftwood-client/.github/workflows/build_macos.yml@main
     with:
       build-number: ${{ needs.prepare.outputs.build-number }}
       build-version: ${{ needs.prepare.outputs.build-version }}
@@ -82,7 +82,7 @@ jobs:
   build-web:
     name: Build Web
     needs: [prepare]
-    uses: mpwg/thriftwood-client/.github/workflows/build_web.yml@master
+    uses: mpwg/thriftwood-client/.github/workflows/build_web.yml@main
     with:
       build-flavor: ${{ needs.prepare.outputs.build-flavor }}
       build-title: ${{ needs.prepare.outputs.build-title }}
@@ -90,7 +90,7 @@ jobs:
   build-windows:
     name: Build Windows
     needs: [prepare]
-    uses: mpwg/thriftwood-client/.github/workflows/build_windows.yml@master
+    uses: mpwg/thriftwood-client/.github/workflows/build_windows.yml@main
     secrets:
       CODE_SIGNING_CERTIFICATE: ${{ secrets.CODE_SIGNING_CERTIFICATE }}
       CODE_SIGNING_PASSWORD: ${{ secrets.CODE_SIGNING_PASSWORD }}
