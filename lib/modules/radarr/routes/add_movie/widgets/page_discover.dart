@@ -1,4 +1,4 @@
-import 'package:collection/collection.dart' show IterableExtension;
+import 'package:thriftwood/utils/collection_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
