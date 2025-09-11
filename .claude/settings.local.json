@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:android:*)",
+      "Bash(flutter pub:*)",
+      "WebSearch",
+      "WebFetch(domain:pub.dev)",
+      "Bash(flutter build:*)",
+      "Bash(flutter analyze:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

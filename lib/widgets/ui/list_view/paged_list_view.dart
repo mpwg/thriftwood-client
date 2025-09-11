@@ -5,7 +5,6 @@ class LunaPagedListView<T> extends StatefulWidget {
   final GlobalKey<RefreshIndicatorState> refreshKey;
   final PagingController<int, T> pagingController;
   final ScrollController scrollController;
-  final void Function(int) listener;
   final Widget Function(BuildContext, T, int) itemBuilder;
   final double? itemExtent;
   final EdgeInsetsGeometry? padding;
@@ -16,7 +15,6 @@ class LunaPagedListView<T> extends StatefulWidget {
     Key? key,
     required this.refreshKey,
     required this.pagingController,
-    required this.listener,
     required this.itemBuilder,
     required this.noItemsFoundMessage,
     required this.scrollController,
@@ -33,9 +31,8 @@ class _State<T> extends State<LunaPagedListView<T>> {
   @override
   void initState() {
     super.initState();
-    widget.pagingController.addPageRequestListener(
-      (pageKey) => widget.listener(pageKey),
-    );
+    // The new API handles page requests through the constructor's fetchPage parameter
+    // No need for addPageRequestListener
   }
 
   @override
@@ -51,7 +48,8 @@ class _State<T> extends State<LunaPagedListView<T>> {
         controller: widget.scrollController,
         interactive: true,
         child: PagedListView<int, T>(
-          pagingController: widget.pagingController,
+          state: widget.pagingController.value,
+          fetchNextPage: () => widget.pagingController.fetchNextPage(),
           scrollController: widget.scrollController,
           itemExtent: widget.itemExtent,
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,

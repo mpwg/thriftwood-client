@@ -14,8 +14,16 @@ class _State extends State<HistoryRoute> with LunaScrollControllerMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshKey =
       GlobalKey<RefreshIndicatorState>();
-  final PagingController<int, RadarrHistoryRecord> _pagingController =
-      PagingController(firstPageKey: 1);
+  late final PagingController<int, RadarrHistoryRecord> _pagingController =
+      PagingController(
+        fetchPage: _fetchPage,
+        getNextPageKey: (state) => _getNextPageKey(state),
+      );
+  
+  // Store pagination info
+  int? _totalRecords;
+  int? _currentPage;
+  int? _pageSize;
 
   @override
   void dispose() {
@@ -23,31 +31,51 @@ class _State extends State<HistoryRoute> with LunaScrollControllerMixin {
     super.dispose();
   }
 
-  Future<void> _fetchPage(int pageKey) async {
-    await context
-        .read<RadarrState>()
-        .api!
-        .history
-        .get(
-          page: pageKey,
-          pageSize: RadarrDatabase.CONTENT_PAGE_SIZE.read(),
-          sortKey: RadarrHistorySortKey.DATE,
-          sortDirection: RadarrSortDirection.DESCENDING,
-        )
-        .then((data) {
-          if (data.totalRecords! > (data.page! * data.pageSize!)) {
-            return _pagingController.appendPage(data.records!, pageKey + 1);
-          }
-          return _pagingController.appendLastPage(data.records!);
-        })
-        .catchError((error, stack) {
-          LunaLogger().error(
-            'Unable to fetch Radarr history page: $pageKey',
-            error,
-            stack,
+  Future<List<RadarrHistoryRecord>> _fetchPage(int pageKey) async {
+    try {
+      final data = await context
+          .read<RadarrState>()
+          .api!
+          .history
+          .get(
+            page: pageKey,
+            pageSize: RadarrDatabase.CONTENT_PAGE_SIZE.read(),
+            sortKey: RadarrHistorySortKey.DATE,
+            sortDirection: RadarrSortDirection.DESCENDING,
           );
-          _pagingController.error = error;
-        });
+      
+      // Store pagination info
+      _totalRecords = data.totalRecords;
+      _currentPage = data.page;
+      _pageSize = data.pageSize;
+      
+      return data.records ?? [];
+    } catch (error, stack) {
+      LunaLogger().error(
+        'Unable to fetch Radarr history page: $pageKey',
+        error,
+        stack,
+      );
+      rethrow;
+    }
+  }
+
+  int? _getNextPageKey(PagingState<int, RadarrHistoryRecord> state) {
+    if (_totalRecords == null || _currentPage == null || _pageSize == null) {
+      return null;
+    }
+    
+    final currentPageKey = state.nextIntPageKey;
+    if (currentPageKey == null) {
+      return null;
+    }
+    final totalItemsFetched = currentPageKey * _pageSize!;
+    
+    if (totalItemsFetched < _totalRecords!) {
+      return currentPageKey + 1;
+    }
+    
+    return null;
   }
 
   @override
@@ -93,7 +121,6 @@ class _State extends State<HistoryRoute> with LunaScrollControllerMixin {
       refreshKey: _refreshKey,
       pagingController: _pagingController,
       scrollController: scrollController,
-      listener: _fetchPage,
       noItemsFoundMessage: 'radarr.NoHistoryFound'.tr(),
       itemBuilder: (context, history, index) {
         RadarrMovie? _movie = movies!.firstWhereOrNull(
