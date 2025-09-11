@@ -73,17 +73,17 @@ class _State extends State<SABnzbdQueueFAB> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) =>
-      Selector<SABnzbdState, Tuple2<bool, bool>>(
-        selector: (_, model) => Tuple2(model.error, model.paused),
+      Selector<SABnzbdState, (bool, bool)>(
+        selector: (_, model) => (model.error, model.paused),
         builder: (context, data, _) {
-          data.item2 ? _iconController!.forward() : _iconController!.reverse();
-          return data.item1
+          data.$2 ? _iconController!.forward() : _iconController!.reverse();
+          return data.$1
               ? Container()
               : ScaleTransition(
                   scale: _hideController!,
                   child: InkWell(
                     child: LunaFloatingActionButtonAnimated(
-                      onPressed: () => _toggle(context, data.item2),
+                      onPressed: () => _toggle(context, data.$2),
                       icon: AnimatedIcons.pause_play,
                       controller: _iconController,
                     ),

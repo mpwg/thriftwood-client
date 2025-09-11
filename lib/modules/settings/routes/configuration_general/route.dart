@@ -141,9 +141,9 @@ class _State extends State<ConfigurationGeneralRoute>
         ],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          Tuple2<bool, int> result = await SettingsDialogs()
+          (bool, int) result = await SettingsDialogs()
               .changeBackgroundImageOpacity(context);
-          if (result.item1) _db.update(result.item2);
+          if (result.$1) _db.update(result.$2);
         },
       ),
     );
@@ -188,8 +188,8 @@ class _State extends State<ConfigurationGeneralRoute>
         trailing: LunaIconButton(icon: _db.read().icon),
         onTap: () async {
           final result = await SettingsDialogs().selectBootModule();
-          if (result.item1) {
-            BIOSDatabase.BOOT_MODULE.update(result.item2!);
+          if (result.$1) {
+            BIOSDatabase.BOOT_MODULE.update(result.$2!);
           }
         },
       ),

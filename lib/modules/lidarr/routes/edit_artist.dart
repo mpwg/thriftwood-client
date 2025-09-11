@@ -155,12 +155,12 @@ class _State extends State<ArtistEditRoute> with LunaScrollControllerMixin {
   );
 
   Future<void> _changePath() async {
-    Tuple2<bool, String> _values = await LunaDialogs().editText(
+    (bool, String) _values = await LunaDialogs().editText(
       context,
       'Artist Path',
       prefill: _path!,
     );
-    if (_values.item1 && mounted) setState(() => _path = _values.item2);
+    if (_values.$1 && mounted) setState(() => _path = _values.$2);
   }
 
   Future<void> _changeProfile() async {

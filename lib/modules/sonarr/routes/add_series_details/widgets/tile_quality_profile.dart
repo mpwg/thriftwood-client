@@ -28,13 +28,13 @@ class SonarrSeriesAddDetailsQualityProfileTile extends StatelessWidget {
     List<SonarrQualityProfile> _profiles = await context
         .read<SonarrState>()
         .qualityProfiles!;
-    Tuple2<bool, SonarrQualityProfile?> result = await SonarrDialogs()
+    (bool, SonarrQualityProfile?) result = await SonarrDialogs()
         .editQualityProfile(context, _profiles);
-    if (result.item1) {
+    if (result.$1) {
       context.read<SonarrSeriesAddDetailsState>().qualityProfile =
-          result.item2!;
+          result.$2!;
       SonarrDatabase.ADD_SERIES_DEFAULT_QUALITY_PROFILE.update(
-        result.item2!.id,
+        result.$2!.id,
       );
     }
   }

@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliDialogs {
-  Future<Tuple2<bool, TautulliGlobalSettingsType?>> globalSettings(
+  Future<(bool, TautulliGlobalSettingsType?)> globalSettings(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -30,7 +30,7 @@ class TautulliDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _value);
+    return (_flag, _value);
   }
 
   static Future<List<dynamic>> setDefaultPage(
@@ -65,7 +65,7 @@ class TautulliDialogs {
     return [_flag, _index];
   }
 
-  Future<Tuple2<bool, String>> terminateSession(BuildContext context) async {
+  Future<(bool, String)> terminateSession(BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
@@ -107,7 +107,7 @@ class TautulliDialogs {
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
 
-    return Tuple2(_flag, _textController.text);
+    return (_flag, _textController.text);
   }
 
   static Future<List<dynamic>> setRefreshRate(BuildContext context) async {
@@ -204,7 +204,7 @@ class TautulliDialogs {
     return [_flag, int.tryParse(_textController.text) ?? 3];
   }
 
-  static Future<Tuple2<bool, String>> setTerminationMessage(
+  static Future<(bool, String)> setTerminationMessage(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -243,6 +243,6 @@ class TautulliDialogs {
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
 
-    return Tuple2(_flag, _textController.text);
+    return (_flag, _textController.text);
   }
 }

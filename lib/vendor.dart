@@ -22,5 +22,5 @@ export 'package:stash_memory/stash_memory.dart';
 export 'package:supercharged/supercharged.dart';
 export 'package:table_calendar/table_calendar.dart';
 export 'package:transparent_image/transparent_image.dart';
-export 'package:tuple/tuple.dart';
+
 export 'package:xml/xml.dart';

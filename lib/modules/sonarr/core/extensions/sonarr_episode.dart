@@ -24,7 +24,7 @@ extension SonarrEpisodeExtension on SonarrEpisode {
       return [
         queueRecord.lunaPercentage(),
         LunaUI.TEXT_EMDASH,
-        queueRecord.lunaStatusParameters().item1,
+        queueRecord.lunaStatusParameters().$1,
       ].join(' ');
     }
 
@@ -43,7 +43,7 @@ extension SonarrEpisodeExtension on SonarrEpisode {
     SonarrQueueRecord? queueRecord,
   ) {
     if (queueRecord != null) {
-      return queueRecord.lunaStatusParameters(canBeWhite: false).item3;
+      return queueRecord.lunaStatusParameters(canBeWhite: false).$3;
     }
 
     if (!this.hasFile!) {

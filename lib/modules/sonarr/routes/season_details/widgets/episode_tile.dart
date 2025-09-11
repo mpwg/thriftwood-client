@@ -51,10 +51,10 @@ class _State extends State<SonarrEpisodeTile> {
   }
 
   Future<void> _onLongPress() async {
-    Tuple2<bool, SonarrEpisodeSettingsType?> results = await SonarrDialogs()
+    (bool, SonarrEpisodeSettingsType?) results = await SonarrDialogs()
         .episodeSettings(context: context, episode: widget.episode);
-    if (results.item1) {
-      results.item2!.execute(
+    if (results.$1) {
+      results.$2!.execute(
         context: context,
         episode: widget.episode,
         episodeFile: widget.episodeFile,

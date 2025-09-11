@@ -161,8 +161,8 @@ class _State extends State<SonarrSeriesTile> {
   }
 
   Future<void> _onLongPress() async {
-    Tuple2<bool, SonarrSeriesSettingsType?> values = await SonarrDialogs()
+    (bool, SonarrSeriesSettingsType?) values = await SonarrDialogs()
         .seriesSettings(context, widget.series);
-    if (values.item1) values.item2!.execute(context, widget.series);
+    if (values.$1) values.$2!.execute(context, widget.series);
   }
 }

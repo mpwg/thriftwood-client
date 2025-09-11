@@ -69,10 +69,10 @@ class _State extends State<ConfigurationWakeOnLANRoute>
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> _values = await SettingsDialogs()
+        (bool, String) _values = await SettingsDialogs()
             .editBroadcastAddress(context, broadcastAddress);
-        if (_values.item1) {
-          LunaProfile.current.wakeOnLANBroadcastAddress = _values.item2;
+        if (_values.$1) {
+          LunaProfile.current.wakeOnLANBroadcastAddress = _values.$2;
           LunaProfile.current.save();
         }
       },
@@ -90,12 +90,12 @@ class _State extends State<ConfigurationWakeOnLANRoute>
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> _values = await SettingsDialogs().editMACAddress(
+        (bool, String) _values = await SettingsDialogs().editMACAddress(
           context,
           macAddress,
         );
-        if (_values.item1) {
-          LunaProfile.current.wakeOnLANMACAddress = _values.item2;
+        if (_values.$1) {
+          LunaProfile.current.wakeOnLANMACAddress = _values.$2;
           LunaProfile.current.save();
         }
       },

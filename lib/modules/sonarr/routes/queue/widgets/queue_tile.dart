@@ -54,9 +54,9 @@ class _State extends State<SonarrQueueTile> {
   }
 
   Widget _collapsedTrailing() {
-    Tuple3<String, IconData, Color> _status = widget.queueRecord
+    (String, IconData, Color) _status = widget.queueRecord
         .lunaStatusParameters();
-    return LunaIconButton(icon: _status.item2, color: _status.item3);
+    return LunaIconButton(icon: _status.$2, color: _status.$3);
   }
 
   TextSpan _subtitle1() {
@@ -101,23 +101,23 @@ class _State extends State<SonarrQueueTile> {
   }
 
   TextSpan _subtitle4() {
-    Tuple3<String, IconData, Color> _params = widget.queueRecord
+    (String, IconData, Color) _params = widget.queueRecord
         .lunaStatusParameters(canBeWhite: false);
     return TextSpan(
       style: TextStyle(
-        color: _params.item3,
+        color: _params.$3,
         fontWeight: LunaUI.FONT_WEIGHT_BOLD,
       ),
       children: [
         TextSpan(text: widget.queueRecord.lunaPercentage()),
         TextSpan(text: LunaUI.TEXT_EMDASH.pad()),
-        TextSpan(text: _params.item1),
+        TextSpan(text: _params.$1),
       ],
     );
   }
 
   List<LunaHighlightedNode> _expandedHighlightedNodes() {
-    Tuple3<String, IconData, Color> _status = widget.queueRecord
+    (String, IconData, Color) _status = widget.queueRecord
         .lunaStatusParameters(canBeWhite: false);
     return [
       LunaHighlightedNode(
@@ -126,11 +126,11 @@ class _State extends State<SonarrQueueTile> {
       ),
       LunaHighlightedNode(
         text: widget.queueRecord.lunaPercentage(),
-        backgroundColor: _status.item3,
+        backgroundColor: _status.$3,
       ),
       LunaHighlightedNode(
         text: widget.queueRecord.status!.lunaStatus(),
-        backgroundColor: _status.item3,
+        backgroundColor: _status.$3,
       ),
     ];
   }

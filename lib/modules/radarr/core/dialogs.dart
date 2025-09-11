@@ -4,7 +4,7 @@ import 'package:thriftwood/extensions/int/bytes.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrDialogs {
-  Future<Tuple2<bool, RadarrGlobalSettingsType?>> globalSettings(
+  Future<(bool, RadarrGlobalSettingsType?)> globalSettings(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -30,10 +30,10 @@ class RadarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _value);
+    return (_flag, _value);
   }
 
-  Future<Tuple2<bool, RadarrMovieSettingsType?>> movieSettings(
+  Future<(bool, RadarrMovieSettingsType?)> movieSettings(
     BuildContext context,
     RadarrMovie movie,
   ) async {
@@ -60,10 +60,10 @@ class RadarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _value);
+    return (_flag, _value);
   }
 
-  Future<Tuple2<bool, int>> setDefaultPage(
+  Future<(bool, int)> setDefaultPage(
     BuildContext context, {
     required List<String> titles,
     required List<IconData> icons,
@@ -92,10 +92,10 @@ class RadarrDialogs {
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
 
-    return Tuple2(_flag, _index);
+    return (_flag, _index);
   }
 
-  Future<Tuple2<bool, RadarrImportMode?>> setManualImportMode(
+  Future<(bool, RadarrImportMode?)> setManualImportMode(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -122,10 +122,10 @@ class RadarrDialogs {
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
 
-    return Tuple2(_flag, _mode);
+    return (_flag, _mode);
   }
 
-  Future<Tuple2<bool, String>> addNewTag(BuildContext context) async {
+  Future<(bool, String)> addNewTag(BuildContext context) async {
     bool _flag = false;
     final _formKey = GlobalKey<FormState>();
     final _textController = TextEditingController();
@@ -160,7 +160,7 @@ class RadarrDialogs {
       ],
       contentPadding: LunaDialog.inputDialogContentPadding(),
     );
-    return Tuple2(_flag, _textController.text);
+    return (_flag, _textController.text);
   }
 
   Future<bool> deleteTag(BuildContext context) async {
@@ -243,7 +243,7 @@ class RadarrDialogs {
     return _flag;
   }
 
-  Future<Tuple2<bool, RadarrAvailability?>> editMinimumAvailability(
+  Future<(bool, RadarrAvailability?)> editMinimumAvailability(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -275,10 +275,10 @@ class RadarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, availability);
+    return (_flag, availability);
   }
 
-  Future<Tuple2<bool, RadarrQualityProfile?>> editQualityProfile(
+  Future<(bool, RadarrQualityProfile?)> editQualityProfile(
     BuildContext context,
     List<RadarrQualityProfile?> profiles,
   ) async {
@@ -305,10 +305,10 @@ class RadarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, profile);
+    return (_flag, profile);
   }
 
-  Future<Tuple2<bool, RadarrQualityDefinition?>> selectQualityDefinition(
+  Future<(bool, RadarrQualityDefinition?)> selectQualityDefinition(
     BuildContext context,
     List<RadarrQualityDefinition> definitions,
   ) async {
@@ -335,7 +335,7 @@ class RadarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, profile);
+    return (_flag, profile);
   }
 
   Future<void> setManualImportLanguages(
@@ -570,7 +570,7 @@ class RadarrDialogs {
     );
   }
 
-  Future<Tuple2<bool, RadarrRootFolder?>> editRootFolder(
+  Future<(bool, RadarrRootFolder?)> editRootFolder(
     BuildContext context,
     List<RadarrRootFolder> folders,
   ) async {
@@ -607,7 +607,7 @@ class RadarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _folder);
+    return (_flag, _folder);
   }
 
   Future<bool> removeMovie(BuildContext context) async {
@@ -651,7 +651,7 @@ class RadarrDialogs {
     return _flag;
   }
 
-  Future<Tuple2<bool, int>> setQueuePageSize(BuildContext context) async {
+  Future<(bool, int)> setQueuePageSize(BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
@@ -693,7 +693,7 @@ class RadarrDialogs {
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
 
-    return Tuple2(_flag, int.tryParse(_textController.text) ?? 50);
+    return (_flag, int.tryParse(_textController.text) ?? 50);
   }
 
   Future<void> addMovieOptions(BuildContext context) async {

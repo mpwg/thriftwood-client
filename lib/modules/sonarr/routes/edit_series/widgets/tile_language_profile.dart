@@ -25,9 +25,9 @@ class SonarrSeriesEditLanguageProfileTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    Tuple2<bool, SonarrLanguageProfile?> result = await SonarrDialogs()
+    (bool, SonarrLanguageProfile?) result = await SonarrDialogs()
         .editLanguageProfiles(context, profiles);
-    if (result.item1)
-      context.read<SonarrSeriesEditState>().languageProfile = result.item2!;
+    if (result.$1)
+      context.read<SonarrSeriesEditState>().languageProfile = result.$2!;
   }
 }

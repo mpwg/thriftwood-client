@@ -64,15 +64,15 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
                 .map<IconData>((view) => view.icon)
                 .toList();
 
-            Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
+            (bool, int) values = await SettingsDialogs().setDefaultOption(
               context,
               title: 'thriftwood.View'.tr(),
               values: titles,
               icons: icons,
             );
 
-            if (values.item1) {
-              LunaListViewOption _opt = LunaListViewOption.values[values.item2];
+            if (values.$1) {
+              LunaListViewOption _opt = LunaListViewOption.values[values.$2];
               context.read<RadarrState>().moviesViewType = _opt;
               _db.update(_opt);
             }
@@ -95,15 +95,15 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
               .toList();
           List<IconData> icons = List.filled(titles.length, LunaIcons.SORT);
 
-          Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
+          (bool, int) values = await SettingsDialogs().setDefaultOption(
             context,
             title: 'settings.SortCategory'.tr(),
             values: titles,
             icons: icons,
           );
 
-          if (values.item1) {
-            _db.update(RadarrMoviesSorting.values[values.item2]);
+          if (values.$1) {
+            _db.update(RadarrMoviesSorting.values[values.$2]);
             context.read<RadarrState>().moviesSortType = _db.read();
             context.read<RadarrState>().moviesSortAscending = RadarrDatabase
                 .DEFAULT_SORTING_MOVIES_ASCENDING
@@ -153,15 +153,15 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
               .toList();
           List<IconData> icons = List.filled(titles.length, LunaIcons.FILTER);
 
-          Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
+          (bool, int) values = await SettingsDialogs().setDefaultOption(
             context,
             title: 'settings.FilterCategory'.tr(),
             values: titles,
             icons: icons,
           );
 
-          if (values.item1) {
-            _db.update(RadarrMoviesFilter.values[values.item2]);
+          if (values.$1) {
+            _db.update(RadarrMoviesFilter.values[values.$2]);
             context.read<RadarrState>().moviesFilterType = _db.read();
           }
         },
@@ -182,15 +182,15 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
               .toList();
           List<IconData> icons = List.filled(titles.length, LunaIcons.SORT);
 
-          Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
+          (bool, int) values = await SettingsDialogs().setDefaultOption(
             context,
             title: 'settings.SortCategory'.tr(),
             values: titles,
             icons: icons,
           );
 
-          if (values.item1) {
-            _db.update(RadarrReleasesSorting.values[values.item2]);
+          if (values.$1) {
+            _db.update(RadarrReleasesSorting.values[values.$2]);
           }
         },
       ),
@@ -230,15 +230,15 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
               .toList();
           List<IconData> icons = List.filled(titles.length, LunaIcons.FILTER);
 
-          Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
+          (bool, int) values = await SettingsDialogs().setDefaultOption(
             context,
             title: 'settings.FilterCategory'.tr(),
             values: titles,
             icons: icons,
           );
 
-          if (values.item1) {
-            _db.update(RadarrReleasesFilter.values[values.item2]);
+          if (values.$1) {
+            _db.update(RadarrReleasesFilter.values[values.$2]);
           }
         },
       ),

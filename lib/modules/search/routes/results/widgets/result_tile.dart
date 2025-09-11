@@ -74,8 +74,8 @@ class SearchResultTile extends StatelessWidget {
   }
 
   Future<void> _sendToClient(BuildContext context) async {
-    Tuple2<bool, SearchDownloadType?> result = await SearchDialogs()
+    (bool, SearchDownloadType?) result = await SearchDialogs()
         .downloadResult(context);
-    if (result.item1) result.item2!.execute(context, data);
+    if (result.$1) result.$2!.execute(context, data);
   }
 }

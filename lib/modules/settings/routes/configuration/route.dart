@@ -56,8 +56,8 @@ class _State extends State<ConfigurationRoute> with LunaScrollControllerMixin {
               LunaState.context,
               profiles,
             );
-            if (selected.item1) {
-              LunaProfileTools().changeTo(selected.item2);
+            if (selected.$1) {
+              LunaProfileTools().changeTo(selected.$2);
             }
           },
         );

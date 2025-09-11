@@ -52,12 +52,12 @@ class _State extends State<ConfigurationLidarrConnectionDetailsRoute>
       body: [TextSpan(text: host.isEmpty ? 'thriftwood.NotSet'.tr() : host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> _values = await SettingsDialogs().editHost(
+        (bool, String) _values = await SettingsDialogs().editHost(
           context,
           prefill: host,
         );
-        if (_values.item1) {
-          LunaProfile.current.lidarrHost = _values.item2;
+        if (_values.$1) {
+          LunaProfile.current.lidarrHost = _values.$2;
           LunaProfile.current.save();
           context.read<LidarrState>().reset();
         }
@@ -78,13 +78,13 @@ class _State extends State<ConfigurationLidarrConnectionDetailsRoute>
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> _values = await LunaDialogs().editText(
+        (bool, String) _values = await LunaDialogs().editText(
           context,
           'settings.ApiKey'.tr(),
           prefill: apiKey,
         );
-        if (_values.item1) {
-          LunaProfile.current.lidarrKey = _values.item2;
+        if (_values.$1) {
+          LunaProfile.current.lidarrKey = _values.$2;
           LunaProfile.current.save();
           context.read<LidarrState>().reset();
         }

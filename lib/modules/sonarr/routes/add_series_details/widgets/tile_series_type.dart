@@ -27,12 +27,12 @@ class SonarrSeriesAddDetailsSeriesTypeTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    Tuple2<bool, SonarrSeriesType?> result = await SonarrDialogs()
+    (bool, SonarrSeriesType?) result = await SonarrDialogs()
         .editSeriesType(context);
-    if (result.item1) {
-      context.read<SonarrSeriesAddDetailsState>().seriesType = result.item2!;
+    if (result.$1) {
+      context.read<SonarrSeriesAddDetailsState>().seriesType = result.$2!;
       SonarrDatabase.ADD_SERIES_DEFAULT_SERIES_TYPE.update(
-        result.item2!.value!,
+        result.$2!.value!,
       );
     }
   }

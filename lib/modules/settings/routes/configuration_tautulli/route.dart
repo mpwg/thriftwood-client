@@ -100,9 +100,9 @@ class _State extends State<ConfigurationTautulliRoute>
           ],
           trailing: const LunaIconButton(icon: Icons.videocam_off_rounded),
           onTap: () async {
-            Tuple2<bool, String> result =
+            (bool, String) result =
                 await TautulliDialogs.setTerminationMessage(context);
-            if (result.item1) _db.update(result.item2);
+            if (result.$1) _db.update(result.$2);
           },
         );
       },

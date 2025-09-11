@@ -5,7 +5,7 @@ import 'package:thriftwood/extensions/string/string.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrDialogs {
-  Future<Tuple2<bool, SonarrGlobalSettingsType?>> globalSettings(
+  Future<(bool, SonarrGlobalSettingsType?)> globalSettings(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -31,10 +31,10 @@ class SonarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _value);
+    return (_flag, _value);
   }
 
-  Future<Tuple2<bool, SonarrSeriesSettingsType?>> seriesSettings(
+  Future<(bool, SonarrSeriesSettingsType?)> seriesSettings(
     BuildContext context,
     SonarrSeries series,
   ) async {
@@ -61,10 +61,10 @@ class SonarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _value);
+    return (_flag, _value);
   }
 
-  Future<Tuple2<bool, SonarrEpisodeSettingsType?>> episodeSettings({
+  Future<(bool, SonarrEpisodeSettingsType?)> episodeSettings({
     required BuildContext context,
     required SonarrEpisode episode,
   }) async {
@@ -94,10 +94,10 @@ class SonarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _value);
+    return (_flag, _value);
   }
 
-  Future<Tuple2<bool, SonarrSeasonSettingsType?>> seasonSettings(
+  Future<(bool, SonarrSeasonSettingsType?)> seasonSettings(
     BuildContext context,
     int? seasonNumber,
   ) async {
@@ -126,10 +126,10 @@ class SonarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _value);
+    return (_flag, _value);
   }
 
-  Future<Tuple2<bool, SonarrEpisodeMultiSettingsType?>> episodeMultiSettings(
+  Future<(bool, SonarrEpisodeMultiSettingsType?)> episodeMultiSettings(
     BuildContext context,
     int episodes,
   ) async {
@@ -160,7 +160,7 @@ class SonarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _value);
+    return (_flag, _value);
   }
 
   static Future<List<dynamic>> setDefaultPage(
@@ -339,7 +339,7 @@ class SonarrDialogs {
     );
   }
 
-  Future<Tuple2<bool, String>> addNewTag(BuildContext context) async {
+  Future<(bool, String)> addNewTag(BuildContext context) async {
     bool _flag = false;
     final _formKey = GlobalKey<FormState>();
     final _textController = TextEditingController();
@@ -373,7 +373,7 @@ class SonarrDialogs {
       ],
       contentPadding: LunaDialog.inputDialogContentPadding(),
     );
-    return Tuple2(_flag, _textController.text);
+    return (_flag, _textController.text);
   }
 
   Future<bool> searchAllMissingEpisodes(BuildContext context) async {
@@ -429,7 +429,7 @@ class SonarrDialogs {
     return _flag;
   }
 
-  Future<Tuple2<bool, SonarrLanguageProfile?>> editLanguageProfiles(
+  Future<(bool, SonarrLanguageProfile?)> editLanguageProfiles(
     BuildContext context,
     List<SonarrLanguageProfile?> profiles,
   ) async {
@@ -456,10 +456,10 @@ class SonarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, profile);
+    return (_flag, profile);
   }
 
-  Future<Tuple2<bool, SonarrQualityProfile?>> editQualityProfile(
+  Future<(bool, SonarrQualityProfile?)> editQualityProfile(
     BuildContext context,
     List<SonarrQualityProfile?> profiles,
   ) async {
@@ -486,10 +486,10 @@ class SonarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, profile);
+    return (_flag, profile);
   }
 
-  Future<Tuple2<bool, SonarrRootFolder?>> editRootFolder(
+  Future<(bool, SonarrRootFolder?)> editRootFolder(
     BuildContext context,
     List<SonarrRootFolder> folders,
   ) async {
@@ -526,10 +526,10 @@ class SonarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _folder);
+    return (_flag, _folder);
   }
 
-  Future<Tuple2<bool, SonarrSeriesMonitorType?>> editMonitorType(
+  Future<(bool, SonarrSeriesMonitorType?)> editMonitorType(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -555,10 +555,10 @@ class SonarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _type);
+    return (_flag, _type);
   }
 
-  Future<Tuple2<bool, SonarrSeriesType?>> editSeriesType(
+  Future<(bool, SonarrSeriesType?)> editSeriesType(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -584,7 +584,7 @@ class SonarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _type);
+    return (_flag, _type);
   }
 
   Future<bool> removeSeries(BuildContext context) async {
@@ -841,7 +841,7 @@ class SonarrDialogs {
     );
   }
 
-  Future<Tuple2<bool, int>> setQueuePageSize(BuildContext context) async {
+  Future<(bool, int)> setQueuePageSize(BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
@@ -883,6 +883,6 @@ class SonarrDialogs {
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
 
-    return Tuple2(_flag, int.tryParse(_textController.text) ?? 50);
+    return (_flag, int.tryParse(_textController.text) ?? 50);
   }
 }

@@ -53,12 +53,12 @@ class _State extends State<ConfigurationTautulliConnectionDetailsRoute>
       body: [TextSpan(text: host.isEmpty ? 'thriftwood.NotSet'.tr() : host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> _values = await SettingsDialogs().editHost(
+        (bool, String) _values = await SettingsDialogs().editHost(
           context,
           prefill: LunaProfile.current.tautulliHost,
         );
-        if (_values.item1) {
-          LunaProfile.current.tautulliHost = _values.item2;
+        if (_values.$1) {
+          LunaProfile.current.tautulliHost = _values.$2;
           LunaProfile.current.save();
           context.read<TautulliState>().reset();
         }
@@ -79,13 +79,13 @@ class _State extends State<ConfigurationTautulliConnectionDetailsRoute>
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> _values = await LunaDialogs().editText(
+        (bool, String) _values = await LunaDialogs().editText(
           context,
           'settings.ApiKey'.tr(),
           prefill: LunaProfile.current.tautulliKey,
         );
-        if (_values.item1) {
-          LunaProfile.current.tautulliKey = _values.item2;
+        if (_values.$1) {
+          LunaProfile.current.tautulliKey = _values.$2;
           LunaProfile.current.save();
           context.read<TautulliState>().reset();
         }

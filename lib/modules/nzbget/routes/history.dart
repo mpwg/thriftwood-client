@@ -89,12 +89,12 @@ class _State extends State<NZBGetHistory>
         onTap: loadCallback,
       );
     }
-    return Selector<NZBGetState, Tuple2<String, bool>>(
+    return Selector<NZBGetState, (String, bool)>(
       selector: (_, model) =>
-          Tuple2(model.historySearchFilter, model.historyHideFailed),
+          (model.historySearchFilter, model.historyHideFailed),
       builder: (context, data, _) {
-        List<NZBGetHistoryData> _filtered = _filter(data.item1);
-        _filtered = data.item2 ? _hide(_filtered) : _filtered;
+        List<NZBGetHistoryData> _filtered = _filter(data.$1);
+        _filtered = data.$2 ? _hide(_filtered) : _filtered;
         return _listBody(_filtered);
       },
     );

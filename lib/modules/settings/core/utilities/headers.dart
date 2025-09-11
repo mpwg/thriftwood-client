@@ -36,8 +36,8 @@ class HeaderUtility {
     LunaIndexer? indexer,
   }) async {
     final result = await SettingsDialogs().addHeader(context);
-    if (result.item1)
-      switch (result.item2) {
+    if (result.$1)
+      switch (result.$2) {
         case HeaderType.AUTHORIZATION:
           await _basicAuthenticationHeader(context, headers, indexer);
           break;
@@ -45,7 +45,7 @@ class HeaderUtility {
           await _genericHeader(context, headers, indexer);
           break;
         default:
-          LunaLogger().warning('Unknown case: ${result.item2}');
+          LunaLogger().warning('Unknown case: ${result.$2}');
       }
   }
 
@@ -56,13 +56,13 @@ class HeaderUtility {
     LunaIndexer? indexer,
   ) async {
     final results = await SettingsDialogs().addCustomHeader(context);
-    if (results.item1) {
-      headers[results.item2] = results.item3;
+    if (results.$1) {
+      headers[results.$2] = results.$3;
       LunaProfile.current.save();
       indexer?.save();
       showLunaSuccessSnackBar(
         title: 'settings.HeaderAdded'.tr(),
-        message: results.item2,
+        message: results.$2,
       );
     }
   }
@@ -76,9 +76,9 @@ class HeaderUtility {
     final results = await SettingsDialogs().addBasicAuthenticationHeader(
       context,
     );
-    if (results.item1) {
+    if (results.$1) {
       String _auth = base64.encode(
-        utf8.encode('${results.item2}:${results.item3}'),
+        utf8.encode('${results.$2}:${results.$3}'),
       );
       headers['Authorization'] = 'Basic $_auth';
       LunaProfile.current.save();

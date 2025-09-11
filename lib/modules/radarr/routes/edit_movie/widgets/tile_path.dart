@@ -14,13 +14,13 @@ class RadarrMoviesEditPathTile extends StatelessWidget {
         body: [TextSpan(text: path)],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          Tuple2<bool, String> _values = await LunaDialogs().editText(
+          (bool, String) _values = await LunaDialogs().editText(
             context,
             'radarr.MoviePath'.tr(),
             prefill: path,
           );
-          if (_values.item1)
-            context.read<RadarrMoviesEditState>().path = _values.item2;
+          if (_values.$1)
+            context.read<RadarrMoviesEditState>().path = _values.$2;
         },
       ),
     );

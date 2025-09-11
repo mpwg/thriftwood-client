@@ -53,8 +53,8 @@ class _State extends State<ProfilesRoute> with LunaScrollControllerMixin {
         final profiles = LunaProfile.list;
 
         final selected = await dialogs.addProfile(context, profiles);
-        if (selected.item1) {
-          LunaProfileTools().create(selected.item2);
+        if (selected.$1) {
+          LunaProfileTools().create(selected.$2);
         }
       },
     );
@@ -71,10 +71,10 @@ class _State extends State<ProfilesRoute> with LunaScrollControllerMixin {
         final profiles = LunaProfile.list;
 
         final selected = await dialogs.renameProfile(context, profiles);
-        if (selected.item1) {
+        if (selected.$1) {
           final name = await dialogs.renameProfileSelected(context, profiles);
-          if (name.item1) {
-            LunaProfileTools().rename(selected.item2, name.item2);
+          if (name.$1) {
+            LunaProfileTools().rename(selected.$2, name.$2);
           }
         }
       },
@@ -102,8 +102,8 @@ class _State extends State<ProfilesRoute> with LunaScrollControllerMixin {
         }
 
         final selected = await dialogs.deleteProfile(context, profiles);
-        if (selected.item1) {
-          LunaProfileTools().remove(selected.item2);
+        if (selected.$1) {
+          LunaProfileTools().remove(selected.$2);
         }
       },
     );
@@ -132,8 +132,8 @@ class _State extends State<ProfilesRoute> with LunaScrollControllerMixin {
           }
 
           final selected = await dialogs.enabledProfile(context, profiles);
-          if (selected.item1) {
-            LunaProfileTools().changeTo(selected.item2);
+          if (selected.$1) {
+            LunaProfileTools().changeTo(selected.$2);
           }
         },
       ),

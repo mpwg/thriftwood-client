@@ -65,15 +65,15 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
                 .map<IconData>((view) => view.icon)
                 .toList();
 
-            Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
+            (bool, int) values = await SettingsDialogs().setDefaultOption(
               context,
               title: 'thriftwood.View'.tr(),
               values: titles,
               icons: icons,
             );
 
-            if (values.item1) {
-              LunaListViewOption _opt = LunaListViewOption.values[values.item2];
+            if (values.$1) {
+              LunaListViewOption _opt = LunaListViewOption.values[values.$2];
               context.read<SonarrState>().seriesViewType = _opt;
               _db.update(_opt);
             }
@@ -96,15 +96,15 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
               .toList();
           List<IconData> icons = List.filled(titles.length, LunaIcons.SORT);
 
-          Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
+          (bool, int) values = await SettingsDialogs().setDefaultOption(
             context,
             title: 'settings.SortCategory'.tr(),
             values: titles,
             icons: icons,
           );
 
-          if (values.item1) {
-            _db.update(SonarrSeriesSorting.values[values.item2]);
+          if (values.$1) {
+            _db.update(SonarrSeriesSorting.values[values.$2]);
             context.read<SonarrState>().seriesSortType = _db.read();
             context.read<SonarrState>().seriesSortAscending = SonarrDatabase
                 .DEFAULT_SORTING_SERIES_ASCENDING
@@ -145,15 +145,15 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
               .toList();
           List<IconData> icons = List.filled(titles.length, LunaIcons.FILTER);
 
-          Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
+          (bool, int) values = await SettingsDialogs().setDefaultOption(
             context,
             title: 'settings.FilterCategory'.tr(),
             values: titles,
             icons: icons,
           );
 
-          if (values.item1) {
-            _db.update(SonarrSeriesFilter.values[values.item2]);
+          if (values.$1) {
+            _db.update(SonarrSeriesFilter.values[values.$2]);
           }
         },
       ),
@@ -173,15 +173,15 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
               .toList();
           List<IconData> icons = List.filled(titles.length, LunaIcons.SORT);
 
-          Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
+          (bool, int) values = await SettingsDialogs().setDefaultOption(
             context,
             title: 'settings.SortCategory'.tr(),
             values: titles,
             icons: icons,
           );
 
-          if (values.item1) {
-            _db.update(SonarrReleasesSorting.values[values.item2]);
+          if (values.$1) {
+            _db.update(SonarrReleasesSorting.values[values.$2]);
           }
         },
       ),
@@ -218,15 +218,15 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
               .toList();
           List<IconData> icons = List.filled(titles.length, LunaIcons.FILTER);
 
-          Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
+          (bool, int) values = await SettingsDialogs().setDefaultOption(
             context,
             title: 'settings.FilterCategory'.tr(),
             values: titles,
             icons: icons,
           );
 
-          if (values.item1) {
-            _db.update(SonarrReleasesFilter.values[values.item2]);
+          if (values.$1) {
+            _db.update(SonarrReleasesFilter.values[values.$2]);
           }
         },
       ),

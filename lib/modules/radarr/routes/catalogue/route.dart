@@ -56,15 +56,15 @@ class _State extends State<RadarrCatalogueRoute>
       child:
           Selector<
             RadarrState,
-            Tuple2<
+            (
               Future<List<RadarrMovie>>?,
               Future<List<RadarrQualityProfile>>?
-            >
+            )
           >(
-            selector: (_, state) => Tuple2(state.movies, state.qualityProfiles),
+            selector: (_, state) => (state.movies, state.qualityProfiles),
             builder: (context, tuple, _) {
               return FutureBuilder(
-                future: Future.wait([tuple.item1!, tuple.item2!]),
+                future: Future.wait([tuple.$1!, tuple.$2!]),
                 builder: (context, AsyncSnapshot<List<Object>> snapshot) {
                   if (snapshot.hasError) {
                     if (snapshot.connectionState != ConnectionState.waiting) {

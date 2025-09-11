@@ -88,13 +88,13 @@ class _State extends State<ConfigurationSearchEditIndexerRoute>
       body: [TextSpan(text: _name.isEmpty ? 'thriftwood.NotSet'.tr() : _name)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> values = await LunaDialogs().editText(
+        (bool, String) values = await LunaDialogs().editText(
           context,
           'settings.DisplayName'.tr(),
           prefill: _indexer!.displayName,
         );
-        if (values.item1) {
-          _indexer!.displayName = values.item2;
+        if (values.$1) {
+          _indexer!.displayName = values.$2;
         }
         _indexer!.save();
       },
@@ -108,13 +108,13 @@ class _State extends State<ConfigurationSearchEditIndexerRoute>
       body: [TextSpan(text: _host.isEmpty ? 'thriftwood.NotSet'.tr() : _host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> values = await LunaDialogs().editText(
+        (bool, String) values = await LunaDialogs().editText(
           context,
           'search.IndexerAPIHost'.tr(),
           prefill: _host,
         );
-        if (values.item1 && mounted) {
-          _indexer!.host = values.item2;
+        if (values.$1 && mounted) {
+          _indexer!.host = values.$2;
         }
         _indexer!.save();
       },
@@ -128,13 +128,13 @@ class _State extends State<ConfigurationSearchEditIndexerRoute>
       body: [TextSpan(text: _key.isEmpty ? 'thriftwood.NotSet'.tr() : _key)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> values = await LunaDialogs().editText(
+        (bool, String) values = await LunaDialogs().editText(
           context,
           'search.IndexerAPIKey'.tr(),
           prefill: _key,
         );
-        if (values.item1) {
-          _indexer!.apiKey = values.item2;
+        if (values.$1) {
+          _indexer!.apiKey = values.$2;
         }
         _indexer!.save();
       },

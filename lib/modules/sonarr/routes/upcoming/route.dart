@@ -42,14 +42,14 @@ class _State extends State<SonarrUpcomingRoute>
       child:
           Selector<
             SonarrState,
-            Tuple2<
+            (
               Future<Map<int?, SonarrSeries>>?,
               Future<List<SonarrCalendar>>?
-            >
+            )
           >(
-            selector: (_, state) => Tuple2(state.series, state.upcoming),
+            selector: (_, state) => (state.series, state.upcoming),
             builder: (context, tuple, _) => FutureBuilder(
-              future: Future.wait([tuple.item1!, tuple.item2!]),
+              future: Future.wait([tuple.$1!, tuple.$2!]),
               builder: (context, AsyncSnapshot<List<Object>> snapshot) {
                 if (snapshot.hasError) {
                   if (snapshot.connectionState != ConnectionState.waiting) {

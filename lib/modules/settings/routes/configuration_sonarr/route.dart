@@ -108,10 +108,10 @@ class _State extends State<ConfigurationSonarrRoute>
         ],
         trailing: const LunaIconButton(icon: Icons.queue_play_next_rounded),
         onTap: () async {
-          Tuple2<bool, int> result = await SonarrDialogs().setQueuePageSize(
+          (bool, int) result = await SonarrDialogs().setQueuePageSize(
             context,
           );
-          if (result.item1) _db.update(result.item2);
+          if (result.$1) _db.update(result.$2);
         },
       ),
     );

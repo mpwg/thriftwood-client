@@ -29,14 +29,14 @@ class TautulliActivityDetailsBottomActionBar extends StatelessWidget {
                   icon: Icons.close_rounded,
                   color: LunaColours.red,
                   onTap: () async {
-                    Tuple2<bool, String> _result = await TautulliDialogs()
+                    (bool, String) _result = await TautulliDialogs()
                         .terminateSession(context);
-                    if (_result.item1)
+                    if (_result.$1)
                       TautulliAPIHelper()
                           .terminateSession(
                             context: context,
                             session: session,
-                            terminationMessage: _result.item2,
+                            terminationMessage: _result.$2,
                           )
                           .then((value) {
                             if (value) Navigator.of(context).pop();

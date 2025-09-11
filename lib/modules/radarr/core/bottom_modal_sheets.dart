@@ -28,11 +28,11 @@ class RadarrBottomModalSheets {
               ],
               trailing: const LunaIconButton.arrow(),
               onTap: () async {
-                Tuple2<bool, RadarrMovie?> result = await selectMovie(context);
-                if (result.item1)
+                (bool, RadarrMovie?) result = await selectMovie(context);
+                if (result.$1)
                   context
                       .read<RadarrManualImportDetailsTileState>()
-                      .fetchUpdates(context, result.item2!.id);
+                      .fetchUpdates(context, result.$2!.id);
               },
             ),
             LunaBlock(
@@ -97,15 +97,15 @@ class RadarrBottomModalSheets {
                 List<RadarrQualityDefinition> profiles = await context
                     .read<RadarrState>()
                     .qualityDefinitions!;
-                Tuple2<bool, RadarrQualityDefinition?> result =
+                (bool, RadarrQualityDefinition?) result =
                     await RadarrDialogs().selectQualityDefinition(
                       context,
                       profiles,
                     );
-                if (result.item1)
+                if (result.$1)
                   context
                       .read<RadarrManualImportDetailsTileState>()
-                      .updateQuality(result.item2!.quality!);
+                      .updateQuality(result.$2!.quality!);
               },
             ),
             LunaBlock(
@@ -160,7 +160,7 @@ class RadarrBottomModalSheets {
     );
   }
 
-  Future<Tuple2<bool, RadarrMovie?>> selectMovie(BuildContext context) async {
+  Future<(bool, RadarrMovie?)> selectMovie(BuildContext context) async {
     bool result = false;
     RadarrMovie? movie;
     context
@@ -248,6 +248,6 @@ class RadarrBottomModalSheets {
         ),
       ),
     );
-    return Tuple2(result, movie);
+    return (result, movie);
   }
 }

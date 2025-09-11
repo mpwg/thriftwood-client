@@ -69,10 +69,10 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
         ],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          Tuple2<bool, int> result = await DashboardDialogs().setPastDays(
+          (bool, int) result = await DashboardDialogs().setPastDays(
             context,
           );
-          if (result.item1) _db.update(result.item2);
+          if (result.$1) _db.update(result.$2);
         },
       ),
     );
@@ -92,10 +92,10 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
         ],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          Tuple2<bool, int> result = await DashboardDialogs().setFutureDays(
+          (bool, int) result = await DashboardDialogs().setFutureDays(
             context,
           );
-          if (result.item1) _db.update(result.item2);
+          if (result.$1) _db.update(result.$2);
         },
       ),
     );
@@ -160,9 +160,9 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
         body: [TextSpan(text: _db.read().name)],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          Tuple2<bool, CalendarStartingType?> _values = await SettingsDialogs()
+          (bool, CalendarStartingType?) _values = await SettingsDialogs()
               .editCalendarStartingView(context);
-          if (_values.item1) _db.update(_values.item2!);
+          if (_values.$1) _db.update(_values.$2!);
         },
       ),
     );
@@ -176,9 +176,9 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
         body: [TextSpan(text: _db.read().name)],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          Tuple2<bool, CalendarStartingDay?> results = await SettingsDialogs()
+          (bool, CalendarStartingDay?) results = await SettingsDialogs()
               .editCalendarStartingDay(context);
-          if (results.item1) _db.update(results.item2!);
+          if (results.$1) _db.update(results.$2!);
         },
       ),
     );
@@ -192,9 +192,9 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
         body: [TextSpan(text: _db.read().name)],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          Tuple2<bool, CalendarStartingSize?> _values = await SettingsDialogs()
+          (bool, CalendarStartingSize?) _values = await SettingsDialogs()
               .editCalendarStartingSize(context);
-          if (_values.item1) _db.update(_values.item2!);
+          if (_values.$1) _db.update(_values.$2!);
         },
       ),
     );

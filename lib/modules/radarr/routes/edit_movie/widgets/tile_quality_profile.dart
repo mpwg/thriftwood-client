@@ -17,11 +17,11 @@ class RadarrMoviesEditQualityProfileTile extends StatelessWidget {
         body: [TextSpan(text: profile.name ?? LunaUI.TEXT_EMDASH)],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          Tuple2<bool, RadarrQualityProfile?> values = await RadarrDialogs()
+          (bool, RadarrQualityProfile?) values = await RadarrDialogs()
               .editQualityProfile(context, profiles!);
-          if (values.item1)
+          if (values.$1)
             context.read<RadarrMoviesEditState>().qualityProfile =
-                values.item2!;
+                values.$2!;
         },
       ),
     );
