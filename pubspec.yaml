@@ -9,7 +9,6 @@ dependencies:
     sdk: flutter
   badges: ^3.1.1
   cached_network_image: ^3.4.1
-  collection: ^1.17.2
   convert: ^3.1.1
   device_preview: ^1.1.0
   dio: ^5.9.0
