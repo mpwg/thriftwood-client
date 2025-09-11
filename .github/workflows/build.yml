@@ -4,7 +4,7 @@ run-name: "Build Release: ${{ inputs.flavor || github.sha }}"
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
     inputs:
       flavor:
