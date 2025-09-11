@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'video_stream.g.dart';
 
@@ -20,96 +20,121 @@ class TautulliVideoStream {
 
   /// Codec of the video stream.
   @JsonKey(
-      name: 'video_codec', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_codec',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoCodec;
 
   /// Codec level of the video stream.
   @JsonKey(
-      name: 'video_codec_level',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_codec_level',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoCodecLevel;
 
   /// Bitrate of the video stream.
   @JsonKey(
-      name: 'video_bitrate', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'video_bitrate',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? videoBitrate;
 
   /// Bit depth of the video stream.
   @JsonKey(
-      name: 'video_bit_depth',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'video_bit_depth',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? videoBitDepth;
 
   /// Chroma subsampling of the video stream.
   @JsonKey(
-      name: 'video_chroma_subsampling',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_chroma_subsampling',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoChromaSubsampling;
 
   /// Color primaries of the video stream.
   @JsonKey(
-      name: 'video_color_primaries',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_color_primaries',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoColorPrimaries;
 
   /// Color range of the video stream.
   @JsonKey(
-      name: 'video_color_range',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_color_range',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoColorRange;
 
   /// Color space of the video stream.
   @JsonKey(
-      name: 'video_color_space',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_color_space',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoColorSpace;
 
   /// Color TRC of the video stream.
   @JsonKey(
-      name: 'video_color_trc', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_color_trc',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoColorTRC;
 
   /// Frame rate of the video stream.
   @JsonKey(
-      name: 'video_frame_rate',
-      fromJson: TautulliUtilities.ensureDoubleFromJson)
+    name: 'video_frame_rate',
+    fromJson: TautulliUtilities.ensureDoubleFromJson,
+  )
   final double? videoFrameRate;
 
   /// Reference frames in the video stream.
   @JsonKey(
-      name: 'video_ref_frames',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'video_ref_frames',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? videoRefFrames;
 
   /// Height in pixels of the video stream.
   @JsonKey(
-      name: 'video_height', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'video_height',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? videoHeight;
 
   /// Width in pixels of the video stream.
   @JsonKey(
-      name: 'video_width', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'video_width',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? videoWidth;
 
   /// Language of the video stream.
   @JsonKey(
-      name: 'video_language', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_language',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoLanguage;
 
   /// Language code of the video stream.
   @JsonKey(
-      name: 'video_language_code',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_language_code',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoLanguageCode;
 
   /// Profile of the video stream.
   @JsonKey(
-      name: 'video_profile', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_profile',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoProfile;
 
   /// Scan type of the video stream.
   @JsonKey(
-      name: 'video_scan_type', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_scan_type',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoScanType;
 
   /// _Unknown_

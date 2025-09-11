@@ -115,7 +115,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Environment
-        uses: JagandeepBrar/lunasea/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
         with:
           platform: test
           skip-core: true

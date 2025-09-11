@@ -1,19 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:lunasea/database/models/external_module.dart';
-import 'package:lunasea/database/models/indexer.dart';
-import 'package:lunasea/database/models/log.dart';
-import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/database/table.dart';
-import 'package:lunasea/system/logger.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/database/models/external_module.dart';
+import 'package:thriftwood/database/models/indexer.dart';
+import 'package:thriftwood/database/models/log.dart';
+import 'package:thriftwood/database/models/profile.dart';
+import 'package:thriftwood/database/table.dart';
+import 'package:thriftwood/system/logger.dart';
+import 'package:thriftwood/vendor.dart';
 
 enum LunaBox<T> {
   alerts<dynamic>('alerts'),
   externalModules<LunaExternalModule>('external_modules'),
   indexers<LunaIndexer>('indexers'),
   logs<LunaLog>('logs'),
-  lunasea<dynamic>('lunasea'),
+  thriftwood<dynamic>('thriftwood'),
   profiles<LunaProfile>('profiles');
 
   final String key;

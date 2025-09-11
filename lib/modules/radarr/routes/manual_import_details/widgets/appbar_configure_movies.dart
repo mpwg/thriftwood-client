@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrManualImportDetailsConfigureMoviesSearchBar extends StatefulWidget
     implements PreferredSizeWidget {
-  const RadarrManualImportDetailsConfigureMoviesSearchBar({
-    Key? key,
-  }) : super(key: key);
+  const RadarrManualImportDetailsConfigureMoviesSearchBar({Key? key})
+    : super(key: key);
 
   @override
   Size get preferredSize =>
@@ -31,9 +30,11 @@ class _State extends State<RadarrManualImportDetailsConfigureMoviesSearchBar> {
                 child: LunaTextInputBar(
                   controller: _controller,
                   autofocus: false,
-                  onChanged: (value) => context
-                      .read<RadarrManualImportDetailsTileState>()
-                      .configureMoviesSearchQuery = value,
+                  onChanged: (value) =>
+                      context
+                              .read<RadarrManualImportDetailsTileState>()
+                              .configureMoviesSearchQuery =
+                          value,
                   margin: LunaTextInputBar.appBarMargin,
                 ),
               ),

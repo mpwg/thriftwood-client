@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/radarr/types.dart';
-import 'package:lunasea/api/radarr/utilities.dart';
+import 'package:thriftwood/api/radarr/types.dart';
+import 'package:thriftwood/api/radarr/utilities.dart';
 
 part 'health_check.g.dart';
 
@@ -12,9 +12,10 @@ class RadarrHealthCheck {
   String? source;
 
   @JsonKey(
-      name: 'type',
-      toJson: RadarrUtilities.healthCheckTypeToJson,
-      fromJson: RadarrUtilities.healthCheckTypeFromJson)
+    name: 'type',
+    toJson: RadarrUtilities.healthCheckTypeToJson,
+    fromJson: RadarrUtilities.healthCheckTypeFromJson,
+  )
   RadarrHealthCheckType? type;
 
   @JsonKey(name: 'message')
@@ -23,12 +24,7 @@ class RadarrHealthCheck {
   @JsonKey(name: 'wikiUrl')
   String? wikiUrl;
 
-  RadarrHealthCheck({
-    this.source,
-    this.type,
-    this.message,
-    this.wikiUrl,
-  });
+  RadarrHealthCheck({this.source, this.type, this.message, this.wikiUrl});
 
   /// Returns a JSON-encoded string version of this object.
   @override

@@ -1,4 +1,4 @@
-import 'package:lunasea/database/table.dart';
+import 'package:thriftwood/database/table.dart';
 
 enum NZBGetDatabase<T> with LunaTableMixin<T> {
   NAVIGATION_INDEX<int>(0);

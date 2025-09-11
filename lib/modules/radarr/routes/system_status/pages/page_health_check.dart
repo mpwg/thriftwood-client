@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrSystemStatusHealthCheckPage extends StatefulWidget {
   final ScrollController scrollController;
@@ -26,10 +26,7 @@ class _State extends State<RadarrSystemStatusHealthCheckPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LunaScaffold(
-      scaffoldKey: _scaffoldKey,
-      body: _body(),
-    );
+    return LunaScaffold(scaffoldKey: _scaffoldKey, body: _body());
   }
 
   Widget _body() {
@@ -39,16 +36,20 @@ class _State extends State<RadarrSystemStatusHealthCheckPage>
       onRefresh: () async =>
           context.read<RadarrSystemStatusState>().fetchHealthCheck(context),
       child: FutureBuilder(
-          future: context.read<RadarrSystemStatusState>().healthCheck,
-          builder: (context, AsyncSnapshot<List<RadarrHealthCheck>> snapshot) {
-            if (snapshot.hasError) {
-              LunaLogger().error('Unable to fetch Radarr health check',
-                  snapshot.error, snapshot.stackTrace);
-              return LunaMessage.error(onTap: _refreshKey.currentState!.show);
-            }
-            if (snapshot.hasData) return _list(snapshot.data);
-            return const LunaLoader();
-          }),
+        future: context.read<RadarrSystemStatusState>().healthCheck,
+        builder: (context, AsyncSnapshot<List<RadarrHealthCheck>> snapshot) {
+          if (snapshot.hasError) {
+            LunaLogger().error(
+              'Unable to fetch Radarr health check',
+              snapshot.error,
+              snapshot.stackTrace,
+            );
+            return LunaMessage.error(onTap: _refreshKey.currentState!.show);
+          }
+          if (snapshot.hasData) return _list(snapshot.data);
+          return const LunaLoader();
+        },
+      ),
     );
   }
 

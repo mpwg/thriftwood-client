@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrMovieDetailsState extends ChangeNotifier {
   final RadarrMovie movie;
@@ -43,9 +43,6 @@ class RadarrMovieDetailsState extends ChangeNotifier {
       movieFiles = state.api!.movieFile.get(movieId: movie.id!);
     }
     notifyListeners();
-    await Future.wait([
-      extraFiles,
-      movieFiles,
-    ]);
+    await Future.wait([extraFiles, movieFiles]);
   }
 }

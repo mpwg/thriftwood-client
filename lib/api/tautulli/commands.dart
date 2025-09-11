@@ -3,8 +3,8 @@ library tautulli_commands;
 
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
-import 'package:lunasea/api/tautulli/types.dart';
-import 'package:lunasea/api/tautulli/models.dart';
+import 'package:thriftwood/api/tautulli/types.dart';
+import 'package:thriftwood/api/tautulli/models.dart';
 
 // Activity
 part 'commands/activity.dart';

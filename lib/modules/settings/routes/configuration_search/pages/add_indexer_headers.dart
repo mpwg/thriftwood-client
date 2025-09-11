@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/models/indexer.dart';
-import 'package:lunasea/modules/settings.dart';
-import 'package:lunasea/widgets/pages/invalid_route.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/models/indexer.dart';
+import 'package:thriftwood/modules/settings.dart';
+import 'package:thriftwood/widgets/pages/invalid_route.dart';
 
 class ConfigurationSearchAddIndexerHeadersRoute extends StatefulWidget {
   final LunaIndexer? indexer;
@@ -51,8 +51,10 @@ class _State extends State<ConfigurationSearchAddIndexerHeadersRoute>
           text: 'settings.AddHeader'.tr(),
           icon: Icons.add_rounded,
           onTap: () async {
-            await HeaderUtility()
-                .addHeader(context, headers: widget.indexer!.headers);
+            await HeaderUtility().addHeader(
+              context,
+              headers: widget.indexer!.headers,
+            );
             if (mounted) setState(() {});
           },
         ),

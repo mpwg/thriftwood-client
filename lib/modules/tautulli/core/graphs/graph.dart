@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliGraphHelper {
   static const GRAPH_HEIGHT = 225.0;
@@ -12,10 +12,8 @@ class TautulliGraphHelper {
 
   FlGridData gridData() => const FlGridData(show: false);
 
-  FlBorderData borderData() => FlBorderData(
-        show: true,
-        border: Border.all(color: LunaColours.white10),
-      );
+  FlBorderData borderData() =>
+      FlBorderData(show: true, border: Border.all(color: LunaColours.white10));
 
   FlTitlesData titlesData(
     TautulliGraphData data, {
@@ -27,9 +25,12 @@ class TautulliGraphHelper {
           ? [
               data.categories![value.truncate()]!
                   .substring(
-                      0,
-                      min(maxTitleLength,
-                          data.categories![value.truncate()]!.length))
+                    0,
+                    min(
+                      maxTitleLength,
+                      data.categories![value.truncate()]!.length,
+                    ),
+                  )
                   .toUpperCase(),
               if (titleOverFlowShowEllipsis) LunaUI.TEXT_ELLIPSIS,
             ].join()

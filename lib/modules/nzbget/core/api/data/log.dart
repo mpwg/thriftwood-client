@@ -1,4 +1,4 @@
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class NZBGetLogData {
   int? id;
@@ -14,10 +14,12 @@ class NZBGetLogData {
   });
 
   String get timestamp {
-    return LunaSeaDatabase.USE_24_HOUR_TIME.read()
-        ? DateFormat('MMMM dd, y - HH:mm')
-            .format(DateTime.fromMillisecondsSinceEpoch(time! * 1000))
-        : DateFormat('MMMM dd, y - hh:mm:ss a')
-            .format(DateTime.fromMillisecondsSinceEpoch(time! * 1000));
+    return thriftwoodDatabase.USE_24_HOUR_TIME.read()
+        ? DateFormat(
+            'MMMM dd, y - HH:mm',
+          ).format(DateTime.fromMillisecondsSinceEpoch(time! * 1000))
+        : DateFormat(
+            'MMMM dd, y - hh:mm:ss a',
+          ).format(DateTime.fromMillisecondsSinceEpoch(time! * 1000));
   }
 }

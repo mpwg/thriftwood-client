@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrBottomModalSheets {
   Future<void> configureManualImport(BuildContext context) async {
@@ -193,7 +193,7 @@ class RadarrBottomModalSheets {
                   snapshot.error,
                   snapshot.stackTrace,
                 );
-              return LunaMessage(text: 'lunasea.AnErrorHasOccurred'.tr());
+              return LunaMessage(text: 'thriftwood.AnErrorHasOccurred'.tr());
             }
             if (snapshot.hasData) {
               if ((snapshot.data?.length ?? 0) == 0)

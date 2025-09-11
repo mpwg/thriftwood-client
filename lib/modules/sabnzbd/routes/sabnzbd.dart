@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/tables/sabnzbd.dart';
-import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/modules/sabnzbd.dart';
-import 'package:lunasea/router/routes/sabnzbd.dart';
-import 'package:lunasea/system/filesystem/file.dart';
-import 'package:lunasea/system/filesystem/filesystem.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/tables/sabnzbd.dart';
+import 'package:thriftwood/extensions/string/links.dart';
+import 'package:thriftwood/modules/sabnzbd.dart';
+import 'package:thriftwood/router/routes/sabnzbd.dart';
+import 'package:thriftwood/system/filesystem/file.dart';
+import 'package:thriftwood/system/filesystem/filesystem.dart';
 
 class SABnzbdRoute extends StatefulWidget {
   final bool showDrawer;
 
-  const SABnzbdRoute({
-    Key? key,
-    this.showDrawer = true,
-  }) : super(key: key);
+  const SABnzbdRoute({Key? key, this.showDrawer = true}) : super(key: key);
 
   @override
   State<SABnzbdRoute> createState() => _State();
@@ -34,7 +31,8 @@ class _State extends State<SABnzbdRoute> {
   void initState() {
     super.initState();
     _pageController = LunaPageController(
-        initialPage: SABnzbdDatabase.NAVIGATION_INDEX.read());
+      initialPage: SABnzbdDatabase.NAVIGATION_INDEX.read(),
+    );
   }
 
   @override
@@ -100,12 +98,8 @@ class _State extends State<SABnzbdRoute> {
     return LunaPageView(
       controller: _pageController,
       children: [
-        SABnzbdQueue(
-          refreshIndicatorKey: _refreshKeys[0],
-        ),
-        SABnzbdHistory(
-          refreshIndicatorKey: _refreshKeys[1],
-        ),
+        SABnzbdQueue(refreshIndicatorKey: _refreshKeys[0]),
+        SABnzbdHistory(refreshIndicatorKey: _refreshKeys[1]),
       ],
     );
   }
@@ -145,14 +139,18 @@ class _State extends State<SABnzbdRoute> {
     if (values[0])
       SABnzbdAPI.from(LunaProfile.current)
           .setOnCompleteAction(values[1])
-          .then((_) => showLunaSuccessSnackBar(
-                title: 'On Complete Action Set',
-                message: values[2],
-              ))
-          .catchError((error) => showLunaErrorSnackBar(
-                title: 'Failed to Set Complete Action',
-                error: error,
-              ));
+          .then(
+            (_) => showLunaSuccessSnackBar(
+              title: 'On Complete Action Set',
+              message: values[2],
+            ),
+          )
+          .catchError(
+            (error) => showLunaErrorSnackBar(
+              title: 'Failed to Set Complete Action',
+              error: error,
+            ),
+          );
   }
 
   Future<void> _clearHistory() async {
@@ -161,17 +159,15 @@ class _State extends State<SABnzbdRoute> {
       SABnzbdAPI.from(LunaProfile.current)
           .clearHistory(values[1], values[2])
           .then((_) {
-        showLunaSuccessSnackBar(
-          title: 'History Cleared',
-          message: values[3],
-        );
-        _refreshAllPages();
-      }).catchError((error) {
-        showLunaErrorSnackBar(
-          title: 'Failed to Upload NZB',
-          error: error,
-        );
-      });
+            showLunaSuccessSnackBar(
+              title: 'History Cleared',
+              message: values[3],
+            );
+            _refreshAllPages();
+          })
+          .catchError((error) {
+            showLunaErrorSnackBar(title: 'Failed to Upload NZB', error: error);
+          });
   }
 
   Future<void> _sort() async {
@@ -180,19 +176,13 @@ class _State extends State<SABnzbdRoute> {
       await SABnzbdAPI.from(LunaProfile.current)
           .sortQueue(values[1], values[2])
           .then((_) {
-        showLunaSuccessSnackBar(
-          title: 'Sorted Queue',
-          message: values[3],
-        );
-        (_refreshKeys[0] as GlobalKey<RefreshIndicatorState>)
-            .currentState
-            ?.show();
-      }).catchError((error) {
-        showLunaErrorSnackBar(
-          title: 'Failed to Sort Queue',
-          error: error,
-        );
-      });
+            showLunaSuccessSnackBar(title: 'Sorted Queue', message: values[3]);
+            (_refreshKeys[0] as GlobalKey<RefreshIndicatorState>).currentState
+                ?.show();
+          })
+          .catchError((error) {
+            showLunaErrorSnackBar(title: 'Failed to Sort Queue', error: error);
+          });
   }
 
   Future<void> _addNZB() async {
@@ -236,10 +226,7 @@ class _State extends State<SABnzbdRoute> {
       }
     } catch (error, stack) {
       LunaLogger().error('Failed to add NZB by file', error, stack);
-      showLunaErrorSnackBar(
-        title: 'Failed to Upload NZB',
-        error: error,
-      );
+      showLunaErrorSnackBar(title: 'Failed to Upload NZB', error: error);
     }
   }
 
@@ -248,14 +235,18 @@ class _State extends State<SABnzbdRoute> {
     if (values[0])
       await _api
           .uploadURL(values[1])
-          .then((_) => showLunaSuccessSnackBar(
-                title: 'Uploaded NZB (URL)',
-                message: values[1],
-              ))
-          .catchError((error) => showLunaErrorSnackBar(
-                title: 'Failed to Upload NZB',
-                error: error,
-              ));
+          .then(
+            (_) => showLunaSuccessSnackBar(
+              title: 'Uploaded NZB (URL)',
+              message: values[1],
+            ),
+          )
+          .catchError(
+            (error) => showLunaErrorSnackBar(
+              title: 'Failed to Upload NZB',
+              error: error,
+            ),
+          );
   }
 
   void _refreshProfile() {

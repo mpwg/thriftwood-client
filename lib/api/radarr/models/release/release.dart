@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/radarr/utilities.dart';
-import 'package:lunasea/api/radarr/models.dart';
-import 'package:lunasea/api/radarr/types.dart';
+import 'package:thriftwood/api/radarr/utilities.dart';
+import 'package:thriftwood/api/radarr/models.dart';
+import 'package:thriftwood/api/radarr/types.dart';
 
 part 'release.g.dart';
 
@@ -76,9 +76,10 @@ class RadarrRelease {
   List<String>? rejections;
 
   @JsonKey(
-      name: 'publishDate',
-      toJson: RadarrUtilities.dateTimeToJson,
-      fromJson: RadarrUtilities.dateTimeFromJson)
+    name: 'publishDate',
+    toJson: RadarrUtilities.dateTimeToJson,
+    fromJson: RadarrUtilities.dateTimeFromJson,
+  )
   DateTime? publishDate;
 
   @JsonKey(name: 'commentUrl')
@@ -106,9 +107,10 @@ class RadarrRelease {
   int? leechers;
 
   @JsonKey(
-      name: 'protocol',
-      toJson: RadarrUtilities.protocolToJson,
-      fromJson: RadarrUtilities.protocolFromJson)
+    name: 'protocol',
+    toJson: RadarrUtilities.protocolToJson,
+    fromJson: RadarrUtilities.protocolFromJson,
+  )
   RadarrProtocol? protocol;
 
   RadarrRelease({

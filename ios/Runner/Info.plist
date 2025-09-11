@@ -50,13 +50,13 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>LunaSea would like to access your location for determining local-remote host switching</string>
+	<string>thriftwood would like to access your location for determining local-remote host switching</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>LunaSea would like to access your location for determining local-remote host switching</string>
+	<string>thriftwood would like to access your location for determining local-remote host switching</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>LunaSea would like to save photos from the app to your gallery</string>
+	<string>thriftwood would like to save photos from the app to your gallery</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>LunaSea would like to access your photo gallery for uploading images to LunaSea</string>
+	<string>thriftwood would like to access your photo gallery for uploading images to thriftwood</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:lunasea/core.dart';
-import 'package:lunasea/router/routes/settings.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/router/routes/settings.dart';
 
 class SettingsRoute extends StatefulWidget {
-  const SettingsRoute({
-    Key? key,
-  }) : super(key: key);
+  const SettingsRoute({Key? key}) : super(key: key);
 
   @override
   State<SettingsRoute> createState() => _State();

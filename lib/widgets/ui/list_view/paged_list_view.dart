@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaPagedListView<T> extends StatefulWidget {
   final GlobalKey<RefreshIndicatorState> refreshKey;
@@ -33,8 +33,9 @@ class _State<T> extends State<LunaPagedListView<T>> {
   @override
   void initState() {
     super.initState();
-    widget.pagingController
-        .addPageRequestListener((pageKey) => widget.listener(pageKey));
+    widget.pagingController.addPageRequestListener(
+      (pageKey) => widget.listener(pageKey),
+    );
   }
 
   @override
@@ -57,8 +58,8 @@ class _State<T> extends State<LunaPagedListView<T>> {
           builderDelegate: PagedChildBuilderDelegate<T>(
             itemBuilder: widget.itemBuilder,
             firstPageErrorIndicatorBuilder: (context) => LunaMessage.error(
-                onTap: () =>
-                    Future.sync(() => widget.pagingController.refresh())),
+              onTap: () => Future.sync(() => widget.pagingController.refresh()),
+            ),
             firstPageProgressIndicatorBuilder: (context) => const LunaLoader(),
             newPageProgressIndicatorBuilder: (context) => Padding(
               child: Container(
@@ -78,16 +79,17 @@ class _State<T> extends State<LunaPagedListView<T>> {
             ),
             noItemsFoundIndicatorBuilder: (context) => LunaMessage(
               text: widget.noItemsFoundMessage,
-              buttonText: 'lunasea.Refresh'.tr(),
+              buttonText: 'thriftwood.Refresh'.tr(),
               onTap: () => Future.sync(() => widget.pagingController.refresh()),
             ),
           ),
-          padding: widget.padding ??
-              MediaQuery.of(context)
-                  .padding
+          padding:
+              widget.padding ??
+              MediaQuery.of(context).padding
                   .copyWith(bottom: LunaUI.MARGIN_H_DEFAULT_V_HALF.bottom)
                   .add(
-                      EdgeInsets.only(top: LunaUI.MARGIN_H_DEFAULT_V_HALF.top)),
+                    EdgeInsets.only(top: LunaUI.MARGIN_H_DEFAULT_V_HALF.top),
+                  ),
           physics: const AlwaysScrollableScrollPhysics(),
         ),
       ),

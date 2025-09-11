@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaActionBarCard extends StatelessWidget {
   final String title;
@@ -81,13 +81,7 @@ class LunaActionBarCard extends StatelessWidget {
                   Container(
                     width: 30.0,
                     alignment: Alignment.centerRight,
-                    child: SizedBox(
-                      width: 20.0,
-                      child: Icon(
-                        icon,
-                        size: 20.0,
-                      ),
-                    ),
+                    child: SizedBox(width: 20.0, child: Icon(icon, size: 20.0)),
                   ),
               ],
             ),
@@ -103,8 +97,8 @@ class LunaActionBarCard extends StatelessWidget {
       color: backgroundColor != null
           ? backgroundColor!.withOpacity(LunaUI.OPACITY_DIMMED)
           : LunaTheme.isAMOLEDTheme
-              ? Colors.black.withOpacity(LunaUI.OPACITY_DIMMED)
-              : LunaColours.primary.withOpacity(LunaUI.OPACITY_DIMMED),
+          ? Colors.black.withOpacity(LunaUI.OPACITY_DIMMED)
+          : LunaColours.primary.withOpacity(LunaUI.OPACITY_DIMMED),
     );
   }
 

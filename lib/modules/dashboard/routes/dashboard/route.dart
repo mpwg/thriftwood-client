@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/database/tables/dashboard.dart';
-import 'package:lunasea/database/tables/lunasea.dart';
-import 'package:lunasea/widgets/ui.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/pages/calendar.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/pages/modules.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/switch_view_action.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/database/tables/dashboard.dart';
+import 'package:thriftwood/database/tables/thriftwood.dart';
+import 'package:thriftwood/widgets/ui.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/pages/calendar.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/pages/modules.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/switch_view_action.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
 
 class DashboardRoute extends StatefulWidget {
-  const DashboardRoute({
-    Key? key,
-  }) : super(key: key);
+  const DashboardRoute({Key? key}) : super(key: key);
 
   @override
   State<DashboardRoute> createState() => _State();
@@ -44,7 +42,7 @@ class _State extends State<DashboardRoute> {
 
   PreferredSizeWidget _appBar() {
     return LunaAppBar(
-      title: 'LunaSea',
+      title: 'thriftwood',
       useDrawer: true,
       scrollControllers: HomeNavigationBar.scrollControllers,
       pageController: _pageController,
@@ -53,12 +51,14 @@ class _State extends State<DashboardRoute> {
   }
 
   Widget _body() {
-    return LunaSeaDatabase.ENABLED_PROFILE.listenableBuilder(
+    return thriftwoodDatabase.ENABLED_PROFILE.listenableBuilder(
       builder: (context, _) => LunaPageView(
         controller: _pageController,
         children: [
-          ModulesPage(key: ValueKey(LunaSeaDatabase.ENABLED_PROFILE.read())),
-          CalendarPage(key: ValueKey(LunaSeaDatabase.ENABLED_PROFILE.read())),
+          ModulesPage(key: ValueKey(thriftwoodDatabase.ENABLED_PROFILE.read())),
+          CalendarPage(
+            key: ValueKey(thriftwoodDatabase.ENABLED_PROFILE.read()),
+          ),
         ],
       ),
     );

@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/lidarr.dart';
-import 'package:lunasea/router/router.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/lidarr.dart';
+import 'package:thriftwood/router/router.dart';
 
 class ArtistEditRoute extends StatefulWidget {
   final LidarrCatalogueData? data;
   final int? artistId;
 
-  const ArtistEditRoute({
-    Key? key,
-    required this.data,
-    required this.artistId,
-  }) : super(key: key);
+  const ArtistEditRoute({Key? key, required this.data, required this.artistId})
+    : super(key: key);
 
   @override
   State<ArtistEditRoute> createState() => _State();
@@ -40,11 +37,11 @@ class _State extends State<ArtistEditRoute> with LunaScrollControllerMixin {
 
   @override
   Widget build(BuildContext context) => LunaScaffold(
-        scaffoldKey: _scaffoldKey,
-        body: _body,
-        appBar: _appBar,
-        bottomNavigationBar: _bottomActionBar(),
-      );
+    scaffoldKey: _scaffoldKey,
+    body: _body,
+    appBar: _appBar,
+    bottomNavigationBar: _bottomActionBar(),
+  );
 
   Future<void> _refresh() async {
     setState(() {
@@ -99,7 +96,7 @@ class _State extends State<ArtistEditRoute> with LunaScrollControllerMixin {
     return LunaBottomActionBar(
       actions: [
         LunaButton.text(
-          text: 'lunasea.Update'.tr(),
+          text: 'thriftwood.Update'.tr(),
           icon: Icons.edit_rounded,
           onTap: _save,
         ),
@@ -108,70 +105,77 @@ class _State extends State<ArtistEditRoute> with LunaScrollControllerMixin {
   }
 
   Widget get _body => FutureBuilder(
-        future: _future,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              {
-                if (snapshot.hasError || snapshot.data == null)
-                  return LunaMessage.error(onTap: _refresh);
-                return _list;
-              }
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-            default:
-              return const LunaLoader();
+    future: _future,
+    builder: (context, snapshot) {
+      switch (snapshot.connectionState) {
+        case ConnectionState.done:
+          {
+            if (snapshot.hasError || snapshot.data == null)
+              return LunaMessage.error(onTap: _refresh);
+            return _list;
           }
-        },
-      );
+        case ConnectionState.none:
+        case ConnectionState.waiting:
+        case ConnectionState.active:
+        default:
+          return const LunaLoader();
+      }
+    },
+  );
 
   Widget get _list => LunaListView(
-        controller: scrollController,
-        children: <Widget>[
-          LunaBlock(
-            title: 'Monitored',
-            trailing: LunaSwitch(
-              value: _monitored!,
-              onChanged: (value) => setState(() => _monitored = value),
-            ),
-          ),
-          LunaBlock(
-            title: 'Quality Profile',
-            body: [TextSpan(text: _qualityProfile!.name)],
-            trailing: const LunaIconButton.arrow(),
-            onTap: _changeProfile,
-          ),
-          LunaBlock(
-            title: 'Metadata Profile',
-            body: [TextSpan(text: _metadataProfile!.name)],
-            trailing: const LunaIconButton.arrow(),
-            onTap: _changeMetadata,
-          ),
-          LunaBlock(
-            title: 'Artist Path',
-            body: [TextSpan(text: _path)],
-            trailing: const LunaIconButton.arrow(),
-            onTap: _changePath,
-          ),
-        ],
-      );
+    controller: scrollController,
+    children: <Widget>[
+      LunaBlock(
+        title: 'Monitored',
+        trailing: LunaSwitch(
+          value: _monitored!,
+          onChanged: (value) => setState(() => _monitored = value),
+        ),
+      ),
+      LunaBlock(
+        title: 'Quality Profile',
+        body: [TextSpan(text: _qualityProfile!.name)],
+        trailing: const LunaIconButton.arrow(),
+        onTap: _changeProfile,
+      ),
+      LunaBlock(
+        title: 'Metadata Profile',
+        body: [TextSpan(text: _metadataProfile!.name)],
+        trailing: const LunaIconButton.arrow(),
+        onTap: _changeMetadata,
+      ),
+      LunaBlock(
+        title: 'Artist Path',
+        body: [TextSpan(text: _path)],
+        trailing: const LunaIconButton.arrow(),
+        onTap: _changePath,
+      ),
+    ],
+  );
 
   Future<void> _changePath() async {
-    Tuple2<bool, String> _values =
-        await LunaDialogs().editText(context, 'Artist Path', prefill: _path!);
+    Tuple2<bool, String> _values = await LunaDialogs().editText(
+      context,
+      'Artist Path',
+      prefill: _path!,
+    );
     if (_values.item1 && mounted) setState(() => _path = _values.item2);
   }
 
   Future<void> _changeProfile() async {
-    List<dynamic> _values =
-        await LidarrDialogs.editQualityProfile(context, _qualityProfiles);
+    List<dynamic> _values = await LidarrDialogs.editQualityProfile(
+      context,
+      _qualityProfiles,
+    );
     if (_values[0] && mounted) setState(() => _qualityProfile = _values[1]);
   }
 
   Future<void> _changeMetadata() async {
-    List<dynamic> _values =
-        await LidarrDialogs.editMetadataProfile(context, _metadataProfiles);
+    List<dynamic> _values = await LidarrDialogs.editMetadataProfile(
+      context,
+      _metadataProfiles,
+    );
     if (_values[0] && mounted) setState(() => _metadataProfile = _values[1]);
   }
 
@@ -179,32 +183,30 @@ class _State extends State<ArtistEditRoute> with LunaScrollControllerMixin {
     final _api = LidarrAPI.from(LunaProfile.current);
     await _api
         .editArtist(
-      widget.data!.artistID,
-      _qualityProfile!,
-      _metadataProfile!,
-      _path,
-      _monitored,
-      _albumFolders,
-    )
+          widget.data!.artistID,
+          _qualityProfile!,
+          _metadataProfile!,
+          _path,
+          _monitored,
+          _albumFolders,
+        )
         .then((_) {
-      widget.data!.qualityProfile = _qualityProfile!.id;
-      widget.data!.quality = _qualityProfile!.name;
-      widget.data!.metadataProfile = _metadataProfile!.id;
-      widget.data!.metadata = _metadataProfile!.name;
-      widget.data!.path = _path;
-      widget.data!.monitored = _monitored;
-      widget.data!.albumFolders = _albumFolders;
-      showLunaSuccessSnackBar(
-        title: 'Artist Updated',
-        message: widget.data!.title,
-      );
-      LunaRouter.router.pop();
-    }).catchError((error, stack) {
-      LunaLogger().error('Failed to update artist', error, stack);
-      showLunaErrorSnackBar(
-        title: 'Failed to Update',
-        error: error,
-      );
-    });
+          widget.data!.qualityProfile = _qualityProfile!.id;
+          widget.data!.quality = _qualityProfile!.name;
+          widget.data!.metadataProfile = _metadataProfile!.id;
+          widget.data!.metadata = _metadataProfile!.name;
+          widget.data!.path = _path;
+          widget.data!.monitored = _monitored;
+          widget.data!.albumFolders = _albumFolders;
+          showLunaSuccessSnackBar(
+            title: 'Artist Updated',
+            message: widget.data!.title,
+          );
+          LunaRouter.router.pop();
+        })
+        .catchError((error, stack) {
+          LunaLogger().error('Failed to update artist', error, stack);
+          showLunaErrorSnackBar(title: 'Failed to Update', error: error);
+        });
   }
 }

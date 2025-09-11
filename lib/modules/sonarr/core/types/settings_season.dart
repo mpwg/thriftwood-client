@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/router/routes/sonarr.dart';
 
-enum SonarrSeasonSettingsType {
-  AUTOMATIC_SEARCH,
-  INTERACTIVE_SEARCH,
-}
+enum SonarrSeasonSettingsType { AUTOMATIC_SEARCH, INTERACTIVE_SEARCH }
 
 extension SonarrSeasonSettingsTypeExtension on SonarrSeasonSettingsType {
   IconData get icon {
@@ -41,10 +38,12 @@ extension SonarrSeasonSettingsTypeExtension on SonarrSeasonSettingsType {
         );
         return;
       case SonarrSeasonSettingsType.INTERACTIVE_SEARCH:
-        return SonarrRoutes.RELEASES.go(queryParams: {
-          'series': seriesId.toString(),
-          'season': seasonNumber.toString(),
-        });
+        return SonarrRoutes.RELEASES.go(
+          queryParams: {
+            'series': seriesId.toString(),
+            'season': seasonNumber.toString(),
+          },
+        );
     }
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 part 'status.g.dart';
 
@@ -13,9 +13,10 @@ class SonarrStatus {
 
   /// [DateTime] object representing the build time
   @JsonKey(
-      name: 'buildTime',
-      fromJson: SonarrUtilities.dateTimeFromJson,
-      toJson: SonarrUtilities.dateTimeToJson)
+    name: 'buildTime',
+    fromJson: SonarrUtilities.dateTimeFromJson,
+    toJson: SonarrUtilities.dateTimeToJson,
+  )
   DateTime? buildTime;
 
   /// Is debug version?

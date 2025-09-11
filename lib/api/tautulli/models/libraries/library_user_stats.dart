@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'library_user_stats.g.dart';
 
@@ -8,7 +8,9 @@ part 'library_user_stats.g.dart';
 class TautulliLibraryUserStats {
   /// Friendly name of the user.
   @JsonKey(
-      name: 'friendly_name', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'friendly_name',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? friendlyName;
 
   /// User's thumbnail avatar.
@@ -21,7 +23,9 @@ class TautulliLibraryUserStats {
 
   /// Total amount of plays from this library section the user has streamed.
   @JsonKey(
-      name: 'total_plays', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'total_plays',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? totalPlays;
 
   TautulliLibraryUserStats({

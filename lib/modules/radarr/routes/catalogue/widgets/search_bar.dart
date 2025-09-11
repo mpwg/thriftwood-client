@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrCatalogueSearchBar extends StatefulWidget
     implements PreferredSizeWidget {
   final ScrollController scrollController;
 
-  const RadarrCatalogueSearchBar({
-    Key? key,
-    required this.scrollController,
-  }) : super(key: key);
+  const RadarrCatalogueSearchBar({Key? key, required this.scrollController})
+    : super(key: key);
 
   @override
   Size get preferredSize =>
@@ -64,7 +62,7 @@ class _State extends State<RadarrCatalogueSearchBar> {
           width: _hasFocus
               ? 0.0
               : (LunaTextInputBar.defaultHeight * 3 +
-                  LunaUI.DEFAULT_MARGIN_SIZE * 3),
+                    LunaUI.DEFAULT_MARGIN_SIZE * 3),
           child: Row(
             children: [
               Flexible(

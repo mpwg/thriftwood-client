@@ -1,7 +1,7 @@
 library sonarr;
 
 import 'package:dio/dio.dart';
-import 'package:lunasea/api/sonarr/controllers.dart';
+import 'package:thriftwood/api/sonarr/controllers.dart';
 
 class SonarrAPI {
   SonarrAPI._internal({
@@ -33,9 +33,7 @@ class SonarrAPI {
     Dio _dio = Dio(
       BaseOptions(
         baseUrl: host.endsWith('/') ? '${host}api/v3/' : '$host/api/v3/',
-        queryParameters: {
-          'apikey': apiKey,
-        },
+        queryParameters: {'apikey': apiKey},
         contentType: Headers.jsonContentType,
         responseType: ResponseType.json,
         headers: headers,
@@ -63,9 +61,7 @@ class SonarrAPI {
     );
   }
 
-  factory SonarrAPI.from({
-    required Dio client,
-  }) {
+  factory SonarrAPI.from({required Dio client}) {
     return SonarrAPI._internal(
       httpClient: client,
       calendar: SonarrControllerCalendar(client),

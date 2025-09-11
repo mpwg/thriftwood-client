@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/search.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/search.dart';
 
 class SearchSearchBar extends StatefulWidget implements PreferredSizeWidget {
   final ScrollController scrollController;

@@ -1,3 +1,3 @@
-PRODUCT_NAME = LunaSea
-PRODUCT_BUNDLE_IDENTIFIER = app.lunasea.lunasea
+PRODUCT_NAME = thriftwood
+PRODUCT_BUNDLE_IDENTIFIER = app.thriftwood.thriftwood
 PRODUCT_COPYRIGHT = Copyright © 2023 Jagandeep Brar. All rights reserved.

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:lunasea/database/box.dart';
-import 'package:lunasea/database/tables/dashboard.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_day.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/abstract.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/lidarr.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/radarr.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/sonarr.dart';
-import 'package:lunasea/modules/dashboard/core/state.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/content_block.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/database/box.dart';
+import 'package:thriftwood/database/tables/dashboard.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_day.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/abstract.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/lidarr.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/radarr.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/sonarr.dart';
+import 'package:thriftwood/modules/dashboard/core/state.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/content_block.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/widgets/ui.dart';
 
 class CalendarView extends StatefulWidget {
   final Map<DateTime, List<CalendarData>> events;
@@ -90,7 +90,7 @@ class _State extends State<CalendarView> {
   }
 
   Widget _calendar() {
-    return LunaBox.lunasea.listenableBuilder(
+    return LunaBox.thriftwood.listenableBuilder(
       selectItems: [
         DashboardDatabase.CALENDAR_STARTING_DAY,
         DashboardDatabase.CALENDAR_STARTING_SIZE,

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/sonarr/models/profile/quality_profile_item_quality.dart';
+import 'package:thriftwood/api/sonarr/models/profile/quality_profile_item_quality.dart';
 
 part 'quality_profile_item.g.dart';
 
@@ -12,10 +12,7 @@ class SonarrQualityProfileItem {
   @JsonKey(name: 'quality')
   SonarrQualityProfileItemQuality? quality;
 
-  SonarrQualityProfileItem({
-    this.allowed,
-    this.quality,
-  });
+  SonarrQualityProfileItem({this.allowed, this.quality});
 
   @override
   String toString() => json.encode(this.toJson());

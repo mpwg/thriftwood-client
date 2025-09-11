@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
-import 'package:lunasea/widgets/pages/invalid_route.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
+import 'package:thriftwood/widgets/pages/invalid_route.dart';
 
 class AddMovieDetailsRoute extends StatefulWidget {
   final RadarrMovie? movie;
@@ -61,13 +61,11 @@ class _State extends State<AddMovieDetailsRoute>
 
   Widget _body() {
     return FutureBuilder(
-      future: Future.wait(
-        [
-          context.watch<RadarrState>().rootFolders!,
-          context.watch<RadarrState>().qualityProfiles!,
-          context.watch<RadarrState>().tags!,
-        ],
-      ),
+      future: Future.wait([
+        context.watch<RadarrState>().rootFolders!,
+        context.watch<RadarrState>().qualityProfiles!,
+        context.watch<RadarrState>().tags!,
+      ]),
       builder: (context, AsyncSnapshot<List<Object>> snapshot) {
         if (snapshot.hasError) {
           if (snapshot.connectionState != ConnectionState.waiting) {
@@ -99,12 +97,12 @@ class _State extends State<AddMovieDetailsRoute>
     List<RadarrTag>? tags,
   }) {
     context.read<RadarrAddMovieDetailsState>().initializeAvailability();
-    context
-        .read<RadarrAddMovieDetailsState>()
-        .initializeQualityProfile(qualityProfiles);
-    context
-        .read<RadarrAddMovieDetailsState>()
-        .initializeRootFolder(rootFolders);
+    context.read<RadarrAddMovieDetailsState>().initializeQualityProfile(
+      qualityProfiles,
+    );
+    context.read<RadarrAddMovieDetailsState>().initializeRootFolder(
+      rootFolders,
+    );
     context.read<RadarrAddMovieDetailsState>().initializeTags(tags);
     context.read<RadarrAddMovieDetailsState>().canExecuteAction = true;
     return LunaRefreshIndicator(

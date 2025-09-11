@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'whois_subnet.g.dart';
 
@@ -24,7 +24,9 @@ class TautulliWHOISSubnet {
 
   /// A description of the subnet.
   @JsonKey(
-      name: 'description', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'description',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? description;
 
   /// The originating country of the subnet.
@@ -45,7 +47,9 @@ class TautulliWHOISSubnet {
 
   /// The postal/zip code.
   @JsonKey(
-      name: 'postal_code', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'postal_code',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? postalCode;
 
   /// List of emails attached to the subnet.

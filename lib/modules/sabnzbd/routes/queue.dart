@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sabnzbd.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sabnzbd.dart';
 
 class SABnzbdQueue extends StatefulWidget {
   static const ROUTE_NAME = '/sabnzbd/queue';
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
 
-  const SABnzbdQueue({
-    Key? key,
-    required this.refreshIndicatorKey,
-  }) : super(key: key);
+  const SABnzbdQueue({Key? key, required this.refreshIndicatorKey})
+    : super(key: key);
 
   @override
   State<SABnzbdQueue> createState() => _State();
@@ -40,7 +38,8 @@ class _State extends State<SABnzbdQueue>
       floatingActionButton: context.watch<SABnzbdState>().error
           ? null
           : SABnzbdQueueFAB(
-              scrollController: SABnzbdNavigationBar.scrollControllers[0]),
+              scrollController: SABnzbdNavigationBar.scrollControllers[0],
+            ),
     );
   }
 
@@ -54,8 +53,8 @@ class _State extends State<SABnzbdQueue>
       _timer = Timer(const Duration(seconds: 2), _fetchWithoutMessage);
 
   Future<void> _refresh() async => setState(() {
-        _future = _fetch();
-      });
+    _future = _fetch();
+  });
 
   Future<void> _fetchWithoutMessage() async {
     _fetch().then((_) => {if (mounted) setState(() {})});
@@ -63,21 +62,24 @@ class _State extends State<SABnzbdQueue>
 
   Future _fetch() async {
     SABnzbdAPI _api = SABnzbdAPI.from(LunaProfile.current);
-    return _api.getStatusAndQueue().then((data) {
-      try {
-        _processStatus(data[0]);
-        _queue = data[1];
-        _setError(false);
-        if (_timer == null || !_timer!.isActive) _createTimer();
-        return true;
-      } catch (error) {
-        return Future.error(error);
-      }
-    }).catchError((error) {
-      _queue = null;
-      _setError(true);
-      return Future.error(error);
-    });
+    return _api
+        .getStatusAndQueue()
+        .then((data) {
+          try {
+            _processStatus(data[0]);
+            _queue = data[1];
+            _setError(false);
+            if (_timer == null || !_timer!.isActive) _createTimer();
+            return true;
+          } catch (error) {
+            return Future.error(error);
+          }
+        })
+        .catchError((error) {
+          _queue = null;
+          _setError(true);
+          return Future.error(error);
+        });
   }
 
   Future<void> _processStatus(SABnzbdStatusData data) async {
@@ -97,20 +99,20 @@ class _State extends State<SABnzbdQueue>
   }
 
   Widget get _body => LunaRefreshIndicator(
-        context: context,
-        key: widget.refreshIndicatorKey,
-        onRefresh: _fetchWithoutMessage,
-        child: FutureBuilder(
-          future: _future,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                context.read<SABnzbdState>().error)
-              return LunaMessage.error(onTap: _refresh);
-            if (snapshot.hasData) return _list;
-            return const LunaLoader();
-          },
-        ),
-      );
+    context: context,
+    key: widget.refreshIndicatorKey,
+    onRefresh: _fetchWithoutMessage,
+    child: FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            context.read<SABnzbdState>().error)
+          return LunaMessage.error(onTap: _refresh);
+        if (snapshot.hasData) return _list;
+        return const LunaLoader();
+      },
+    ),
+  );
 
   Widget get _list {
     if (_queue == null) return LunaMessage.error(onTap: _refresh);

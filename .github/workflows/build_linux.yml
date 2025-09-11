@@ -16,11 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Environment
-        uses: JagandeepBrar/lunasea/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
         with:
           platform: linux
 
-      - name: Build LunaSea
+      - name: Build thriftwood
         run: flutter build linux
 
       - name: Prepare Artifact
@@ -37,15 +37,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Environment
-        uses: JagandeepBrar/lunasea/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
         with:
           platform: linux
 
-      - name: Build LunaSea
+      - name: Build thriftwood
         run: flutter build linux
 
       - name: Prepare Artifact
-        run: tar czf output/lunasea-linux-amd64.tar.gz -C build/linux/x64/release/bundle/ .
+        run: tar czf output/thriftwood-linux-amd64.tar.gz -C build/linux/x64/release/bundle/ .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -58,16 +58,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Environment
-        uses: JagandeepBrar/lunasea/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
         with:
           platform: linux
 
-      - name: Build LunaSea
+      - name: Build thriftwood
         uses: snapcore/action-build@v1
         id: build
 
       - name: Prepare Artifact
-        run: mv ${{ steps.build.outputs.snap }} ${{ github.workspace }}/output/lunasea-linux-amd64.snap
+        run: mv ${{ steps.build.outputs.snap }} ${{ github.workspace }}/output/thriftwood-linux-amd64.snap
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4

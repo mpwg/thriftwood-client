@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'home_stats.g.dart';
 
@@ -22,12 +22,7 @@ class TautulliHomeStats {
   @JsonKey(name: 'rows')
   final List<Map<String, dynamic>>? data;
 
-  TautulliHomeStats({
-    this.id,
-    this.title,
-    this.type,
-    this.data,
-  });
+  TautulliHomeStats({this.id, this.title, this.type, this.data});
 
   /// Returns a JSON-encoded string version of this object.
   @override

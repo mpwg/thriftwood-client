@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'libraries_table.g.dart';
 
@@ -18,13 +18,16 @@ class TautulliLibrariesTable {
 
   /// Total amount of records.
   @JsonKey(
-      name: 'recordsTotal', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsTotal',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsTotal;
 
   /// The amount of records (filtered).
   @JsonKey(
-      name: 'recordsFiltered',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsFiltered',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsFiltered;
 
   TautulliLibrariesTable({
@@ -46,12 +49,14 @@ class TautulliLibrariesTable {
   Map<String, dynamic> toJson() => _$TautulliLibrariesTableToJson(this);
 
   static List<TautulliTableLibrary> _librariesFromJson(
-          List<dynamic> libraries) =>
-      libraries
-          .map((library) =>
-              TautulliTableLibrary.fromJson((library as Map<String, dynamic>)))
-          .toList();
+    List<dynamic> libraries,
+  ) => libraries
+      .map(
+        (library) =>
+            TautulliTableLibrary.fromJson((library as Map<String, dynamic>)),
+      )
+      .toList();
   static List<Map<String, dynamic>>? _librariesToJson(
-          List<TautulliTableLibrary>? libraries) =>
-      libraries?.map((library) => library.toJson()).toList();
+    List<TautulliTableLibrary>? libraries,
+  ) => libraries?.map((library) => library.toJson()).toList();
 }

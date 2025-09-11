@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/router/routes/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/router/routes/radarr.dart';
 
 class RadarrAppBarAddMoviesAction extends StatelessWidget {
-  const RadarrAppBarAddMoviesAction({
-    Key? key,
-  }) : super(key: key);
+  const RadarrAppBarAddMoviesAction({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

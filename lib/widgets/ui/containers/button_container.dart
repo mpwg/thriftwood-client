@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaButtonContainer extends StatelessWidget {
   final List<Widget> children;
@@ -20,11 +20,13 @@ class LunaButtonContainer extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: children
             .chunked(buttonsPerRow)
-            .map((child) => Row(
-                  children: child
-                      .map<Expanded>((button) => Expanded(child: button))
-                      .toList(),
-                ))
+            .map(
+              (child) => Row(
+                children: child
+                    .map<Expanded>((button) => Expanded(child: button))
+                    .toList(),
+              ),
+            )
             .toList(),
       ),
       padding: padding,

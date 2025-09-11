@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 part 'filter_releases.g.dart';
 

@@ -1,6 +1,6 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/modules/lidarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/modules/lidarr.dart';
 
 class LidarrCatalogueData {
   String title;
@@ -45,7 +45,7 @@ class LidarrCatalogueData {
 
   String get genre {
     if (genres.isNotEmpty) return genres.join('\n');
-    return 'lunasea.Unknown'.tr();
+    return 'thriftwood.Unknown'.tr();
   }
 
   DateTime? get dateAddedObject => DateTime.tryParse(added)?.toLocal();

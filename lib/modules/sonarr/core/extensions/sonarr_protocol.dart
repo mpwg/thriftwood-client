@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 extension LunaSonarrProtocolExtension on SonarrProtocol {
-  Color lunaProtocolColor({
-    SonarrRelease? release,
-  }) {
+  Color lunaProtocolColor({SonarrRelease? release}) {
     if (this == SonarrProtocol.USENET) return LunaColours.accent;
     if (release == null) return LunaColours.blue;
 

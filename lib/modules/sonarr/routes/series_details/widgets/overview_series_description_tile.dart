@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeriesDetailsOverviewDescriptionTile extends StatelessWidget {
   final SonarrSeries? series;
@@ -26,11 +26,8 @@ class SonarrSeriesDetailsOverviewDescriptionTile extends StatelessWidget {
         ),
       ],
       customBodyMaxLines: 3,
-      onTap: () async => LunaDialogs().textPreview(
-        context,
-        series!.title,
-        series!.overview!,
-      ),
+      onTap: () async =>
+          LunaDialogs().textPreview(context, series!.title, series!.overview!),
     );
   }
 }

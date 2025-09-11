@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/lidarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/lidarr.dart';
 
 class LidarrMissing extends StatefulWidget {
   static const ROUTE_NAME = '/lidarr/missing';
@@ -45,36 +45,33 @@ class _State extends State<LidarrMissing> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LunaScaffold(
-      scaffoldKey: _scaffoldKey,
-      body: _body,
-    );
+    return LunaScaffold(scaffoldKey: _scaffoldKey, body: _body);
   }
 
   Widget get _body => LunaRefreshIndicator(
-        context: context,
-        key: widget.refreshIndicatorKey,
-        onRefresh: _refresh,
-        child: FutureBuilder(
-          future: _future,
-          builder: (context, AsyncSnapshot<List<LidarrMissingData>> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                {
-                  if (snapshot.hasError || snapshot.data == null)
-                    return LunaMessage.error(onTap: _refresh);
-                  _results = snapshot.data;
-                  return _list;
-                }
-              case ConnectionState.none:
-              case ConnectionState.waiting:
-              case ConnectionState.active:
-              default:
-                return const LunaLoader();
+    context: context,
+    key: widget.refreshIndicatorKey,
+    onRefresh: _refresh,
+    child: FutureBuilder(
+      future: _future,
+      builder: (context, AsyncSnapshot<List<LidarrMissingData>> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            {
+              if (snapshot.hasError || snapshot.data == null)
+                return LunaMessage.error(onTap: _refresh);
+              _results = snapshot.data;
+              return _list;
             }
-          },
-        ),
-      );
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+          case ConnectionState.active:
+          default:
+            return const LunaLoader();
+        }
+      },
+    ),
+  );
 
   Widget get _list {
     if (_results?.isEmpty ?? true) {

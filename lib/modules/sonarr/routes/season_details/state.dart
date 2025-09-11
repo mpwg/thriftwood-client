@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/system/cache/memory/memory_cache.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/system/cache/memory/memory_cache.dart';
 
 class SonarrSeasonDetailsState extends ChangeNotifier {
   final int seriesId;
@@ -58,9 +58,9 @@ class SonarrSeasonDetailsState extends ChangeNotifier {
       _episodeHistoryCache.put(
         episodeId.toString(),
         context.read<SonarrState>().api!.history.get(
-              pageSize: 1000,
-              episodeId: episodeId,
-            ),
+          pageSize: 1000,
+          episodeId: episodeId,
+        ),
       );
     }
     notifyListeners();
@@ -81,10 +81,8 @@ class SonarrSeasonDetailsState extends ChangeNotifier {
           .episode
           .getMulti(seriesId: seriesId, seasonNumber: seasonNumber)
           .then((episodes) {
-        return {
-          for (SonarrEpisode e in episodes) e.id!: e,
-        };
-      });
+            return {for (SonarrEpisode e in episodes) e.id!: e};
+          });
     }
     notifyListeners();
   }
@@ -100,9 +98,9 @@ class SonarrSeasonDetailsState extends ChangeNotifier {
     if (this.seasonNumber == null) return;
     if (context.read<SonarrState>().enabled) {
       _history = context.read<SonarrState>().api!.history.getBySeries(
-            seriesId: seriesId,
-            seasonNumber: seasonNumber,
-          );
+        seriesId: seriesId,
+        seasonNumber: seasonNumber,
+      );
     }
     notifyListeners();
   }
@@ -117,10 +115,8 @@ class SonarrSeasonDetailsState extends ChangeNotifier {
           .episodeFile
           .getSeries(seriesId: seriesId)
           .then((files) {
-        return {
-          for (SonarrEpisodeFile f in files) f.id!: f,
-        };
-      });
+            return {for (SonarrEpisodeFile f in files) f.id!: f};
+          });
     }
     notifyListeners();
   }
@@ -163,20 +159,14 @@ class SonarrSeasonDetailsState extends ChangeNotifier {
           .read<SonarrState>()
           .api!
           .queue
-          .getDetails(
-            seriesId: seriesId,
-            includeEpisode: true,
-          )
+          .getDetails(seriesId: seriesId, includeEpisode: true)
           .then((queue) {
-        if (_currentQueueItems != queue.length) {
-          fetchState(
-            context,
-            shouldFetchQueue: false,
-          );
-        }
-        _currentQueueItems = queue.length;
-        return queue;
-      });
+            if (_currentQueueItems != queue.length) {
+              fetchState(context, shouldFetchQueue: false);
+            }
+            _currentQueueItems = queue.length;
+            return queue;
+          });
       createQueueTimer(context);
     }
     notifyListeners();

@@ -1,25 +1,17 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/system/webhooks.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/system/webhooks.dart';
 
 class LidarrWebhooks extends LunaWebhooks {
   @override
   Future<void> handle(Map<dynamic, dynamic> data) async {
     _EventType? event = _EventType.GRAB.fromKey(data['event']);
     if (event == null)
-      LunaLogger().warning(
-        'Unknown event type: ${data['event'] ?? 'null'}',
-      );
+      LunaLogger().warning('Unknown event type: ${data['event'] ?? 'null'}');
     event?.execute(data);
   }
 }
 
-enum _EventType {
-  DOWNLOAD,
-  GRAB,
-  RENAME,
-  RETAG,
-  TEST,
-}
+enum _EventType { DOWNLOAD, GRAB, RENAME, RETAG, TEST }
 
 extension _EventTypeExtension on _EventType {
   _EventType? fromKey(String key) {

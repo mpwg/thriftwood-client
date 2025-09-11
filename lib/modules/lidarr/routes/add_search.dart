@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/lidarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/lidarr.dart';
 
 class AddArtistRoute extends StatefulWidget {
-  const AddArtistRoute({
-    Key? key,
-  }) : super(key: key);
+  const AddArtistRoute({Key? key}) : super(key: key);
 
   @override
   State<AddArtistRoute> createState() => _State();
@@ -26,10 +24,10 @@ class _State extends State<AddArtistRoute> with LunaScrollControllerMixin {
 
   @override
   Widget build(BuildContext context) => LunaScaffold(
-        scaffoldKey: _scaffoldKey,
-        body: _body(),
-        appBar: _appBar() as PreferredSizeWidget?,
-      );
+    scaffoldKey: _scaffoldKey,
+    body: _body(),
+    appBar: _appBar() as PreferredSizeWidget?,
+  );
 
   Future<void> _refresh() async {
     final _model = Provider.of<LidarrState>(context, listen: false);
@@ -77,7 +75,8 @@ class _State extends State<AddArtistRoute> with LunaScrollControllerMixin {
             return LunaMessage.error(onTap: _refreshKey.currentState!.show);
           }
           if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasData) return _list(snapshot.data);
+              snapshot.hasData)
+            return _list(snapshot.data);
           return const LunaLoader();
         },
       ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/duration/timestamp.dart';
-import 'package:lunasea/modules/tautulli.dart';
-import 'package:lunasea/router/routes/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/duration/timestamp.dart';
+import 'package:thriftwood/modules/tautulli.dart';
+import 'package:thriftwood/router/routes/tautulli.dart';
 
 class TautulliStatisticsMediaTile extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -23,16 +23,17 @@ class _State extends State<TautulliStatisticsMediaTile> {
   @override
   Widget build(BuildContext context) {
     return LunaBlock(
-      title: widget.data['title'] ?? 'lunasea.Unknown'.tr(),
+      title: widget.data['title'] ?? 'thriftwood.Unknown'.tr(),
       body: _body(),
       onTap: _onTap,
-      posterUrl: context
-          .read<TautulliState>()
-          .getImageURLFromPath(widget.data['thumb']),
+      posterUrl: context.read<TautulliState>().getImageURLFromPath(
+        widget.data['thumb'],
+      ),
       posterHeaders: context.watch<TautulliState>().headers,
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
-      backgroundUrl:
-          context.read<TautulliState>().getImageURLFromPath(widget.data['art']),
+      backgroundUrl: context.read<TautulliState>().getImageURLFromPath(
+        widget.data['art'],
+      ),
       backgroundHeaders: context.watch<TautulliState>().headers,
     );
   }
@@ -40,14 +41,17 @@ class _State extends State<TautulliStatisticsMediaTile> {
   List<TextSpan> _body() {
     return [
       TextSpan(
-        text: widget.data['total_plays'].toString() +
+        text:
+            widget.data['total_plays'].toString() +
             (widget.data['total_plays'] == 1 ? ' Play' : ' Plays'),
         style: TextStyle(
-          color: context.watch<TautulliState>().statisticsType ==
+          color:
+              context.watch<TautulliState>().statisticsType ==
                   TautulliStatsType.PLAYS
               ? LunaColours.accent
               : null,
-          fontWeight: context.watch<TautulliState>().statisticsType ==
+          fontWeight:
+              context.watch<TautulliState>().statisticsType ==
                   TautulliStatsType.PLAYS
               ? LunaUI.FONT_WEIGHT_BOLD
               : null,
@@ -55,14 +59,17 @@ class _State extends State<TautulliStatisticsMediaTile> {
       ),
       widget.data['total_duration'] != null
           ? TextSpan(
-              text: Duration(seconds: widget.data['total_duration'])
-                  .asWordsTimestamp(),
+              text: Duration(
+                seconds: widget.data['total_duration'],
+              ).asWordsTimestamp(),
               style: TextStyle(
-                color: context.watch<TautulliState>().statisticsType ==
+                color:
+                    context.watch<TautulliState>().statisticsType ==
                         TautulliStatsType.DURATION
                     ? LunaColours.accent
                     : null,
-                fontWeight: context.watch<TautulliState>().statisticsType ==
+                fontWeight:
+                    context.watch<TautulliState>().statisticsType ==
                         TautulliStatsType.DURATION
                     ? LunaUI.FONT_WEIGHT_BOLD
                     : null,
@@ -74,14 +81,16 @@ class _State extends State<TautulliStatisticsMediaTile> {
               text:
                   'Last Played ${DateTime.fromMillisecondsSinceEpoch(widget.data['last_play'] * 1000).asAge()}',
             )
-          : const TextSpan(text: LunaUI.TEXT_EMDASH)
+          : const TextSpan(text: LunaUI.TEXT_EMDASH),
     ];
   }
 
   void _onTap() {
-    TautulliRoutes.MEDIA_DETAILS.go(params: {
-      'rating_key': widget.data['rating_key'].toString(),
-      'media_type': widget.mediaType.value,
-    });
+    TautulliRoutes.MEDIA_DETAILS.go(
+      params: {
+        'rating_key': widget.data['rating_key'].toString(),
+        'media_type': widget.mediaType.value,
+      },
+    );
   }
 }

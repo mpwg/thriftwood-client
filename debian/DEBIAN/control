@@ -1,6 +1,6 @@
-Package:LunaSea
+Package:thriftwood
 Architecture:amd64
 Essential:no
 Priority:optional
-Maintainer:LunaSea Support <hello@lunasea.app>
+Maintainer:thriftwood Support <hello@thriftwood.app>
 Description:Self-hosted software controller built using Flutter

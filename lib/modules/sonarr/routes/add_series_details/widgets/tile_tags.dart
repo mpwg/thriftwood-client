@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeriesAddDetailsTagsTile extends StatelessWidget {
-  const SonarrSeriesAddDetailsTagsTile({
-    Key? key,
-  }) : super(key: key);
+  const SonarrSeriesAddDetailsTagsTile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

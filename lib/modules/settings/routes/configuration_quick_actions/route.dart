@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/settings.dart';
-import 'package:lunasea/system/quick_actions/quick_actions.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/settings.dart';
+import 'package:thriftwood/system/quick_actions/quick_actions.dart';
 
 class ConfigurationQuickActionsRoute extends StatefulWidget {
-  const ConfigurationQuickActionsRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationQuickActionsRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationQuickActionsRoute> createState() => _State();
@@ -39,45 +37,45 @@ class _State extends State<ConfigurationQuickActionsRoute>
         SettingsBanners.QUICK_ACTIONS_SUPPORT.banner(),
         _actionTile(
           LunaModule.LIDARR.title,
-          LunaSeaDatabase.QUICK_ACTIONS_LIDARR,
+          thriftwoodDatabase.QUICK_ACTIONS_LIDARR,
         ),
         _actionTile(
           LunaModule.NZBGET.title,
-          LunaSeaDatabase.QUICK_ACTIONS_NZBGET,
+          thriftwoodDatabase.QUICK_ACTIONS_NZBGET,
         ),
         if (LunaModule.OVERSEERR.featureFlag)
           _actionTile(
             LunaModule.OVERSEERR.title,
-            LunaSeaDatabase.QUICK_ACTIONS_OVERSEERR,
+            thriftwoodDatabase.QUICK_ACTIONS_OVERSEERR,
           ),
         _actionTile(
           LunaModule.RADARR.title,
-          LunaSeaDatabase.QUICK_ACTIONS_RADARR,
+          thriftwoodDatabase.QUICK_ACTIONS_RADARR,
         ),
         _actionTile(
           LunaModule.SABNZBD.title,
-          LunaSeaDatabase.QUICK_ACTIONS_SABNZBD,
+          thriftwoodDatabase.QUICK_ACTIONS_SABNZBD,
         ),
         _actionTile(
           LunaModule.SEARCH.title,
-          LunaSeaDatabase.QUICK_ACTIONS_SEARCH,
+          thriftwoodDatabase.QUICK_ACTIONS_SEARCH,
         ),
         _actionTile(
           LunaModule.SONARR.title,
-          LunaSeaDatabase.QUICK_ACTIONS_SONARR,
+          thriftwoodDatabase.QUICK_ACTIONS_SONARR,
         ),
         _actionTile(
           LunaModule.TAUTULLI.title,
-          LunaSeaDatabase.QUICK_ACTIONS_TAUTULLI,
+          thriftwoodDatabase.QUICK_ACTIONS_TAUTULLI,
         ),
       ],
     );
   }
 
-  Widget _actionTile(String title, LunaSeaDatabase action) {
+  Widget _actionTile(String title, thriftwoodDatabase action) {
     return LunaBlock(
       title: title,
-      trailing: LunaBox.lunasea.listenableBuilder(
+      trailing: LunaBox.thriftwood.listenableBuilder(
         selectKeys: [action.key],
         builder: (context, _) => LunaSwitch(
           value: action.read(),

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrAddMovieDetailsMonitoredTile extends StatelessWidget {
-  const RadarrAddMovieDetailsMonitoredTile({
-    Key? key,
-  }) : super(key: key);
+  const RadarrAddMovieDetailsMonitoredTile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

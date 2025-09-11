@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'users_table.g.dart';
 
@@ -18,13 +18,16 @@ class TautulliUsersTable {
 
   /// Total amount of records.
   @JsonKey(
-      name: 'recordsTotal', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsTotal',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsTotal;
 
   /// The amount of records (filtered).
   @JsonKey(
-      name: 'recordsFiltered',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsFiltered',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsFiltered;
 
   TautulliUsersTable({
@@ -49,6 +52,6 @@ class TautulliUsersTable {
       .map((user) => TautulliTableUser.fromJson((user as Map<String, dynamic>)))
       .toList();
   static List<Map<String, dynamic>>? _usersToJson(
-          List<TautulliTableUser>? users) =>
-      users?.map((user) => user.toJson()).toList();
+    List<TautulliTableUser>? users,
+  ) => users?.map((user) => user.toJson()).toList();
 }

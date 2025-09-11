@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrRoute extends StatefulWidget {
-  const RadarrRoute({
-    Key? key,
-  }) : super(key: key);
+  const RadarrRoute({Key? key}) : super(key: key);
 
   @override
   State<RadarrRoute> createState() => _State();
@@ -47,15 +45,12 @@ class _State extends State<RadarrRoute> {
   }
 
   Widget _appBar() {
-    List<String> profiles = LunaBox.profiles.keys.fold(
-      [],
-      (value, element) {
-        if (LunaBox.profiles.read(element)?.radarrEnabled ?? false) {
-          value.add(element);
-        }
-        return value;
-      },
-    );
+    List<String> profiles = LunaBox.profiles.keys.fold([], (value, element) {
+      if (LunaBox.profiles.read(element)?.radarrEnabled ?? false) {
+        value.add(element);
+      }
+      return value;
+    });
     List<Widget>? actions;
     if (context.watch<RadarrState>().enabled) {
       actions = [

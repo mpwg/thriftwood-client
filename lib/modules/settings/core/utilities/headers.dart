@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/models/indexer.dart';
-import 'package:lunasea/modules/settings.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/models/indexer.dart';
+import 'package:thriftwood/modules/settings.dart';
 
 class HeaderUtility {
   /// Show a dialog confirming the user wants to delete a header.
@@ -73,8 +73,9 @@ class HeaderUtility {
     Map<String, String> headers,
     LunaIndexer? indexer,
   ) async {
-    final results =
-        await SettingsDialogs().addBasicAuthenticationHeader(context);
+    final results = await SettingsDialogs().addBasicAuthenticationHeader(
+      context,
+    );
     if (results.item1) {
       String _auth = base64.encode(
         utf8.encode('${results.item2}:${results.item3}'),

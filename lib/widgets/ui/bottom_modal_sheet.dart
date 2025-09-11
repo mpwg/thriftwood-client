@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/system/state.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/system/state.dart';
+import 'package:thriftwood/widgets/ui.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class LunaBottomModalSheet<T> {

@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'pms_update.g.dart';
 
@@ -11,10 +11,7 @@ class TautulliPMSUpdate {
   )
   final bool? updateAvailable;
 
-  @JsonKey(
-    name: 'platform',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+  @JsonKey(name: 'platform', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? platform;
 
   @JsonKey(
@@ -23,10 +20,7 @@ class TautulliPMSUpdate {
   )
   final DateTime? releaseDate;
 
-  @JsonKey(
-    name: 'version',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+  @JsonKey(name: 'version', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? version;
 
   @JsonKey(
@@ -35,10 +29,7 @@ class TautulliPMSUpdate {
   )
   final String? requirements;
 
-  @JsonKey(
-    name: 'extra_info',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+  @JsonKey(name: 'extra_info', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? extraInfo;
 
   @JsonKey(
@@ -55,16 +46,10 @@ class TautulliPMSUpdate {
   )
   final List<String>? changelogFixed;
 
-  @JsonKey(
-    name: 'label',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+  @JsonKey(name: 'label', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? label;
 
-  @JsonKey(
-    name: 'distro',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+  @JsonKey(name: 'distro', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? distro;
 
   @JsonKey(

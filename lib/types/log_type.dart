@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/system/flavor.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/system/flavor.dart';
 
 part 'log_type.g.dart';
 
@@ -37,13 +37,13 @@ enum LunaLogType {
   String get title {
     switch (this) {
       case LunaLogType.WARNING:
-        return 'lunasea.Warning'.tr();
+        return 'thriftwood.Warning'.tr();
       case LunaLogType.ERROR:
-        return 'lunasea.Error'.tr();
+        return 'thriftwood.Error'.tr();
       case LunaLogType.CRITICAL:
-        return 'lunasea.Critical'.tr();
+        return 'thriftwood.Critical'.tr();
       case LunaLogType.DEBUG:
-        return 'lunasea.Debug'.tr();
+        return 'thriftwood.Debug'.tr();
     }
   }
 

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 part 'missing_record.g.dart';
 
@@ -25,9 +25,10 @@ class SonarrMissingRecord {
   String? airDate;
 
   @JsonKey(
-      name: 'airDateUtc',
-      toJson: SonarrUtilities.dateTimeToJson,
-      fromJson: SonarrUtilities.dateTimeFromJson)
+    name: 'airDateUtc',
+    toJson: SonarrUtilities.dateTimeToJson,
+    fromJson: SonarrUtilities.dateTimeFromJson,
+  )
   DateTime? airDateUtc;
 
   @JsonKey(name: 'overview')

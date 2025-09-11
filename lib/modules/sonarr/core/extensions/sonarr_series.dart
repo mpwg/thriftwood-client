@@ -1,9 +1,9 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/extensions/int/duration.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/extensions/int/duration.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 extension SonarrSeriesExtension on SonarrSeries {
   String get lunaRuntime {
@@ -40,33 +40,33 @@ extension SonarrSeriesExtension on SonarrSeries {
 
   String lunaNextAiring([bool short = false]) {
     if (this.status == 'ended') return 'sonarr.SeriesEnded'.tr();
-    if (this.nextAiring == null) return 'lunasea.Unknown'.tr();
+    if (this.nextAiring == null) return 'thriftwood.Unknown'.tr();
     return this.nextAiring!.asDateTime(
-          showSeconds: false,
-          delimiter: '@'.pad(),
-          shortenMonth: short,
-        );
+      showSeconds: false,
+      delimiter: '@'.pad(),
+      shortenMonth: short,
+    );
   }
 
   String lunaPreviousAiring([bool short = false]) {
     if (this.previousAiring == null) return LunaUI.TEXT_EMDASH;
     return this.previousAiring!.asDateTime(
-          showSeconds: false,
-          delimiter: '@'.pad(),
-          shortenMonth: short,
-        );
+      showSeconds: false,
+      delimiter: '@'.pad(),
+      shortenMonth: short,
+    );
   }
 
   String get lunaDateAdded {
     if (this.added == null) {
-      return 'lunasea.Unknown'.tr();
+      return 'thriftwood.Unknown'.tr();
     }
     return DateFormat('MMMM dd, y').format(this.added!.toLocal());
   }
 
   String get lunaDateAddedShort {
     if (this.added == null) {
-      return 'lunasea.Unknown'.tr();
+      return 'thriftwood.Unknown'.tr();
     }
     return DateFormat('MMM dd, y').format(this.added!.toLocal());
   }
@@ -78,24 +78,24 @@ extension SonarrSeriesExtension on SonarrSeries {
 
   String? get lunaAirTime {
     if (this.previousAiring != null) {
-      return LunaSeaDatabase.USE_24_HOUR_TIME.read()
+      return thriftwoodDatabase.USE_24_HOUR_TIME.read()
           ? DateFormat.Hm().format(this.previousAiring!.toLocal())
           : DateFormat('hh:mm a').format(this.previousAiring!.toLocal());
     }
     if (this.airTime == null) {
-      return 'lunasea.Unknown'.tr();
+      return 'thriftwood.Unknown'.tr();
     }
     return this.airTime;
   }
 
   String get lunaSeriesType {
-    if (this.seriesType == null) return 'lunasea.Unknown'.tr();
+    if (this.seriesType == null) return 'thriftwood.Unknown'.tr();
     return this.seriesType!.value!.toTitleCase();
   }
 
-  String get lunaSeasonCount {
+  String get thriftwoodsonCount {
     if (this.statistics?.seasonCount == null) {
-      return 'lunasea.Unknown'.tr();
+      return 'thriftwood.Unknown'.tr();
     }
     return this.statistics!.seasonCount == 1
         ? 'sonarr.OneSeason'.tr()

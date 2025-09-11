@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaColours {
-  /// List of LunaSea colours in order that the should appear in a list.
+  /// List of thriftwood colours in order that the should appear in a list.
   ///
   /// Use [byListIndex] to fetch the colour at the any index
   static const _LIST_COLOR_ICONS = [

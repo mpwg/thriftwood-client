@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class LogsNewslettersRoute extends StatefulWidget {
-  const LogsNewslettersRoute({
-    Key? key,
-  }) : super(key: key);
+  const LogsNewslettersRoute({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -43,8 +41,9 @@ class _State extends State<LogsNewslettersRoute>
       onRefresh: () async =>
           context.read<TautulliLogsNewslettersState>().fetchLogs(context),
       child: FutureBuilder(
-        future:
-            context.select((TautulliLogsNewslettersState state) => state.logs),
+        future: context.select(
+          (TautulliLogsNewslettersState state) => state.logs,
+        ),
         builder: (context, AsyncSnapshot<TautulliNewsletterLogs> snapshot) {
           if (snapshot.hasError) {
             if (snapshot.connectionState != ConnectionState.waiting)

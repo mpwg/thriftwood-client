@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/extensions/string/links.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/extensions/string/links.dart';
 
-enum _Type {
-  CONTENT,
-  SPACER,
-}
+enum _Type { CONTENT, SPACER }
 
 class LunaTableContent extends StatelessWidget {
   final String? title;
@@ -38,11 +35,7 @@ class LunaTableContent extends StatelessWidget {
     Key? key,
     double spacerSize = LunaUI.DEFAULT_MARGIN_SIZE,
   }) =>
-      LunaTableContent._(
-        key: key,
-        type: _Type.SPACER,
-        spacerSize: spacerSize,
-      );
+      LunaTableContent._(key: key, type: _Type.SPACER, spacerSize: spacerSize);
 
   factory LunaTableContent({
     Key? key,
@@ -54,28 +47,24 @@ class LunaTableContent extends StatelessWidget {
     TextAlign bodyAlign = TextAlign.start,
     int titleFlex = 1,
     int bodyFlex = 2,
-  }) =>
-      LunaTableContent._(
-        key: key,
-        title: title,
-        body: body,
-        url: url,
-        bodyIsUrl: bodyIsUrl,
-        titleAlign: titleAlign,
-        bodyAlign: bodyAlign,
-        titleFlex: titleFlex,
-        bodyFlex: bodyFlex,
-        type: _Type.CONTENT,
-      );
+  }) => LunaTableContent._(
+    key: key,
+    title: title,
+    body: body,
+    url: url,
+    bodyIsUrl: bodyIsUrl,
+    titleAlign: titleAlign,
+    bodyAlign: bodyAlign,
+    titleFlex: titleFlex,
+    bodyFlex: bodyFlex,
+    type: _Type.CONTENT,
+  );
 
   @override
   Widget build(BuildContext context) {
     if (type == _Type.SPACER) return SizedBox(height: spacerSize);
     return Row(
-      children: [
-        if (title != null) _title(),
-        _subtitle(),
-      ],
+      children: [if (title != null) _title(), _subtitle()],
       crossAxisAlignment: CrossAxisAlignment.start,
     );
   }

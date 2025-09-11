@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeriesAddDetailsState extends ChangeNotifier {
   final SonarrSeries series;
   bool canExecuteAction = false;
 
-  SonarrSeriesAddDetailsState({
-    required this.series,
-  });
+  SonarrSeriesAddDetailsState({required this.series});
 
   bool _monitored = true;
   bool get monitored => _monitored;
@@ -29,8 +27,8 @@ class SonarrSeriesAddDetailsState extends ChangeNotifier {
   }
 
   void initializeUseSeasonFolders() {
-    _useSeasonFolders =
-        SonarrDatabase.ADD_SERIES_DEFAULT_USE_SEASON_FOLDERS.read();
+    _useSeasonFolders = SonarrDatabase.ADD_SERIES_DEFAULT_USE_SEASON_FOLDERS
+        .read();
   }
 
   late SonarrSeriesType _seriesType;
@@ -121,15 +119,18 @@ class SonarrSeriesAddDetailsState extends ChangeNotifier {
   List<SonarrTag> get tags => _tags;
   set tags(List<SonarrTag> tags) {
     _tags = tags;
-    SonarrDatabase.ADD_SERIES_DEFAULT_TAGS
-        .update(tags.map<int?>((tag) => tag.id).toList());
+    SonarrDatabase.ADD_SERIES_DEFAULT_TAGS.update(
+      tags.map<int?>((tag) => tag.id).toList(),
+    );
     notifyListeners();
   }
 
   void initializeTags(List<SonarrTag> tags) {
     _tags = tags
-        .where((tag) =>
-            (SonarrDatabase.ADD_SERIES_DEFAULT_TAGS.read()).contains(tag.id))
+        .where(
+          (tag) =>
+              (SonarrDatabase.ADD_SERIES_DEFAULT_TAGS.read()).contains(tag.id),
+        )
         .toList();
   }
 

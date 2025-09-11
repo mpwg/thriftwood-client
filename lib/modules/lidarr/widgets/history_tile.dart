@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/lidarr.dart';
-import 'package:lunasea/router/routes/lidarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/lidarr.dart';
+import 'package:thriftwood/router/routes/lidarr.dart';
 
 class LidarrHistoryTile extends StatefulWidget {
   static final double extent = LunaBlock.calculateItemExtent(2);
@@ -23,11 +23,11 @@ class LidarrHistoryTile extends StatefulWidget {
 class _State extends State<LidarrHistoryTile> {
   @override
   Widget build(BuildContext context) => LunaBlock(
-        title: widget.entry.title,
-        body: widget.entry.subtitle,
-        trailing: const LunaIconButton.arrow(),
-        onTap: () async => _enterArtist(),
-      );
+    title: widget.entry.title,
+    body: widget.entry.subtitle,
+    trailing: const LunaIconButton.arrow(),
+    onTap: () async => _enterArtist(),
+  );
 
   Future<void> _enterArtist() async {
     if (widget.entry.artistID == -1) {
@@ -37,9 +37,7 @@ class _State extends State<LidarrHistoryTile> {
       );
     } else {
       LidarrRoutes.ARTIST.go(
-        params: {
-          'artist': widget.entry.artistID.toString(),
-        },
+        params: {'artist': widget.entry.artistID.toString()},
       );
     }
   }

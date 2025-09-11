@@ -1,4 +1,4 @@
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/vendor.dart';
 
 extension IntegerAsDurationExtension on int? {
   static const int _MINUTE_IN_SECONDS = 60;
@@ -9,32 +9,32 @@ extension IntegerAsDurationExtension on int? {
     int multiplier = 1,
     int divisor = 1,
   }) {
-    if (this == null || this! <= 0) return 'lunasea.Unknown'.tr();
+    if (this == null || this! <= 0) return 'thriftwood.Unknown'.tr();
     final seconds = ((this! * multiplier) / divisor).floor();
 
     final days = seconds ~/ _DAY_IN_SECONDS;
     if (days > 1) {
-      return 'lunasea.Days'.tr(args: [days.toString()]);
+      return 'thriftwood.Days'.tr(args: [days.toString()]);
     }
 
     final hours = seconds ~/ _HOUR_IN_SECONDS;
     if (hours > 1) {
-      return 'lunasea.Hours'.tr(args: [hours.toString()]);
+      return 'thriftwood.Hours'.tr(args: [hours.toString()]);
     }
 
     final minutes = seconds ~/ _MINUTE_IN_SECONDS;
     if (minutes > 0) {
-      return 'lunasea.Minutes'.tr(args: [minutes.toString()]);
+      return 'thriftwood.Minutes'.tr(args: [minutes.toString()]);
     }
 
-    return 'lunasea.Seconds'.tr(args: [seconds.toString()]);
+    return 'thriftwood.Seconds'.tr(args: [seconds.toString()]);
   }
 
   String asVideoDuration({
     int multiplier = 1,
     int divisor = 1,
   }) {
-    if (this == null || this! <= 0) return 'lunasea.Unknown'.tr();
+    if (this == null || this! <= 0) return 'thriftwood.Unknown'.tr();
 
     final minutes = ((this! * multiplier) / divisor).floor();
     final hours = (minutes ~/ 60);

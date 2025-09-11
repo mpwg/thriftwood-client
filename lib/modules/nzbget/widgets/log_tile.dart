@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/nzbget.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/nzbget.dart';
 
 class NZBGetLogTile extends StatelessWidget {
   final NZBGetLogData data;
 
-  const NZBGetLogTile({
-    Key? key,
-    required this.data,
-  }) : super(key: key);
+  const NZBGetLogTile({Key? key, required this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

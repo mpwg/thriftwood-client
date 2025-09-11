@@ -1,12 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliGraphsDailyStreamTypeBreakdownGraph extends StatelessWidget {
-  const TautulliGraphsDailyStreamTypeBreakdownGraph({
-    Key? key,
-  }) : super(key: key);
+  const TautulliGraphsDailyStreamTypeBreakdownGraph({Key? key})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) =>
@@ -18,9 +17,10 @@ class TautulliGraphsDailyStreamTypeBreakdownGraph extends StatelessWidget {
             if (snapshot.hasError) {
               if (snapshot.connectionState != ConnectionState.waiting) {
                 LunaLogger().error(
-                    'Unable to fetch Tautulli graph data: getPlaysByDate',
-                    snapshot.error,
-                    snapshot.stackTrace);
+                  'Unable to fetch Tautulli graph data: getPlaysByDate',
+                  snapshot.error,
+                  snapshot.stackTrace,
+                );
               }
               return TautulliGraphHelper().errorContainer(context);
             }
@@ -45,8 +45,10 @@ class TautulliGraphsDailyStreamTypeBreakdownGraph extends StatelessWidget {
                   titlesData: TautulliLineGraphHelper.titlesData(data),
                   borderData: TautulliGraphHelper().borderData(),
                   lineBarsData: TautulliLineGraphHelper.lineBarsData(data),
-                  lineTouchData:
-                      TautulliLineGraphHelper.lineTouchData(context, data),
+                  lineTouchData: TautulliLineGraphHelper.lineTouchData(
+                    context,
+                    data,
+                  ),
                 ),
               ),
               padding: LunaUI.MARGIN_DEFAULT,

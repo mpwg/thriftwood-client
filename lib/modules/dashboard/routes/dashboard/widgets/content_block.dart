@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/widgets/ui.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/abstract.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/lidarr.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/radarr.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/sonarr.dart';
+import 'package:thriftwood/database/models/profile.dart';
+import 'package:thriftwood/widgets/ui.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/abstract.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/lidarr.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/radarr.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/sonarr.dart';
 
 class ContentBlock extends StatelessWidget {
   final CalendarData data;

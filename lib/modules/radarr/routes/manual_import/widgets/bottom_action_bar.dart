@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
-import 'package:lunasea/router/routes/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
+import 'package:thriftwood/router/routes/radarr.dart';
 
 class RadarrManualImportBottomActionBar extends StatelessWidget {
-  const RadarrManualImportBottomActionBar({
-    Key? key,
-  }) : super(key: key);
+  const RadarrManualImportBottomActionBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +21,11 @@ class RadarrManualImportBottomActionBar extends StatelessWidget {
         LunaButton.text(
           text: 'radarr.Interactive'.tr(),
           icon: Icons.person_rounded,
-          onTap: () => RadarrRoutes.MANUAL_IMPORT_DETAILS.go(queryParams: {
-            'path': context.read<RadarrManualImportState>().currentPath,
-          }),
+          onTap: () => RadarrRoutes.MANUAL_IMPORT_DETAILS.go(
+            queryParams: {
+              'path': context.read<RadarrManualImportState>().currentPath,
+            },
+          ),
         ),
       ],
     );

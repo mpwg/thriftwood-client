@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/tautulli/models/libraries/search_result.dart';
+import 'package:thriftwood/api/tautulli/models/libraries/search_result.dart';
 
 part 'search_results.g.dart';
 
@@ -17,7 +17,10 @@ class TautulliSearchResults {
 
   /// List of collection results.
   @JsonKey(
-      name: 'collection', toJson: _resultsToJson, fromJson: _resultsFromJson)
+    name: 'collection',
+    toJson: _resultsToJson,
+    fromJson: _resultsFromJson,
+  )
   final List<TautulliSearchResult>? collections;
 
   /// List of episode results.
@@ -64,10 +67,12 @@ class TautulliSearchResults {
 
   static List<TautulliSearchResult> _resultsFromJson(List<dynamic> results) =>
       results
-          .map((result) =>
-              TautulliSearchResult.fromJson((result as Map<String, dynamic>)))
+          .map(
+            (result) =>
+                TautulliSearchResult.fromJson((result as Map<String, dynamic>)),
+          )
           .toList();
   static List<Map<String, dynamic>?>? _resultsToJson(
-          List<TautulliSearchResult>? results) =>
-      results?.map((result) => result.toJson()).toList();
+    List<TautulliSearchResult>? results,
+  ) => results?.map((result) => result.toJson()).toList();
 }

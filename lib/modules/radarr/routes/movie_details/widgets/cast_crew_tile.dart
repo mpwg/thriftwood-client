@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/string/links.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrMovieDetailsCastCrewTile extends StatelessWidget {
   final RadarrMovieCredits credits;
 
-  const RadarrMovieDetailsCastCrewTile({
-    Key? key,
-    required this.credits,
-  }) : super(key: key);
+  const RadarrMovieDetailsCastCrewTile({Key? key, required this.credits})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

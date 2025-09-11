@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/config.dart';
-import 'package:lunasea/system/filesystem/file.dart';
-import 'package:lunasea/system/filesystem/filesystem.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/config.dart';
+import 'package:thriftwood/system/filesystem/file.dart';
+import 'package:thriftwood/system/filesystem/filesystem.dart';
 
 class SettingsSystemBackupRestoreRestoreTile extends StatelessWidget {
-  const SettingsSystemBackupRestoreRestoreTile({
-    Key? key,
-  }) : super(key: key);
+  const SettingsSystemBackupRestoreRestoreTile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +20,7 @@ class SettingsSystemBackupRestoreRestoreTile extends StatelessWidget {
 
   Future<void> _restore(BuildContext context) async {
     try {
-      LunaFile? file = await LunaFileSystem().read(context, ['lunasea']);
+      LunaFile? file = await LunaFileSystem().read(context, ['thriftwood']);
       if (file != null) await _decryptBackup(context, file);
     } catch (error, stack) {
       LunaLogger().error('Failed to restore device backup', error, stack);
@@ -33,10 +31,7 @@ class SettingsSystemBackupRestoreRestoreTile extends StatelessWidget {
     }
   }
 
-  Future<void> _decryptBackup(
-    BuildContext context,
-    LunaFile file,
-  ) async {
+  Future<void> _decryptBackup(BuildContext context, LunaFile file) async {
     String encrypted = String.fromCharCodes(file.data);
     try {
       await LunaConfig().import(context, encrypted);
@@ -47,9 +42,9 @@ class SettingsSystemBackupRestoreRestoreTile extends StatelessWidget {
     } catch (_) {
       showLunaErrorSnackBar(
         title: 'settings.RestoreFromCloudFailure'.tr(),
-        message: 'lunasea.IncorrectEncryptionKey'.tr(),
+        message: 'thriftwood.IncorrectEncryptionKey'.tr(),
         showButton: true,
-        buttonText: 'lunasea.Retry'.tr(),
+        buttonText: 'thriftwood.Retry'.tr(),
         buttonOnPressed: () async => _decryptBackup(context, file),
       );
     }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliMediaDetailsMetadata extends StatefulWidget {
   final TautulliMediaType? type;
@@ -34,23 +34,18 @@ class _State extends State<TautulliMediaDetailsMetadata>
 
   Future<void> _refresh() async {
     context.read<TautulliState>().setMetadata(
-          widget.ratingKey,
-          context
-              .read<TautulliState>()
-              .api!
-              .libraries
-              .getMetadata(ratingKey: widget.ratingKey),
-        );
+      widget.ratingKey,
+      context.read<TautulliState>().api!.libraries.getMetadata(
+        ratingKey: widget.ratingKey,
+      ),
+    );
     await context.read<TautulliState>().metadata[widget.ratingKey];
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LunaScaffold(
-      scaffoldKey: _scaffoldKey,
-      body: _body(),
-    );
+    return LunaScaffold(scaffoldKey: _scaffoldKey, body: _body());
   }
 
   Widget _body() {
@@ -83,7 +78,9 @@ class _State extends State<TautulliMediaDetailsMetadata>
       children: [
         TautulliMediaDetailsMetadataHeaderTile(metadata: metadata),
         TautulliMediaDetailsMetadataSummary(
-            metadata: metadata, type: widget.type),
+          metadata: metadata,
+          type: widget.type,
+        ),
         TautulliMediaDetailsMetadataMetadata(metadata: metadata),
       ],
     );

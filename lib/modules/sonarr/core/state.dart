@@ -1,6 +1,6 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/types/list_view_option.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/types/list_view_option.dart';
 
 class SonarrState extends LunaModuleState {
   SonarrState() {
@@ -77,8 +77,8 @@ class SonarrState extends LunaModuleState {
   /// CATALOGUE ///
   /////////////////
 
-  LunaListViewOption _seriesViewType =
-      SonarrDatabase.DEFAULT_VIEW_SERIES.read();
+  LunaListViewOption _seriesViewType = SonarrDatabase.DEFAULT_VIEW_SERIES
+      .read();
   LunaListViewOption get seriesViewType => _seriesViewType;
   set seriesViewType(LunaListViewOption seriesViewType) {
     _seriesViewType = seriesViewType;
@@ -92,24 +92,24 @@ class SonarrState extends LunaModuleState {
     notifyListeners();
   }
 
-  SonarrSeriesSorting _seriesSortType =
-      SonarrDatabase.DEFAULT_SORTING_SERIES.read();
+  SonarrSeriesSorting _seriesSortType = SonarrDatabase.DEFAULT_SORTING_SERIES
+      .read();
   SonarrSeriesSorting get seriesSortType => _seriesSortType;
   set seriesSortType(SonarrSeriesSorting seriesSortType) {
     _seriesSortType = seriesSortType;
     notifyListeners();
   }
 
-  SonarrSeriesFilter _seriesFilterType =
-      SonarrDatabase.DEFAULT_FILTERING_SERIES.read();
+  SonarrSeriesFilter _seriesFilterType = SonarrDatabase.DEFAULT_FILTERING_SERIES
+      .read();
   SonarrSeriesFilter get seriesFilterType => _seriesFilterType;
   set seriesFilterType(SonarrSeriesFilter seriesFilterType) {
     _seriesFilterType = seriesFilterType;
     notifyListeners();
   }
 
-  bool _seriesSortAscending =
-      SonarrDatabase.DEFAULT_SORTING_SERIES_ASCENDING.read();
+  bool _seriesSortAscending = SonarrDatabase.DEFAULT_SORTING_SERIES_ASCENDING
+      .read();
   bool get seriesSortAscending => _seriesSortAscending;
   set seriesSortAscending(bool seriesSortAscending) {
     _seriesSortAscending = seriesSortAscending;
@@ -125,9 +125,7 @@ class SonarrState extends LunaModuleState {
   void fetchAllSeries() {
     if (_api != null) {
       _series = _api!.series.getAll(includeSeasonImages: true).then((series) {
-        return {
-          for (SonarrSeries s in series) s.id!: s,
-        };
+        return {for (SonarrSeries s in series) s.id!: s};
       });
     }
     notifyListeners();
@@ -135,8 +133,10 @@ class SonarrState extends LunaModuleState {
 
   Future<void> fetchSeries(int seriesId) async {
     if (_api != null) {
-      SonarrSeries series =
-          await _api!.series.get(seriesId: seriesId, includeSeasonImages: true);
+      SonarrSeries series = await _api!.series.get(
+        seriesId: seriesId,
+        includeSeasonImages: true,
+      );
       (await _series)![seriesId] = series;
     }
     notifyListeners();
@@ -186,8 +186,9 @@ class SonarrState extends LunaModuleState {
 
   void fetchUpcoming() {
     DateTime start = DateTime.now();
-    DateTime end =
-        start.add(Duration(days: SonarrDatabase.UPCOMING_FUTURE_DAYS.read()));
+    DateTime end = start.add(
+      Duration(days: SonarrDatabase.UPCOMING_FUTURE_DAYS.read()),
+    );
     if (_api != null)
       _upcoming = _api!.calendar.get(
         start: start,

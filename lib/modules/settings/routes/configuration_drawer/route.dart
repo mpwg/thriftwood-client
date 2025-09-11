@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class ConfigurationDrawerRoute extends StatefulWidget {
-  const ConfigurationDrawerRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationDrawerRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationDrawerRoute> createState() => _State();
@@ -46,18 +44,24 @@ class _State extends State<ConfigurationDrawerRoute>
           body: [
             TextSpan(text: 'settings.AutomaticallyManageOrderDescription'.tr()),
           ],
-          trailing: LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE.listenableBuilder(
-            builder: (context, _) => LunaSwitch(
-              value: LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE.read(),
-              onChanged: LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE.update,
-            ),
-          ),
+          trailing: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE
+              .listenableBuilder(
+                builder: (context, _) => LunaSwitch(
+                  value: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.read(),
+                  onChanged: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.update,
+                ),
+              ),
         ),
         LunaDivider(),
         Expanded(
           child: LunaReorderableListViewBuilder(
-            padding: MediaQuery.of(context).padding.copyWith(top: 0).add(
-                EdgeInsets.only(bottom: LunaUI.MARGIN_H_DEFAULT_V_HALF.bottom)),
+            padding: MediaQuery.of(context).padding
+                .copyWith(top: 0)
+                .add(
+                  EdgeInsets.only(
+                    bottom: LunaUI.MARGIN_H_DEFAULT_V_HALF.bottom,
+                  ),
+                ),
             controller: scrollController,
             itemCount: _modules!.length,
             itemBuilder: (context, index) => _reorderableModuleTile(index),
@@ -67,7 +71,7 @@ class _State extends State<ConfigurationDrawerRoute>
               LunaModule module = _modules![oIndex];
               _modules!.remove(module);
               _modules!.insert(nIndex, module);
-              LunaSeaDatabase.DRAWER_MANUAL_ORDER.update(_modules!);
+              thriftwoodDatabase.DRAWER_MANUAL_ORDER.update(_modules!);
             },
           ),
         ),
@@ -76,14 +80,14 @@ class _State extends State<ConfigurationDrawerRoute>
   }
 
   Widget _reorderableModuleTile(int index) {
-    return LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE.listenableBuilder(
+    return thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.listenableBuilder(
       key: ObjectKey(_modules![index]),
       builder: (context, _) => LunaBlock(
-        disabled: LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE.read(),
+        disabled: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.read(),
         title: _modules![index].title,
         body: [TextSpan(text: _modules![index].description)],
         leading: LunaIconButton(icon: _modules![index].icon),
-        trailing: LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE.read()
+        trailing: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.read()
             ? null
             : LunaReorderableListViewDragger(index: index),
       ),

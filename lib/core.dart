@@ -5,7 +5,7 @@ export 'system/state.dart';
 export 'types/loading_state.dart';
 export 'database/box.dart';
 export 'database/models/profile.dart';
-export 'database/tables/lunasea.dart';
+export 'database/tables/thriftwood.dart';
 export 'system/logger.dart';
 export 'utils/dialogs.dart';
 export 'widgets/ui.dart';

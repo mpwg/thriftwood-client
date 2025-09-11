@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class TagsRoute extends StatefulWidget {
-  const TagsRoute({
-    Key? key,
-  }) : super(key: key);
+  const TagsRoute({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -41,9 +39,7 @@ class _State extends State<TagsRoute> with LunaScrollControllerMixin {
     return LunaAppBar(
       title: 'Tags',
       scrollControllers: [scrollController],
-      actions: const [
-        RadarrTagsAppBarActionAddTag(),
-      ],
+      actions: const [RadarrTagsAppBarActionAddTag()],
     );
   }
 
@@ -76,17 +72,15 @@ class _State extends State<TagsRoute> with LunaScrollControllerMixin {
     if ((tags?.length ?? 0) == 0) {
       return LunaMessage(
         text: 'radarr.NoTagsFound'.tr(),
-        buttonText: 'lunasea.Refresh'.tr(),
+        buttonText: 'thriftwood.Refresh'.tr(),
         onTap: _refreshKey.currentState!.show,
       );
     }
     return LunaListViewBuilder(
       controller: scrollController,
       itemCount: tags!.length,
-      itemBuilder: (context, index) => RadarrTagsTagTile(
-        key: ObjectKey(tags[index].id),
-        tag: tags[index],
-      ),
+      itemBuilder: (context, index) =>
+          RadarrTagsTagTile(key: ObjectKey(tags[index].id), tag: tags[index]),
     );
   }
 }

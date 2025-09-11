@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/main.dart';
-import 'package:lunasea/system/recovery_mode/action_tile.dart';
+import 'package:thriftwood/main.dart';
+import 'package:thriftwood/system/recovery_mode/action_tile.dart';
 
 class BootstrapTile extends RecoveryActionTile {
   const BootstrapTile({
     super.key,
-    super.title = 'Bootstrap LunaSea',
+    super.title = 'Bootstrap thriftwood',
     super.description = 'Run the bootstrap process and show any errors',
   });
 

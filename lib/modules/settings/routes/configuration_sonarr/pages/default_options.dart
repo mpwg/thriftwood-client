@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/settings.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/types/list_view_option.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/settings.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/types/list_view_option.dart';
 
 class ConfigurationSonarrDefaultOptionsRoute extends StatefulWidget {
-  const ConfigurationSonarrDefaultOptionsRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationSonarrDefaultOptionsRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationSonarrDefaultOptionsRoute> createState() => _State();
@@ -56,7 +54,7 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
       builder: (context, _) {
         LunaListViewOption _view = _db.read();
         return LunaBlock(
-          title: 'lunasea.View'.tr(),
+          title: 'thriftwood.View'.tr(),
           body: [TextSpan(text: _view.readable)],
           trailing: const LunaIconButton.arrow(),
           onTap: () async {
@@ -69,7 +67,7 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
 
             Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
               context,
-              title: 'lunasea.View'.tr(),
+              title: 'thriftwood.View'.tr(),
               values: titles,
               icons: icons,
             );
@@ -108,8 +106,9 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
           if (values.item1) {
             _db.update(SonarrSeriesSorting.values[values.item2]);
             context.read<SonarrState>().seriesSortType = _db.read();
-            context.read<SonarrState>().seriesSortAscending =
-                SonarrDatabase.DEFAULT_SORTING_SERIES_ASCENDING.read();
+            context.read<SonarrState>().seriesSortAscending = SonarrDatabase
+                .DEFAULT_SORTING_SERIES_ASCENDING
+                .read();
           }
         },
       ),
@@ -124,14 +123,11 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
         body: [
           TextSpan(
             text: _db.read()
-                ? 'lunasea.Ascending'.tr()
-                : 'lunasea.Descending'.tr(),
+                ? 'thriftwood.Ascending'.tr()
+                : 'thriftwood.Descending'.tr(),
           ),
         ],
-        trailing: LunaSwitch(
-          value: _db.read(),
-          onChanged: _db.update,
-        ),
+        trailing: LunaSwitch(value: _db.read(), onChanged: _db.update),
       ),
     );
   }
@@ -200,14 +196,11 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
         body: [
           TextSpan(
             text: _db.read()
-                ? 'lunasea.Ascending'.tr()
-                : 'lunasea.Descending'.tr(),
+                ? 'thriftwood.Ascending'.tr()
+                : 'thriftwood.Descending'.tr(),
           ),
         ],
-        trailing: LunaSwitch(
-          value: _db.read(),
-          onChanged: _db.update,
-        ),
+        trailing: LunaSwitch(value: _db.read(), onChanged: _db.update),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/system/environment.dart';
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/system/environment.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/widgets/ui.dart';
 
 const FLAVOR_EDGE = 'edge';
 const FLAVOR_BETA = 'beta';
@@ -50,7 +50,7 @@ extension LunaFlavorExtension on LunaFlavor {
   }
 
   String get downloadLink {
-    String base = 'https://builds.lunasea.app/#latest';
+    String base = 'https://builds.thriftwood.app/#latest';
     switch (this) {
       case LunaFlavor.EDGE:
         return '$base/${this.key}/';
@@ -64,11 +64,11 @@ extension LunaFlavorExtension on LunaFlavor {
   String get name {
     switch (this) {
       case LunaFlavor.EDGE:
-        return 'lunasea.Edge'.tr();
+        return 'thriftwood.Edge'.tr();
       case LunaFlavor.BETA:
-        return 'lunasea.Beta'.tr();
+        return 'thriftwood.Beta'.tr();
       case LunaFlavor.STABLE:
-        return 'lunasea.Stable'.tr();
+        return 'thriftwood.Stable'.tr();
     }
   }
 

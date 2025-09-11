@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 extension LunaRadarrDiskSpaceExtension on RadarrDiskSpace {
   String? get lunaPath {
@@ -18,7 +18,7 @@ extension LunaRadarrDiskSpaceExtension on RadarrDiskSpace {
   int get lunaPercentage {
     int? _percentNumerator = this.freeSpace;
     int? _percentDenominator = this.totalSpace;
-    if (_percentDenominator != null && _percentDenominator != 0) {
+    if (_percentDenominator != 0) {
       int _val = ((_percentNumerator / _percentDenominator) * 100).round();
       return (_val - 100).abs();
     }

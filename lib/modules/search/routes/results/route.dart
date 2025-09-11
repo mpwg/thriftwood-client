@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/search.dart';
-import 'package:lunasea/router/routes/search.dart';
-import 'package:lunasea/widgets/sheets/download_client/button.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/search.dart';
+import 'package:thriftwood/router/routes/search.dart';
+import 'package:thriftwood/widgets/sheets/download_client/button.dart';
 
 class ResultsRoute extends StatefulWidget {
   const ResultsRoute({Key? key}) : super(key: key);
@@ -67,7 +67,7 @@ class _State extends State<ResultsRoute> with LunaScrollControllerMixin {
         .activeSubcategory;
     if (category != null) title = category.name;
     if (category != null && subcategory != null) {
-      title = '$title > ${subcategory.name ?? 'lunasea.Unknown'.tr()}';
+      title = '$title > ${subcategory.name ?? 'thriftwood.Unknown'.tr()}';
     }
     return LunaAppBar(
       title: title,

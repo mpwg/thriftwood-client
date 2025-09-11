@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 part 'sorting_series.g.dart';
 
@@ -154,10 +154,16 @@ class _Sorter {
 
   List<SonarrSeries> _alphabetical(List<SonarrSeries> series, bool ascending) {
     ascending
-        ? series.sort((a, b) =>
-            a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()))
-        : series.sort((a, b) =>
-            b.sortTitle!.toLowerCase().compareTo(a.sortTitle!.toLowerCase()));
+        ? series.sort(
+            (a, b) => a.sortTitle!.toLowerCase().compareTo(
+              b.sortTitle!.toLowerCase(),
+            ),
+          )
+        : series.sort(
+            (a, b) => b.sortTitle!.toLowerCase().compareTo(
+              a.sortTitle!.toLowerCase(),
+            ),
+          );
     return series;
   }
 
@@ -197,10 +203,12 @@ class _Sorter {
   List<SonarrSeries> _network(List<SonarrSeries> series, bool ascending) {
     series.sort((a, b) {
       int _comparison = ascending
-          ? (a.network ?? LunaUI.TEXT_EMDASH)
-              .compareTo((b.network ?? LunaUI.TEXT_EMDASH))
-          : (b.network ?? LunaUI.TEXT_EMDASH)
-              .compareTo((a.network ?? LunaUI.TEXT_EMDASH));
+          ? (a.network ?? LunaUI.TEXT_EMDASH).compareTo(
+              (b.network ?? LunaUI.TEXT_EMDASH),
+            )
+          : (b.network ?? LunaUI.TEXT_EMDASH).compareTo(
+              (a.network ?? LunaUI.TEXT_EMDASH),
+            );
       return _comparison == 0
           ? a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase())
           : _comparison;
@@ -235,7 +243,9 @@ class _Sorter {
   }
 
   List<SonarrSeries> _previousAiring(
-      List<SonarrSeries> series, bool ascending) {
+    List<SonarrSeries> series,
+    bool ascending,
+  ) {
     series.sort((a, b) {
       if (a.previousAiring == null && b.previousAiring == null) {
         if (a.status == 'ended' && b.status != 'ended') return 1;
@@ -276,10 +286,12 @@ class _Sorter {
   List<SonarrSeries> _size(List<SonarrSeries> series, bool ascending) {
     series.sort((a, b) {
       int _comparison = ascending
-          ? (a.statistics?.sizeOnDisk ?? 0)
-              .compareTo(b.statistics?.sizeOnDisk ?? 0)
-          : (b.statistics?.sizeOnDisk ?? 0)
-              .compareTo(a.statistics?.sizeOnDisk ?? 0);
+          ? (a.statistics?.sizeOnDisk ?? 0).compareTo(
+              b.statistics?.sizeOnDisk ?? 0,
+            )
+          : (b.statistics?.sizeOnDisk ?? 0).compareTo(
+              a.statistics?.sizeOnDisk ?? 0,
+            );
       return _comparison == 0
           ? a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase())
           : _comparison;
@@ -291,18 +303,24 @@ class _Sorter {
     List<SonarrSeries> _anime = series
         .where((element) => element.seriesType == SonarrSeriesType.ANIME)
         .toList();
-    _anime.sort((a, b) =>
-        a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()));
+    _anime.sort(
+      (a, b) =>
+          a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()),
+    );
     List<SonarrSeries> _daily = series
         .where((element) => element.seriesType == SonarrSeriesType.DAILY)
         .toList();
-    _daily.sort((a, b) =>
-        a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()));
+    _daily.sort(
+      (a, b) =>
+          a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()),
+    );
     List<SonarrSeries> _stand = series
         .where((element) => element.seriesType == SonarrSeriesType.STANDARD)
         .toList();
-    _stand.sort((a, b) =>
-        a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()));
+    _stand.sort(
+      (a, b) =>
+          a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()),
+    );
     return ascending
         ? [..._anime, ..._daily, ..._stand]
         : [..._stand, ..._daily, ..._anime];

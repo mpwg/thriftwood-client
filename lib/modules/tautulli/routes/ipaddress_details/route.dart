@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class IPDetailsRoute extends StatefulWidget {
   final String? ipAddress;
 
-  const IPDetailsRoute({
-    Key? key,
-    required this.ipAddress,
-  }) : super(key: key);
+  const IPDetailsRoute({Key? key, required this.ipAddress}) : super(key: key);
 
   @override
   State<IPDetailsRoute> createState() => _State();
@@ -61,8 +58,10 @@ class _State extends State<IPDetailsRoute> with LunaScrollControllerMixin {
             return LunaMessage.error(onTap: _refreshKey.currentState!.show);
           }
           if (snapshot.hasData)
-            return _list(snapshot.data![0] as TautulliGeolocationInfo,
-                snapshot.data![1] as TautulliWHOISInfo);
+            return _list(
+              snapshot.data![0] as TautulliGeolocationInfo,
+              snapshot.data![1] as TautulliWHOISInfo,
+            );
           return const LunaLoader();
         },
       ),

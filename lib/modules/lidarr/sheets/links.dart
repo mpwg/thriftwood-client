@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/modules/lidarr/core/api.dart';
-import 'package:lunasea/utils/links.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/extensions/string/links.dart';
+import 'package:thriftwood/modules/lidarr/core/api.dart';
+import 'package:thriftwood/utils/links.dart';
+import 'package:thriftwood/widgets/ui.dart';
 
 class LinksSheet extends LunaBottomModalSheet {
   LidarrCatalogueData artist;
 
-  LinksSheet({
-    required this.artist,
-  });
+  LinksSheet({required this.artist});
 
   @override
   Widget builder(BuildContext context) {
@@ -42,8 +40,9 @@ class LinksSheet extends LunaBottomModalSheet {
         LunaBlock(
           title: 'MusicBrainz',
           leading: const LunaIconButton(icon: LunaIcons.MUSICBRAINZ),
-          onTap:
-              LunaLinkedContent.musicBrainz(artist.foreignArtistID)!.openLink,
+          onTap: LunaLinkedContent.musicBrainz(
+            artist.foreignArtistID,
+          )!.openLink,
         ),
       ],
     );

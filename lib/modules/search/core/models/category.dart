@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/search.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/search.dart';
 
 class NewznabCategoryData {
   int id;
   String? name;
   List<NewznabSubcategoryData> subcategories = [];
 
-  NewznabCategoryData({
-    required this.id,
-    required this.name,
-  });
+  NewznabCategoryData({required this.id, required this.name});
 
   @override
   String toString() => {
-        'id': id,
-        'name': name,
-        'subcatagories': [
-          for (NewznabSubcategoryData subcatagory in subcategories)
-            subcatagory.toString()
-        ],
-      }.toString();
+    'id': id,
+    'name': name,
+    'subcatagories': [
+      for (NewznabSubcategoryData subcatagory in subcategories)
+        subcatagory.toString(),
+    ],
+  }.toString();
 
   IconData get icon {
     if (id >= 1000 && id <= 1999) return Icons.games_rounded;

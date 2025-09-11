@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/radarr/utilities.dart';
-import 'package:lunasea/api/radarr/models/command/command_body.dart';
+import 'package:thriftwood/api/radarr/utilities.dart';
+import 'package:thriftwood/api/radarr/models/command/command_body.dart';
 
 part 'command.g.dart';
 
@@ -27,30 +27,34 @@ class RadarrCommand {
   String? status;
 
   @JsonKey(
-      name: 'queued',
-      toJson: RadarrUtilities.dateTimeToJson,
-      fromJson: RadarrUtilities.dateTimeFromJson)
+    name: 'queued',
+    toJson: RadarrUtilities.dateTimeToJson,
+    fromJson: RadarrUtilities.dateTimeFromJson,
+  )
   DateTime? queued;
 
   @JsonKey(
-      name: 'started',
-      toJson: RadarrUtilities.dateTimeToJson,
-      fromJson: RadarrUtilities.dateTimeFromJson)
+    name: 'started',
+    toJson: RadarrUtilities.dateTimeToJson,
+    fromJson: RadarrUtilities.dateTimeFromJson,
+  )
   DateTime? started;
 
   @JsonKey(
-      name: 'ended',
-      toJson: RadarrUtilities.dateTimeToJson,
-      fromJson: RadarrUtilities.dateTimeFromJson)
+    name: 'ended',
+    toJson: RadarrUtilities.dateTimeToJson,
+    fromJson: RadarrUtilities.dateTimeFromJson,
+  )
   DateTime? ended;
 
   @JsonKey(name: 'trigger')
   String? trigger;
 
   @JsonKey(
-      name: 'stateChangeTime',
-      toJson: RadarrUtilities.dateTimeToJson,
-      fromJson: RadarrUtilities.dateTimeFromJson)
+    name: 'stateChangeTime',
+    toJson: RadarrUtilities.dateTimeToJson,
+    fromJson: RadarrUtilities.dateTimeFromJson,
+  )
   DateTime? stateChangeTime;
 
   @JsonKey(name: 'sendUpdatesToClient')
@@ -60,9 +64,10 @@ class RadarrCommand {
   bool? updateScheduledTask;
 
   @JsonKey(
-      name: 'lastExecutionTime',
-      toJson: RadarrUtilities.dateTimeToJson,
-      fromJson: RadarrUtilities.dateTimeFromJson)
+    name: 'lastExecutionTime',
+    toJson: RadarrUtilities.dateTimeToJson,
+    fromJson: RadarrUtilities.dateTimeFromJson,
+  )
   DateTime? lastExecutionTime;
 
   @JsonKey(name: 'id')

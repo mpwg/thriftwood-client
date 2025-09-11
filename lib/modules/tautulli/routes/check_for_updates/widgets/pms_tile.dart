@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliCheckForUpdatesPMSTile extends StatelessWidget {
   final TautulliPMSUpdate update;
 
-  const TautulliCheckForUpdatesPMSTile({
-    Key? key,
-    required this.update,
-  }) : super(key: key);
+  const TautulliCheckForUpdatesPMSTile({Key? key, required this.update})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +43,8 @@ class TautulliCheckForUpdatesPMSTile extends StatelessWidget {
         ),
       if (!(update.updateAvailable ?? false))
         TextSpan(
-            text: 'Current Version: ${update.version ?? LunaUI.TEXT_EMDASH}'),
+          text: 'Current Version: ${update.version ?? LunaUI.TEXT_EMDASH}',
+        ),
       if (update.updateAvailable ?? false)
         const TextSpan(
           text: 'Update Available',
@@ -56,7 +55,8 @@ class TautulliCheckForUpdatesPMSTile extends StatelessWidget {
         ),
       if (update.updateAvailable ?? false)
         TextSpan(
-            text: 'Latest Version: ${update.version ?? LunaUI.TEXT_EMDASH}'),
+          text: 'Latest Version: ${update.version ?? LunaUI.TEXT_EMDASH}',
+        ),
     ];
   }
 }

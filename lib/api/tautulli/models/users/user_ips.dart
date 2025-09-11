@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'user_ips.g.dart';
 
@@ -10,13 +10,16 @@ part 'user_ips.g.dart';
 class TautulliUserIPs {
   /// Number of filtered records returned.
   @JsonKey(
-      name: 'recordsFiltered',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsFiltered',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsFiltered;
 
   /// Total amount of records.
   @JsonKey(
-      name: 'recordsTotal', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsTotal',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsTotal;
 
   /// _Unknown_
@@ -49,6 +52,6 @@ class TautulliUserIPs {
       .map((ip) => TautulliUserIPRecord.fromJson((ip as Map<String, dynamic>)))
       .toList();
   static List<Map<String, dynamic>>? _ipsToJson(
-          List<TautulliUserIPRecord>? ips) =>
-      ips?.map((ip) => ip.toJson()).toList();
+    List<TautulliUserIPRecord>? ips,
+  ) => ips?.map((ip) => ip.toJson()).toList();
 }

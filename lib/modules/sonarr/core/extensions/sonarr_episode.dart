@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 extension SonarrEpisodeExtension on SonarrEpisode {
   bool _hasAired() {
@@ -12,7 +12,7 @@ extension SonarrEpisodeExtension on SonarrEpisode {
   SonarrEpisode clone() => SonarrEpisode.fromJson(this.toJson());
 
   String lunaAirDate() {
-    if (this.airDateUtc == null) return 'lunasea.UnknownDate'.tr();
+    if (this.airDateUtc == null) return 'thriftwood.UnknownDate'.tr();
     return DateFormat.yMMMMd().format(this.airDateUtc!.toLocal());
   }
 
@@ -32,8 +32,8 @@ extension SonarrEpisodeExtension on SonarrEpisode {
       if (_hasAired()) return 'sonarr.Unaired'.tr();
       return 'sonarr.Missing'.tr();
     }
-    if (file == null) return 'lunasea.Unknown'.tr();
-    String quality = file.quality?.quality?.name ?? 'lunasea.Unknown'.tr();
+    if (file == null) return 'thriftwood.Unknown'.tr();
+    String quality = file.quality?.quality?.name ?? 'thriftwood.Unknown'.tr();
     String size = file.size?.asBytes() ?? '0.00 B';
     return '$quality ${LunaUI.TEXT_EMDASH} $size';
   }
@@ -55,17 +55,13 @@ extension SonarrEpisodeExtension on SonarrEpisode {
     return LunaColours.accent;
   }
 
-  String lunaSeasonEpisode() {
+  String thriftwoodsonEpisode() {
     String season = this.seasonNumber != null
-        ? 'sonarr.SeasonNumber'.tr(
-            args: [this.seasonNumber.toString()],
-          )
-        : 'lunasea.Unknown'.tr();
+        ? 'sonarr.SeasonNumber'.tr(args: [this.seasonNumber.toString()])
+        : 'thriftwood.Unknown'.tr();
     String episode = this.episodeNumber != null
-        ? 'sonarr.EpisodeNumber'.tr(
-            args: [this.episodeNumber.toString()],
-          )
-        : 'lunasea.Unknown'.tr();
+        ? 'sonarr.EpisodeNumber'.tr(args: [this.episodeNumber.toString()])
+        : 'thriftwood.Unknown'.tr();
     return '$season ${LunaUI.TEXT_BULLET} $episode';
   }
 }

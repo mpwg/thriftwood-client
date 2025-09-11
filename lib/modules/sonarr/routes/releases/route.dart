@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/widgets/sheets/download_client/button.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/widgets/sheets/download_client/button.dart';
 
 class ReleasesRoute extends StatefulWidget {
   final int? episodeId;
@@ -46,9 +46,7 @@ class _State extends State<ReleasesRoute> with LunaScrollControllerMixin {
       title: 'sonarr.Releases'.tr(),
       scrollControllers: [scrollController],
       bottom: SonarrReleasesSearchBar(scrollController: scrollController),
-      actions: const [
-        DownloadClientButton(),
-      ],
+      actions: const [DownloadClientButton()],
     );
   }
 
@@ -88,7 +86,7 @@ class _State extends State<ReleasesRoute> with LunaScrollControllerMixin {
         if (releases?.isEmpty ?? true) {
           return LunaMessage(
             text: 'sonarr.NoReleasesFound'.tr(),
-            buttonText: 'lunasea.Refresh'.tr(),
+            buttonText: 'thriftwood.Refresh'.tr(),
             onTap: _refreshKey.currentState!.show,
           );
         }
@@ -115,15 +113,13 @@ class _State extends State<ReleasesRoute> with LunaScrollControllerMixin {
     SonarrReleasesState state,
   ) {
     if (releases.isEmpty) return releases;
-    List<SonarrRelease> filtered = releases.where(
-      (release) {
-        String _query = state.searchQuery;
-        if (_query.isNotEmpty) {
-          return release.title!.toLowerCase().contains(_query.toLowerCase());
-        }
-        return true;
-      },
-    ).toList();
+    List<SonarrRelease> filtered = releases.where((release) {
+      String _query = state.searchQuery;
+      if (_query.isNotEmpty) {
+        return release.title!.toLowerCase().contains(_query.toLowerCase());
+      }
+      return true;
+    }).toList();
     filtered = state.filterType.filter(filtered);
     filtered = state.sortType.sort(filtered, state.sortAscending);
     return filtered;

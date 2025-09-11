@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class HomeNavigationBar extends StatelessWidget {
   final PageController? pageController;
@@ -19,10 +19,8 @@ class HomeNavigationBar extends StatelessWidget {
     Icons.calendar_today_rounded,
   ];
 
-  const HomeNavigationBar({
-    Key? key,
-    required this.pageController,
-  }) : super(key: key);
+  const HomeNavigationBar({Key? key, required this.pageController})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

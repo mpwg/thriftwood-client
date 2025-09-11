@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/tautulli.dart';
-import 'package:lunasea/router/routes/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/tautulli.dart';
+import 'package:thriftwood/router/routes/tautulli.dart';
 
 class TautulliRecentlyAddedContentTile extends StatefulWidget {
   final TautulliRecentlyAdded recentlyAdded;
@@ -24,12 +24,13 @@ class _State extends State<TautulliRecentlyAddedContentTile> {
       title: _title,
       body: _body,
       posterHeaders: context.watch<TautulliState>().headers,
-      posterUrl:
-          context.watch<TautulliState>().getImageURLFromPath(_posterLink),
+      posterUrl: context.watch<TautulliState>().getImageURLFromPath(
+        _posterLink,
+      ),
       backgroundHeaders: context.watch<TautulliState>().headers,
-      backgroundUrl: context
-          .watch<TautulliState>()
-          .getImageURLFromPath(widget.recentlyAdded.art),
+      backgroundUrl: context.watch<TautulliState>().getImageURLFromPath(
+        widget.recentlyAdded.art,
+      ),
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
       onTap: _onTap,
     );
@@ -55,7 +56,7 @@ class _State extends State<TautulliRecentlyAddedContentTile> {
   }
 
   String? get _title {
-    String? title = 'lunasea.Unknown'.tr();
+    String? title = 'thriftwood.Unknown'.tr();
     if (widget.recentlyAdded.title != null &&
         widget.recentlyAdded.title!.isNotEmpty)
       title = widget.recentlyAdded.title;
@@ -79,9 +80,7 @@ class _State extends State<TautulliRecentlyAddedContentTile> {
             TextSpan(text: 'E${widget.recentlyAdded.mediaIndex}: '),
             TextSpan(
               text: widget.recentlyAdded.title,
-              style: const TextStyle(
-                fontStyle: FontStyle.italic,
-              ),
+              style: const TextStyle(fontStyle: FontStyle.italic),
             ),
           ],
         ),
@@ -112,15 +111,18 @@ class _State extends State<TautulliRecentlyAddedContentTile> {
         const TextSpan(text: LunaUI.TEXT_EMDASH),
       TextSpan(text: widget.recentlyAdded.libraryName),
       TextSpan(
-        text: widget.recentlyAdded.addedAt?.asAge() ?? 'lunasea.Unknown'.tr(),
+        text:
+            widget.recentlyAdded.addedAt?.asAge() ?? 'thriftwood.Unknown'.tr(),
       ),
     ];
   }
 
   void _onTap() {
-    TautulliRoutes.MEDIA_DETAILS.go(params: {
-      'rating_key': widget.recentlyAdded.ratingKey.toString(),
-      'media_type': widget.recentlyAdded.mediaType!.value,
-    });
+    TautulliRoutes.MEDIA_DETAILS.go(
+      params: {
+        'rating_key': widget.recentlyAdded.ratingKey.toString(),
+        'media_type': widget.recentlyAdded.mediaType!.value,
+      },
+    );
   }
 }

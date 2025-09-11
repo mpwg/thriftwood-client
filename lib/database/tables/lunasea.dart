@@ -1,16 +1,16 @@
-import 'package:lunasea/database/models/external_module.dart';
-import 'package:lunasea/database/models/indexer.dart';
-import 'package:lunasea/database/models/log.dart';
-import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/types/indexer_icon.dart';
-import 'package:lunasea/types/list_view_option.dart';
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/database/table.dart';
-import 'package:lunasea/types/log_type.dart';
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/database/models/external_module.dart';
+import 'package:thriftwood/database/models/indexer.dart';
+import 'package:thriftwood/database/models/log.dart';
+import 'package:thriftwood/database/models/profile.dart';
+import 'package:thriftwood/types/indexer_icon.dart';
+import 'package:thriftwood/types/list_view_option.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/database/table.dart';
+import 'package:thriftwood/types/log_type.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/widgets/ui.dart';
 
-enum LunaSeaDatabase<T> with LunaTableMixin<T> {
+enum thriftwoodDatabase<T> with LunaTableMixin<T> {
   ANDROID_BACK_OPENS_DRAWER<bool>(true),
   DRAWER_AUTOMATIC_MANAGE<bool>(true),
   DRAWER_MANUAL_ORDER<List>([]),
@@ -32,12 +32,12 @@ enum LunaSeaDatabase<T> with LunaTableMixin<T> {
   CHANGELOG_LAST_BUILD_VERSION<int>(0);
 
   @override
-  LunaTable get table => LunaTable.lunasea;
+  LunaTable get table => LunaTable.thriftwood;
 
   @override
   final T fallback;
 
-  const LunaSeaDatabase(this.fallback);
+  const thriftwoodDatabase(this.fallback);
 
   @override
   void register() {
@@ -53,9 +53,9 @@ enum LunaSeaDatabase<T> with LunaTableMixin<T> {
 
   @override
   dynamic export() {
-    LunaSeaDatabase db = this;
+    thriftwoodDatabase db = this;
     switch (db) {
-      case LunaSeaDatabase.DRAWER_MANUAL_ORDER:
+      case thriftwoodDatabase.DRAWER_MANUAL_ORDER:
         return LunaDrawer.moduleOrderedList()
             .map<String>((module) => module.key)
             .toList();
@@ -66,11 +66,11 @@ enum LunaSeaDatabase<T> with LunaTableMixin<T> {
 
   @override
   void import(dynamic value) {
-    LunaSeaDatabase db = this;
+    thriftwoodDatabase db = this;
     dynamic result;
 
     switch (db) {
-      case LunaSeaDatabase.DRAWER_MANUAL_ORDER:
+      case thriftwoodDatabase.DRAWER_MANUAL_ORDER:
         List<LunaModule> item = [];
         (value as List).cast<String>().forEach((val) {
           LunaModule? module = LunaModule.fromKey(val);

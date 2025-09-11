@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/api/sonarr/models.dart';
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/modules/sonarr/core/state.dart';
-import 'package:lunasea/modules/sonarr/routes/add_series/route.dart';
-import 'package:lunasea/modules/sonarr/routes/add_series_details/route.dart';
-import 'package:lunasea/modules/sonarr/routes/edit_series/route.dart';
-import 'package:lunasea/modules/sonarr/routes/history/route.dart';
-import 'package:lunasea/modules/sonarr/routes/queue/route.dart';
-import 'package:lunasea/modules/sonarr/routes/releases/route.dart';
-import 'package:lunasea/modules/sonarr/routes/season_details/route.dart';
-import 'package:lunasea/modules/sonarr/routes/series_details/route.dart';
-import 'package:lunasea/modules/sonarr/routes/sonarr/route.dart';
-import 'package:lunasea/modules/sonarr/routes/tags/route.dart';
-import 'package:lunasea/router/routes.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/api/sonarr/models.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/modules/sonarr/core/state.dart';
+import 'package:thriftwood/modules/sonarr/routes/add_series/route.dart';
+import 'package:thriftwood/modules/sonarr/routes/add_series_details/route.dart';
+import 'package:thriftwood/modules/sonarr/routes/edit_series/route.dart';
+import 'package:thriftwood/modules/sonarr/routes/history/route.dart';
+import 'package:thriftwood/modules/sonarr/routes/queue/route.dart';
+import 'package:thriftwood/modules/sonarr/routes/releases/route.dart';
+import 'package:thriftwood/modules/sonarr/routes/season_details/route.dart';
+import 'package:thriftwood/modules/sonarr/routes/series_details/route.dart';
+import 'package:thriftwood/modules/sonarr/routes/sonarr/route.dart';
+import 'package:thriftwood/modules/sonarr/routes/tags/route.dart';
+import 'package:thriftwood/router/routes.dart';
+import 'package:thriftwood/vendor.dart';
 
 enum SonarrRoutes with LunaRoutesMixin {
   HOME('/sonarr'),
@@ -46,56 +46,71 @@ enum SonarrRoutes with LunaRoutesMixin {
       case SonarrRoutes.HOME:
         return route(widget: const SonarrRoute());
       case SonarrRoutes.ADD_SERIES:
-        return route(builder: (_, state) {
-          final query = state.uri.queryParameters['query'] ?? '';
-          return AddSeriesRoute(query: query);
-        });
+        return route(
+          builder: (_, state) {
+            final query = state.uri.queryParameters['query'] ?? '';
+            return AddSeriesRoute(query: query);
+          },
+        );
       case SonarrRoutes.ADD_SERIES_DETAILS:
-        return route(builder: (_, state) {
-          final series = state.extra as SonarrSeries?;
-          return AddSeriesDetailsRoute(series: series);
-        });
+        return route(
+          builder: (_, state) {
+            final series = state.extra as SonarrSeries?;
+            return AddSeriesDetailsRoute(series: series);
+          },
+        );
       case SonarrRoutes.HISTORY:
         return route(widget: const HistoryRoute());
       case SonarrRoutes.QUEUE:
         return route(widget: const QueueRoute());
       case SonarrRoutes.RELEASES:
-        return route(builder: (_, state) {
-          final episode =
-              int.tryParse(state.uri.queryParameters['episode'] ?? '');
-          final series =
-              int.tryParse(state.uri.queryParameters['series'] ?? '');
-          final season =
-              int.tryParse(state.uri.queryParameters['season'] ?? '');
-          return ReleasesRoute(
-            episodeId: episode,
-            seriesId: series,
-            seasonNumber: season,
-          );
-        });
+        return route(
+          builder: (_, state) {
+            final episode = int.tryParse(
+              state.uri.queryParameters['episode'] ?? '',
+            );
+            final series = int.tryParse(
+              state.uri.queryParameters['series'] ?? '',
+            );
+            final season = int.tryParse(
+              state.uri.queryParameters['season'] ?? '',
+            );
+            return ReleasesRoute(
+              episodeId: episode,
+              seriesId: series,
+              seasonNumber: season,
+            );
+          },
+        );
       case SonarrRoutes.SERIES:
-        return route(builder: (_, state) {
-          final seriesId =
-              int.tryParse(state.pathParameters['series'] ?? '-1') ?? -1;
-          return SeriesDetailsRoute(seriesId: seriesId);
-        });
+        return route(
+          builder: (_, state) {
+            final seriesId =
+                int.tryParse(state.pathParameters['series'] ?? '-1') ?? -1;
+            return SeriesDetailsRoute(seriesId: seriesId);
+          },
+        );
       case SonarrRoutes.SERIES_EDIT:
-        return route(builder: (_, state) {
-          final seriesId =
-              int.tryParse(state.pathParameters['series'] ?? '-1') ?? -1;
-          return SeriesEditRoute(seriesId: seriesId);
-        });
+        return route(
+          builder: (_, state) {
+            final seriesId =
+                int.tryParse(state.pathParameters['series'] ?? '-1') ?? -1;
+            return SeriesEditRoute(seriesId: seriesId);
+          },
+        );
       case SonarrRoutes.SERIES_SEASON:
-        return route(builder: (_, state) {
-          final seriesId =
-              int.tryParse(state.pathParameters['series'] ?? '-1') ?? -1;
-          final season =
-              int.tryParse(state.pathParameters['season'] ?? '-1') ?? -1;
-          return SeriesSeasonDetailsRoute(
-            seriesId: seriesId,
-            seasonNumber: season,
-          );
-        });
+        return route(
+          builder: (_, state) {
+            final seriesId =
+                int.tryParse(state.pathParameters['series'] ?? '-1') ?? -1;
+            final season =
+                int.tryParse(state.pathParameters['season'] ?? '-1') ?? -1;
+            return SeriesSeasonDetailsRoute(
+              seriesId: seriesId,
+              seasonNumber: season,
+            );
+          },
+        );
       case SonarrRoutes.TAGS:
         return route(widget: const TagsRoute());
     }
@@ -114,9 +129,7 @@ enum SonarrRoutes with LunaRoutesMixin {
           SonarrRoutes.TAGS.routes,
         ];
       case SonarrRoutes.ADD_SERIES:
-        return [
-          SonarrRoutes.ADD_SERIES_DETAILS.routes,
-        ];
+        return [SonarrRoutes.ADD_SERIES_DETAILS.routes];
       case SonarrRoutes.SERIES:
         return [
           SonarrRoutes.SERIES_EDIT.routes,

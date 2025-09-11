@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 part 'sorting_movies.g.dart';
 
@@ -177,10 +177,16 @@ class _Sorter {
 
   List<RadarrMovie> _alphabetical(List<RadarrMovie> series, bool ascending) {
     ascending
-        ? series.sort((a, b) =>
-            a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()))
-        : series.sort((a, b) =>
-            b.sortTitle!.toLowerCase().compareTo(a.sortTitle!.toLowerCase()));
+        ? series.sort(
+            (a, b) => a.sortTitle!.toLowerCase().compareTo(
+              b.sortTitle!.toLowerCase(),
+            ),
+          )
+        : series.sort(
+            (a, b) => b.sortTitle!.toLowerCase().compareTo(
+              a.sortTitle!.toLowerCase(),
+            ),
+          );
     return series;
   }
 
@@ -236,7 +242,9 @@ class _Sorter {
   }
 
   List<RadarrMovie> _minimumAvailability(
-      List<RadarrMovie> movies, bool ascending) {
+    List<RadarrMovie> movies,
+    bool ascending,
+  ) {
     movies.sort((a, b) {
       int? _comparison;
       if (a.minimumAvailability == null) _comparison = 1;
@@ -245,10 +253,12 @@ class _Sorter {
         _comparison = 0;
       if (a.minimumAvailability != null && b.minimumAvailability != null)
         _comparison = ascending
-            ? a.minimumAvailability!.value
-                .compareTo(b.minimumAvailability!.value)
-            : b.minimumAvailability!.value
-                .compareTo(a.minimumAvailability!.value);
+            ? a.minimumAvailability!.value.compareTo(
+                b.minimumAvailability!.value,
+              )
+            : b.minimumAvailability!.value.compareTo(
+                a.minimumAvailability!.value,
+              );
       return _comparison == 0
           ? a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase())
           : _comparison!;
@@ -280,7 +290,8 @@ class _Sorter {
       if (a.runtime == null || a.runtime == 0) _comparison = 1;
       if (b.runtime == null || b.runtime == 0) _comparison = -1;
       if ((a.runtime == null || a.runtime == 0) &&
-          (b.runtime == null || b.runtime == 0)) _comparison = 0;
+          (b.runtime == null || b.runtime == 0))
+        _comparison = 0;
       if (a.runtime != null &&
           b.runtime != null &&
           a.runtime != 0 &&
@@ -325,7 +336,8 @@ class _Sorter {
       if (a.sizeOnDisk == null || a.sizeOnDisk == 0) _comparison = 1;
       if (b.sizeOnDisk == null || b.sizeOnDisk == 0) _comparison = -1;
       if ((a.sizeOnDisk == null || a.sizeOnDisk == 0) &&
-          (b.sizeOnDisk == null || b.sizeOnDisk == 0)) _comparison = 0;
+          (b.sizeOnDisk == null || b.sizeOnDisk == 0))
+        _comparison = 0;
       if (a.sizeOnDisk != null &&
           b.sizeOnDisk != null &&
           a.sizeOnDisk != 0 &&
@@ -346,7 +358,8 @@ class _Sorter {
       if (a.studio == null || a.studio!.isEmpty) _comparison = 1;
       if (b.studio == null || b.studio!.isEmpty) _comparison = -1;
       if ((a.studio == null || a.studio!.isEmpty) &&
-          (b.studio == null || b.studio!.isEmpty)) _comparison = 0;
+          (b.studio == null || b.studio!.isEmpty))
+        _comparison = 0;
       if (a.studio != null &&
           b.studio != null &&
           a.studio!.isNotEmpty &&
@@ -369,8 +382,9 @@ class _Sorter {
       if ((a.year == null || a.year == 0) && (b.year == null || b.year == 0))
         _comparison = 0;
       if (a.year != null && b.year != null && a.year != 0 && b.year != 0)
-        _comparison =
-            ascending ? a.year!.compareTo(b.year!) : b.year!.compareTo(a.year!);
+        _comparison = ascending
+            ? a.year!.compareTo(b.year!)
+            : b.year!.compareTo(a.year!);
       return _comparison == 0
           ? a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase())
           : _comparison!;

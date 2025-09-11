@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/string/links.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrReleasesTile extends StatefulWidget {
   final SonarrRelease release;

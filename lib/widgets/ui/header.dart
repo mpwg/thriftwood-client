@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaHeader extends StatelessWidget {
   final String? text;
   final String? subtitle;
 
-  const LunaHeader({
-    Key? key,
-    required this.text,
-    this.subtitle,
-  }) : super(key: key);
+  const LunaHeader({Key? key, required this.text, this.subtitle})
+    : super(key: key);
 
   Widget _headerText() {
     return Text(

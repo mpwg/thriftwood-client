@@ -37,7 +37,7 @@ build/
 !packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 ios/Flutter/.last_build_id
 
-# LunaSea
+# thriftwood
 output/
 *.packages
 coverage/
@@ -46,9 +46,9 @@ lib/system/environment.dart
 # XCode Build Artifacts
 ios/build/
 ios/Runner.app.dSYM.zip
-macos/LunaSea.app
-macos/LunaSea.app.dSYM.zip
-macos/LunaSea.app.zip
+macos/thriftwood.app
+macos/thriftwood.app.dSYM.zip
+macos/thriftwood.app.zip
 
 # Fastlane
 android/fastlane/report.xml
@@ -77,5 +77,5 @@ output/
 
 # Linux Artifacts
 debian/DEBIAN/md5sums
-debian/usr/share/lunasea
+debian/usr/share/thriftwood
 *.snap

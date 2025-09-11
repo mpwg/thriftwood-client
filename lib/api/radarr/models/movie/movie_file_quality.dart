@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/radarr/models.dart';
+import 'package:thriftwood/api/radarr/models.dart';
 
 part 'movie_file_quality.g.dart';
 
@@ -13,10 +13,7 @@ class RadarrMovieFileQuality {
   @JsonKey(name: 'revision')
   RadarrQualityRevision? revision;
 
-  RadarrMovieFileQuality({
-    this.quality,
-    this.revision,
-  });
+  RadarrMovieFileQuality({this.quality, this.revision});
 
   /// Returns a JSON-encoded string version of this object.
   @override

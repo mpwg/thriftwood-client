@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 part 'sorting_releases.g.dart';
 
@@ -110,12 +110,16 @@ class _Sorter {
   }
 
   List<SonarrRelease> _alphabetical(
-      List<SonarrRelease> releases, bool ascending) {
+    List<SonarrRelease> releases,
+    bool ascending,
+  ) {
     ascending
         ? releases.sort(
-            (a, b) => a.title!.toLowerCase().compareTo(b.title!.toLowerCase()))
+            (a, b) => a.title!.toLowerCase().compareTo(b.title!.toLowerCase()),
+          )
         : releases.sort(
-            (a, b) => b.title!.toLowerCase().compareTo(a.title!.toLowerCase()));
+            (a, b) => b.title!.toLowerCase().compareTo(a.title!.toLowerCase()),
+          );
     return releases;
   }
 
@@ -128,43 +132,53 @@ class _Sorter {
 
   List<SonarrRelease> _seeders(List<SonarrRelease> releases, bool ascending) {
     List<SonarrRelease> _torrent = _weight(
-        releases
-            .where((release) => release.protocol == SonarrProtocol.TORRENT)
-            .toList(),
-        true);
+      releases
+          .where((release) => release.protocol == SonarrProtocol.TORRENT)
+          .toList(),
+      true,
+    );
     List<SonarrRelease> _usenet = _weight(
-        releases
-            .where((release) => release.protocol == SonarrProtocol.USENET)
-            .toList(),
-        true);
+      releases
+          .where((release) => release.protocol == SonarrProtocol.USENET)
+          .toList(),
+      true,
+    );
     ascending
-        ? _torrent
-            .sort((a, b) => (a.seeders ?? -1).compareTo((b.seeders ?? -1)))
-        : _torrent
-            .sort((a, b) => (b.seeders ?? -1).compareTo((a.seeders ?? -1)));
+        ? _torrent.sort(
+            (a, b) => (a.seeders ?? -1).compareTo((b.seeders ?? -1)),
+          )
+        : _torrent.sort(
+            (a, b) => (b.seeders ?? -1).compareTo((a.seeders ?? -1)),
+          );
     return [..._torrent, ..._usenet];
   }
 
   List<SonarrRelease> _weight(List<SonarrRelease> releases, bool ascending) {
     ascending
-        ? releases.sort((a, b) =>
-            (a.releaseWeight ?? -1).compareTo((b.releaseWeight ?? -1)))
-        : releases.sort((a, b) =>
-            (b.releaseWeight ?? -1).compareTo((a.releaseWeight ?? -1)));
+        ? releases.sort(
+            (a, b) =>
+                (a.releaseWeight ?? -1).compareTo((b.releaseWeight ?? -1)),
+          )
+        : releases.sort(
+            (a, b) =>
+                (b.releaseWeight ?? -1).compareTo((a.releaseWeight ?? -1)),
+          );
     return releases;
   }
 
   List<SonarrRelease> _type(List<SonarrRelease> releases, bool ascending) {
     List<SonarrRelease> _torrent = _weight(
-        releases
-            .where((release) => release.protocol == SonarrProtocol.TORRENT)
-            .toList(),
-        true);
+      releases
+          .where((release) => release.protocol == SonarrProtocol.TORRENT)
+          .toList(),
+      true,
+    );
     List<SonarrRelease> _usenet = _weight(
-        releases
-            .where((release) => release.protocol == SonarrProtocol.USENET)
-            .toList(),
-        true);
+      releases
+          .where((release) => release.protocol == SonarrProtocol.USENET)
+          .toList(),
+      true,
+    );
     return ascending ? [..._torrent, ..._usenet] : [..._usenet, ..._torrent];
   }
 
@@ -177,10 +191,16 @@ class _Sorter {
 
   List<SonarrRelease> _wordScore(List<SonarrRelease> releases, bool ascending) {
     ascending
-        ? releases.sort((a, b) =>
-            (b.preferredWordScore ?? 0).compareTo((a.preferredWordScore ?? 0)))
-        : releases.sort((a, b) =>
-            (a.preferredWordScore ?? 0).compareTo((b.preferredWordScore ?? 0)));
+        ? releases.sort(
+            (a, b) => (b.preferredWordScore ?? 0).compareTo(
+              (a.preferredWordScore ?? 0),
+            ),
+          )
+        : releases.sort(
+            (a, b) => (a.preferredWordScore ?? 0).compareTo(
+              (b.preferredWordScore ?? 0),
+            ),
+          );
     return releases;
   }
 }

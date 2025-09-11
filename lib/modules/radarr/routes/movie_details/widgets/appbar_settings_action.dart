@@ -1,15 +1,13 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrAppBarMovieSettingsAction extends StatelessWidget {
   final int movieId;
 
-  const RadarrAppBarMovieSettingsAction({
-    Key? key,
-    required this.movieId,
-  }) : super(key: key);
+  const RadarrAppBarMovieSettingsAction({Key? key, required this.movieId})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

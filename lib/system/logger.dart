@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/models/log.dart';
-import 'package:lunasea/types/exception.dart';
-import 'package:lunasea/types/log_type.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/models/log.dart';
+import 'package:thriftwood/types/exception.dart';
+import 'package:thriftwood/types/log_type.dart';
 
 class LunaLogger {
-  static String get checkLogsMessage => 'lunasea.CheckLogsMessage'.tr();
+  static String get checkLogsMessage => 'thriftwood.CheckLogsMessage'.tr();
 
   void initialize() {
     FlutterError.onError = (details) async {

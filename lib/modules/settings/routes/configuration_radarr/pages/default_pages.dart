@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class ConfigurationRadarrDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationRadarrDefaultPagesRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationRadarrDefaultPagesRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationRadarrDefaultPagesRoute> createState() => _State();
@@ -91,8 +89,9 @@ class _State extends State<ConfigurationRadarrDefaultPagesRoute>
       builder: (context, _) => LunaBlock(
         title: 'radarr.AddMovie'.tr(),
         body: [TextSpan(text: RadarrAddMovieNavigationBar.titles[_db.read()])],
-        trailing:
-            LunaIconButton(icon: RadarrAddMovieNavigationBar.icons[_db.read()]),
+        trailing: LunaIconButton(
+          icon: RadarrAddMovieNavigationBar.icons[_db.read()],
+        ),
         onTap: () async {
           Tuple2<bool, int> values = await RadarrDialogs().setDefaultPage(
             context,

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/sabnzbd/models/server.dart';
+import 'package:thriftwood/api/sabnzbd/models/server.dart';
 
 part 'server_stats.g.dart';
 

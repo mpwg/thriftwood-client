@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/database.dart';
-import 'package:lunasea/database/models/external_module.dart';
-import 'package:lunasea/database/models/indexer.dart';
-import 'package:lunasea/database/table.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/database.dart';
+import 'package:thriftwood/database/models/external_module.dart';
+import 'package:thriftwood/database/models/indexer.dart';
+import 'package:thriftwood/database/table.dart';
 
 class LunaConfig {
   Future<void> import(BuildContext context, String data) async {
@@ -17,8 +17,8 @@ class LunaConfig {
       _setExternalModules(config[LunaBox.externalModules.key]);
       for (final table in LunaTable.values) table.import(config[table.key]);
 
-      if (!LunaProfile.list.contains(LunaSeaDatabase.ENABLED_PROFILE.read())) {
-        LunaSeaDatabase.ENABLED_PROFILE.update(LunaProfile.list[0]);
+      if (!LunaProfile.list.contains(thriftwoodDatabase.ENABLED_PROFILE.read())) {
+        thriftwoodDatabase.ENABLED_PROFILE.update(LunaProfile.list[0]);
       }
     } catch (error, stack) {
       await LunaDatabase().bootstrap();

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/modules/sabnzbd/core/api/data/history.dart';
-import 'package:lunasea/modules/sabnzbd/routes/history_stages.dart';
-import 'package:lunasea/modules/sabnzbd/routes/sabnzbd.dart';
-import 'package:lunasea/modules/sabnzbd/routes/statistics.dart';
-import 'package:lunasea/router/routes.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/modules/sabnzbd/core/api/data/history.dart';
+import 'package:thriftwood/modules/sabnzbd/routes/history_stages.dart';
+import 'package:thriftwood/modules/sabnzbd/routes/sabnzbd.dart';
+import 'package:thriftwood/modules/sabnzbd/routes/statistics.dart';
+import 'package:thriftwood/router/routes.dart';
+import 'package:thriftwood/vendor.dart';
 
 enum SABnzbdRoutes with LunaRoutesMixin {
   HOME('/sabnzbd'),
@@ -31,10 +31,12 @@ enum SABnzbdRoutes with LunaRoutesMixin {
       case SABnzbdRoutes.STATISTICS:
         return route(widget: const StatisticsRoute());
       case SABnzbdRoutes.HISTORY_STAGES:
-        return route(builder: (_, state) {
-          final history = state.extra as SABnzbdHistoryData?;
-          return HistoryStagesRoute(history: history);
-        });
+        return route(
+          builder: (_, state) {
+            final history = state.extra as SABnzbdHistoryData?;
+            return HistoryStagesRoute(history: history);
+          },
+        );
     }
   }
 

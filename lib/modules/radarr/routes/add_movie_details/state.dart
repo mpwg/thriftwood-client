@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrAddMovieDetailsState extends ChangeNotifier {
   final bool isDiscovery;
   final RadarrMovie movie;
   bool canExecuteAction = false;
 
-  RadarrAddMovieDetailsState({
-    required this.movie,
-    required this.isDiscovery,
-  });
+  RadarrAddMovieDetailsState({required this.movie, required this.isDiscovery});
 
   bool _monitored = RadarrDatabase.ADD_MOVIE_DEFAULT_MONITORED_STATE.read();
   bool get monitored => _monitored;
@@ -24,8 +21,9 @@ class RadarrAddMovieDetailsState extends ChangeNotifier {
   RadarrAvailability get availability => _availability;
   set availability(RadarrAvailability availability) {
     _availability = availability;
-    RadarrDatabase.ADD_MOVIE_DEFAULT_MINIMUM_AVAILABILITY_ID
-        .update(_availability.value);
+    RadarrDatabase.ADD_MOVIE_DEFAULT_MINIMUM_AVAILABILITY_ID.update(
+      _availability.value,
+    );
     notifyListeners();
   }
 
@@ -65,8 +63,9 @@ class RadarrAddMovieDetailsState extends ChangeNotifier {
   RadarrQualityProfile get qualityProfile => _qualityProfile;
   set qualityProfile(RadarrQualityProfile qualityProfile) {
     _qualityProfile = qualityProfile;
-    RadarrDatabase.ADD_MOVIE_DEFAULT_QUALITY_PROFILE_ID
-        .update(_qualityProfile.id);
+    RadarrDatabase.ADD_MOVIE_DEFAULT_QUALITY_PROFILE_ID.update(
+      _qualityProfile.id,
+    );
     notifyListeners();
   }
 
@@ -85,15 +84,18 @@ class RadarrAddMovieDetailsState extends ChangeNotifier {
   List<RadarrTag> get tags => _tags;
   set tags(List<RadarrTag> tags) {
     _tags = tags;
-    RadarrDatabase.ADD_MOVIE_DEFAULT_TAGS
-        .update(tags.map<int?>((tag) => tag.id).toList());
+    RadarrDatabase.ADD_MOVIE_DEFAULT_TAGS.update(
+      tags.map<int?>((tag) => tag.id).toList(),
+    );
     notifyListeners();
   }
 
   void initializeTags(List<RadarrTag>? tags) {
     _tags = (tags ?? [])
-        .where((tag) =>
-            RadarrDatabase.ADD_MOVIE_DEFAULT_TAGS.read().contains(tag.id))
+        .where(
+          (tag) =>
+              RadarrDatabase.ADD_MOVIE_DEFAULT_TAGS.read().contains(tag.id),
+        )
         .toList();
   }
 

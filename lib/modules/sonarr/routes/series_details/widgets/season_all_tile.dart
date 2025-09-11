@@ -1,32 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/router/routes/sonarr.dart';
 
 class SonarrSeriesDetailsSeasonAllTile extends StatelessWidget {
   final SonarrSeries? series;
 
-  const SonarrSeriesDetailsSeasonAllTile({
-    Key? key,
-    required this.series,
-  }) : super(key: key);
+  const SonarrSeriesDetailsSeasonAllTile({Key? key, required this.series})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LunaBlock(
       title: 'sonarr.AllSeasons'.tr(),
       disabled: !series!.monitored!,
-      body: [
-        _subtitle1(),
-        _subtitle2(),
-      ],
+      body: [_subtitle1(), _subtitle2()],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        SonarrRoutes.SERIES_SEASON.go(params: {
-          'series': (series?.id ?? -1).toString(),
-          'season': '-1',
-        });
+        SonarrRoutes.SERIES_SEASON.go(
+          params: {'series': (series?.id ?? -1).toString(), 'season': '-1'},
+        );
       },
     );
   }

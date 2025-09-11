@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/duration/timestamp.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/duration/timestamp.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliLibrariesDetailsInformationGlobalStats extends StatelessWidget {
   final List<TautulliLibraryWatchTimeStats> watchtime;

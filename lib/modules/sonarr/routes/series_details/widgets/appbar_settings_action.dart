@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrAppBarSeriesSettingsAction extends StatelessWidget {
   final int seriesId;
 
-  const SonarrAppBarSeriesSettingsAction({
-    Key? key,
-    required this.seriesId,
-  }) : super(key: key);
+  const SonarrAppBarSeriesSettingsAction({Key? key, required this.seriesId})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

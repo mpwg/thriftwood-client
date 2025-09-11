@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/modules/radarr.dart';
-import 'package:lunasea/router/routes/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/extensions/string/links.dart';
+import 'package:thriftwood/modules/radarr.dart';
+import 'package:thriftwood/router/routes/radarr.dart';
 
 class RadarrAddMovieDiscoveryResultTile extends StatefulWidget {
   final RadarrMovie movie;
@@ -64,9 +64,7 @@ class _State extends State<RadarrAddMovieDiscoveryResultTile> {
             fontSize: LunaUI.FONT_SIZE_H3,
             color: LunaColours.grey,
           ),
-          children: [
-            LunaTextSpan.extended(text: summary),
-          ],
+          children: [LunaTextSpan.extended(text: summary)],
         ),
         overflow: TextOverflow.ellipsis,
         maxLines: 2,
@@ -76,12 +74,16 @@ class _State extends State<RadarrAddMovieDiscoveryResultTile> {
 
   Future<void> _onTap() async {
     if (widget.onTapShowOverview) {
-      LunaDialogs().textPreview(context, widget.movie.title,
-          widget.movie.overview ?? 'radarr.NoSummaryIsAvailable'.tr());
+      LunaDialogs().textPreview(
+        context,
+        widget.movie.title,
+        widget.movie.overview ?? 'radarr.NoSummaryIsAvailable'.tr(),
+      );
     } else {
-      RadarrRoutes.ADD_MOVIE_DETAILS.go(extra: widget.movie, queryParams: {
-        'isDiscovery': 'true',
-      });
+      RadarrRoutes.ADD_MOVIE_DETAILS.go(
+        extra: widget.movie,
+        queryParams: {'isDiscovery': 'true'},
+      );
     }
   }
 

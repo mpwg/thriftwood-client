@@ -1,4 +1,4 @@
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 part 'metadata.g.dart';
 
@@ -9,8 +9,5 @@ class LidarrMetadataProfile {
   @HiveField(1)
   String? name;
 
-  LidarrMetadataProfile({
-    required this.id,
-    required this.name,
-  });
+  LidarrMetadataProfile({required this.id, required this.name});
 }

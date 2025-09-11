@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SeriesSeasonDetailsRoute extends StatefulWidget {
   final int seriesId;
@@ -34,8 +34,9 @@ class _State extends State<SeriesSeasonDetailsRoute>
     return LunaScaffold(
       scaffoldKey: _scaffoldKey,
       appBar: _appBar() as PreferredSizeWidget?,
-      bottomNavigationBar:
-          context.watch<SonarrState>().enabled ? _bottomNavigationBar() : null,
+      bottomNavigationBar: context.watch<SonarrState>().enabled
+          ? _bottomNavigationBar()
+          : null,
       body: _body(),
     );
   }
@@ -50,8 +51,9 @@ class _State extends State<SeriesSeasonDetailsRoute>
         _season = 'sonarr.Specials'.tr();
         break;
       default:
-        _season =
-            'sonarr.SeasonNumber'.tr(args: [widget.seasonNumber.toString()]);
+        _season = 'sonarr.SeasonNumber'.tr(
+          args: [widget.seasonNumber.toString()],
+        );
         break;
     }
     return LunaAppBar(

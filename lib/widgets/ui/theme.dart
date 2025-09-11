@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaTheme {
   /// Initialize the theme by setting the system navigation and system colours.
@@ -15,8 +15,8 @@ class LunaTheme {
     return isAMOLEDTheme ? _pureBlackTheme() : _midnightTheme();
   }
 
-  static bool get isAMOLEDTheme => LunaSeaDatabase.THEME_AMOLED.read();
-  static bool get useBorders => LunaSeaDatabase.THEME_AMOLED_BORDER.read();
+  static bool get isAMOLEDTheme => thriftwoodDatabase.THEME_AMOLED.read();
+  static bool get useBorders => thriftwoodDatabase.THEME_AMOLED_BORDER.read();
 
   /// Midnight theme (Default)
   ThemeData _midnightTheme() {
@@ -29,12 +29,8 @@ class LunaTheme {
       cardColor: LunaColours.secondary,
       hoverColor: LunaColours.accent.withOpacity(LunaUI.OPACITY_SPLASH / 2),
       splashColor: LunaColours.accent.withOpacity(LunaUI.OPACITY_SPLASH),
-      dialogTheme: DialogThemeData(
-        backgroundColor: LunaColours.secondary,
-      ),
-      iconTheme: const IconThemeData(
-        color: Colors.white,
-      ),
+      dialogTheme: DialogThemeData(backgroundColor: LunaColours.secondary),
+      iconTheme: const IconThemeData(color: Colors.white),
       tooltipTheme: const TooltipThemeData(
         decoration: BoxDecoration(
           color: LunaColours.secondary,
@@ -64,12 +60,8 @@ class LunaTheme {
       cardColor: Colors.black,
       hoverColor: LunaColours.accent.withOpacity(LunaUI.OPACITY_SPLASH / 2),
       splashColor: LunaColours.accent.withOpacity(LunaUI.OPACITY_SPLASH),
-      dialogTheme: DialogThemeData(
-        backgroundColor: Colors.black,
-      ),
-      iconTheme: const IconThemeData(
-        color: Colors.white,
-      ),
+      dialogTheme: DialogThemeData(backgroundColor: Colors.black),
+      iconTheme: const IconThemeData(color: Colors.white),
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
           color: Colors.black,
@@ -93,10 +85,10 @@ class LunaTheme {
 
   SystemUiOverlayStyle get overlayStyle {
     return SystemUiOverlayStyle(
-      systemNavigationBarColor: LunaSeaDatabase.THEME_AMOLED.read()
+      systemNavigationBarColor: thriftwoodDatabase.THEME_AMOLED.read()
           ? Colors.black
           : LunaColours.secondary,
-      systemNavigationBarDividerColor: LunaSeaDatabase.THEME_AMOLED.read()
+      systemNavigationBarDividerColor: thriftwoodDatabase.THEME_AMOLED.read()
           ? Colors.black
           : LunaColours.secondary,
       statusBarColor: Colors.transparent,

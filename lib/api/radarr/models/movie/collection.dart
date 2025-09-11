@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/radarr/models.dart';
+import 'package:thriftwood/api/radarr/models.dart';
 
 part 'collection.g.dart';
 
@@ -16,11 +16,7 @@ class RadarrMovieCollection {
   @JsonKey(name: 'images')
   List<RadarrImage>? images;
 
-  RadarrMovieCollection({
-    this.name,
-    this.tmdbId,
-    this.images,
-  });
+  RadarrMovieCollection({this.name, this.tmdbId, this.images});
 
   /// Returns a JSON-encoded string version of this object.
   @override

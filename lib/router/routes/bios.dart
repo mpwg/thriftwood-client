@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/database/tables/bios.dart';
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/router/routes.dart';
-import 'package:lunasea/router/routes/dashboard.dart';
-import 'package:lunasea/system/bios.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/database/tables/bios.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/router/routes.dart';
+import 'package:thriftwood/router/routes/dashboard.dart';
+import 'package:thriftwood/system/bios.dart';
+import 'package:thriftwood/vendor.dart';
 
 enum BIOSRoutes with LunaRoutesMixin {
   HOME('/');
@@ -24,12 +24,14 @@ enum BIOSRoutes with LunaRoutesMixin {
   GoRoute get routes {
     switch (this) {
       case BIOSRoutes.HOME:
-        return redirect(redirect: (context, _) {
-          LunaOS().boot(context);
+        return redirect(
+          redirect: (context, _) {
+            LunaOS().boot(context);
 
-          final fallback = DashboardRoutes.HOME.path;
-          return BIOSDatabase.BOOT_MODULE.read().homeRoute ?? fallback;
-        });
+            final fallback = DashboardRoutes.HOME.path;
+            return BIOSDatabase.BOOT_MODULE.read().homeRoute ?? fallback;
+          },
+        );
     }
   }
 }

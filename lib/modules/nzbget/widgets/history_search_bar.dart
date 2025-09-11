@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/nzbget.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/nzbget.dart';
 
 class NZBGetHistorySearchBar extends StatefulWidget {
   final ScrollController scrollController;
 
-  const NZBGetHistorySearchBar({
-    Key? key,
-    required this.scrollController,
-  }) : super(key: key);
+  const NZBGetHistorySearchBar({Key? key, required this.scrollController})
+    : super(key: key);
 
   @override
   State<NZBGetHistorySearchBar> createState() => _State();

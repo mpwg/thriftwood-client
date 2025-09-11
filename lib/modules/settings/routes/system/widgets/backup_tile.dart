@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/config.dart';
-import 'package:lunasea/system/filesystem/filesystem.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/config.dart';
+import 'package:thriftwood/system/filesystem/filesystem.dart';
 
 class SettingsSystemBackupRestoreBackupTile extends StatelessWidget {
-  const SettingsSystemBackupRestoreBackupTile({
-    Key? key,
-  }) : super(key: key);
+  const SettingsSystemBackupRestoreBackupTile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +23,13 @@ class SettingsSystemBackupRestoreBackupTile extends StatelessWidget {
       String name = DateFormat('y-MM-dd kk-mm-ss').format(DateTime.now());
       bool result = await LunaFileSystem().save(
         context,
-        '$name.lunasea',
+        '$name.thriftwood',
         data.codeUnits,
       );
       if (result) {
         showLunaSuccessSnackBar(
           title: 'settings.BackupToCloudSuccess'.tr(),
-          message: '$name.lunasea',
+          message: '$name.thriftwood',
         );
       }
     } catch (error, stack) {

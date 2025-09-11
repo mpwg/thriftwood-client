@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliHistoryRoute extends StatefulWidget {
-  const TautulliHistoryRoute({
-    Key? key,
-  }) : super(key: key);
+  const TautulliHistoryRoute({Key? key}) : super(key: key);
 
   @override
   State<TautulliHistoryRoute> createState() => _State();

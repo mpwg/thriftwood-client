@@ -1,4 +1,4 @@
-import 'package:lunasea/modules/lidarr.dart';
+import 'package:thriftwood/modules/lidarr.dart';
 
 enum LidarrCatalogueSorting {
   alphabetical,
@@ -54,11 +54,7 @@ extension LidarrCatalogueSortingExtension on LidarrCatalogueSorting {
 }
 
 class _Sorter {
-  List byType(
-    List data,
-    LidarrCatalogueSorting type,
-    bool ascending,
-  ) {
+  List byType(List data, LidarrCatalogueSorting type, bool ascending) {
     switch (type) {
       case LidarrCatalogueSorting.alphabetical:
         return _alphabetical(data, ascending);
@@ -87,10 +83,12 @@ class _Sorter {
 
   List<LidarrCatalogueData> _dateAdded(List data, bool ascending) {
     List<LidarrCatalogueData> _data = _alphabetical(data, true);
-    List<LidarrCatalogueData> _hasNoDate =
-        _data.where((item) => item.dateAddedObject == null).toList();
-    List<LidarrCatalogueData> _hasDate =
-        _data.where((item) => item.dateAddedObject != null).toList();
+    List<LidarrCatalogueData> _hasNoDate = _data
+        .where((item) => item.dateAddedObject == null)
+        .toList();
+    List<LidarrCatalogueData> _hasDate = _data
+        .where((item) => item.dateAddedObject != null)
+        .toList();
     _hasDate.sort((a, b) {
       return ascending
           ? a.dateAddedObject!.compareTo(b.dateAddedObject!)
@@ -119,18 +117,25 @@ class _Sorter {
     List<LidarrCatalogueData> _data = _alphabetical(data, true);
     ascending
         ? _data.sort((a, b) => a.metadataProfile!.compareTo(b.metadataProfile!))
-        : _data
-            .sort((a, b) => b.metadataProfile!.compareTo(a.metadataProfile!));
+        : _data.sort(
+            (a, b) => b.metadataProfile!.compareTo(a.metadataProfile!),
+          );
     return _data;
   }
 
   List<LidarrCatalogueData> _tracks(List data, bool ascending) {
     List<LidarrCatalogueData> _data = List.from(data, growable: false);
     ascending
-        ? _data.sort((a, b) => a.statistics['percentOfTracks']
-            .compareTo(b.statistics['percentOfTracks']))
-        : _data.sort((a, b) => b.statistics['percentOfTracks']
-            .compareTo(a.statistics['percentOfTracks']));
+        ? _data.sort(
+            (a, b) => a.statistics['percentOfTracks'].compareTo(
+              b.statistics['percentOfTracks'],
+            ),
+          )
+        : _data.sort(
+            (a, b) => b.statistics['percentOfTracks'].compareTo(
+              a.statistics['percentOfTracks'],
+            ),
+          );
     return _data;
   }
 

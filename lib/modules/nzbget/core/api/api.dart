@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/nzbget.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/nzbget.dart';
 
 class NZBGetAPI {
   final Dio _dio;
@@ -37,17 +37,12 @@ class NZBGetAPI {
     });
   }
 
-  Future<dynamic> testConnection() async => _dio.post(
-        '',
-        data: getBody('version'),
-      );
+  Future<dynamic> testConnection() async =>
+      _dio.post('', data: getBody('version'));
 
   Future<NZBGetStatusData> getStatus() async {
     try {
-      Response response = await _dio.post(
-        '',
-        data: getBody('status'),
-      );
+      Response response = await _dio.post('', data: getBody('status'));
       return NZBGetStatusData(
         paused: response.data['result']['DownloadPaused'] ?? true,
         speed: response.data['result']['DownloadRate'] ?? 0,
@@ -63,10 +58,7 @@ class NZBGetAPI {
 
   Future<NZBGetStatisticsData> getStatistics() async {
     try {
-      Response response = await _dio.post(
-        '',
-        data: getBody('status'),
-      );
+      Response response = await _dio.post('', data: getBody('status'));
       return NZBGetStatisticsData(
         freeSpaceHigh: response.data['result']['FreeDiskSpaceHi'] ?? 0,
         freeSpaceLow: response.data['result']['FreeDiskSpaceLo'] ?? 0,
@@ -91,22 +83,18 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody(
-          'log',
-          params: [
-            0,
-            amount,
-          ],
-        ),
+        data: getBody('log', params: [0, amount]),
       );
       List<NZBGetLogData> _entries = [];
       for (var entry in response.data['result']) {
-        _entries.add(NZBGetLogData(
-          id: entry['ID'],
-          kind: entry['Kind'],
-          time: entry['Time'],
-          text: entry['Text'],
-        ));
+        _entries.add(
+          NZBGetLogData(
+            id: entry['ID'],
+            kind: entry['Kind'],
+            time: entry['Time'],
+            text: entry['Text'],
+          ),
+        );
       }
       return _entries;
     } on DioException catch (error, stack) {
@@ -120,10 +108,7 @@ class NZBGetAPI {
 
   Future<List<NZBGetQueueData>> getQueue(int speed, int limit) async {
     try {
-      Response response = await _dio.post(
-        '',
-        data: getBody('listgroups'),
-      );
+      Response response = await _dio.post('', data: getBody('listgroups'));
       List<NZBGetQueueData> _entries = [];
       int queueSeconds = 0;
       for (int i = 0; i < min(limit, response.data['result'].length); i++) {
@@ -156,25 +141,24 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody(
-          'history',
-          params: [hidden],
-        ),
+        data: getBody('history', params: [hidden]),
       );
       List<NZBGetHistoryData> _entries = [];
       for (var entry in response.data['result']) {
-        _entries.add(NZBGetHistoryData(
-          id: entry['NZBID'] ?? -1,
-          name: entry['Name'] ?? 'Unknown',
-          status: entry['Status'] ?? 'Unkown',
-          timestamp: entry['HistoryTime'] ?? -1,
-          downloadedLow: entry['FileSizeLo'] ?? 0,
-          downloadedHigh: entry['FileSizeHi'] ?? 0,
-          category: entry['Category'] ?? 'Unknown',
-          storageLocation: entry['DestDir'] ?? 'Unknown',
-          downloadTime: entry['DownloadTimeSec'] ?? 0,
-          health: entry['Health'] ?? 0,
-        ));
+        _entries.add(
+          NZBGetHistoryData(
+            id: entry['NZBID'] ?? -1,
+            name: entry['Name'] ?? 'Unknown',
+            status: entry['Status'] ?? 'Unkown',
+            timestamp: entry['HistoryTime'] ?? -1,
+            downloadedLow: entry['FileSizeLo'] ?? 0,
+            downloadedHigh: entry['FileSizeHi'] ?? 0,
+            category: entry['Category'] ?? 'Unknown',
+            storageLocation: entry['DestDir'] ?? 'Unknown',
+            downloadTime: entry['DownloadTimeSec'] ?? 0,
+            health: entry['Health'] ?? 0,
+          ),
+        );
       }
       return _entries;
     } on DioException catch (error, stack) {
@@ -188,10 +172,7 @@ class NZBGetAPI {
 
   Future<bool> pauseQueue() async {
     try {
-      Response response = await _dio.post(
-        '',
-        data: getBody('pausedownload'),
-      );
+      Response response = await _dio.post('', data: getBody('pausedownload'));
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
       throw (Error());
@@ -209,10 +190,7 @@ class NZBGetAPI {
       await pauseQueue();
       Response response = await _dio.post(
         '',
-        data: getBody(
-          'scheduleresume',
-          params: [minutes * 60],
-        ),
+        data: getBody('scheduleresume', params: [minutes * 60]),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
@@ -228,10 +206,7 @@ class NZBGetAPI {
 
   Future<bool> resumeQueue() async {
     try {
-      Response response = await _dio.post(
-        '',
-        data: getBody('resumedownload'),
-      );
+      Response response = await _dio.post('', data: getBody('resumedownload'));
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
       throw (Error());
@@ -248,11 +223,14 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          'GroupMoveOffset',
-          '$offset',
-          [id],
-        ]),
+        data: getBody(
+          'editqueue',
+          params: [
+            'GroupMoveOffset',
+            '$offset',
+            [id],
+          ],
+        ),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
@@ -270,11 +248,14 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          'GroupPause',
-          '',
-          [id],
-        ]),
+        data: getBody(
+          'editqueue',
+          params: [
+            'GroupPause',
+            '',
+            [id],
+          ],
+        ),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
@@ -292,11 +273,14 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          'GroupResume',
-          '',
-          [id],
-        ]),
+        data: getBody(
+          'editqueue',
+          params: [
+            'GroupResume',
+            '',
+            [id],
+          ],
+        ),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
@@ -314,11 +298,14 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          'GroupFinalDelete',
-          '',
-          [id],
-        ]),
+        data: getBody(
+          'editqueue',
+          params: [
+            'GroupFinalDelete',
+            '',
+            [id],
+          ],
+        ),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
@@ -336,11 +323,14 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          'GroupSetName',
-          name,
-          [id],
-        ]),
+        data: getBody(
+          'editqueue',
+          params: [
+            'GroupSetName',
+            name,
+            [id],
+          ],
+        ),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
@@ -358,22 +348,31 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          'GroupSetPriority',
-          '${priority.value}',
-          [id],
-        ]),
+        data: getBody(
+          'editqueue',
+          params: [
+            'GroupSetPriority',
+            '${priority.value}',
+            [id],
+          ],
+        ),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
       throw (Error());
     } on DioException catch (error, stack) {
       logError(
-          'Failed to set job priority ($id, ${priority.name})', error, stack);
+        'Failed to set job priority ($id, ${priority.name})',
+        error,
+        stack,
+      );
       return Future.error(error, stack);
     } catch (error, stack) {
       logError(
-          'Failed to set job priority ($id, ${priority.name})', error, stack);
+        'Failed to set job priority ($id, ${priority.name})',
+        error,
+        stack,
+      );
       return Future.error(error, stack);
     }
   }
@@ -382,22 +381,31 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          'GroupApplyCategory',
-          category.name,
-          [id],
-        ]),
+        data: getBody(
+          'editqueue',
+          params: [
+            'GroupApplyCategory',
+            category.name,
+            [id],
+          ],
+        ),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
       throw (Error());
     } on DioException catch (error, stack) {
       logError(
-          'Failed to set job category ($id, ${category.name})', error, stack);
+        'Failed to set job category ($id, ${category.name})',
+        error,
+        stack,
+      );
       return Future.error(error, stack);
     } catch (error, stack) {
       logError(
-          'Failed to set job category ($id, ${category.name})', error, stack);
+        'Failed to set job category ($id, ${category.name})',
+        error,
+        stack,
+      );
       return Future.error(error, stack);
     }
   }
@@ -406,11 +414,14 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          'GroupSetParameter',
-          '*Unpack:Password=$password',
-          [id],
-        ]),
+        data: getBody(
+          'editqueue',
+          params: [
+            'GroupSetParameter',
+            '*Unpack:Password=$password',
+            [id],
+          ],
+        ),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
@@ -428,11 +439,14 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          hide ? 'HistoryDelete' : 'HistoryFinalDelete',
-          '',
-          [id],
-        ]),
+        data: getBody(
+          'editqueue',
+          params: [
+            hide ? 'HistoryDelete' : 'HistoryFinalDelete',
+            '',
+            [id],
+          ],
+        ),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
@@ -450,11 +464,14 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          'HistoryRedownload',
-          '',
-          [id],
-        ]),
+        data: getBody(
+          'editqueue',
+          params: [
+            'HistoryRedownload',
+            '',
+            [id],
+          ],
+        ),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
@@ -470,19 +487,14 @@ class NZBGetAPI {
 
   Future<List<NZBGetCategoryData>> getCategories() async {
     try {
-      Response response = await _dio.post(
-        '',
-        data: getBody('config'),
-      );
+      Response response = await _dio.post('', data: getBody('config'));
       List<NZBGetCategoryData> _entries = [NZBGetCategoryData(name: '')];
       for (var entry in response.data['result']) {
         if (entry['Name'] != null &&
             entry['Name'].length >= 8 &&
             entry['Name'].substring(0, 8) == 'Category' &&
             entry['Name'].indexOf('.Name') != -1)
-          _entries.add(NZBGetCategoryData(
-            name: entry['Value'] ?? 'Unknown',
-          ));
+          _entries.add(NZBGetCategoryData(name: entry['Value'] ?? 'Unknown'));
       }
       return _entries;
     } on DioException catch (error, stack) {
@@ -498,11 +510,7 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody('editqueue', params: [
-          'GroupSort',
-          (sort.value),
-          [],
-        ]),
+        data: getBody('editqueue', params: ['GroupSort', (sort.value), []]),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;
@@ -585,10 +593,7 @@ class NZBGetAPI {
     try {
       Response response = await _dio.post(
         '',
-        data: getBody(
-          'rate',
-          params: [limit],
-        ),
+        data: getBody('rate', params: [limit]),
       );
       if (response.data['result'] != null && response.data['result'] == true)
         return true;

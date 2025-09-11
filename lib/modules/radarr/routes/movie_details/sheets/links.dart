@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/api/radarr/models.dart';
-import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/utils/links.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/api/radarr/models.dart';
+import 'package:thriftwood/extensions/string/links.dart';
+import 'package:thriftwood/utils/links.dart';
+import 'package:thriftwood/widgets/ui.dart';
 
 class LinksSheet extends LunaBottomModalSheet {
   RadarrMovie movie;
 
-  LinksSheet({
-    required this.movie,
-  });
+  LinksSheet({required this.movie});
 
   @override
   Widget builder(BuildContext context) {
     final imdb = LunaLinkedContent.imdb(movie.imdbId);
-    final tmdb =
-        LunaLinkedContent.theMovieDB(movie.tmdbId, LinkedContentType.MOVIE);
+    final tmdb = LunaLinkedContent.theMovieDB(
+      movie.tmdbId,
+      LinkedContentType.MOVIE,
+    );
     final letterboxd = LunaLinkedContent.letterboxd(movie.tmdbId);
-    final trakt =
-        LunaLinkedContent.trakt(movie.tmdbId, LinkedContentType.MOVIE);
+    final trakt = LunaLinkedContent.trakt(
+      movie.tmdbId,
+      LinkedContentType.MOVIE,
+    );
     final youtube = LunaLinkedContent.youtube(movie.youTubeTrailerId);
 
     return LunaListViewModal(

@@ -1,34 +1,35 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliGraphsPlayCountByStreamResolutionGraph extends StatelessWidget {
-  const TautulliGraphsPlayCountByStreamResolutionGraph({
-    Key? key,
-  }) : super(key: key);
+  const TautulliGraphsPlayCountByStreamResolutionGraph({Key? key})
+    : super(key: key);
 
   @override
-  Widget build(BuildContext context) =>
-      Selector<TautulliState, Future<TautulliGraphData>?>(
-        selector: (_, state) => state.playCountByStreamResolutionGraph,
-        builder: (context, future, _) => FutureBuilder(
-          future: future,
-          builder: (context, AsyncSnapshot<TautulliGraphData> snapshot) {
-            if (snapshot.hasError) {
-              if (snapshot.connectionState != ConnectionState.waiting) {
-                LunaLogger().error(
-                    'Unable to fetch Tautulli graph data: getPlaysByStreamResolution',
-                    snapshot.error,
-                    snapshot.stackTrace);
-              }
-              return TautulliGraphHelper().errorContainer(context);
-            }
-            if (snapshot.hasData) return _graph(context, snapshot.data!);
-            return TautulliGraphHelper().loadingContainer(context);
-          },
-        ),
-      );
+  Widget build(
+    BuildContext context,
+  ) => Selector<TautulliState, Future<TautulliGraphData>?>(
+    selector: (_, state) => state.playCountByStreamResolutionGraph,
+    builder: (context, future, _) => FutureBuilder(
+      future: future,
+      builder: (context, AsyncSnapshot<TautulliGraphData> snapshot) {
+        if (snapshot.hasError) {
+          if (snapshot.connectionState != ConnectionState.waiting) {
+            LunaLogger().error(
+              'Unable to fetch Tautulli graph data: getPlaysByStreamResolution',
+              snapshot.error,
+              snapshot.stackTrace,
+            );
+          }
+          return TautulliGraphHelper().errorContainer(context);
+        }
+        if (snapshot.hasData) return _graph(context, snapshot.data!);
+        return TautulliGraphHelper().loadingContainer(context);
+      },
+    ),
+  );
 
   Widget _graph(BuildContext context, TautulliGraphData data) {
     return LunaCard(
@@ -46,8 +47,10 @@ class TautulliGraphsPlayCountByStreamResolutionGraph extends StatelessWidget {
                   titlesData: TautulliGraphHelper().titlesData(data),
                   borderData: TautulliGraphHelper().borderData(),
                   barGroups: TautulliBarGraphHelper.barGroups(context, data),
-                  barTouchData:
-                      TautulliBarGraphHelper.barTouchData(context, data),
+                  barTouchData: TautulliBarGraphHelper.barTouchData(
+                    context,
+                    data,
+                  ),
                 ),
               ),
               padding: LunaUI.MARGIN_DEFAULT,

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/double/time.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/double/time.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 extension LunaRadarrEventType on RadarrEventType {
-  // Get LunaSea associated colour of the event type.
+  // Get thriftwood associated colour of the event type.
   Color get lunaColour {
     switch (this) {
       case RadarrEventType.GRABBED:

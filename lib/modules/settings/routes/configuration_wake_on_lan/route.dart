@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/settings.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/settings.dart';
 
 class ConfigurationWakeOnLANRoute extends StatefulWidget {
-  const ConfigurationWakeOnLANRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationWakeOnLANRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationWakeOnLANRoute> createState() => _State();
@@ -64,17 +62,15 @@ class _State extends State<ConfigurationWakeOnLANRoute>
       title: 'settings.BroadcastAddress'.tr(),
       body: [
         TextSpan(
-          text:
-              broadcastAddress == '' ? 'lunasea.NotSet'.tr() : broadcastAddress,
+          text: broadcastAddress == ''
+              ? 'thriftwood.NotSet'.tr()
+              : broadcastAddress,
         ),
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> _values =
-            await SettingsDialogs().editBroadcastAddress(
-          context,
-          broadcastAddress,
-        );
+        Tuple2<bool, String> _values = await SettingsDialogs()
+            .editBroadcastAddress(context, broadcastAddress);
         if (_values.item1) {
           LunaProfile.current.wakeOnLANBroadcastAddress = _values.item2;
           LunaProfile.current.save();
@@ -88,7 +84,9 @@ class _State extends State<ConfigurationWakeOnLANRoute>
     return LunaBlock(
       title: 'settings.MACAddress'.tr(),
       body: [
-        TextSpan(text: macAddress == '' ? 'lunasea.NotSet'.tr() : macAddress),
+        TextSpan(
+          text: macAddress == '' ? 'thriftwood.NotSet'.tr() : macAddress,
+        ),
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaBanner extends StatelessWidget {
   // An arbitrarily large number of max lines
@@ -32,8 +32,9 @@ class LunaBanner extends StatelessWidget {
     return LunaCard(
       context: context,
       child: Container(
-        padding:
-            EdgeInsets.symmetric(vertical: LunaUI.MARGIN_H_DEFAULT_V_HALF.top),
+        padding: EdgeInsets.symmetric(
+          vertical: LunaUI.MARGIN_H_DEFAULT_V_HALF.top,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -43,13 +44,10 @@ class LunaBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    child: Icon(
-                      icon,
-                      size: 20.0,
-                      color: iconColor,
-                    ),
+                    child: Icon(icon, size: 20.0, color: iconColor),
                     padding: EdgeInsets.only(
-                        right: LunaUI.MARGIN_DEFAULT.right - 2.0),
+                      right: LunaUI.MARGIN_DEFAULT.right - 2.0,
+                    ),
                   ),
                   Expanded(
                     child: LunaText.title(
@@ -85,7 +83,8 @@ class LunaBanner extends StatelessWidget {
             if (buttons?.isNotEmpty ?? false)
               LunaButtonContainer(
                 padding: EdgeInsets.symmetric(
-                    horizontal: LunaUI.MARGIN_H_DEFAULT_V_HALF.left / 2),
+                  horizontal: LunaUI.MARGIN_H_DEFAULT_V_HALF.left / 2,
+                ),
                 children: buttons!,
               ),
           ],

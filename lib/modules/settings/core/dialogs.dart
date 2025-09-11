@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 import 'package:wake_on_lan/wake_on_lan.dart';
-import 'package:lunasea/database/tables/lunasea.dart';
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_day.dart';
-import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_size.dart';
-import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_type.dart';
-import 'package:lunasea/modules/settings/core/types/header.dart';
-import 'package:lunasea/system/state.dart';
-import 'package:lunasea/utils/validator.dart';
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/database/tables/thriftwood.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_day.dart';
+import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_size.dart';
+import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_type.dart';
+import 'package:thriftwood/modules/settings/core/types/header.dart';
+import 'package:thriftwood/system/state.dart';
+import 'package:thriftwood/utils/validator.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/widgets/ui.dart';
 
 class SettingsDialogs {
   Future<Tuple2<bool, int>> setDefaultOption(
@@ -64,9 +64,7 @@ class SettingsDialogs {
           onPressed: () => _setValues(true),
         ),
       ],
-      content: [
-        LunaDialog.textContent(text: 'settings.SignOutHint1'.tr()),
-      ],
+      content: [LunaDialog.textContent(text: 'settings.SignOutHint1'.tr())],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
     return _flag;
@@ -92,7 +90,7 @@ class SettingsDialogs {
       title: 'settings.Host'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Set'.tr(),
+          text: 'thriftwood.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -160,7 +158,7 @@ class SettingsDialogs {
       title: 'settings.Host'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Set'.tr(),
+          text: 'thriftwood.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -217,7 +215,7 @@ class SettingsDialogs {
       title: 'settings.DeleteIndexer'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Delete'.tr(),
+          text: 'thriftwood.Delete'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -243,7 +241,7 @@ class SettingsDialogs {
       title: 'settings.DeleteModule'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Delete'.tr(),
+          text: 'thriftwood.Delete'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -269,7 +267,7 @@ class SettingsDialogs {
       title: 'settings.DeleteHeader'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Delete'.tr(),
+          text: 'thriftwood.Delete'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -329,7 +327,7 @@ class SettingsDialogs {
       title: 'settings.CustomHeader'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Add'.tr(),
+          text: 'thriftwood.Add'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -385,7 +383,7 @@ class SettingsDialogs {
       title: 'settings.BasicAuthentication'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Add'.tr(),
+          text: 'thriftwood.Add'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -448,14 +446,12 @@ class SettingsDialogs {
       title: 'settings.ClearLogs'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Clear'.tr(),
+          text: 'thriftwood.Clear'.tr(),
           onPressed: () => _setValues(true),
           textColor: LunaColours.red,
         ),
       ],
-      content: [
-        LunaDialog.textContent(text: 'settings.ClearLogsHint1'.tr()),
-      ],
+      content: [LunaDialog.textContent(text: 'settings.ClearLogsHint1'.tr())],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
     return _flag;
@@ -480,7 +476,7 @@ class SettingsDialogs {
       title: 'settings.DeleteAccount'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Delete'.tr(),
+          text: 'thriftwood.Delete'.tr(),
           onPressed: () => _setValues(true),
           textColor: LunaColours.red,
         ),
@@ -542,7 +538,7 @@ class SettingsDialogs {
       title: 'settings.UpdateEmail'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Update'.tr(),
+          text: 'thriftwood.Update'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -601,7 +597,7 @@ class SettingsDialogs {
       title: 'settings.UpdatePassword'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Update'.tr(),
+          text: 'thriftwood.Update'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -661,7 +657,7 @@ class SettingsDialogs {
       title: 'settings.AddProfile'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Add'.tr(),
+          text: 'thriftwood.Add'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -739,9 +735,10 @@ class SettingsDialogs {
       title: 'settings.RenameProfile'.tr(),
       buttons: [
         LunaDialog.button(
-            text: 'lunasea.Rename'.tr(),
-            onPressed: () => _setValues(true),
-            textColor: LunaColours.accent),
+          text: 'thriftwood.Rename'.tr(),
+          onPressed: () => _setValues(true),
+          textColor: LunaColours.accent,
+        ),
       ],
       content: [
         Form(
@@ -943,7 +940,7 @@ class SettingsDialogs {
       title: 'settings.BroadcastAddress'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Set'.tr(),
+          text: 'thriftwood.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -1003,7 +1000,7 @@ class SettingsDialogs {
       title: 'settings.MACAddress'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Set'.tr(),
+          text: 'thriftwood.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -1057,7 +1054,7 @@ class SettingsDialogs {
       title: 'settings.DismissBanners'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Dismiss'.tr(),
+          text: 'thriftwood.Dismiss'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -1085,7 +1082,7 @@ class SettingsDialogs {
       title: 'settings.ClearImageCache'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Clear'.tr(),
+          text: 'thriftwood.Clear'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -1113,7 +1110,7 @@ class SettingsDialogs {
       title: 'settings.ClearConfiguration'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Clear'.tr(),
+          text: 'thriftwood.Clear'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -1147,7 +1144,7 @@ class SettingsDialogs {
       title: 'settings.DecryptBackup'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Restore'.tr(),
+          text: 'thriftwood.Restore'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -1188,7 +1185,7 @@ class SettingsDialogs {
       title: 'settings.BackupConfiguration'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.BackUp'.tr(),
+          text: 'thriftwood.BackUp'.tr(),
           textColor: LunaColours.accent,
           onPressed: () => _setValues(true),
         ),
@@ -1229,7 +1226,9 @@ class SettingsDialogs {
     int _opacity = 0;
     final _formKey = GlobalKey<FormState>();
     final _textController = TextEditingController()
-      ..text = LunaSeaDatabase.THEME_IMAGE_BACKGROUND_OPACITY.read().toString();
+      ..text = thriftwoodDatabase.THEME_IMAGE_BACKGROUND_OPACITY
+          .read()
+          .toString();
 
     void _setValues(bool flag) {
       if (_formKey.currentState!.validate()) {
@@ -1244,7 +1243,7 @@ class SettingsDialogs {
       title: 'settings.ImageBackgroundOpacity'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Set'.tr(),
+          text: 'thriftwood.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -1266,10 +1265,9 @@ class SettingsDialogs {
             validator: (value) {
               int? _opacity = int.tryParse(value!);
               if (_opacity == null || _opacity < 0 || _opacity > 100)
-                return 'settings.MustBeValueBetween'.tr(args: [
-                  0.toString(),
-                  100.toString(),
-                ]);
+                return 'settings.MustBeValueBetween'.tr(
+                  args: [0.toString(), 100.toString()],
+                );
               return null;
             },
           ),

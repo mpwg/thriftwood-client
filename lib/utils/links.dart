@@ -1,6 +1,6 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/system/platform.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/string/links.dart';
+import 'package:thriftwood/system/platform.dart';
 
 enum LinkedContentType {
   MOVIE,
@@ -11,7 +11,7 @@ enum LinkedContentType {
 }
 
 enum LunaLinkedContent {
-  WEBSITE('https://www.lunasea.app');
+  WEBSITE('https://www.thriftwood.app');
 
   final String url;
   const LunaLinkedContent(this.url);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/scroll_controller.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/scroll_controller.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrCatalogueSearchBarFilterButton extends StatefulWidget {
   final ScrollController controller;
@@ -30,21 +30,22 @@ class _State extends State<RadarrCatalogueSearchBarFilterButton> {
           },
           itemBuilder: (context) =>
               List<PopupMenuEntry<RadarrMoviesFilter>>.generate(
-            RadarrMoviesFilter.values.length,
-            (index) => PopupMenuItem<RadarrMoviesFilter>(
-              value: RadarrMoviesFilter.values[index],
-              child: Text(
-                RadarrMoviesFilter.values[index].readable,
-                style: TextStyle(
-                  fontSize: LunaUI.FONT_SIZE_H3,
-                  color:
-                      state.moviesFilterType == RadarrMoviesFilter.values[index]
+                RadarrMoviesFilter.values.length,
+                (index) => PopupMenuItem<RadarrMoviesFilter>(
+                  value: RadarrMoviesFilter.values[index],
+                  child: Text(
+                    RadarrMoviesFilter.values[index].readable,
+                    style: TextStyle(
+                      fontSize: LunaUI.FONT_SIZE_H3,
+                      color:
+                          state.moviesFilterType ==
+                              RadarrMoviesFilter.values[index]
                           ? LunaColours.accent
                           : Colors.white,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
         ),
       ),
       height: LunaTextInputBar.defaultHeight,

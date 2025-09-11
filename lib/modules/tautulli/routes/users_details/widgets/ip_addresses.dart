@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/tautulli.dart';
-import 'package:lunasea/router/routes/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/tautulli.dart';
+import 'package:thriftwood/router/routes/tautulli.dart';
 
 class TautulliUserDetailsIPAddresses extends StatefulWidget {
   final TautulliTableUser user;
 
-  const TautulliUserDetailsIPAddresses({
-    Key? key,
-    required this.user,
-  }) : super(key: key);
+  const TautulliUserDetailsIPAddresses({Key? key, required this.user})
+    : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -29,13 +27,11 @@ class _State extends State<TautulliUserDetailsIPAddresses>
   @override
   Future<void> loadCallback() async {
     context.read<TautulliState>().setUserIPs(
-          widget.user.userId!,
-          context
-              .read<TautulliState>()
-              .api!
-              .users
-              .getUserIPs(userId: widget.user.userId!),
-        );
+      widget.user.userId!,
+      context.read<TautulliState>().api!.users.getUserIPs(
+        userId: widget.user.userId!,
+      ),
+    );
     await context.read<TautulliState>().userIPs[widget.user.userId!];
   }
 
@@ -94,7 +90,9 @@ class _State extends State<TautulliUserDetailsIPAddresses>
       body: [
         TextSpan(
           children: [
-            TextSpan(text: record.lastSeen?.asAge() ?? 'lunasea.Unknown'.tr()),
+            TextSpan(
+              text: record.lastSeen?.asAge() ?? 'thriftwood.Unknown'.tr(),
+            ),
             TextSpan(text: LunaUI.TEXT_BULLET.pad()),
             TextSpan(text: _count == 1 ? '1 Play' : '$_count Plays'),
           ],
@@ -102,13 +100,13 @@ class _State extends State<TautulliUserDetailsIPAddresses>
         TextSpan(text: record.lastPlayed),
       ],
       backgroundUrl: context.read<TautulliState>().getImageURLFromPath(
-            record.thumb ?? '',
-            width: MediaQuery.of(context).size.width.truncate(),
-          ),
+        record.thumb ?? '',
+        width: MediaQuery.of(context).size.width.truncate(),
+      ),
       backgroundHeaders: context.read<TautulliState>().headers,
-      onTap: () => TautulliRoutes.IP_DETAILS.go(params: {
-        'ip_address': record.ipAddress!,
-      }),
+      onTap: () => TautulliRoutes.IP_DETAILS.go(
+        params: {'ip_address': record.ipAddress!},
+      ),
     );
   }
 }

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/nzbget.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/nzbget.dart';
 
 class NZBGetAppBarStats extends StatelessWidget {
-  const NZBGetAppBarStats({
-    Key? key,
-  }) : super(key: key);
+  const NZBGetAppBarStats({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) =>
@@ -41,7 +39,7 @@ class NZBGetAppBarStats extends StatelessWidget {
                   const TextSpan(text: '\n'),
                   TextSpan(text: data.item3 == '0:00:00' ? '―' : data.item3),
                   TextSpan(text: LunaUI.TEXT_BULLET.pad()),
-                  TextSpan(text: data.item4 == '0.0 B' ? '―' : data.item4)
+                  TextSpan(text: data.item4 == '0.0 B' ? '―' : data.item4),
                 ],
               ),
               overflow: TextOverflow.fade,
@@ -56,8 +54,8 @@ class NZBGetAppBarStats extends StatelessWidget {
   String _status(bool paused, String speed) => paused
       ? 'Paused'
       : speed == '0.0 B/s'
-          ? 'Idle'
-          : speed;
+      ? 'Idle'
+      : speed;
 
   Future<void> _onTap(BuildContext context, String speed) async {
     HapticFeedback.lightImpact();
@@ -70,29 +68,37 @@ class NZBGetAppBarStats extends StatelessWidget {
             if (values[0])
               NZBGetAPI.from(LunaProfile.current)
                   .setSpeedLimit(values[1])
-                  .then((_) => showLunaSuccessSnackBar(
-                        title: 'Speed Limit Set',
-                        message:
-                            'Set to ${(values[1] as int?).asKilobytes(decimals: 0)}/s',
-                      ))
-                  .catchError((error) => showLunaErrorSnackBar(
-                        title: 'Failed to Set Speed Limit',
-                        error: error,
-                      ));
+                  .then(
+                    (_) => showLunaSuccessSnackBar(
+                      title: 'Speed Limit Set',
+                      message:
+                          'Set to ${(values[1] as int?).asKilobytes(decimals: 0)}/s',
+                    ),
+                  )
+                  .catchError(
+                    (error) => showLunaErrorSnackBar(
+                      title: 'Failed to Set Speed Limit',
+                      error: error,
+                    ),
+                  );
             break;
           }
         default:
           NZBGetAPI.from(LunaProfile.current)
               .setSpeedLimit(values[1])
-              .then((_) => showLunaSuccessSnackBar(
-                    title: 'Speed Limit Set',
-                    message:
-                        'Set to ${(values[1] as int?).asKilobytes(decimals: 0)}/s',
-                  ))
-              .catchError((error) => showLunaErrorSnackBar(
-                    title: 'Failed to Set Speed Limit',
-                    error: error,
-                  ));
+              .then(
+                (_) => showLunaSuccessSnackBar(
+                  title: 'Speed Limit Set',
+                  message:
+                      'Set to ${(values[1] as int?).asKilobytes(decimals: 0)}/s',
+                ),
+              )
+              .catchError(
+                (error) => showLunaErrorSnackBar(
+                  title: 'Failed to Set Speed Limit',
+                  error: error,
+                ),
+              );
       }
   }
 }

@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'notification_logs.g.dart';
 
@@ -10,13 +10,16 @@ part 'notification_logs.g.dart';
 class TautulliNotificationLogs {
   /// Number of filtered records returned.
   @JsonKey(
-      name: 'recordsFiltered',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsFiltered',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsFiltered;
 
   /// Total amount of records.
   @JsonKey(
-      name: 'recordsTotal', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsTotal',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsTotal;
 
   /// _Unknown_
@@ -46,12 +49,15 @@ class TautulliNotificationLogs {
   Map<String, dynamic> toJson() => _$TautulliNotificationLogsToJson(this);
 
   static List<TautulliNotificationLogRecord> _logsFromJson(
-          List<dynamic> logs) =>
-      logs
-          .map((log) => TautulliNotificationLogRecord.fromJson(
-              (log as Map<String, dynamic>)))
-          .toList();
+    List<dynamic> logs,
+  ) => logs
+      .map(
+        (log) => TautulliNotificationLogRecord.fromJson(
+          (log as Map<String, dynamic>),
+        ),
+      )
+      .toList();
   static List<Map<String, dynamic>>? _logsToJson(
-          List<TautulliNotificationLogRecord>? logs) =>
-      logs?.map((log) => log.toJson()).toList();
+    List<TautulliNotificationLogRecord>? logs,
+  ) => logs?.map((log) => log.toJson()).toList();
 }

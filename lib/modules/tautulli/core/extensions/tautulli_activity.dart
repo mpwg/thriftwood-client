@@ -1,6 +1,6 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 extension TautulliActivityExtension on TautulliActivity {
   String get lunaSessionsHeader {

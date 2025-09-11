@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'history.g.dart';
 
@@ -19,23 +19,30 @@ class TautulliHistory {
 
   /// Total amount of records.
   @JsonKey(
-      name: 'recordsTotal', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsTotal',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsTotal;
 
   /// The amount of records (filtered).
   @JsonKey(
-      name: 'recordsFiltered',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsFiltered',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsFiltered;
 
   /// The duration of the records (total) retrieved, as a preformatted string.
   @JsonKey(
-      name: 'total_duration', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'total_duration',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? totalDuration;
 
   /// The duration of the records (filtered) retrieved, as a preformatted string.
   @JsonKey(
-      name: 'filter_duration', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'filter_duration',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? filterDuration;
 
   TautulliHistory({
@@ -60,10 +67,12 @@ class TautulliHistory {
 
   static List<TautulliHistoryRecord> _entriesFromJson(List<dynamic> entries) =>
       entries
-          .map((entry) =>
-              TautulliHistoryRecord.fromJson((entry as Map<String, dynamic>)))
+          .map(
+            (entry) =>
+                TautulliHistoryRecord.fromJson((entry as Map<String, dynamic>)),
+          )
           .toList();
   static List<Map<String, dynamic>>? _entriesToJson(
-          List<TautulliHistoryRecord>? entries) =>
-      entries?.map((entry) => entry.toJson()).toList();
+    List<TautulliHistoryRecord>? entries,
+  ) => entries?.map((entry) => entry.toJson()).toList();
 }

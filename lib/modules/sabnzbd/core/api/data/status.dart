@@ -1,4 +1,4 @@
-import 'package:lunasea/extensions/int/bytes.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
 
 class SABnzbdStatusData {
   bool paused;

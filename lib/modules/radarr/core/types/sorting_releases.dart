@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 part 'sorting_releases.g.dart';
 
@@ -100,12 +100,16 @@ class _Sorter {
   }
 
   List<RadarrRelease> _alphabetical(
-      List<RadarrRelease> releases, bool ascending) {
+    List<RadarrRelease> releases,
+    bool ascending,
+  ) {
     ascending
         ? releases.sort(
-            (a, b) => a.title!.toLowerCase().compareTo(b.title!.toLowerCase()))
+            (a, b) => a.title!.toLowerCase().compareTo(b.title!.toLowerCase()),
+          )
         : releases.sort(
-            (a, b) => b.title!.toLowerCase().compareTo(a.title!.toLowerCase()));
+            (a, b) => b.title!.toLowerCase().compareTo(a.title!.toLowerCase()),
+          );
     return releases;
   }
 
@@ -118,43 +122,53 @@ class _Sorter {
 
   List<RadarrRelease> _seeders(List<RadarrRelease> releases, bool ascending) {
     List<RadarrRelease> _torrent = _weight(
-        releases
-            .where((release) => release.protocol == RadarrProtocol.TORRENT)
-            .toList(),
-        true);
+      releases
+          .where((release) => release.protocol == RadarrProtocol.TORRENT)
+          .toList(),
+      true,
+    );
     List<RadarrRelease> _usenet = _weight(
-        releases
-            .where((release) => release.protocol == RadarrProtocol.USENET)
-            .toList(),
-        true);
+      releases
+          .where((release) => release.protocol == RadarrProtocol.USENET)
+          .toList(),
+      true,
+    );
     ascending
-        ? _torrent
-            .sort((a, b) => (a.seeders ?? -1).compareTo((b.seeders ?? -1)))
-        : _torrent
-            .sort((a, b) => (b.seeders ?? -1).compareTo((a.seeders ?? -1)));
+        ? _torrent.sort(
+            (a, b) => (a.seeders ?? -1).compareTo((b.seeders ?? -1)),
+          )
+        : _torrent.sort(
+            (a, b) => (b.seeders ?? -1).compareTo((a.seeders ?? -1)),
+          );
     return [..._torrent, ..._usenet];
   }
 
   List<RadarrRelease> _weight(List<RadarrRelease> releases, bool ascending) {
     ascending
-        ? releases.sort((a, b) =>
-            (a.releaseWeight ?? -1).compareTo((b.releaseWeight ?? -1)))
-        : releases.sort((a, b) =>
-            (b.releaseWeight ?? -1).compareTo((a.releaseWeight ?? -1)));
+        ? releases.sort(
+            (a, b) =>
+                (a.releaseWeight ?? -1).compareTo((b.releaseWeight ?? -1)),
+          )
+        : releases.sort(
+            (a, b) =>
+                (b.releaseWeight ?? -1).compareTo((a.releaseWeight ?? -1)),
+          );
     return releases;
   }
 
   List<RadarrRelease> _type(List<RadarrRelease> releases, bool ascending) {
     List<RadarrRelease> _torrent = _weight(
-        releases
-            .where((release) => release.protocol == RadarrProtocol.TORRENT)
-            .toList(),
-        true);
+      releases
+          .where((release) => release.protocol == RadarrProtocol.TORRENT)
+          .toList(),
+      true,
+    );
     List<RadarrRelease> _usenet = _weight(
-        releases
-            .where((release) => release.protocol == RadarrProtocol.USENET)
-            .toList(),
-        true);
+      releases
+          .where((release) => release.protocol == RadarrProtocol.USENET)
+          .toList(),
+      true,
+    );
     return ascending ? [..._torrent, ..._usenet] : [..._usenet, ..._torrent];
   }
 

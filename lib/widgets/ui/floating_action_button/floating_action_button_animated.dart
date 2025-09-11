@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaFloatingActionButtonAnimated extends StatelessWidget {
   final Object? heroTag;
@@ -22,11 +22,7 @@ class LunaFloatingActionButtonAnimated extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      child: AnimatedIcon(
-        icon: icon,
-        color: color,
-        progress: controller!,
-      ),
+      child: AnimatedIcon(icon: icon, color: color, progress: controller!),
       heroTag: heroTag,
       onPressed: onPressed as void Function()?,
       backgroundColor: backgroundColor,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/radarr.dart';
-import 'package:lunasea/router/routes/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/radarr.dart';
+import 'package:thriftwood/router/routes/radarr.dart';
 
 class RadarrHistoryTile extends StatelessWidget {
   final RadarrHistoryRecord history;
@@ -42,22 +42,24 @@ class RadarrHistoryTile extends StatelessWidget {
           text: history.eventType!.readable!,
           backgroundColor: history.eventType!.lunaColour,
         ),
-        ...history.customFormats!
-            .map<LunaHighlightedNode>((format) => LunaHighlightedNode(
-                  text: format.name!,
-                  backgroundColor: LunaColours.blueGrey,
-                )),
+        ...history.customFormats!.map<LunaHighlightedNode>(
+          (format) => LunaHighlightedNode(
+            text: format.name!,
+            backgroundColor: LunaColours.blueGrey,
+          ),
+        ),
       ],
-      expandedTableContent: history.eventType?.lunaTableContent(
+      expandedTableContent:
+          history.eventType?.lunaTableContent(
             history,
             movieHistory: movieHistory,
           ) ??
           [],
       onLongPress: movieHistory
           ? null
-          : () => RadarrRoutes.MOVIE.go(params: {
-                'movie': history.movieId!.toString(),
-              }),
+          : () => RadarrRoutes.MOVIE.go(
+              params: {'movie': history.movieId!.toString()},
+            ),
     );
   }
 }

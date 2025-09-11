@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliLogsNewsletterLogTile extends StatelessWidget {
   final TautulliNewsletterLogRecord newsletter;
 
-  const TautulliLogsNewsletterLogTile({
-    Key? key,
-    required this.newsletter,
-  }) : super(key: key);
+  const TautulliLogsNewsletterLogTile({Key? key, required this.newsletter})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +34,15 @@ class TautulliLogsNewsletterLogTile extends StatelessWidget {
   }
 
   Widget _trailing() => Column(
-        children: [
-          LunaIconButton(
-            icon: newsletter.success!
-                ? Icons.check_circle_rounded
-                : Icons.cancel_rounded,
-            color: newsletter.success! ? LunaColours.white : LunaColours.red,
-          ),
-        ],
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-      );
+    children: [
+      LunaIconButton(
+        icon: newsletter.success!
+            ? Icons.check_circle_rounded
+            : Icons.cancel_rounded,
+        color: newsletter.success! ? LunaColours.white : LunaColours.red,
+      ),
+    ],
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.center,
+  );
 }

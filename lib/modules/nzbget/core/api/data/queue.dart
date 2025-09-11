@@ -1,6 +1,6 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/int/duration.dart';
-import 'package:lunasea/extensions/string/string.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/int/duration.dart';
+import 'package:thriftwood/extensions/string/string.dart';
 
 class NZBGetQueueData {
   int id;

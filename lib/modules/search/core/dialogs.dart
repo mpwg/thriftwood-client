@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/search.dart';
-import 'package:lunasea/utils/profile_tools.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/search.dart';
+import 'package:thriftwood/utils/profile_tools.dart';
 
 class SearchDialogs {
   Future<Tuple2<bool, SearchDownloadType?>> downloadResult(
-      BuildContext context) async {
+    BuildContext context,
+  ) async {
     bool _flag = false;
     SearchDownloadType? _type;
 
@@ -19,22 +20,20 @@ class SearchDialogs {
     await LunaDialog.dialog(
       context: context,
       title: 'search.Download'.tr(),
-      customContent: LunaSeaDatabase.ENABLED_PROFILE.listenableBuilder(
+      customContent: thriftwoodDatabase.ENABLED_PROFILE.listenableBuilder(
         builder: (context, _) => LunaDialog.content(
           children: [
             Padding(
               child: LunaPopupMenuButton<String>(
-                tooltip: 'lunasea.ChangeProfiles'.tr(),
+                tooltip: 'thriftwood.ChangeProfiles'.tr(),
                 child: Container(
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Expanded(
                         child: Text(
-                          LunaSeaDatabase.ENABLED_PROFILE.read(),
-                          style: const TextStyle(
-                            fontSize: LunaUI.FONT_SIZE_H3,
-                          ),
+                          thriftwoodDatabase.ENABLED_PROFILE.read(),
+                          style: const TextStyle(fontSize: LunaUI.FONT_SIZE_H3),
                         ),
                       ),
                       const Icon(
@@ -46,10 +45,7 @@ class SearchDialogs {
                   padding: const EdgeInsets.only(bottom: 2.0),
                   decoration: const BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(
-                        color: LunaColours.accent,
-                        width: 2.0,
-                      ),
+                      bottom: BorderSide(color: LunaColours.accent, width: 2.0),
                     ),
                   ),
                 ),
@@ -66,18 +62,20 @@ class SearchDialogs {
                           profile,
                           style: TextStyle(
                             fontSize: LunaUI.FONT_SIZE_H3,
-                            color: LunaSeaDatabase.ENABLED_PROFILE.read() ==
+                            color:
+                                thriftwoodDatabase.ENABLED_PROFILE.read() ==
                                     profile
                                 ? LunaColours.accent
                                 : Colors.white,
                           ),
                         ),
-                      )
+                      ),
                   ];
                 },
               ),
-              padding: LunaDialog.tileContentPadding()
-                  .add(const EdgeInsets.only(bottom: 16.0)),
+              padding: LunaDialog.tileContentPadding().add(
+                const EdgeInsets.only(bottom: 16.0),
+              ),
             ),
             if (LunaProfile.current.sabnzbdEnabled)
               LunaDialog.tile(

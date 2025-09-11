@@ -1,4 +1,4 @@
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 part 'external_module.g.dart';
 

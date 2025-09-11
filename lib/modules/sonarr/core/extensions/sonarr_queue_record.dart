@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 extension SonarrQueueRecordExtension on SonarrQueueRecord {
   Tuple3<String, IconData, Color> lunaStatusParameters({
@@ -73,9 +73,9 @@ extension SonarrQueueRecordExtension on SonarrQueueRecord {
 
     // Warning
     if (_status == SonarrQueueStatus.WARNING) {
-      _title = 'sonarr.DownloadWarningWithMessage'.tr(args: [
-        'sonarr.CheckDownloadClient'.tr(),
-      ]);
+      _title = 'sonarr.DownloadWarningWithMessage'.tr(
+        args: ['sonarr.CheckDownloadClient'.tr()],
+      );
       _icon = Icons.cloud_download_rounded;
       _color = LunaColours.orange;
     }

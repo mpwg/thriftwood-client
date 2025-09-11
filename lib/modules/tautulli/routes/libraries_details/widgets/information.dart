@@ -1,15 +1,13 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliLibrariesDetailsInformation extends StatefulWidget {
   final int sectionId;
 
-  const TautulliLibrariesDetailsInformation({
-    Key? key,
-    required this.sectionId,
-  }) : super(key: key);
+  const TautulliLibrariesDetailsInformation({Key? key, required this.sectionId})
+    : super(key: key);
 
   @override
   State<TautulliLibrariesDetailsInformation> createState() => _State();
@@ -62,13 +60,14 @@ class _State extends State<TautulliLibrariesDetailsInformation>
             return LunaMessage.error(onTap: _refreshKey.currentState!.show);
           if (snapshot.hasData) {
             TautulliTableLibrary? library =
-                (snapshot.data![0] as TautulliLibrariesTable)
-                    .libraries!
+                (snapshot.data![0] as TautulliLibrariesTable).libraries!
                     .firstWhereOrNull(
                       (element) => element.sectionId == widget.sectionId,
                     );
-            return _list(library,
-                snapshot.data![1] as List<TautulliLibraryWatchTimeStats>);
+            return _list(
+              library,
+              snapshot.data![1] as List<TautulliLibraryWatchTimeStats>,
+            );
           }
           return const LunaLoader();
         },
@@ -76,8 +75,10 @@ class _State extends State<TautulliLibrariesDetailsInformation>
     );
   }
 
-  Widget _list(TautulliTableLibrary? library,
-      List<TautulliLibraryWatchTimeStats> watchTimeStats) {
+  Widget _list(
+    TautulliTableLibrary? library,
+    List<TautulliLibraryWatchTimeStats> watchTimeStats,
+  ) {
     if (library == null)
       return LunaMessage(
         text: 'Library Not Found',
@@ -91,7 +92,8 @@ class _State extends State<TautulliLibrariesDetailsInformation>
         TautulliLibrariesDetailsInformationDetails(library: library),
         const LunaHeader(text: 'Global Stats'),
         TautulliLibrariesDetailsInformationGlobalStats(
-            watchtime: watchTimeStats),
+          watchtime: watchTimeStats,
+        ),
       ],
     );
   }

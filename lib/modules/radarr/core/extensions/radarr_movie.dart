@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/extensions/int/duration.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/extensions/int/duration.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 extension LunaRadarrMovieExtension on RadarrMovie {
   String get lunaRuntime {
@@ -116,10 +116,7 @@ extension LunaRadarrMovieExtension on RadarrMovie {
     DateTime now = DateTime.now();
     // If we already have a file or it is released
     if (this.hasFile! || lunaIsReleased)
-      return const Text(
-        '',
-        style: TextStyle(fontSize: LunaUI.FONT_SIZE_H3),
-      );
+      return const Text('', style: TextStyle(fontSize: LunaUI.FONT_SIZE_H3));
     // In Cinemas
     if (this.inCinemas != null && this.inCinemas!.toLocal().isAfter(now)) {
       String _date = this.inCinemas!.asDaysDifference().toUpperCase();
@@ -163,45 +160,45 @@ extension LunaRadarrMovieExtension on RadarrMovie {
         this.digitalRelease == null &&
         movie.physicalRelease == null &&
         movie.digitalRelease == null)
-      return this
-          .sortTitle!
-          .toLowerCase()
-          .compareTo(movie.sortTitle!.toLowerCase());
+      return this.sortTitle!.toLowerCase().compareTo(
+        movie.sortTitle!.toLowerCase(),
+      );
     if (this.physicalRelease == null && this.digitalRelease == null) return 1;
     if (movie.physicalRelease == null && movie.digitalRelease == null)
       return -1;
-    DateTime a = (this.physicalRelease ?? DateTime(9999))
-            .isBefore((this.digitalRelease ?? DateTime(9999)))
+    DateTime a =
+        (this.physicalRelease ?? DateTime(9999)).isBefore(
+          (this.digitalRelease ?? DateTime(9999)),
+        )
         ? this.physicalRelease!
         : this.digitalRelease!;
-    DateTime b = (movie.physicalRelease ?? DateTime(9999))
-            .isBefore((movie.digitalRelease ?? DateTime(9999)))
+    DateTime b =
+        (movie.physicalRelease ?? DateTime(9999)).isBefore(
+          (movie.digitalRelease ?? DateTime(9999)),
+        )
         ? movie.physicalRelease!
         : movie.digitalRelease!;
     int comparison = a.compareTo(b);
     if (comparison == 0)
-      comparison = this
-          .sortTitle!
-          .toLowerCase()
-          .compareTo(movie.sortTitle!.toLowerCase());
+      comparison = this.sortTitle!.toLowerCase().compareTo(
+        movie.sortTitle!.toLowerCase(),
+      );
     return comparison;
   }
 
   /// Compare two movies by their cinema release date. Returns an integer value compatible with `.sort()` in arrays.
   int lunaCompareToByInCinemas(RadarrMovie movie) {
     if (this.inCinemas == null && movie.inCinemas == null)
-      return this
-          .sortTitle!
-          .toLowerCase()
-          .compareTo(movie.sortTitle!.toLowerCase());
+      return this.sortTitle!.toLowerCase().compareTo(
+        movie.sortTitle!.toLowerCase(),
+      );
     if (this.inCinemas == null) return 1;
     if (movie.inCinemas == null) return -1;
     int comparison = this.inCinemas!.compareTo(movie.inCinemas!);
     if (comparison == 0)
-      comparison = this
-          .sortTitle!
-          .toLowerCase()
-          .compareTo(movie.sortTitle!.toLowerCase());
+      comparison = this.sortTitle!.toLowerCase().compareTo(
+        movie.sortTitle!.toLowerCase(),
+      );
     return comparison;
   }
 

@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
 
 class NewznabResultData {
   String title;
@@ -33,7 +33,7 @@ class NewznabResultData {
     return null;
   }
 
-  String get age => dateObject?.asAge() ?? 'lunasea.Unknown'.tr();
+  String get age => dateObject?.asAge() ?? 'thriftwood.Unknown'.tr();
 
   int get posix => dateObject?.millisecondsSinceEpoch ?? 0;
 }

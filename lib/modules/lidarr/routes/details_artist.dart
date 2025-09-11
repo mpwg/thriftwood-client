@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/lidarr.dart';
-import 'package:lunasea/modules/lidarr/sheets/links.dart';
-import 'package:lunasea/router/router.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/lidarr.dart';
+import 'package:thriftwood/modules/lidarr/sheets/links.dart';
+import 'package:thriftwood/router/router.dart';
 
 class ArtistDetailsRoute extends StatefulWidget {
   final LidarrCatalogueData? data;
@@ -38,20 +38,23 @@ class _State extends State<ArtistDetailsRoute> {
   Future<void> _fetch() async {
     if (mounted) setState(() => _error = false);
     final api = LidarrAPI.from(LunaProfile.current);
-    await api.getArtist(widget.artistId).then((newData) {
-      if (mounted) {
-        setState(() {
-          data = newData;
-          _error = false;
+    await api
+        .getArtist(widget.artistId)
+        .then((newData) {
+          if (mounted) {
+            setState(() {
+              data = newData;
+              _error = false;
+            });
+          }
+        })
+        .catchError((error) {
+          if (mounted) {
+            setState(() {
+              _error = true;
+            });
+          }
         });
-      }
-    }).catchError((error) {
-      if (mounted) {
-        setState(() {
-          _error = true;
-        });
-      }
-    });
   }
 
   @override
@@ -84,10 +87,7 @@ class _State extends State<ArtistDetailsRoute> {
           },
         ),
         LidarrDetailsEditButton(data: data),
-        LidarrDetailsSettingsButton(
-          data: data,
-          remove: _removeCallback,
-        ),
+        LidarrDetailsSettingsButton(data: data, remove: _removeCallback),
       ];
     }
 
@@ -103,20 +103,15 @@ class _State extends State<ArtistDetailsRoute> {
       LidarrArtistNavigationBar(pageController: _pageController);
 
   List<Widget> get _tabs => [
-        LidarrDetailsOverview(data: data!),
-        LidarrDetailsAlbumList(artistID: data!.artistID),
-      ];
+    LidarrDetailsOverview(data: data!),
+    LidarrDetailsAlbumList(artistID: data!.artistID),
+  ];
 
-  Widget get _body => LunaPageView(
-        controller: _pageController,
-        children: _tabs,
-      );
+  Widget get _body =>
+      LunaPageView(controller: _pageController, children: _tabs);
 
   Future<void> _removeCallback(bool withData) async {
-    showLunaSuccessSnackBar(
-      title: 'Artist Removed',
-      message: data!.title,
-    );
+    showLunaSuccessSnackBar(title: 'Artist Removed', message: data!.title);
     LunaRouter.router.pop();
   }
 }

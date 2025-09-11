@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/database/tables/lunasea.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:thriftwood/database/tables/thriftwood.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/router/routes/sonarr.dart';
 
-import 'package:lunasea/system/logger.dart';
-import 'package:lunasea/widgets/ui.dart';
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/modules/sonarr/core/state.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/abstract.dart';
+import 'package:thriftwood/system/logger.dart';
+import 'package:thriftwood/widgets/ui.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/modules/sonarr/core/state.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/abstract.dart';
 
 class CalendarSonarrData extends CalendarData {
   String episodeTitle;
@@ -37,15 +37,14 @@ class CalendarSonarrData extends CalendarData {
       TextSpan(
         children: [
           TextSpan(
-              text: seasonNumber == 0 ? 'Specials' : 'Season $seasonNumber'),
+            text: seasonNumber == 0 ? 'Specials' : 'Season $seasonNumber',
+          ),
           TextSpan(text: LunaUI.TEXT_BULLET.pad()),
           TextSpan(text: 'Episode $episodeNumber'),
         ],
       ),
       TextSpan(
-        style: const TextStyle(
-          fontStyle: FontStyle.italic,
-        ),
+        style: const TextStyle(fontStyle: FontStyle.italic),
         text: episodeTitle,
       ),
       if (!hasFile)
@@ -79,10 +78,10 @@ class CalendarSonarrData extends CalendarData {
 
   @override
   Widget trailing(BuildContext context) => LunaIconButton(
-        text: airTimeString,
-        onPressed: () async => trailingOnPress(context),
-        onLongPress: () => trailingOnLongPress(context),
-      );
+    text: airTimeString,
+    onPressed: () async => trailingOnPress(context),
+    onLongPress: () => trailingOnLongPress(context),
+  );
 
   DateTime? get airTimeObject {
     return DateTime.tryParse(airTime)?.toLocal();
@@ -90,7 +89,7 @@ class CalendarSonarrData extends CalendarData {
 
   String get airTimeString {
     if (airTimeObject != null) {
-      return LunaSeaDatabase.USE_24_HOUR_TIME.read()
+      return thriftwoodDatabase.USE_24_HOUR_TIME.read()
           ? DateFormat.Hm().format(airTimeObject!)
           : DateFormat('hh:mm\na').format(airTimeObject!);
     }
@@ -105,28 +104,25 @@ class CalendarSonarrData extends CalendarData {
           .api!
           .command
           .episodeSearch(episodeIds: [id])
-          .then((_) => showLunaSuccessSnackBar(
-                title: 'Searching for Episode...',
-                message: episodeTitle,
-              ))
+          .then(
+            (_) => showLunaSuccessSnackBar(
+              title: 'Searching for Episode...',
+              message: episodeTitle,
+            ),
+          )
           .catchError((error, stack) {
             LunaLogger().error(
               'Failed to search for episode: $id',
               error,
               stack,
             );
-            showLunaErrorSnackBar(
-              title: 'Failed to Search',
-              error: error,
-            );
+            showLunaErrorSnackBar(title: 'Failed to Search', error: error);
           });
   }
 
   @override
   Future<void> trailingOnLongPress(BuildContext context) async {
-    SonarrRoutes.RELEASES.go(queryParams: {
-      'episode': id.toString(),
-    });
+    SonarrRoutes.RELEASES.go(queryParams: {'episode': id.toString()});
   }
 
   @override

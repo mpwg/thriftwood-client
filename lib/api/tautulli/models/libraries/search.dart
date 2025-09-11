@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'search.g.dart';
 
@@ -9,17 +9,19 @@ part 'search.g.dart';
 class TautulliSearch {
   /// Total amount of returned results.
   @JsonKey(
-      name: 'results_count', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'results_count',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? count;
 
   @JsonKey(
-      name: 'results_list', toJson: _resultsToJson, fromJson: _resultsFromJson)
+    name: 'results_list',
+    toJson: _resultsToJson,
+    fromJson: _resultsFromJson,
+  )
   final TautulliSearchResults? results;
 
-  TautulliSearch({
-    this.count,
-    this.results,
-  });
+  TautulliSearch({this.count, this.results});
 
   /// Returns a JSON-encoded string version of this object.
   @override

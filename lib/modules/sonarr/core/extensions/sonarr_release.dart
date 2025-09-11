@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/double/time.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/double/time.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 extension SonarrReleaseExtension on SonarrRelease {
   IconData get lunaTrailingIcon {
