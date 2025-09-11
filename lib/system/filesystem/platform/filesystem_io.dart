@@ -43,9 +43,11 @@ class _Desktop extends _Shared {
         fileName: name,
         lockParentWindow: true,
       );
-      File file = File(path);
-      file.writeAsBytesSync(data);
-      return true;
+      if (path != null) {
+        File file = File(path);
+        file.writeAsBytesSync(data);
+        return true;
+      }
       return false;
     } catch (error, stack) {
       LunaLogger().error('Failed to save to filesystem', error, stack);
@@ -106,6 +108,7 @@ class _Mobile extends _Shared {
         case ShareResultStatus.dismissed:
           return false;
       }
+      return false;
     } catch (error, stack) {
       LunaLogger().error('Failed to save to filesystem', error, stack);
       rethrow;

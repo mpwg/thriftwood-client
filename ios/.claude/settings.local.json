@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "WebSearch",
-      "Read(//Users/mat/code/thriftwood-client/**)"
+      "Read(//Users/mat/code/thriftwood-client/**)",
+      "Bash(npm run build:ios:*)",
+      "Bash(flutter build:*)",
+      "Bash(npm run generate:*)",
+      "Read(//Users/mat/.pub-cache/hosted/pub.dev/**)",
+      "Read(//Users/mat/.pub-cache/**)",
+      "Bash(flutter analyze:*)"
     ],
     "deny": [],
     "ask": []

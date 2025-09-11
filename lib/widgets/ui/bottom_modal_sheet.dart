@@ -13,7 +13,7 @@ class LunaBottomModalSheet<T> {
           ? Colors.black
           : LunaColours.primary,
       shape: LunaShapeBorder(topOnly: true, useBorder: LunaUI.shouldUseBorder),
-      builder: builder ?? this.builder,
+      builder: builder ?? this.builder ?? (context) => Container(),
       closeProgressThreshold: 0.90,
       elevation: LunaUI.ELEVATION,
       overlayStyle: LunaTheme().overlayStyle,
