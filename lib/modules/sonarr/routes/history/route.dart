@@ -70,6 +70,9 @@ class _State extends State<HistoryRoute>
     }
     
     final currentPageKey = state.nextIntPageKey;
+    if (currentPageKey == null) {
+      return null;
+    }
     final totalItemsFetched = currentPageKey * _pageSize!;
     
     if (totalItemsFetched < _totalRecords!) {
