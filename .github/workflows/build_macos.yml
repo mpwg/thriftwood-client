@@ -42,7 +42,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Setup Environment
-        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@main
         with:
           platform: macos
           appstore-connect-key: ${{ secrets.APPLE_STORE_CONNECT_KEY }}
@@ -74,7 +74,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Setup Environment
-        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@main
         with:
           platform: macos
           appstore-connect-key: ${{ secrets.APPLE_STORE_CONNECT_KEY }}
@@ -106,7 +106,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Setup Environment
-        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@main
         with:
           platform: macos
           appstore-connect-key: ${{ secrets.APPLE_STORE_CONNECT_KEY }}

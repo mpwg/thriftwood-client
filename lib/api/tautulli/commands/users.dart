@@ -9,7 +9,7 @@ class TautulliCommandHandlerUsers {
   /// Create a user command handler using an initialized [Dio] client.
   TautulliCommandHandlerUsers(this._client);
 
-  /// Handler for [delete_all_user_history](https://github.com/Tautulli/Tautulli/blob/master/API.md#delete_all_user_history).
+  /// Handler for [delete_all_user_history](https://github.com/Tautulli/Tautulli/blob/main/API.md#delete_all_user_history).
   ///
   /// Delete all Tautulli history for a specific user.
   ///
@@ -24,7 +24,7 @@ class TautulliCommandHandlerUsers {
   }) async =>
       _commandDeleteAllUserHistory(_client, userId: userId, rowIds: rowIds);
 
-  /// Handler for [delete_user](https://github.com/Tautulli/Tautulli/blob/master/API.md#delete_user).
+  /// Handler for [delete_user](https://github.com/Tautulli/Tautulli/blob/main/API.md#delete_user).
   ///
   /// Delete a user from Tautulli. Also erases all history for the user.
   ///
@@ -39,7 +39,7 @@ class TautulliCommandHandlerUsers {
   }) async =>
       _commandDeleteUser(_client, userId: userId, rowIds: rowIds);
 
-  /// Handler for [edit_user](https://github.com/Tautulli/Tautulli/blob/master/API.md#edit_user).
+  /// Handler for [edit_user](https://github.com/Tautulli/Tautulli/blob/main/API.md#edit_user).
   ///
   /// Update a user on Tautulli.
   ///
@@ -65,7 +65,7 @@ class TautulliCommandHandlerUsers {
           keepHistory: keepHistory,
           allowGuest: allowGuest);
 
-  /// Handler for [get_user](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_user).
+  /// Handler for [get_user](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_user).
   ///
   /// Get a user's details.
   ///
@@ -76,7 +76,7 @@ class TautulliCommandHandlerUsers {
   }) async =>
       _commandGetUser(_client, userId: userId);
 
-  /// Handler for [get_user_logins](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_user_logins).
+  /// Handler for [get_user_logins](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_user_logins).
   ///
   /// Get the data on Tautulli user login table.
   ///
@@ -105,7 +105,7 @@ class TautulliCommandHandlerUsers {
         search: search,
       );
 
-  /// Handler for [get_user_ips](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_user_ips).
+  /// Handler for [get_user_ips](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_user_ips).
   ///
   /// Get the data on Tautulli users IP table.
   ///
@@ -136,13 +136,13 @@ class TautulliCommandHandlerUsers {
         search: search,
       );
 
-  /// Handler for [get_user_names](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_user_names).
+  /// Handler for [get_user_names](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_user_names).
   ///
   /// Get a list of all user and user IDs.
   Future<List<TautulliUserName>> getUserNames() async =>
       _commandGetUserNames(_client);
 
-  /// Handler for [get_user_player_stats](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_user_player_stats).
+  /// Handler for [get_user_player_stats](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_user_player_stats).
   ///
   /// Get a user's player statistics.
   ///
@@ -157,7 +157,7 @@ class TautulliCommandHandlerUsers {
   }) async =>
       _commandGetUserPlayerStats(_client, userId: userId, grouping: grouping);
 
-  /// Handler for [get_user_watch_time_stats](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_user_watch_time_stats).
+  /// Handler for [get_user_watch_time_stats](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_user_watch_time_stats).
   ///
   /// Get a user's watch time statistics.
   ///
@@ -175,12 +175,12 @@ class TautulliCommandHandlerUsers {
       _commandGetUserWatchTimeStats(_client,
           userId: userId, grouping: grouping, queryDays: queryDays);
 
-  /// Handler for [get_users](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_users).
+  /// Handler for [get_users](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_users).
   ///
   /// Get a list of all users that have access to your server.
   Future<List<TautulliUser>> getUsers() async => _commandGetUsers(_client);
 
-  /// Handler for [get_users_table](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_users_table).
+  /// Handler for [get_users_table](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_users_table).
   ///
   /// Get the data on Tautulli users table.
   ///
@@ -209,12 +209,12 @@ class TautulliCommandHandlerUsers {
         search: search,
       );
 
-  /// Handler for [refresh_users_list](https://github.com/Tautulli/Tautulli/blob/master/API.md#refresh_users_list).
+  /// Handler for [refresh_users_list](https://github.com/Tautulli/Tautulli/blob/main/API.md#refresh_users_list).
   ///
   /// Refresh the Tautulli users list.
   Future<void> refreshUsersList() async => _commandRefreshUsersList(_client);
 
-  /// Handler for [undelete_user](https://github.com/Tautulli/Tautulli/blob/master/API.md#undelete_user).
+  /// Handler for [undelete_user](https://github.com/Tautulli/Tautulli/blob/main/API.md#undelete_user).
   ///
   /// Restore a deleted user to Tautulli.
   ///

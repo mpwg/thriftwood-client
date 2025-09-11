@@ -14,7 +14,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Setup Environment
-        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@main
         with:
           platform: windows
 
@@ -35,7 +35,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Setup Environment
-        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@main
         with:
           platform: windows
           code-signing-certificate: ${{ secrets.CODE_SIGNING_CERTIFICATE }}
