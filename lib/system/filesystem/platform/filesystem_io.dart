@@ -108,7 +108,6 @@ class _Mobile extends _Shared {
         case ShareResultStatus.dismissed:
           return false;
       }
-      return false;
     } catch (error, stack) {
       LunaLogger().error('Failed to save to filesystem', error, stack);
       rethrow;
