@@ -42,7 +42,7 @@ jobs:
         run: npm run build:web
 
       - name: Create Archive
-        uses: thedoctor0/zip-release@0.6.2
+        uses: thedoctor0/zip-release@0.7.6
         with:
           type: zip
           directory: ${{ github.workspace }}/build/web
