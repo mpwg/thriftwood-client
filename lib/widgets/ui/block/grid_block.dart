@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thriftwood/core.dart';
+import 'package:thriftwood/utils/transparent_image.dart';
 
 class LunaGridBlock extends StatelessWidget {
   static const MAX_CROSS_AXIS_EXTENT = 180.0;
@@ -96,7 +97,7 @@ class LunaGridBlock extends StatelessWidget {
     return Opacity(
       opacity: _opacity,
       child: FadeInImage(
-        placeholder: MemoryImage(kTransparentImage),
+        placeholder: MemoryImage(transparentImageBytes),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         fadeInDuration: const Duration(
