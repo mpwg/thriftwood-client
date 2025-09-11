@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thriftwood/core.dart';
+import 'package:thriftwood/utils/transparent_image.dart';
 
 class LunaBlock extends StatelessWidget {
   static const TITLE_HEIGHT = LunaUI.FONT_SIZE_H2 + 4.0;
@@ -172,7 +173,7 @@ class LunaBlock extends StatelessWidget {
     return Opacity(
       opacity: _opacity,
       child: FadeInImage(
-        placeholder: MemoryImage(kTransparentImage),
+        placeholder: MemoryImage(transparentImageBytes),
         height: _height,
         width: MediaQuery.of(context).size.width,
         fadeInDuration: const Duration(

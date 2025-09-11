@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thriftwood/core.dart';
+import 'package:thriftwood/utils/transparent_image.dart';
 
 class LunaNetworkImage extends ClipRRect {
   LunaNetworkImage({
@@ -44,7 +45,7 @@ class LunaNetworkImage extends ClipRRect {
                      milliseconds: LunaUI.ANIMATION_SPEED_IMAGES,
                    ),
                    fadeOutDuration: const Duration(milliseconds: 1),
-                   placeholder: MemoryImage(kTransparentImage),
+                   placeholder: MemoryImage(transparentImageBytes),
                    fit: BoxFit.cover,
                    image: LunaNetworkImageProvider(
                      url: url!,
