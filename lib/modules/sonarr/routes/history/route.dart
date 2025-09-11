@@ -13,7 +13,15 @@ class _State extends State<HistoryRoute>
     with LunaScrollControllerMixin, LunaLoadCallbackMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshKey = GlobalKey<RefreshIndicatorState>();
-  final _pagingController = PagingController<int, SonarrHistoryRecord>(firstPageKey: 1);
+  late final _pagingController = PagingController<int, SonarrHistoryRecord>(
+    fetchPage: _fetchPage,
+    getNextPageKey: (state) => _getNextPageKey(state),
+  );
+  
+  // Store pagination info
+  int? _totalRecords;
+  int? _currentPage;
+  int? _pageSize;
 
   @override
   Future<void> loadCallback() async {
@@ -26,32 +34,49 @@ class _State extends State<HistoryRoute>
     super.dispose();
   }
 
-  Future<void> _fetchPage(int pageKey) async {
-    await context
-        .read<SonarrState>()
-        .api!
-        .history
-        .get(
-          page: pageKey,
-          pageSize: SonarrDatabase.CONTENT_PAGE_SIZE.read(),
-          sortKey: SonarrHistorySortKey.DATE,
-          sortDirection: SonarrSortDirection.DESCENDING,
-          includeEpisode: true,
-        )
-        .then((data) {
-          if (data.totalRecords! > (data.page! * data.pageSize!)) {
-            return _pagingController.appendPage(data.records!, pageKey + 1);
-          }
-          return _pagingController.appendLastPage(data.records!);
-        })
-        .catchError((error, stack) {
-          LunaLogger().error(
-            'Unable to fetch Sonarr history page: $pageKey',
-            error,
-            stack,
+  Future<List<SonarrHistoryRecord>> _fetchPage(int pageKey) async {
+    try {
+      final data = await context
+          .read<SonarrState>()
+          .api!
+          .history
+          .get(
+            page: pageKey,
+            pageSize: SonarrDatabase.CONTENT_PAGE_SIZE.read(),
+            sortKey: SonarrHistorySortKey.DATE,
+            sortDirection: SonarrSortDirection.DESCENDING,
+            includeEpisode: true,
           );
-          _pagingController.error = error;
-        });
+      
+      // Store pagination info
+      _totalRecords = data.totalRecords;
+      _currentPage = data.page;
+      _pageSize = data.pageSize;
+      
+      return data.records ?? [];
+    } catch (error, stack) {
+      LunaLogger().error(
+        'Unable to fetch Sonarr history page: $pageKey',
+        error,
+        stack,
+      );
+      rethrow;
+    }
+  }
+
+  int? _getNextPageKey(PagingState<int, SonarrHistoryRecord> state) {
+    if (_totalRecords == null || _currentPage == null || _pageSize == null) {
+      return null;
+    }
+    
+    final currentPageKey = state.nextIntPageKey;
+    final totalItemsFetched = currentPageKey * _pageSize!;
+    
+    if (totalItemsFetched < _totalRecords!) {
+      return currentPageKey + 1;
+    }
+    
+    return null;
   }
 
   @override
@@ -95,7 +120,6 @@ class _State extends State<HistoryRoute>
       refreshKey: _refreshKey,
       pagingController: _pagingController,
       scrollController: scrollController,
-      listener: _fetchPage,
       noItemsFoundMessage: 'sonarr.NoHistoryFound'.tr(),
       itemBuilder: (context, history, _) => SonarrHistoryTile(
         history: history,
