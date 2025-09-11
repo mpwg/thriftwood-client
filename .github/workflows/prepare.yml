@@ -36,7 +36,7 @@ jobs:
       build-version: ${{ steps.build-version.outputs.current-version }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
