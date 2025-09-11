@@ -48,7 +48,7 @@ jobs:
 
       - name: Build Flavor
         id: build-flavor
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         env:
           FLAVOR: ${{ inputs.flavor }}
         with:
@@ -65,7 +65,7 @@ jobs:
 
       - name: Build MOTD
         id: build-motd
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         env:
           FLAVOR: ${{ steps.build-flavor.outputs.result }}
         with:
@@ -74,7 +74,7 @@ jobs:
 
       - name: Build Number
         id: build-number
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         env:
           COUNT: ${{ steps.commit-count.outputs.commit-count }}
         with:

@@ -65,7 +65,7 @@ jobs:
 
       - name: Determine Tags
         id: tags
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         env:
           BUILD_FLAVOR: ${{ inputs.build-flavor }}
           BUILD_TITLE: ${{ inputs.build-title }}
