@@ -13,9 +13,7 @@ class _State extends State<HistoryRoute>
     with LunaScrollControllerMixin, LunaLoadCallbackMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshKey = GlobalKey<RefreshIndicatorState>();
-  final _pagingController = PagingController<int, SonarrHistoryRecord>(
-    firstPageKey: 1,
-  );
+  final _pagingController = PagingController<int, SonarrHistoryRecord>(firstPageKey: 1);
 
   @override
   Future<void> loadCallback() async {

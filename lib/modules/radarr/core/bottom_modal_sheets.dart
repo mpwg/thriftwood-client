@@ -215,7 +215,7 @@ class RadarrBottomModalSheets {
                   if (movies[index].year != null && movies[index].year != 0)
                     title += ' (${movies[index].year})';
                   String? overview = movies[index].overview;
-                  if (overview.isEmpty ?? true)
+                  if (overview?.isEmpty ?? true)
                     overview = 'radarr.NoSummaryIsAvailable'.tr();
                   return LunaBlock(
                     title: title,

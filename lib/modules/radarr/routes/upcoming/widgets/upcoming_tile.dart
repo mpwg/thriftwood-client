@@ -93,15 +93,15 @@ class _State extends State<RadarrUpcomingTile> {
           TextSpan(
             text: _days == 'Today'
                 ? 'radarr.AvailableToday'.tr()
-                : 'radarr.AvailableIn'.tr(args: [_days]),
+                : 'radarr.AvailableIn'.tr(args: [_days ?? '']),
           ),
         if (type == 'cinema')
           TextSpan(
             text: _days == 'Today'
                 ? 'radarr.InCinemasToday'.tr()
-                : 'radarr.InCinemasIn'.tr(args: [_days]),
+                : 'radarr.InCinemasIn'.tr(args: [_days ?? '']),
           ),
-        if (type == 'unknown') TextSpan(text: _days),
+        if (type == 'unknown') TextSpan(text: _days ?? ''),
       ],
     );
   }

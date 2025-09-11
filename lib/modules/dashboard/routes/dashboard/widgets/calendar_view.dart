@@ -212,7 +212,7 @@ class _State extends State<CalendarView> {
         case CalendarSonarrData:
           CalendarSonarrData _event = event;
           DateTime? _airTime = _event.airTimeObject?.toLocal();
-          bool _isAired = _airTime.isBefore(DateTime.now()) ?? false;
+          bool _isAired = _airTime?.isBefore(DateTime.now()) ?? false;
           if (!_event.hasFile && _isAired) counter++;
           break;
       }

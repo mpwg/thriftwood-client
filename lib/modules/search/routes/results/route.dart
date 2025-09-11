@@ -70,7 +70,7 @@ class _State extends State<ResultsRoute> with LunaScrollControllerMixin {
       title = '$title > ${subcategory.name ?? 'thriftwood.Unknown'.tr()}';
     }
     return LunaAppBar(
-      title: title,
+      title: title ?? '',
       actions: [
         const DownloadClientButton(),
         LunaIconButton(
