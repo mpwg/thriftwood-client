@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaExpandableListTile extends StatefulWidget {
   final String title;
@@ -54,10 +54,7 @@ class _State extends State<LunaExpandableListTile> {
   Widget build(BuildContext context) {
     return ExpandableNotifier(
       controller: controller,
-      child: Expandable(
-        collapsed: collapsed(),
-        expanded: expanded(),
-      ),
+      child: Expandable(collapsed: collapsed(), expanded: expanded()),
     );
   }
 
@@ -126,12 +123,14 @@ class _State extends State<LunaExpandableListTile> {
                         ),
                       ),
                     ...widget.expandedTableContent
-                        .map((child) => Padding(
-                              child: child,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: LunaUI.DEFAULT_MARGIN_SIZE,
-                              ),
-                            ))
+                        .map(
+                          (child) => Padding(
+                            child: child,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: LunaUI.DEFAULT_MARGIN_SIZE,
+                            ),
+                          ),
+                        )
                         .toList(),
                     if (widget.expandedTableButtons != null)
                       Padding(

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/tables/dashboard.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/tables/dashboard.dart';
 
-import 'package:lunasea/modules/dashboard/core/dialogs.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
+import 'package:thriftwood/modules/dashboard/core/dialogs.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
 
 class ConfigurationDashboardDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationDashboardDefaultPagesRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationDashboardDefaultPagesRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationDashboardDefaultPagesRoute> createState() => _State();
@@ -35,19 +33,14 @@ class _State extends State<ConfigurationDashboardDefaultPagesRoute>
   }
 
   Widget _body() {
-    return LunaListView(
-      controller: scrollController,
-      children: [
-        _homePage(),
-      ],
-    );
+    return LunaListView(controller: scrollController, children: [_homePage()]);
   }
 
   Widget _homePage() {
     const _db = DashboardDatabase.NAVIGATION_INDEX;
     return _db.listenableBuilder(
       builder: (context, _) => LunaBlock(
-        title: 'lunasea.Home'.tr(),
+        title: 'thriftwood.Home'.tr(),
         body: [TextSpan(text: HomeNavigationBar.titles[_db.read()])],
         trailing: LunaIconButton(icon: HomeNavigationBar.icons[_db.read()]),
         onTap: () async {

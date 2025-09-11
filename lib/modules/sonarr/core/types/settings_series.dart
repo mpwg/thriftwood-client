@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/router/router.dart';
-import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/router/router.dart';
+import 'package:thriftwood/router/routes/sonarr.dart';
 
-enum SonarrSeriesSettingsType {
-  SEARCH,
-  EDIT,
-  REFRESH,
-  DELETE,
-  MONITORED,
-}
+enum SonarrSeriesSettingsType { SEARCH, EDIT, REFRESH, DELETE, MONITORED }
 
 extension SonarrSeriesSettingsTypeExtension on SonarrSeriesSettingsType {
   IconData icon(SonarrSeries series) {
@@ -73,8 +67,10 @@ extension SonarrSeriesSettingsTypeExtension on SonarrSeriesSettingsType {
         );
         break;
       case SonarrSeriesSettingsType.SEARCH:
-        await SonarrAPIController()
-            .seriesSearch(context: context, series: series);
+        await SonarrAPIController().seriesSearch(
+          context: context,
+          series: series,
+        );
         break;
     }
   }

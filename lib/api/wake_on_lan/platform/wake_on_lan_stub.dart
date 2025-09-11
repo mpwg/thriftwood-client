@@ -1,4 +1,4 @@
-import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
+import 'package:thriftwood/api/wake_on_lan/wake_on_lan.dart';
 
 bool isPlatformSupported() => false;
 LunaWakeOnLAN getWakeOnLAN() =>

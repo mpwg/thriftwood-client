@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/radarr/utilities.dart';
-import 'package:lunasea/api/radarr/models.dart';
-import 'package:lunasea/api/radarr/types.dart';
+import 'package:thriftwood/api/radarr/utilities.dart';
+import 'package:thriftwood/api/radarr/models.dart';
+import 'package:thriftwood/api/radarr/types.dart';
 
 part 'queue_record.g.dart';
 
@@ -33,27 +33,31 @@ class RadarrQueueRecord {
   String? timeLeft;
 
   @JsonKey(
-      name: 'estimatedCompletionTime',
-      fromJson: RadarrUtilities.dateTimeFromJson,
-      toJson: RadarrUtilities.dateTimeToJson)
+    name: 'estimatedCompletionTime',
+    fromJson: RadarrUtilities.dateTimeFromJson,
+    toJson: RadarrUtilities.dateTimeToJson,
+  )
   DateTime? estimatedCompletionTime;
 
   @JsonKey(
-      name: 'status',
-      fromJson: RadarrUtilities.queueRecordStatusFromJson,
-      toJson: RadarrUtilities.queueRecordStatusToJson)
+    name: 'status',
+    fromJson: RadarrUtilities.queueRecordStatusFromJson,
+    toJson: RadarrUtilities.queueRecordStatusToJson,
+  )
   RadarrQueueRecordStatus? status;
 
   @JsonKey(
-      name: 'trackedDownloadStatus',
-      fromJson: RadarrUtilities.trackedDownloadStatusFromJson,
-      toJson: RadarrUtilities.trackedDownloadStatusToJson)
+    name: 'trackedDownloadStatus',
+    fromJson: RadarrUtilities.trackedDownloadStatusFromJson,
+    toJson: RadarrUtilities.trackedDownloadStatusToJson,
+  )
   RadarrTrackedDownloadStatus? trackedDownloadStatus;
 
   @JsonKey(
-      name: 'trackedDownloadState',
-      fromJson: RadarrUtilities.trackedDownloadStateFromJson,
-      toJson: RadarrUtilities.trackedDownloadStateToJson)
+    name: 'trackedDownloadState',
+    fromJson: RadarrUtilities.trackedDownloadStateFromJson,
+    toJson: RadarrUtilities.trackedDownloadStateToJson,
+  )
   RadarrTrackedDownloadState? trackedDownloadState;
 
   @JsonKey(name: 'statusMessages')
@@ -63,9 +67,10 @@ class RadarrQueueRecord {
   String? downloadId;
 
   @JsonKey(
-      name: 'protocol',
-      fromJson: RadarrUtilities.protocolFromJson,
-      toJson: RadarrUtilities.protocolToJson)
+    name: 'protocol',
+    fromJson: RadarrUtilities.protocolFromJson,
+    toJson: RadarrUtilities.protocolToJson,
+  )
   RadarrProtocol? protocol;
 
   @JsonKey(name: 'downloadClient')

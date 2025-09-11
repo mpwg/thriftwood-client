@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/database/tables/lunasea.dart';
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/system/platform.dart';
+import 'package:thriftwood/database/tables/thriftwood.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/system/platform.dart';
 
 class LunaScaffold extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -14,7 +14,7 @@ class LunaScaffold extends StatelessWidget {
   final bool extendBody;
   final bool extendBodyBehindAppBar;
 
-  /// Called when [LunaSeaDatabase.ENABLED_PROFILE] has changed. Triggered within the build function.
+  /// Called when [thriftwoodDatabase.ENABLED_PROFILE] has changed. Triggered within the build function.
   final void Function(BuildContext)? onProfileChange;
 
   // ignore: use_key_in_widget_constructors
@@ -40,7 +40,7 @@ class LunaScaffold extends StatelessWidget {
   Widget get android {
     return WillPopScope(
       onWillPop: () async {
-        if (!LunaSeaDatabase.ANDROID_BACK_OPENS_DRAWER.read()) return true;
+        if (!thriftwoodDatabase.ANDROID_BACK_OPENS_DRAWER.read()) return true;
 
         final state = scaffoldKey.currentState;
         if (state?.hasDrawer ?? false) {
@@ -55,7 +55,7 @@ class LunaScaffold extends StatelessWidget {
   }
 
   Widget get scaffold {
-    return LunaSeaDatabase.ENABLED_PROFILE.listenableBuilder(
+    return thriftwoodDatabase.ENABLED_PROFILE.listenableBuilder(
       builder: (context, _) {
         onProfileChange?.call(context);
         return Scaffold(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/router/routes/sonarr.dart';
 
 class SonarrEpisodeTile extends StatefulWidget {
   final SonarrEpisode episode;
@@ -32,10 +32,10 @@ class _State extends State<SonarrEpisodeTile> {
       trailing: _trailing(),
       onTap: _onTap,
       onLongPress: _onLongPress,
-      backgroundColor: context
-              .read<SonarrSeasonDetailsState>()
-              .selectedEpisodes
-              .contains(widget.episode.id)
+      backgroundColor:
+          context.read<SonarrSeasonDetailsState>().selectedEpisodes.contains(
+            widget.episode.id,
+          )
           ? LunaColours.accent.selected()
           : null,
     );
@@ -90,9 +90,9 @@ class _State extends State<SonarrEpisodeTile> {
       text: widget.episode.episodeNumber.toString(),
       textSize: LunaUI.FONT_SIZE_H4,
       onPressed: () {
-        context
-            .read<SonarrSeasonDetailsState>()
-            .toggleSelectedEpisode(widget.episode);
+        context.read<SonarrSeasonDetailsState>().toggleSelectedEpisode(
+          widget.episode,
+        );
       },
     );
   }
@@ -108,16 +108,13 @@ class _State extends State<SonarrEpisodeTile> {
       onPressed: () async {
         setLoadingState(LunaLoadingState.ACTIVE);
         SonarrAPIController()
-            .episodeSearch(
-              context: context,
-              episode: widget.episode,
-            )
+            .episodeSearch(context: context, episode: widget.episode)
             .whenComplete(() => setLoadingState(LunaLoadingState.INACTIVE));
       },
       onLongPress: () async {
-        SonarrRoutes.RELEASES.go(queryParams: {
-          'episode': widget.episode.id!.toString(),
-        });
+        SonarrRoutes.RELEASES.go(
+          queryParams: {'episode': widget.episode.id!.toString()},
+        );
       },
     );
   }

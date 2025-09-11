@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/sonarr/models/profile/language_profile_item_language.dart';
+import 'package:thriftwood/api/sonarr/models/profile/language_profile_item_language.dart';
 
 part 'language_profile_item.g.dart';
 
@@ -14,9 +14,7 @@ class SonarrLanguageProfileItem {
   @JsonKey(name: 'language')
   SonarrLanguageProfileItemLanguage? language;
 
-  SonarrLanguageProfileItem({
-    this.allowed,
-  });
+  SonarrLanguageProfileItem({this.allowed});
 
   /// Returns a JSON-encoded string version of this object.
   @override

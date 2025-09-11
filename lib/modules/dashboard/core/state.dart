@@ -1,11 +1,11 @@
-import 'package:lunasea/database/tables/dashboard.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_size.dart';
-import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_type.dart';
-import 'package:lunasea/modules/dashboard/core/api/api.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/abstract.dart';
-import 'package:lunasea/system/state.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/database/tables/dashboard.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_size.dart';
+import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_type.dart';
+import 'package:thriftwood/modules/dashboard/core/api/api.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/abstract.dart';
+import 'package:thriftwood/system/state.dart';
+import 'package:thriftwood/vendor.dart';
 
 class DashboardState extends LunaModuleState {
   DashboardState() {
@@ -19,16 +19,17 @@ class DashboardState extends LunaModuleState {
     resetUpcoming();
   }
 
-  CalendarStartingType _calendarType =
-      DashboardDatabase.CALENDAR_STARTING_TYPE.read();
+  CalendarStartingType _calendarType = DashboardDatabase.CALENDAR_STARTING_TYPE
+      .read();
   CalendarStartingType get calendarType => _calendarType;
   set calendarType(CalendarStartingType calendarStartingType) {
     _calendarType = calendarStartingType;
     notifyListeners();
   }
 
-  CalendarFormat _calendarFormat =
-      DashboardDatabase.CALENDAR_STARTING_SIZE.read().data;
+  CalendarFormat _calendarFormat = DashboardDatabase.CALENDAR_STARTING_SIZE
+      .read()
+      .data;
   CalendarFormat get calendarFormat => _calendarFormat;
   set calendarFormat(CalendarFormat calendarFormat) {
     _calendarFormat = calendarFormat;

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'package:lunasea/widgets/ui.dart';
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_type.dart';
-import 'package:lunasea/modules/dashboard/core/state.dart';
+import 'package:thriftwood/widgets/ui.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_type.dart';
+import 'package:thriftwood/modules/dashboard/core/state.dart';
 
 class SwitchViewAction extends StatefulWidget {
   final PageController? pageController;
-  const SwitchViewAction({
-    Key? key,
-    required this.pageController,
-  }) : super(key: key);
+  const SwitchViewAction({Key? key, required this.pageController})
+    : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();

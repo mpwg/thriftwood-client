@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 part 'release.g.dart';
 

@@ -1,15 +1,13 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/router/routes/tautulli.dart';
-import 'package:lunasea/system/webhooks.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/router/routes/tautulli.dart';
+import 'package:thriftwood/system/webhooks.dart';
 
 class TautulliWebhooks extends LunaWebhooks {
   @override
   Future<void> handle(Map data) async {
     _EventType? event = _EventType.PLAYBACK_PAUSE.fromKey(data['event']);
     if (event == null)
-      LunaLogger().warning(
-        'Unknown event type: ${data['event'] ?? 'null'}',
-      );
+      LunaLogger().warning('Unknown event type: ${data['event'] ?? 'null'}');
     event?.execute(data);
   }
 }
@@ -181,9 +179,7 @@ extension _EventTypeExtension on _EventType {
     if (userId != null && userId.isNotEmpty) {
       return TautulliRoutes.USER_DETAILS.go(
         buildTree: true,
-        params: {
-          'user': userId,
-        },
+        params: {'user': userId},
       );
     }
     return _goToHome();
@@ -193,9 +189,7 @@ extension _EventTypeExtension on _EventType {
     if (sessionKey != null && sessionKey.isNotEmpty) {
       return TautulliRoutes.ACTIVITY_DETAILS.go(
         buildTree: true,
-        params: {
-          'session': sessionKey,
-        },
+        params: {'session': sessionKey},
       );
     }
     return _goToHome();

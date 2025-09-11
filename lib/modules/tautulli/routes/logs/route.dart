@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/router/routes/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/router/routes/tautulli.dart';
 
 class LogsRoute extends StatefulWidget {
-  const LogsRoute({
-    Key? key,
-  }) : super(key: key);
+  const LogsRoute({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -24,10 +22,7 @@ class _State extends State<LogsRoute> with LunaScrollControllerMixin {
   }
 
   Widget _appBar() {
-    return LunaAppBar(
-      title: 'Logs',
-      scrollControllers: [scrollController],
-    );
+    return LunaAppBar(title: 'Logs', scrollControllers: [scrollController]);
   }
 
   Widget _body() {

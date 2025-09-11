@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'newsletter_logs.g.dart';
 
@@ -10,13 +10,16 @@ part 'newsletter_logs.g.dart';
 class TautulliNewsletterLogs {
   /// Number of filtered records returned.
   @JsonKey(
-      name: 'recordsFiltered',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsFiltered',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsFiltered;
 
   /// Total amount of records.
   @JsonKey(
-      name: 'recordsTotal', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'recordsTotal',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? recordsTotal;
 
   /// _Unknown_
@@ -45,13 +48,15 @@ class TautulliNewsletterLogs {
   /// Serialize a [TautulliNewsletterLogs] object to a JSON map.
   Map<String, dynamic> toJson() => _$TautulliNewsletterLogsToJson(this);
 
-  static List<TautulliNewsletterLogRecord> _logsFromJson(
-          List<dynamic> logs) =>
+  static List<TautulliNewsletterLogRecord> _logsFromJson(List<dynamic> logs) =>
       logs
-          .map((log) => TautulliNewsletterLogRecord.fromJson(
-              (log as Map<String, dynamic>)))
+          .map(
+            (log) => TautulliNewsletterLogRecord.fromJson(
+              (log as Map<String, dynamic>),
+            ),
+          )
           .toList();
   static List<Map<String, dynamic>>? _logsToJson(
-          List<TautulliNewsletterLogRecord>? logs) =>
-      logs?.map((log) => log.toJson()).toList();
+    List<TautulliNewsletterLogRecord>? logs,
+  ) => logs?.map((log) => log.toJson()).toList();
 }

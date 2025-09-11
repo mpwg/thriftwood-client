@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class TautulliUserDetailsNavigationBar extends StatelessWidget {
   final PageController? pageController;
-  static List<ScrollController> scrollControllers =
-      List.generate(icons.length, (_) => ScrollController());
+  static List<ScrollController> scrollControllers = List.generate(
+    icons.length,
+    (_) => ScrollController(),
+  );
 
   static const List<IconData> icons = [
     Icons.person_rounded,
@@ -13,12 +15,7 @@ class TautulliUserDetailsNavigationBar extends StatelessWidget {
     Icons.computer_rounded,
   ];
 
-  static const List<String> titles = [
-    'Profile',
-    'History',
-    'Synced',
-    'IPs',
-  ];
+  static const List<String> titles = ['Profile', 'History', 'Synced', 'IPs'];
 
   const TautulliUserDetailsNavigationBar({
     Key? key,

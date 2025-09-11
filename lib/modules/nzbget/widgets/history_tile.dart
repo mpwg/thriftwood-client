@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/nzbget.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/nzbget.dart';
 
 class NZBGetHistoryTile extends StatefulWidget {
   final NZBGetHistoryData data;
   final Function() refresh;
 
-  const NZBGetHistoryTile({
-    Key? key,
-    required this.data,
-    required this.refresh,
-  }) : super(key: key);
+  const NZBGetHistoryTile({Key? key, required this.data, required this.refresh})
+    : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -22,10 +19,7 @@ class _State extends State<NZBGetHistoryTile> {
   Widget build(BuildContext context) {
     return LunaExpandableListTile(
       title: widget.data.name,
-      collapsedSubtitles: [
-        _subtitle1(),
-        _subtitle2(),
-      ],
+      collapsedSubtitles: [_subtitle1(), _subtitle2()],
       expandedHighlightedNodes: _expandedHighlightedNodes(),
       expandedTableContent: _expandedTableContent(),
       expandedTableButtons: _expandedTableButtons(),
@@ -41,9 +35,10 @@ class _State extends State<NZBGetHistoryTile> {
         TextSpan(text: widget.data.sizeReadable),
         TextSpan(text: LunaUI.TEXT_BULLET.pad()),
         TextSpan(
-            text: (widget.data.category ?? '').isEmpty
-                ? 'No Category'
-                : widget.data.category),
+          text: (widget.data.category ?? '').isEmpty
+              ? 'No Category'
+              : widget.data.category,
+        ),
       ],
     );
   }
@@ -67,7 +62,7 @@ class _State extends State<NZBGetHistoryTile> {
       LunaHighlightedNode(
         text: widget.data.healthString,
         backgroundColor: LunaColours.blueGrey,
-      )
+      ),
     ];
   }
 
@@ -76,10 +71,11 @@ class _State extends State<NZBGetHistoryTile> {
       LunaTableContent(title: 'age', body: widget.data.completeTime),
       LunaTableContent(title: 'size', body: widget.data.sizeReadable),
       LunaTableContent(
-          title: 'category',
-          body: (widget.data.category ?? '').isEmpty
-              ? 'No Category'
-              : widget.data.category),
+        title: 'category',
+        body: (widget.data.category ?? '').isEmpty
+            ? 'No Category'
+            : widget.data.category,
+      ),
       LunaTableContent(title: 'speed', body: widget.data.downloadSpeed),
       LunaTableContent(title: 'path', body: widget.data.storageLocation),
     ];
@@ -97,8 +93,10 @@ class _State extends State<NZBGetHistoryTile> {
   }
 
   Future<void> _handlePopup() async {
-    List values =
-        await NZBGetDialogs.historySettings(context, widget.data.name);
+    List values = await NZBGetDialogs.historySettings(
+      context,
+      widget.data.name,
+    );
     if (values[0])
       switch (values[1]) {
         case 'retry':
@@ -106,36 +104,41 @@ class _State extends State<NZBGetHistoryTile> {
             await NZBGetAPI.from(LunaProfile.current)
                 .retryHistoryEntry(widget.data.id)
                 .then((_) {
-              widget.refresh();
-              showLunaSuccessSnackBar(
-                title: 'Retrying Job...',
-                message: widget.data.name,
-              );
-            }).catchError((error) {
-              showLunaErrorSnackBar(
-                title: 'Failed to Retry Job',
-                error: error,
-              );
-            });
+                  widget.refresh();
+                  showLunaSuccessSnackBar(
+                    title: 'Retrying Job...',
+                    message: widget.data.name,
+                  );
+                })
+                .catchError((error) {
+                  showLunaErrorSnackBar(
+                    title: 'Failed to Retry Job',
+                    error: error,
+                  );
+                });
             break;
           }
         case 'hide':
           await NZBGetAPI.from(LunaProfile.current)
               .deleteHistoryEntry(widget.data.id, hide: true)
               .then((_) => _handleDelete('History Hidden'))
-              .catchError((error) => showLunaErrorSnackBar(
-                    title: 'Failed to Hide History',
-                    error: error,
-                  ));
+              .catchError(
+                (error) => showLunaErrorSnackBar(
+                  title: 'Failed to Hide History',
+                  error: error,
+                ),
+              );
           break;
         case 'delete':
           await NZBGetAPI.from(LunaProfile.current)
               .deleteHistoryEntry(widget.data.id, hide: true)
               .then((_) => _handleDelete('History Deleted'))
-              .catchError((error) => showLunaErrorSnackBar(
-                    title: 'Failed to Delete History',
-                    error: error,
-                  ));
+              .catchError(
+                (error) => showLunaErrorSnackBar(
+                  title: 'Failed to Delete History',
+                  error: error,
+                ),
+              );
       }
   }
 
@@ -143,23 +146,21 @@ class _State extends State<NZBGetHistoryTile> {
     List<dynamic> values = await NZBGetDialogs.deleteHistory(context);
     if (values[0])
       await NZBGetAPI.from(LunaProfile.current)
-          .deleteHistoryEntry(
-            widget.data.id,
-            hide: values[1],
+          .deleteHistoryEntry(widget.data.id, hide: values[1])
+          .then(
+            (_) =>
+                _handleDelete(values[1] ? 'History Hidden' : 'History Deleted'),
           )
-          .then((_) =>
-              _handleDelete(values[1] ? 'History Hidden' : 'History Deleted'))
-          .catchError((error) => showLunaErrorSnackBar(
-                title: 'Failed to Delete History',
-                error: error,
-              ));
+          .catchError(
+            (error) => showLunaErrorSnackBar(
+              title: 'Failed to Delete History',
+              error: error,
+            ),
+          );
   }
 
   void _handleDelete(String title) {
-    showLunaSuccessSnackBar(
-      title: title,
-      message: widget.data.name,
-    );
+    showLunaSuccessSnackBar(title: title, message: widget.data.name);
     widget.refresh();
   }
 }

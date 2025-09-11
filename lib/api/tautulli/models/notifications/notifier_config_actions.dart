@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'notifier_config_actions.g.dart';
 
@@ -32,27 +32,37 @@ class TautulliNotifierConfigActions {
 
   /// Trigger on watched?
   @JsonKey(
-      name: 'on_watched', fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'on_watched',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? onWatched;
 
   /// Trigger on concurrent streams passing threshold?
   @JsonKey(
-      name: 'on_concurrent', fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'on_concurrent',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? onConcurrent;
 
   /// Trigger on new user device?
   @JsonKey(
-      name: 'on_newdevice', fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'on_newdevice',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? onNewDevice;
 
   /// Trigger on created/new content?
   @JsonKey(
-      name: 'on_created', fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'on_created',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? onCreated;
 
   /// Trigger on Plex Media Server going down?
   @JsonKey(
-      name: 'on_intdown', fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'on_intdown',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? onPlexServerDown;
 
   /// Trigger on Plex Media Server going back up?
@@ -61,7 +71,9 @@ class TautulliNotifierConfigActions {
 
   /// Trigger on Plex Media Server remote access going down?
   @JsonKey(
-      name: 'on_extdown', fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'on_extdown',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? onPlexServerRemoteAccessDown;
 
   /// Trigger on Plex Media Server remote access going back up?
@@ -70,19 +82,23 @@ class TautulliNotifierConfigActions {
 
   /// Trigger on Plex Media Server update?
   @JsonKey(
-      name: 'on_pmsupdate', fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'on_pmsupdate',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? onPlexUpdate;
 
   /// Trigger on Tautulli update?
   @JsonKey(
-      name: 'on_plexpyupdate',
-      fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'on_plexpyupdate',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? onTautulliUpdate;
 
   /// Trigger on Tautulli database corruption?
   @JsonKey(
-      name: 'on_plexpydbcorrupt',
-      fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'on_plexpydbcorrupt',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? onTautulliDatabaseCorruption;
 
   TautulliNotifierConfigActions({

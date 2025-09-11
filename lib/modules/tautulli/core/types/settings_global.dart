@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/string/links.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 enum TautulliGlobalSettingsType {
   WEB_GUI,

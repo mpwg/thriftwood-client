@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/router/router.dart';
-import 'package:lunasea/router/routes/bios.dart';
-import 'package:lunasea/router/routes/dashboard.dart';
-import 'package:lunasea/router/routes/external_modules.dart';
-import 'package:lunasea/router/routes/lidarr.dart';
-import 'package:lunasea/router/routes/nzbget.dart';
-import 'package:lunasea/router/routes/radarr.dart';
-import 'package:lunasea/router/routes/sabnzbd.dart';
-import 'package:lunasea/router/routes/search.dart';
-import 'package:lunasea/router/routes/settings.dart';
-import 'package:lunasea/router/routes/sonarr.dart';
-import 'package:lunasea/router/routes/tautulli.dart';
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/widgets/pages/not_enabled.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/router/router.dart';
+import 'package:thriftwood/router/routes/bios.dart';
+import 'package:thriftwood/router/routes/dashboard.dart';
+import 'package:thriftwood/router/routes/external_modules.dart';
+import 'package:thriftwood/router/routes/lidarr.dart';
+import 'package:thriftwood/router/routes/nzbget.dart';
+import 'package:thriftwood/router/routes/radarr.dart';
+import 'package:thriftwood/router/routes/sabnzbd.dart';
+import 'package:thriftwood/router/routes/search.dart';
+import 'package:thriftwood/router/routes/settings.dart';
+import 'package:thriftwood/router/routes/sonarr.dart';
+import 'package:thriftwood/router/routes/tautulli.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/widgets/pages/not_enabled.dart';
 
 enum LunaRoutes {
   bios('bios', root: BIOSRoutes.HOME),
@@ -32,10 +32,7 @@ enum LunaRoutes {
   final String key;
   final LunaRoutesMixin root;
 
-  const LunaRoutes(
-    this.key, {
-    required this.root,
-  });
+  const LunaRoutes(this.key, {required this.root});
 
   static String get initialLocation => BIOSRoutes.HOME.path;
 }
@@ -64,19 +61,13 @@ mixin LunaRoutesMixin on Enum {
         if (isModuleEnabled(context)) {
           return builder?.call(context, state) ?? widget!;
         }
-        return NotEnabledPage(module: module?.title ?? 'LunaSea');
+        return NotEnabledPage(module: module?.title ?? 'thriftwood');
       },
     );
   }
 
-  GoRoute redirect({
-    required GoRouterRedirect redirect,
-  }) {
-    return GoRoute(
-      path: path,
-      name: _routeName,
-      redirect: redirect,
-    );
+  GoRoute redirect({required GoRouterRedirect redirect}) {
+    return GoRoute(path: path, name: _routeName, redirect: redirect);
   }
 
   void go({

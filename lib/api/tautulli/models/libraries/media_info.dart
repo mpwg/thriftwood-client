@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'media_info.g.dart';
 
@@ -28,78 +28,100 @@ class TautulliMediaInfo {
 
   /// Aspect ratio of the content.
   @JsonKey(
-      name: 'aspect_ratio', fromJson: TautulliUtilities.ensureDoubleFromJson)
+    name: 'aspect_ratio',
+    fromJson: TautulliUtilities.ensureDoubleFromJson,
+  )
   final double? aspectRatio;
 
   /// Codec of the video stream.
   @JsonKey(
-      name: 'video_codec', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_codec',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoCodec;
 
   /// Resolution of the video stream.
   @JsonKey(
-      name: 'video_resolution',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_resolution',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoResolution;
 
   /// Full resoltuion of the video stream.
   @JsonKey(
-      name: 'video_full_resolution',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_full_resolution',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoFullResolution;
 
   /// Framerate of the video stream.
   @JsonKey(
-      name: 'video_framerate', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_framerate',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoFramerate;
 
   /// Profile of the video stream.
   @JsonKey(
-      name: 'video_profile', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'video_profile',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? videoProfile;
 
   /// Codec of the audio stream.
   @JsonKey(
-      name: 'audio_codec', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'audio_codec',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? audioCodec;
 
   /// Number of channels in the audio stream.
   @JsonKey(
-      name: 'audio_channels', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'audio_channels',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? audioChannels;
 
   /// The layout of the channels in the audio stream.
   @JsonKey(
-      name: 'audio_channel_layout',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'audio_channel_layout',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? audioChannelLayout;
 
   /// Profile of the audio stream.
   @JsonKey(
-      name: 'audio_profile', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'audio_profile',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? audioProfile;
 
   /// Is this session using an optimized version?
   @JsonKey(
-      name: 'optimized_version',
-      fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'optimized_version',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? optimizedVersion;
 
   /// The channel's callsign for live content.
   @JsonKey(
-      name: 'channel_call_sign',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'channel_call_sign',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? channelCallSign;
 
   /// The channel's identifier for live content.
   @JsonKey(
-      name: 'channel_identifier',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'channel_identifier',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? channelIdentifier;
 
   /// The channel's thumbnail for live content.
   @JsonKey(
-      name: 'channel_thumb', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'channel_thumb',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? channelThumb;
 
   /// List of [TautulliMediaInfoParts] objects, each containing information on individual parts (files) of the content.
@@ -141,12 +163,14 @@ class TautulliMediaInfo {
   Map<String, dynamic> toJson() => _$TautulliMediaInfoToJson(this);
 
   static List<TautulliMediaInfoParts> _partsFromJson(
-          List<dynamic> mediaInfoParts) =>
-      mediaInfoParts
-          .map((parts) =>
-              TautulliMediaInfoParts.fromJson((parts as Map<String, dynamic>)))
-          .toList();
+    List<dynamic> mediaInfoParts,
+  ) => mediaInfoParts
+      .map(
+        (parts) =>
+            TautulliMediaInfoParts.fromJson((parts as Map<String, dynamic>)),
+      )
+      .toList();
   static List<Map<String, dynamic>>? _partsToJson(
-          List<TautulliMediaInfoParts>? mediaInfoParts) =>
-      mediaInfoParts?.map((parts) => parts.toJson()).toList();
+    List<TautulliMediaInfoParts>? mediaInfoParts,
+  ) => mediaInfoParts?.map((parts) => parts.toJson()).toList();
 }

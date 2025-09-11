@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/api/tautulli/types.dart';
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/modules/tautulli/core/state.dart';
-import 'package:lunasea/modules/tautulli/routes/activity_details/route.dart';
-import 'package:lunasea/modules/tautulli/routes/check_for_updates/route.dart';
-import 'package:lunasea/modules/tautulli/routes/graphs/route.dart';
-import 'package:lunasea/modules/tautulli/routes/history_details/route.dart';
-import 'package:lunasea/modules/tautulli/routes/ipaddress_details/route.dart';
-import 'package:lunasea/modules/tautulli/routes/libraries/route.dart';
-import 'package:lunasea/modules/tautulli/routes/libraries_details/route.dart';
-import 'package:lunasea/modules/tautulli/routes/logs/route.dart';
-import 'package:lunasea/modules/tautulli/routes/logs_logins/route.dart';
-import 'package:lunasea/modules/tautulli/routes/logs_newsletters/route.dart';
-import 'package:lunasea/modules/tautulli/routes/logs_notifications/route.dart';
-import 'package:lunasea/modules/tautulli/routes/logs_plex_media_scanner/route.dart';
-import 'package:lunasea/modules/tautulli/routes/logs_plex_media_server/route.dart';
-import 'package:lunasea/modules/tautulli/routes/logs_tautulli/route.dart';
-import 'package:lunasea/modules/tautulli/routes/media_details/route.dart';
-import 'package:lunasea/modules/tautulli/routes/recently_added/route.dart';
-import 'package:lunasea/modules/tautulli/routes/search/route.dart';
-import 'package:lunasea/modules/tautulli/routes/statistics/route.dart';
-import 'package:lunasea/modules/tautulli/routes/synced_items/route.dart';
-import 'package:lunasea/modules/tautulli/routes/tautulli/route.dart';
-import 'package:lunasea/modules/tautulli/routes/users_details/route.dart';
-import 'package:lunasea/router/routes.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/api/tautulli/types.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/modules/tautulli/core/state.dart';
+import 'package:thriftwood/modules/tautulli/routes/activity_details/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/check_for_updates/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/graphs/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/history_details/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/ipaddress_details/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/libraries/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/libraries_details/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/logs/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/logs_logins/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/logs_newsletters/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/logs_notifications/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/logs_plex_media_scanner/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/logs_plex_media_server/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/logs_tautulli/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/media_details/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/recently_added/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/search/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/statistics/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/synced_items/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/tautulli/route.dart';
+import 'package:thriftwood/modules/tautulli/routes/users_details/route.dart';
+import 'package:thriftwood/router/routes.dart';
+import 'package:thriftwood/vendor.dart';
 
 enum TautulliRoutes with LunaRoutesMixin {
   HOME('/tautulli'),
@@ -68,41 +68,51 @@ enum TautulliRoutes with LunaRoutesMixin {
       case TautulliRoutes.HOME:
         return route(widget: const TautulliRoute());
       case TautulliRoutes.ACTIVITY_DETAILS:
-        return route(builder: (_, state) {
-          return ActivityDetailsRoute(
-            sessionKey:
-                int.tryParse(state.pathParameters['session'] ?? '') ?? -1,
-          );
-        });
+        return route(
+          builder: (_, state) {
+            return ActivityDetailsRoute(
+              sessionKey:
+                  int.tryParse(state.pathParameters['session'] ?? '') ?? -1,
+            );
+          },
+        );
       case TautulliRoutes.CHECK_FOR_UPDATES:
         return route(widget: const CheckForUpdatesRoute());
       case TautulliRoutes.GRAPHS:
         return route(widget: const GraphsRoute());
       case TautulliRoutes.HISTORY_DETAILS:
-        return route(builder: (_, state) {
-          return HistoryDetailsRoute(
-            ratingKey:
-                int.tryParse(state.pathParameters['rating_key'] ?? '') ?? -1,
-            sessionKey:
-                int.tryParse(state.uri.queryParameters['session_key'] ?? ''),
-            referenceId:
-                int.tryParse(state.uri.queryParameters['reference_id'] ?? ''),
-          );
-        });
+        return route(
+          builder: (_, state) {
+            return HistoryDetailsRoute(
+              ratingKey:
+                  int.tryParse(state.pathParameters['rating_key'] ?? '') ?? -1,
+              sessionKey: int.tryParse(
+                state.uri.queryParameters['session_key'] ?? '',
+              ),
+              referenceId: int.tryParse(
+                state.uri.queryParameters['reference_id'] ?? '',
+              ),
+            );
+          },
+        );
       case TautulliRoutes.IP_DETAILS:
-        return route(builder: (_, state) {
-          return IPDetailsRoute(
-            ipAddress: state.pathParameters['ip_address'],
-          );
-        });
+        return route(
+          builder: (_, state) {
+            return IPDetailsRoute(
+              ipAddress: state.pathParameters['ip_address'],
+            );
+          },
+        );
       case TautulliRoutes.LIBRARIES:
         return route(widget: const LibrariesRoute());
       case TautulliRoutes.LIBRARIES_DETAILS:
-        return route(builder: (_, state) {
-          return LibrariesDetailsRoute(
-            sectionId: int.tryParse(state.pathParameters['section'] ?? ''),
-          );
-        });
+        return route(
+          builder: (_, state) {
+            return LibrariesDetailsRoute(
+              sectionId: int.tryParse(state.pathParameters['section'] ?? ''),
+            );
+          },
+        );
       case TautulliRoutes.LOGS:
         return route(widget: const LogsRoute());
       case TautulliRoutes.LOGS_LOGINS:
@@ -118,14 +128,17 @@ enum TautulliRoutes with LunaRoutesMixin {
       case TautulliRoutes.LOGS_TAUTULLI:
         return route(widget: const LogsTautulliRoute());
       case TautulliRoutes.MEDIA_DETAILS:
-        return route(builder: (_, state) {
-          return MediaDetailsRoute(
-            ratingKey:
-                int.tryParse(state.pathParameters['rating_key'] ?? '') ?? -1,
-            mediaType:
-                TautulliMediaType.from(state.pathParameters['media_type']),
-          );
-        });
+        return route(
+          builder: (_, state) {
+            return MediaDetailsRoute(
+              ratingKey:
+                  int.tryParse(state.pathParameters['rating_key'] ?? '') ?? -1,
+              mediaType: TautulliMediaType.from(
+                state.pathParameters['media_type'],
+              ),
+            );
+          },
+        );
       case TautulliRoutes.RECENTLY_ADDED:
         return route(widget: const RecentlyAddedRoute());
       case TautulliRoutes.SEARCH:
@@ -135,11 +148,13 @@ enum TautulliRoutes with LunaRoutesMixin {
       case TautulliRoutes.SYNCED_ITEMS:
         return route(widget: const SyncedItemsRoute());
       case TautulliRoutes.USER_DETAILS:
-        return route(builder: (_, state) {
-          return UserDetailsRoute(
-            userId: int.tryParse(state.pathParameters['user'] ?? ''),
-          );
-        });
+        return route(
+          builder: (_, state) {
+            return UserDetailsRoute(
+              userId: int.tryParse(state.pathParameters['user'] ?? ''),
+            );
+          },
+        );
     }
   }
 
@@ -163,9 +178,7 @@ enum TautulliRoutes with LunaRoutesMixin {
           TautulliRoutes.USER_DETAILS.routes,
         ];
       case TautulliRoutes.LIBRARIES:
-        return [
-          TautulliRoutes.LIBRARIES_DETAILS.routes,
-        ];
+        return [TautulliRoutes.LIBRARIES_DETAILS.routes];
       case TautulliRoutes.LOGS:
         return [
           TautulliRoutes.LOGS_LOGINS.routes,

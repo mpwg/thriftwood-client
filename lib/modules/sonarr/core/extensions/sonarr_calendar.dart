@@ -1,10 +1,10 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 extension SonarrCalendarExtension on SonarrCalendar {
   String get lunaAirTime {
     if (this.airDateUtc != null)
-      return LunaSeaDatabase.USE_24_HOUR_TIME.read()
+      return thriftwoodDatabase.USE_24_HOUR_TIME.read()
           ? DateFormat.Hm().format(this.airDateUtc!.toLocal())
           : DateFormat('hh:mm\na').format(this.airDateUtc!.toLocal());
     return LunaUI.TEXT_EMDASH;

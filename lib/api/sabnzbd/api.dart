@@ -1,18 +1,18 @@
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/api/sabnzbd/models/action_result.dart';
-import 'package:lunasea/api/sabnzbd/models/categories.dart';
-import 'package:lunasea/api/sabnzbd/models/history.dart';
-import 'package:lunasea/api/sabnzbd/models/queue.dart';
-import 'package:lunasea/api/sabnzbd/models/server_stats.dart';
-import 'package:lunasea/api/sabnzbd/models/status.dart';
-import 'package:lunasea/api/sabnzbd/models/version.dart';
-import 'package:lunasea/api/sabnzbd/types/action.dart';
-import 'package:lunasea/api/sabnzbd/types/clear_history.dart';
-import 'package:lunasea/api/sabnzbd/types/on_complete_action.dart';
-import 'package:lunasea/api/sabnzbd/types/post_processing.dart';
-import 'package:lunasea/api/sabnzbd/types/priority.dart';
-import 'package:lunasea/api/sabnzbd/types/sort_category.dart';
-import 'package:lunasea/api/sabnzbd/types/sort_direction.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/api/sabnzbd/models/action_result.dart';
+import 'package:thriftwood/api/sabnzbd/models/categories.dart';
+import 'package:thriftwood/api/sabnzbd/models/history.dart';
+import 'package:thriftwood/api/sabnzbd/models/queue.dart';
+import 'package:thriftwood/api/sabnzbd/models/server_stats.dart';
+import 'package:thriftwood/api/sabnzbd/models/status.dart';
+import 'package:thriftwood/api/sabnzbd/models/version.dart';
+import 'package:thriftwood/api/sabnzbd/types/action.dart';
+import 'package:thriftwood/api/sabnzbd/types/clear_history.dart';
+import 'package:thriftwood/api/sabnzbd/types/on_complete_action.dart';
+import 'package:thriftwood/api/sabnzbd/types/post_processing.dart';
+import 'package:thriftwood/api/sabnzbd/types/priority.dart';
+import 'package:thriftwood/api/sabnzbd/types/sort_category.dart';
+import 'package:thriftwood/api/sabnzbd/types/sort_direction.dart';
 
 part 'api.g.dart';
 
@@ -28,17 +28,19 @@ abstract class SABnzbdAPI {
     required String apiKey,
     Map<String, dynamic> headers = const {},
   }) {
-    Dio dio = Dio(BaseOptions(
-      headers: headers,
-      followRedirects: true,
-      maxRedirects: 5,
-      contentType: Headers.jsonContentType,
-      responseType: ResponseType.json,
-      queryParameters: {
-        if (apiKey.isNotEmpty) 'apikey': apiKey,
-        'output': 'json',
-      },
-    ));
+    Dio dio = Dio(
+      BaseOptions(
+        headers: headers,
+        followRedirects: true,
+        maxRedirects: 5,
+        contentType: Headers.jsonContentType,
+        responseType: ResponseType.json,
+        queryParameters: {
+          if (apiKey.isNotEmpty) 'apikey': apiKey,
+          'output': 'json',
+        },
+      ),
+    );
     return _SABnzbdAPI(dio, baseUrl: _baseUrl(host));
   }
 
@@ -97,14 +99,10 @@ abstract class SABnzbdAPI {
   });
 
   @GET('')
-  Future<SABnzbdStatus> getStatus({
-    @Query('mode') String mode = 'status',
-  });
+  Future<SABnzbdStatus> getStatus({@Query('mode') String mode = 'status'});
 
   @GET('')
-  Future<SABnzbdVersion> getVersion({
-    @Query('mode') String mode = 'version',
-  });
+  Future<SABnzbdVersion> getVersion({@Query('mode') String mode = 'version'});
 
   @GET('')
   Future<void> moveQueue(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/lidarr.dart';
-import 'package:lunasea/router/routes/lidarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/lidarr.dart';
+import 'package:thriftwood/router/routes/lidarr.dart';
 
 class LidarrDetailsAlbumTile extends StatefulWidget {
   final LidarrAlbumData data;
@@ -54,28 +54,33 @@ class _State extends State<LidarrDetailsAlbumTile> {
     await _api
         .toggleAlbumMonitored(widget.data.albumID, !widget.data.monitored)
         .then((_) {
-      if (mounted)
-        setState(() => widget.data.monitored = !widget.data.monitored);
-      widget.refreshState();
-      showLunaSuccessSnackBar(
-          title: widget.data.monitored ? 'Monitoring' : 'No Longer Monitoring',
-          message: widget.data.title);
-    }).catchError((error) {
-      showLunaErrorSnackBar(
-        title: widget.data.monitored
-            ? 'Failed to Stop Monitoring'
-            : 'Failed to Monitor',
-        error: error,
-      );
-    });
+          if (mounted)
+            setState(() => widget.data.monitored = !widget.data.monitored);
+          widget.refreshState();
+          showLunaSuccessSnackBar(
+            title: widget.data.monitored
+                ? 'Monitoring'
+                : 'No Longer Monitoring',
+            message: widget.data.title,
+          );
+        })
+        .catchError((error) {
+          showLunaErrorSnackBar(
+            title: widget.data.monitored
+                ? 'Failed to Stop Monitoring'
+                : 'Failed to Monitor',
+            error: error,
+          );
+        });
   }
 
   Future<void> _enterAlbum() async {
-    LidarrRoutes.ARTIST_ALBUM.go(params: {
-      'album': widget.data.albumID.toString(),
-      'artist': widget.artistId.toString(),
-    }, queryParams: {
-      'monitored': widget.data.monitored.toString(),
-    });
+    LidarrRoutes.ARTIST_ALBUM.go(
+      params: {
+        'album': widget.data.albumID.toString(),
+        'artist': widget.artistId.toString(),
+      },
+      queryParams: {'monitored': widget.data.monitored.toString()},
+    );
   }
 }

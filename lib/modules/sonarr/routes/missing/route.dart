@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrMissingRoute extends StatefulWidget {
-  const SonarrMissingRoute({
-    Key? key,
-  }) : super(key: key);
+  const SonarrMissingRoute({Key? key}) : super(key: key);
 
   @override
   State<SonarrMissingRoute> createState() => _State();
@@ -42,31 +40,36 @@ class _State extends State<SonarrMissingRoute>
       context: context,
       key: _refreshKey,
       onRefresh: loadCallback,
-      child: Selector<SonarrState,
-          Tuple2<Future<Map<int, SonarrSeries>>?, Future<SonarrMissing>?>>(
-        selector: (_, state) => Tuple2(state.series, state.missing),
-        builder: (context, tuple, _) => FutureBuilder(
-          future: Future.wait([tuple.item1!, tuple.item2!]),
-          builder: (context, AsyncSnapshot<List<Object>> snapshot) {
-            if (snapshot.hasError) {
-              if (snapshot.connectionState != ConnectionState.waiting) {
-                LunaLogger().error(
-                  'Unable to fetch Sonarr missing episodes',
-                  snapshot.error,
-                  snapshot.stackTrace,
-                );
-              }
-              return LunaMessage.error(onTap: _refreshKey.currentState!.show);
-            }
-            if (snapshot.hasData)
-              return _episodes(
-                snapshot.data![0] as Map<int, SonarrSeries>,
-                snapshot.data![1] as SonarrMissing,
-              );
-            return const LunaLoader();
-          },
-        ),
-      ),
+      child:
+          Selector<
+            SonarrState,
+            Tuple2<Future<Map<int, SonarrSeries>>?, Future<SonarrMissing>?>
+          >(
+            selector: (_, state) => Tuple2(state.series, state.missing),
+            builder: (context, tuple, _) => FutureBuilder(
+              future: Future.wait([tuple.item1!, tuple.item2!]),
+              builder: (context, AsyncSnapshot<List<Object>> snapshot) {
+                if (snapshot.hasError) {
+                  if (snapshot.connectionState != ConnectionState.waiting) {
+                    LunaLogger().error(
+                      'Unable to fetch Sonarr missing episodes',
+                      snapshot.error,
+                      snapshot.stackTrace,
+                    );
+                  }
+                  return LunaMessage.error(
+                    onTap: _refreshKey.currentState!.show,
+                  );
+                }
+                if (snapshot.hasData)
+                  return _episodes(
+                    snapshot.data![0] as Map<int, SonarrSeries>,
+                    snapshot.data![1] as SonarrMissing,
+                  );
+                return const LunaLoader();
+              },
+            ),
+          ),
     );
   }
 
@@ -74,7 +77,7 @@ class _State extends State<SonarrMissingRoute>
     if ((missing.records?.length ?? 0) == 0)
       return LunaMessage(
         text: 'sonarr.NoEpisodesFound'.tr(),
-        buttonText: 'lunasea.Refresh'.tr(),
+        buttonText: 'thriftwood.Refresh'.tr(),
         onTap: _refreshKey.currentState?.show,
       );
     return LunaListViewBuilder(

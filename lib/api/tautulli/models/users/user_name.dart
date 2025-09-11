@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'user_name.g.dart';
 
@@ -12,13 +12,12 @@ class TautulliUserName {
 
   /// The user's friendly name.
   @JsonKey(
-      name: 'friendly_name', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'friendly_name',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? friendlyName;
 
-  TautulliUserName({
-    this.userId,
-    this.friendlyName,
-  });
+  TautulliUserName({this.userId, this.friendlyName});
 
   /// Returns a JSON-encoded string version of this object.
   @override

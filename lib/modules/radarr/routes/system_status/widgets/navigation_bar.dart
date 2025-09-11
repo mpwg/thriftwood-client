@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class RadarrSystemStatusNavigationBar extends StatelessWidget {
   final PageController? pageController;
@@ -9,8 +9,10 @@ class RadarrSystemStatusNavigationBar extends StatelessWidget {
     Icons.donut_large_rounded,
   ];
   static const List<String> titles = ['About', 'Health Check', 'Disk Space'];
-  static List<ScrollController> scrollControllers =
-      List.generate(icons.length, (_) => ScrollController());
+  static List<ScrollController> scrollControllers = List.generate(
+    icons.length,
+    (_) => ScrollController(),
+  );
 
   const RadarrSystemStatusNavigationBar({
     Key? key,

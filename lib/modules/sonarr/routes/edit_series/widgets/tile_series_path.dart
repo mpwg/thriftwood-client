@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeriesEditSeriesPathTile extends StatelessWidget {
-  const SonarrSeriesEditSeriesPathTile({
-    Key? key,
-  }) : super(key: key);
+  const SonarrSeriesEditSeriesPathTile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LunaBlock(
       title: 'sonarr.SeriesPath'.tr(),
-      body: [
-        TextSpan(
-          text: context.watch<SonarrSeriesEditState>().seriesPath,
-        ),
-      ],
+      body: [TextSpan(text: context.watch<SonarrSeriesEditState>().seriesPath)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async => _onTap(context),
     );

@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/database/tables/lunasea.dart';
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/widgets/ui.dart';
-import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/database/models/profile.dart';
+import 'package:thriftwood/database/tables/thriftwood.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/widgets/ui.dart';
+import 'package:thriftwood/api/wake_on_lan/wake_on_lan.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
 
 class ModulesPage extends StatefulWidget {
-  const ModulesPage({
-    Key? key,
-  }) : super(key: key);
+  const ModulesPage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -30,15 +28,15 @@ class _State extends State<ModulesPage> with AutomaticKeepAliveClientMixin {
   Widget _list() {
     if (!(LunaProfile.current.isAnythingEnabled())) {
       return LunaMessage(
-        text: 'lunasea.NoModulesEnabled'.tr(),
-        buttonText: 'lunasea.GoToSettings'.tr(),
+        text: 'thriftwood.NoModulesEnabled'.tr(),
+        buttonText: 'thriftwood.GoToSettings'.tr(),
         onTap: LunaModule.SETTINGS.launch,
       );
     }
     return LunaListView(
       controller: HomeNavigationBar.scrollControllers[0],
       itemExtent: LunaBlock.calculateItemExtent(1),
-      children: LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE.read()
+      children: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.read()
           ? _buildAlphabeticalList()
           : _buildManuallyOrderedList(),
     );
@@ -48,9 +46,7 @@ class _State extends State<ModulesPage> with AutomaticKeepAliveClientMixin {
     List<Widget> modules = [];
     int index = 0;
     LunaModule.active
-      ..sort((a, b) => a.title.toLowerCase().compareTo(
-            b.title.toLowerCase(),
-          ))
+      ..sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()))
       ..forEach((module) {
         if (module.isEnabled) {
           if (module == LunaModule.WAKE_ON_LAN) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/modules/lidarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/modules/lidarr.dart';
 
 class LidarrDialogs {
   Future<Tuple2<bool, LidarrMonitorStatus?>> selectMonitoringOption(
@@ -34,7 +34,9 @@ class LidarrDialogs {
   }
 
   static Future<List<dynamic>> editQualityProfile(
-      BuildContext context, List<LidarrQualityProfile> qualities) async {
+    BuildContext context,
+    List<LidarrQualityProfile> qualities,
+  ) async {
     bool _flag = false;
     LidarrQualityProfile? _quality;
 
@@ -62,7 +64,9 @@ class LidarrDialogs {
   }
 
   static Future<List<dynamic>> editMetadataProfile(
-      BuildContext context, List<LidarrMetadataProfile> metadatas) async {
+    BuildContext context,
+    List<LidarrMetadataProfile> metadatas,
+  ) async {
     bool _flag = false;
     LidarrMetadataProfile? _metadata;
 
@@ -116,7 +120,8 @@ class LidarrDialogs {
       ],
       content: [
         LunaDialog.textContent(
-            text: 'Are you sure you want to remove the artist from Lidarr?'),
+          text: 'Are you sure you want to remove the artist from Lidarr?',
+        ),
       ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
@@ -135,15 +140,13 @@ class LidarrDialogs {
       context: context,
       title: 'Download Release',
       buttons: <Widget>[
-        LunaDialog.button(
-          text: 'Download',
-          onPressed: () => _setValues(true),
-        ),
+        LunaDialog.button(text: 'Download', onPressed: () => _setValues(true)),
       ],
       content: [
         LunaDialog.textContent(
-            text:
-                'Are you sure you want to download this release? It has been marked as a rejected release by Lidarr.'),
+          text:
+              'Are you sure you want to download this release? It has been marked as a rejected release by Lidarr.',
+        ),
       ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
@@ -162,14 +165,12 @@ class LidarrDialogs {
       context: context,
       title: 'Search All Missing',
       buttons: <Widget>[
-        LunaDialog.button(
-          text: 'Search',
-          onPressed: () => _setValues(true),
-        ),
+        LunaDialog.button(text: 'Search', onPressed: () => _setValues(true)),
       ],
       content: [
         LunaDialog.textContent(
-            text: 'Are you sure you want to search for all missing albums?'),
+          text: 'Are you sure you want to search for all missing albums?',
+        ),
       ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
@@ -177,7 +178,9 @@ class LidarrDialogs {
   }
 
   static Future<List<dynamic>> editArtist(
-      BuildContext context, LidarrCatalogueData entry) async {
+    BuildContext context,
+    LidarrCatalogueData entry,
+  ) async {
     List<List<dynamic>> _options = [
       ['Edit Artist', Icons.edit_rounded, 'edit_artist'],
       ['Refresh Artist', Icons.refresh_rounded, 'refresh_artist'],
@@ -210,7 +213,9 @@ class LidarrDialogs {
   }
 
   static Future<List<dynamic>> editRootFolder(
-      BuildContext context, List<LidarrRootFolder> folders) async {
+    BuildContext context,
+    List<LidarrRootFolder> folders,
+  ) async {
     bool _flag = false;
     LidarrRootFolder? _folder;
 
@@ -227,14 +232,16 @@ class LidarrDialogs {
         folders.length,
         (index) => LunaDialog.tile(
           text: folders[index].path!,
-          subtitle: LunaDialog.richText(
-            children: [
-              LunaDialog.bolded(
-                text: folders[index].freeSpace.asBytes(),
-                fontSize: LunaDialog.BUTTON_SIZE,
-              ),
-            ],
-          ) as RichText?,
+          subtitle:
+              LunaDialog.richText(
+                    children: [
+                      LunaDialog.bolded(
+                        text: folders[index].freeSpace.asBytes(),
+                        fontSize: LunaDialog.BUTTON_SIZE,
+                      ),
+                    ],
+                  )
+                  as RichText?,
           icon: Icons.folder_rounded,
           iconColor: LunaColours().byListIndex(index),
           onTap: () => _setValues(true, folders[index]),
@@ -310,10 +317,10 @@ class LidarrDialogs {
   Future<void> addArtistOptions(BuildContext context) async {
     await LunaDialog.dialog(
       context: context,
-      title: 'lunasea.Options'.tr(),
+      title: 'thriftwood.Options'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'lunasea.Close'.tr(),
+          text: 'thriftwood.Close'.tr(),
           onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
         ),
       ],

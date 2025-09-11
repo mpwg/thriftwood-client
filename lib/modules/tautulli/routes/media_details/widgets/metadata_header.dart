@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
   final TautulliMetadata? metadata;
@@ -17,13 +17,14 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
       body: _body,
       backgroundHeaders: context.watch<TautulliState>().headers,
       backgroundUrl: context.watch<TautulliState>().getImageURLFromPath(
-            metadata!.art,
-            width: MediaQuery.of(context).size.width.truncate(),
-          ),
+        metadata!.art,
+        width: MediaQuery.of(context).size.width.truncate(),
+      ),
       bottom: const SizedBox(),
       bottomHeight: _bottomHeight,
-      posterUrl:
-          context.watch<TautulliState>().getImageURLFromPath(_posterLink),
+      posterUrl: context.watch<TautulliState>().getImageURLFromPath(
+        _posterLink,
+      ),
       posterHeaders: context.watch<TautulliState>().headers,
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
     );
@@ -31,12 +32,12 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
 
   String? get _title =>
       metadata!.grandparentTitle == null || metadata!.grandparentTitle!.isEmpty
-          ? metadata!.parentTitle == null || metadata!.parentTitle!.isEmpty
-              ? metadata!.title == null || metadata!.title!.isEmpty
+      ? metadata!.parentTitle == null || metadata!.parentTitle!.isEmpty
+            ? metadata!.title == null || metadata!.title!.isEmpty
                   ? 'Unknown Title'
                   : metadata!.title
-              : metadata!.parentTitle
-          : metadata!.grandparentTitle;
+            : metadata!.parentTitle
+      : metadata!.grandparentTitle;
 
   String? get _posterLink {
     switch (metadata!.mediaType) {
@@ -102,7 +103,7 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
       case TautulliMediaType.MOVIE:
       case TautulliMediaType.ARTIST:
       case TautulliMediaType.SHOW:
-        _text = metadata!.year?.toString() ?? 'lunasea.Unknown'.tr();
+        _text = metadata!.year?.toString() ?? 'thriftwood.Unknown'.tr();
         break;
       case TautulliMediaType.ALBUM:
       case TautulliMediaType.SEASON:
@@ -120,7 +121,7 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
         break;
       case TautulliMediaType.NULL:
       default:
-        _text = 'lunasea.Unknown'.tr();
+        _text = 'thriftwood.Unknown'.tr();
         break;
     }
     return TextSpan(text: _text);
@@ -132,7 +133,7 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
       case TautulliMediaType.MOVIE:
       case TautulliMediaType.ARTIST:
       case TautulliMediaType.SHOW:
-        _text = metadata!.year?.toString() ?? 'lunasea.Unknown'.tr();
+        _text = metadata!.year?.toString() ?? 'thriftwood.Unknown'.tr();
         break;
       case TautulliMediaType.ALBUM:
       case TautulliMediaType.SEASON:
@@ -144,7 +145,7 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
         break;
       case TautulliMediaType.NULL:
       default:
-        _text = 'lunasea.Unknown'.tr();
+        _text = 'thriftwood.Unknown'.tr();
         break;
     }
     return TextSpan(text: _text);

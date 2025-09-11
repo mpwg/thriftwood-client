@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/router/routes/sonarr.dart';
 
-enum _SonarrSeriesTileType {
-  TILE,
-  GRID,
-}
+enum _SonarrSeriesTileType { TILE, GRID }
 
 class SonarrSeriesTile extends StatefulWidget {
   static final itemExtent = LunaBlock.calculateItemExtent(3);
@@ -61,11 +58,7 @@ class _State extends State<SonarrSeriesTile> {
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
       disabled: !widget.series.monitored!,
       title: widget.series.title,
-      body: [
-        _subtitle1(),
-        _subtitle2(),
-        _subtitle3(),
-      ],
+      body: [_subtitle1(), _subtitle2(), _subtitle3()],
       onTap: _onTap,
       onLongPress: _onLongPress,
     );
@@ -97,10 +90,7 @@ class _State extends State<SonarrSeriesTile> {
         fontSize: LunaUI.FONT_SIZE_H3,
       );
     }
-    return TextSpan(
-      text: text,
-      style: style,
-    );
+    return TextSpan(text: text, style: style);
   }
 
   TextSpan _subtitle1() {
@@ -111,7 +101,7 @@ class _State extends State<SonarrSeriesTile> {
           SonarrSeriesSorting.EPISODES,
         ),
         TextSpan(text: LunaUI.TEXT_BULLET.pad()),
-        TextSpan(text: widget.series.lunaSeasonCount),
+        TextSpan(text: widget.series.thriftwoodsonCount),
         TextSpan(text: LunaUI.TEXT_BULLET.pad()),
         _buildChildTextSpan(
           widget.series.lunaSizeOnDisk,
@@ -167,17 +157,12 @@ class _State extends State<SonarrSeriesTile> {
   }
 
   Future<void> _onTap() async {
-    SonarrRoutes.SERIES.go(params: {
-      'series': widget.series.id!.toString(),
-    });
+    SonarrRoutes.SERIES.go(params: {'series': widget.series.id!.toString()});
   }
 
   Future<void> _onLongPress() async {
-    Tuple2<bool, SonarrSeriesSettingsType?> values =
-        await SonarrDialogs().seriesSettings(
-      context,
-      widget.series,
-    );
+    Tuple2<bool, SonarrSeriesSettingsType?> values = await SonarrDialogs()
+        .seriesSettings(context, widget.series);
     if (values.item1) values.item2!.execute(context, widget.series);
   }
 }

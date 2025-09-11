@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaLoader extends StatelessWidget {
   final double size;
@@ -16,19 +16,16 @@ class LunaLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SafeArea(
-        left: useSafeArea,
-        right: useSafeArea,
-        top: useSafeArea,
-        bottom: useSafeArea,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SpinKitThreeBounce(
-              color: color ?? LunaColours.accent,
-              size: size,
-            ),
-          ],
-        ),
-      );
+    left: useSafeArea,
+    right: useSafeArea,
+    top: useSafeArea,
+    bottom: useSafeArea,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        SpinKitThreeBounce(color: color ?? LunaColours.accent, size: size),
+      ],
+    ),
+  );
 }

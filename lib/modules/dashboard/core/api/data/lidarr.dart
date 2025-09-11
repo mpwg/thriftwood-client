@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/router/routes/lidarr.dart';
-import 'package:lunasea/widgets/ui.dart';
-import 'package:lunasea/modules/lidarr/core/api/api.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/abstract.dart';
+import 'package:thriftwood/database/models/profile.dart';
+import 'package:thriftwood/router/routes/lidarr.dart';
+import 'package:thriftwood/widgets/ui.dart';
+import 'package:thriftwood/modules/lidarr/core/api/api.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/abstract.dart';
 
 class CalendarLidarrData extends CalendarData {
   String albumTitle;
@@ -25,9 +25,7 @@ class CalendarLidarrData extends CalendarData {
     return [
       TextSpan(
         text: albumTitle,
-        style: const TextStyle(
-          fontStyle: FontStyle.italic,
-        ),
+        style: const TextStyle(fontStyle: FontStyle.italic),
       ),
       TextSpan(
         text: totalTrackCount == 1 ? '1 Track' : '$totalTrackCount Tracks',
@@ -47,40 +45,43 @@ class CalendarLidarrData extends CalendarData {
             fontWeight: LunaUI.FONT_WEIGHT_BOLD,
             color: LunaColours.accent,
           ),
-        )
+        ),
     ];
   }
 
   @override
   Future<void> enterContent(BuildContext context) async {
-    LidarrRoutes.ARTIST.go(params: {
-      'artist': artistId.toString(),
-    });
+    LidarrRoutes.ARTIST.go(params: {'artist': artistId.toString()});
   }
 
   @override
   Widget trailing(BuildContext context) => LunaIconButton(
-        icon: Icons.search_rounded,
-        onPressed: () async => trailingOnPress(context),
-        onLongPress: () async => trailingOnLongPress(context),
-      );
+    icon: Icons.search_rounded,
+    onPressed: () async => trailingOnPress(context),
+    onLongPress: () async => trailingOnLongPress(context),
+  );
 
   @override
   Future<void> trailingOnPress(BuildContext context) async {
     await LidarrAPI.from(LunaProfile.current)
         .searchAlbums([id])
-        .then((_) =>
-            showLunaSuccessSnackBar(title: 'Searching...', message: albumTitle))
-        .catchError((error) =>
-            showLunaErrorSnackBar(title: 'Failed to Search', error: error));
+        .then(
+          (_) => showLunaSuccessSnackBar(
+            title: 'Searching...',
+            message: albumTitle,
+          ),
+        )
+        .catchError(
+          (error) =>
+              showLunaErrorSnackBar(title: 'Failed to Search', error: error),
+        );
   }
 
   @override
   Future<void> trailingOnLongPress(BuildContext context) async {
-    LidarrRoutes.ARTIST_ALBUM_RELEASES.go(params: {
-      'artist': artistId.toString(),
-      'album': id.toString(),
-    });
+    LidarrRoutes.ARTIST_ALBUM_RELEASES.go(
+      params: {'artist': artistId.toString(), 'album': id.toString()},
+    );
   }
 
   @override

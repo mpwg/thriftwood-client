@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class SonarrNavigationBar extends StatelessWidget {
   final PageController? pageController;
@@ -16,16 +16,14 @@ class SonarrNavigationBar extends StatelessWidget {
   ];
 
   static List<String> get titles => [
-        'sonarr.Series'.tr(),
-        'sonarr.Upcoming'.tr(),
-        'sonarr.Missing'.tr(),
-        'sonarr.More'.tr(),
-      ];
+    'sonarr.Series'.tr(),
+    'sonarr.Upcoming'.tr(),
+    'sonarr.Missing'.tr(),
+    'sonarr.More'.tr(),
+  ];
 
-  const SonarrNavigationBar({
-    Key? key,
-    required this.pageController,
-  }) : super(key: key);
+  const SonarrNavigationBar({Key? key, required this.pageController})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

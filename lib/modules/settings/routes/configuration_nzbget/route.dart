@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/nzbget.dart';
-import 'package:lunasea/router/routes/settings.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/nzbget.dart';
+import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationNZBGetRoute extends StatefulWidget {
-  const ConfigurationNZBGetRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationNZBGetRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationNZBGetRoute> createState() => _State();
@@ -67,8 +65,9 @@ class _State extends State<ConfigurationNZBGetRoute>
       title: 'settings.ConnectionDetails'.tr(),
       body: [
         TextSpan(
-          text: 'settings.ConnectionDetailsDescription'
-              .tr(args: [LunaModule.NZBGET.title]),
+          text: 'settings.ConnectionDetailsDescription'.tr(
+            args: [LunaModule.NZBGET.title],
+          ),
         ),
       ],
       trailing: const LunaIconButton.arrow(),

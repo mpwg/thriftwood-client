@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'graph_data.g.dart';
 
@@ -12,17 +12,16 @@ part 'graph_data.g.dart';
 class TautulliGraphData {
   /// The category header for the series.
   @JsonKey(
-      name: 'categories', fromJson: TautulliUtilities.ensureStringListFromJson)
+    name: 'categories',
+    fromJson: TautulliUtilities.ensureStringListFromJson,
+  )
   final List<String?>? categories;
 
   /// List of [TautulliSeriesData], each storing a series for the graph data.
   @JsonKey(name: 'series', toJson: _seriesToJson, fromJson: _seriesFromJson)
   final List<TautulliSeriesData>? series;
 
-  TautulliGraphData({
-    this.categories,
-    this.series,
-  });
+  TautulliGraphData({this.categories, this.series});
 
   /// Returns a JSON-encoded string version of this object.
   @override
@@ -37,10 +36,12 @@ class TautulliGraphData {
 
   static List<TautulliSeriesData> _seriesFromJson(List<dynamic> series) =>
       series
-          .map((entry) =>
-              TautulliSeriesData.fromJson((entry as Map<String, dynamic>)))
+          .map(
+            (entry) =>
+                TautulliSeriesData.fromJson((entry as Map<String, dynamic>)),
+          )
           .toList();
   static List<Map<String, dynamic>>? _seriesToJson(
-          List<TautulliSeriesData>? series) =>
-      series?.map((entry) => entry.toJson()).toList();
+    List<TautulliSeriesData>? series,
+  ) => series?.map((entry) => entry.toJson()).toList();
 }

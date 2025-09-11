@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'synced_item.g.dart';
 
@@ -8,7 +8,9 @@ part 'synced_item.g.dart';
 class TautulliSyncedItem {
   /// Name of the device that the content is synced to.
   @JsonKey(
-      name: 'device_name', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'device_name',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? deviceName;
 
   /// Platform of the device.
@@ -37,17 +39,23 @@ class TautulliSyncedItem {
 
   /// The metadata type of the synced content.
   @JsonKey(
-      name: 'metadata_type', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'metadata_type',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? metadataType;
 
   /// The content type of the synced content.
   @JsonKey(
-      name: 'content_type', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'content_type',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? contentType;
 
   /// The rating key for the synced content.
   @JsonKey(
-      name: 'rating_key', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'rating_key',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? ratingKey;
 
   /// The current state of the synced content.
@@ -56,50 +64,65 @@ class TautulliSyncedItem {
 
   /// The amount of items.
   @JsonKey(
-      name: 'item_count', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'item_count',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? itemCount;
 
   /// The amount of completed items.
   @JsonKey(
-      name: 'item_complete_count',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'item_complete_count',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? itemCompleteCount;
 
   /// The amount of downloaded items.
   @JsonKey(
-      name: 'item_downloaded_count',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'item_downloaded_count',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? itemDownloadedCount;
 
   /// The percentage completed of downloaded items.
   @JsonKey(
-      name: 'item_downloaded_percent_complete',
-      fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'item_downloaded_percent_complete',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? itemDownloadedPercentComplete;
 
   /// The synced video bitrate.
   @JsonKey(
-      name: 'video_bitrate', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'video_bitrate',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? videoBitrate;
 
   /// The synced audio bitrate.
   @JsonKey(
-      name: 'audio_bitrate', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'audio_bitrate',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? audioBitrate;
 
   /// The synced photo quality.
   @JsonKey(
-      name: 'photo_quality', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'photo_quality',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? photoQuality;
 
   /// The synced video quality.
   @JsonKey(
-      name: 'video_quality', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'video_quality',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? videoQuality;
 
   /// The total size in bytes of the synced content.
   @JsonKey(
-      name: 'total_size', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'total_size',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? totalSize;
 
   /// Failure status.

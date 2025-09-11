@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrAddSeriesState extends ChangeNotifier {
   SonarrAddSeriesState(BuildContext context, String query) {
@@ -19,8 +19,9 @@ class SonarrAddSeriesState extends ChangeNotifier {
   Future<List<SonarrSeries>>? get lookup => _lookup;
   void fetchLookup(BuildContext context) {
     if (context.read<SonarrState>().enabled) {
-      _lookup =
-          context.read<SonarrState>().api!.seriesLookup.get(term: _searchQuery);
+      _lookup = context.read<SonarrState>().api!.seriesLookup.get(
+        term: _searchQuery,
+      );
     }
     notifyListeners();
   }

@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'newsletter_log_record.g.dart';
 
@@ -12,8 +12,9 @@ class TautulliNewsletterLogRecord {
 
   /// Timestamp for when the newsletter was sent.
   @JsonKey(
-      name: 'timestamp',
-      fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
+    name: 'timestamp',
+    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
+  )
   final DateTime? timestamp;
 
   /// End date (of content) of the newsletter.
@@ -30,7 +31,9 @@ class TautulliNewsletterLogRecord {
 
   /// newsletter ID.
   @JsonKey(
-      name: 'newsletter_id', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'newsletter_id',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? newsletterId;
 
   /// Agent ID for the newsletter.
@@ -43,12 +46,16 @@ class TautulliNewsletterLogRecord {
 
   /// Notification action that triggered the newsletter.
   @JsonKey(
-      name: 'notify_action', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'notify_action',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? notifyAction;
 
   /// Subject text of the newsletter.
   @JsonKey(
-      name: 'subject_text', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'subject_text',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? subjectText;
 
   /// Body text of the newsletter.

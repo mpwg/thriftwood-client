@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/modules/tautulli.dart';
-import 'package:lunasea/router/routes/tautulli.dart';
+import 'package:thriftwood/modules/tautulli.dart';
+import 'package:thriftwood/router/routes/tautulli.dart';
 
 enum TautulliMediaDetailsSwitcherType {
   GO_TO_SERIES,
@@ -46,9 +46,11 @@ extension TautulliMediaDetailsSwitcherTypeExtension
     required TautulliMediaType mediaType,
     required int ratingKey,
   }) {
-    TautulliRoutes.MEDIA_DETAILS.go(params: {
-      'rating_key': ratingKey.toString(),
-      'media_type': mediaType.value,
-    });
+    TautulliRoutes.MEDIA_DETAILS.go(
+      params: {
+        'rating_key': ratingKey.toString(),
+        'media_type': mediaType.value,
+      },
+    );
   }
 }

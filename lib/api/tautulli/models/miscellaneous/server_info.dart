@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'server_info.g.dart';
 
@@ -12,8 +12,9 @@ class TautulliServerInfo {
 
   /// The machine identifier key.
   @JsonKey(
-      name: 'machine_identifier',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'machine_identifier',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? machineIdentifier;
 
   /// The Plex Media Server version currently installed.

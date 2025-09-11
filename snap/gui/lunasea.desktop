@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=LunaSea
+Name=thriftwood
 Comment=Self-hosted software controller built using Flutter
-Exec=lunasea
-Icon=${SNAP}/meta/gui/lunasea.png
+Exec=thriftwood
+Icon=${SNAP}/meta/gui/thriftwood.png
 Terminal=false
 Type=Application
 Categories=Utilities;Entertainment;

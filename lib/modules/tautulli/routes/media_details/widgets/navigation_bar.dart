@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class TautulliMediaDetailsNavigationBar extends StatelessWidget {
   final PageController? pageController;
-  static List<ScrollController> scrollControllers =
-      List.generate(icons.length, (_) => ScrollController());
+  static List<ScrollController> scrollControllers = List.generate(
+    icons.length,
+    (_) => ScrollController(),
+  );
 
   static const List<IconData> icons = [
     Icons.info_outline_rounded,
     Icons.history_rounded,
   ];
 
-  static const List<String> titles = [
-    'Metadata',
-    'History',
-  ];
+  static const List<String> titles = ['Metadata', 'History'];
 
   const TautulliMediaDetailsNavigationBar({
     Key? key,

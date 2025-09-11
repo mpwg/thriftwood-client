@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/router/routes/sonarr.dart';
 
 enum SonarrEpisodeSettingsType {
   MONITORED,
@@ -60,25 +60,26 @@ extension SonarrEpisodeSettingsTypeExtension on SonarrEpisodeSettingsType {
         );
         break;
       case SonarrEpisodeSettingsType.INTERACTIVE_SEARCH:
-        SonarrRoutes.RELEASES.go(queryParams: {
-          'episode': episode.id.toString(),
-        });
+        SonarrRoutes.RELEASES.go(
+          queryParams: {'episode': episode.id.toString()},
+        );
         break;
       case SonarrEpisodeSettingsType.DELETE_FILE:
         bool result = await SonarrDialogs().deleteEpisode(context);
         if (result) {
           await SonarrAPIController()
               .deleteEpisode(
-            context: context,
-            episode: episode,
-            episodeFile: episodeFile!,
-          )
+                context: context,
+                episode: episode,
+                episodeFile: episodeFile!,
+              )
               .then((_) {
-            context.read<SonarrSeasonDetailsState>().fetchHistory(context);
-            context
-                .read<SonarrSeasonDetailsState>()
-                .fetchEpisodeHistory(context, episode.id);
-          });
+                context.read<SonarrSeasonDetailsState>().fetchHistory(context);
+                context.read<SonarrSeasonDetailsState>().fetchEpisodeHistory(
+                  context,
+                  episode.id,
+                );
+              });
         }
         break;
     }

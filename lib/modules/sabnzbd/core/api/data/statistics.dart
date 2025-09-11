@@ -1,4 +1,4 @@
-import 'package:lunasea/modules/sabnzbd.dart';
+import 'package:thriftwood/modules/sabnzbd.dart';
 
 class SABnzbdStatisticsData {
   List<SABnzbdServerStatisticsData> servers;

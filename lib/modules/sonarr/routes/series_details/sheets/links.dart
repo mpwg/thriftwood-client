@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/utils/links.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/extensions/string/links.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/utils/links.dart';
+import 'package:thriftwood/widgets/ui.dart';
 
 class LinksSheet extends LunaBottomModalSheet {
   SonarrSeries series;
 
-  LinksSheet({
-    required this.series,
-  });
+  LinksSheet({required this.series});
 
   @override
   Widget builder(BuildContext context) {
     final imdb = LunaLinkedContent.imdb(series.imdbId);
-    final tvdb =
-        LunaLinkedContent.theTVDB(series.tvdbId, LinkedContentType.SERIES);
-    final trakt =
-        LunaLinkedContent.trakt(series.tvdbId, LinkedContentType.SERIES);
+    final tvdb = LunaLinkedContent.theTVDB(
+      series.tvdbId,
+      LinkedContentType.SERIES,
+    );
+    final trakt = LunaLinkedContent.trakt(
+      series.tvdbId,
+      LinkedContentType.SERIES,
+    );
     final tvMaze = LunaLinkedContent.tvMaze(series.tvMazeId);
 
     return LunaListViewModal(

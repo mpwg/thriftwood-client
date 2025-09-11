@@ -1,4 +1,4 @@
-import 'package:lunasea/types/log_type.dart';
+import 'package:thriftwood/types/log_type.dart';
 
 abstract class LunaException implements Exception {
   LunaLogType get type;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrQueueState extends ChangeNotifier {
   SonarrQueueState(BuildContext context) {
@@ -42,10 +42,10 @@ class SonarrQueueState extends ChangeNotifier {
             );
       }
       _queue = context.read<SonarrState>().api!.queue.get(
-            includeEpisode: true,
-            includeSeries: true,
-            pageSize: SonarrDatabase.QUEUE_PAGE_SIZE.read(),
-          );
+        includeEpisode: true,
+        includeSeries: true,
+        pageSize: SonarrDatabase.QUEUE_PAGE_SIZE.read(),
+      );
       createTimer(context);
     }
     notifyListeners();

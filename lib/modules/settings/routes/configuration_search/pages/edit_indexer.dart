@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/models/indexer.dart';
-import 'package:lunasea/modules/settings.dart';
-import 'package:lunasea/widgets/pages/invalid_route.dart';
-import 'package:lunasea/router/routes/settings.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/models/indexer.dart';
+import 'package:thriftwood/modules/settings.dart';
+import 'package:thriftwood/widgets/pages/invalid_route.dart';
+import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationSearchEditIndexerRoute extends StatefulWidget {
   final int id;
 
-  const ConfigurationSearchEditIndexerRoute({
-    Key? key,
-    required this.id,
-  }) : super(key: key);
+  const ConfigurationSearchEditIndexerRoute({Key? key, required this.id})
+    : super(key: key);
 
   @override
   State<ConfigurationSearchEditIndexerRoute> createState() => _State();
@@ -77,12 +75,7 @@ class _State extends State<ConfigurationSearchEditIndexerRoute>
         _indexer = LunaBox.indexers.read(widget.id);
         return LunaListView(
           controller: scrollController,
-          children: [
-            _displayName(),
-            _apiURL(),
-            _apiKey(),
-            _headers(),
-          ],
+          children: [_displayName(), _apiURL(), _apiKey(), _headers()],
         );
       },
     );
@@ -92,7 +85,7 @@ class _State extends State<ConfigurationSearchEditIndexerRoute>
     String _name = _indexer!.displayName;
     return LunaBlock(
       title: 'settings.DisplayName'.tr(),
-      body: [TextSpan(text: _name.isEmpty ? 'lunasea.NotSet'.tr() : _name)],
+      body: [TextSpan(text: _name.isEmpty ? 'thriftwood.NotSet'.tr() : _name)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
         Tuple2<bool, String> values = await LunaDialogs().editText(
@@ -112,7 +105,7 @@ class _State extends State<ConfigurationSearchEditIndexerRoute>
     String _host = _indexer!.host;
     return LunaBlock(
       title: 'search.IndexerAPIHost'.tr(),
-      body: [TextSpan(text: _host.isEmpty ? 'lunasea.NotSet'.tr() : _host)],
+      body: [TextSpan(text: _host.isEmpty ? 'thriftwood.NotSet'.tr() : _host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
         Tuple2<bool, String> values = await LunaDialogs().editText(
@@ -132,7 +125,7 @@ class _State extends State<ConfigurationSearchEditIndexerRoute>
     String _key = _indexer!.apiKey;
     return LunaBlock(
       title: 'search.IndexerAPIKey'.tr(),
-      body: [TextSpan(text: _key.isEmpty ? 'lunasea.NotSet'.tr() : _key)],
+      body: [TextSpan(text: _key.isEmpty ? 'thriftwood.NotSet'.tr() : _key)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
         Tuple2<bool, String> values = await LunaDialogs().editText(
@@ -154,9 +147,7 @@ class _State extends State<ConfigurationSearchEditIndexerRoute>
       body: [TextSpan(text: 'settings.CustomHeadersDescription'.tr())],
       trailing: const LunaIconButton.arrow(),
       onTap: () => SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER_HEADERS.go(
-        params: {
-          'id': widget.id.toString(),
-        },
+        params: {'id': widget.id.toString()},
       ),
     );
   }

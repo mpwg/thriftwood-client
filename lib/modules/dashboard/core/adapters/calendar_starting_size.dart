@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/vendor.dart';
 
 part 'calendar_starting_size.g.dart';
 

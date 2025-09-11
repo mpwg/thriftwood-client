@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrManualImportDirectoryTile extends StatefulWidget {
   final RadarrFileSystemDirectory directory;
 
-  const RadarrManualImportDirectoryTile({
-    Key? key,
-    required this.directory,
-  }) : super(key: key);
+  const RadarrManualImportDirectoryTile({Key? key, required this.directory})
+    : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -29,9 +27,9 @@ class _State extends State<RadarrManualImportDirectoryTile> {
         if (_loadingState == LunaLoadingState.INACTIVE) {
           if (mounted) setState(() => _loadingState = LunaLoadingState.ACTIVE);
           context.read<RadarrManualImportState>().fetchDirectories(
-                context,
-                _dir.path,
-              );
+            context,
+            _dir.path,
+          );
         }
       },
     );

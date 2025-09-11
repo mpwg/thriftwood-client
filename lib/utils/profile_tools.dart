@@ -1,12 +1,12 @@
-import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/database/box.dart';
-import 'package:lunasea/database/tables/lunasea.dart';
-import 'package:lunasea/system/state.dart';
-import 'package:lunasea/router/router.dart';
-import 'package:lunasea/system/logger.dart';
-import 'package:lunasea/types/exception.dart';
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/database/models/profile.dart';
+import 'package:thriftwood/database/box.dart';
+import 'package:thriftwood/database/tables/thriftwood.dart';
+import 'package:thriftwood/system/state.dart';
+import 'package:thriftwood/router/router.dart';
+import 'package:thriftwood/system/logger.dart';
+import 'package:thriftwood/types/exception.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/widgets/ui.dart';
 
 class LunaProfileTools {
   bool changeTo(
@@ -15,7 +15,7 @@ class LunaProfileTools {
     bool popToRootRoute = false,
   }) {
     try {
-      if (LunaSeaDatabase.ENABLED_PROFILE.read() == profile) return true;
+      if (thriftwoodDatabase.ENABLED_PROFILE.read() == profile) return true;
       _changeTo(profile);
 
       if (showSnackbar) {
@@ -117,7 +117,7 @@ class LunaProfileTools {
       throw ProfileNotFoundException(profile);
     }
 
-    LunaSeaDatabase.ENABLED_PROFILE.update(profile);
+    thriftwoodDatabase.ENABLED_PROFILE.update(profile);
     LunaState.reset();
   }
 
@@ -130,7 +130,7 @@ class LunaProfileTools {
   }
 
   Future<void> _remove(String profile) async {
-    if (LunaSeaDatabase.ENABLED_PROFILE.read() == profile) {
+    if (thriftwoodDatabase.ENABLED_PROFILE.read() == profile) {
       throw ActiveProfileRemovalException(profile);
     }
 

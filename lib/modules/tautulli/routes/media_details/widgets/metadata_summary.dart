@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliMediaDetailsMetadataSummary extends StatefulWidget {
   final TautulliMetadata? metadata;
@@ -55,9 +55,7 @@ class _State extends State<TautulliMediaDetailsMetadataSummary> {
                     Padding(
                       child: RichText(
                         text: TextSpan(
-                          style: const TextStyle(
-                            fontSize: LunaUI.FONT_SIZE_H3,
-                          ),
+                          style: const TextStyle(fontSize: LunaUI.FONT_SIZE_H3),
                           text: _summary,
                         ),
                         maxLines: 6,
@@ -77,8 +75,11 @@ class _State extends State<TautulliMediaDetailsMetadataSummary> {
             ),
           ],
         ),
-        onTap: () async => LunaDialogs()
-            .textPreview(context, widget.metadata!.title, _summary!),
+        onTap: () async => LunaDialogs().textPreview(
+          context,
+          widget.metadata!.title,
+          _summary!,
+        ),
       ),
     );
   }
@@ -87,30 +88,21 @@ class _State extends State<TautulliMediaDetailsMetadataSummary> {
     if (_blacklist.contains(widget.type)) return null;
     return LunaButtonContainer(
       children: _buttonBuilder(),
-      padding: EdgeInsets.fromLTRB(
-        6.0,
-        _summary == null ? 6.0 : 0.0,
-        6.0,
-        6.0,
-      ),
+      padding: EdgeInsets.fromLTRB(6.0, _summary == null ? 6.0 : 0.0, 6.0, 6.0),
     );
   }
 
   List<Widget> _buttonBuilder() {
     switch (widget.type) {
       case TautulliMediaType.SEASON:
-        return [
-          _button(TautulliMediaDetailsSwitcherType.GO_TO_SERIES),
-        ];
+        return [_button(TautulliMediaDetailsSwitcherType.GO_TO_SERIES)];
       case TautulliMediaType.EPISODE:
         return [
           _button(TautulliMediaDetailsSwitcherType.GO_TO_SERIES),
           _button(TautulliMediaDetailsSwitcherType.GO_TO_SEASON),
         ];
       case TautulliMediaType.ALBUM:
-        return [
-          _button(TautulliMediaDetailsSwitcherType.GO_TO_ARTIST),
-        ];
+        return [_button(TautulliMediaDetailsSwitcherType.GO_TO_ARTIST)];
       case TautulliMediaType.TRACK:
         return [
           _button(TautulliMediaDetailsSwitcherType.GO_TO_ARTIST),

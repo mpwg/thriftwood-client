@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliMediaDetailsHistory extends StatefulWidget {
   final TautulliMediaType? type;
@@ -34,14 +34,14 @@ class _State extends State<TautulliMediaDetailsHistory>
 
   Future<void> _refresh() async {
     context.read<TautulliState>().setIndividualHistory(
-          widget.ratingKey,
-          context.read<TautulliState>().api!.history.getHistory(
-                ratingKey: _ratingKey,
-                parentRatingKey: _parentRatingKey,
-                grandparentRatingKey: _grandparentRatingKey,
-                length: TautulliDatabase.CONTENT_LOAD_LENGTH.read(),
-              ),
-        );
+      widget.ratingKey,
+      context.read<TautulliState>().api!.history.getHistory(
+        ratingKey: _ratingKey,
+        parentRatingKey: _parentRatingKey,
+        grandparentRatingKey: _grandparentRatingKey,
+        length: TautulliDatabase.CONTENT_LOAD_LENGTH.read(),
+      ),
+    );
     await context.read<TautulliState>().individualHistory[widget.ratingKey];
   }
 
@@ -83,10 +83,7 @@ class _State extends State<TautulliMediaDetailsHistory>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LunaScaffold(
-      scaffoldKey: _scaffoldKey,
-      body: _body(),
-    );
+    return LunaScaffold(scaffoldKey: _scaffoldKey, body: _body());
   }
 
   Widget _body() {
@@ -95,8 +92,9 @@ class _State extends State<TautulliMediaDetailsHistory>
       key: _refreshKey,
       onRefresh: _refresh,
       child: FutureBuilder(
-        future:
-            context.watch<TautulliState>().individualHistory[widget.ratingKey],
+        future: context
+            .watch<TautulliState>()
+            .individualHistory[widget.ratingKey],
         builder: (context, AsyncSnapshot<TautulliHistory> snapshot) {
           if (snapshot.hasError) {
             if (snapshot.connectionState != ConnectionState.waiting)

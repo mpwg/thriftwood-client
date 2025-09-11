@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/duration/timestamp.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/tautulli.dart';
-import 'package:lunasea/router/routes/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/duration/timestamp.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/tautulli.dart';
+import 'package:thriftwood/router/routes/tautulli.dart';
 
 class TautulliStatisticsUserTile extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const TautulliStatisticsUserTile({
-    Key? key,
-    required this.data,
-  }) : super(key: key);
+  const TautulliStatisticsUserTile({Key? key, required this.data})
+    : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -24,9 +22,9 @@ class _State extends State<TautulliStatisticsUserTile> {
     return LunaBlock(
       title: widget.data['friendly_name'] ?? 'Unknown User',
       body: _body(),
-      posterUrl: context
-          .watch<TautulliState>()
-          .getImageURLFromPath(widget.data['user_thumb']),
+      posterUrl: context.watch<TautulliState>().getImageURLFromPath(
+        widget.data['user_thumb'],
+      ),
       posterHeaders: context.watch<TautulliState>().headers,
       posterIsSquare: true,
       posterPlaceholderIcon: LunaIcons.USER,
@@ -39,14 +37,17 @@ class _State extends State<TautulliStatisticsUserTile> {
       TextSpan(
         children: [
           TextSpan(
-            text: widget.data['total_plays'].toString() +
+            text:
+                widget.data['total_plays'].toString() +
                 (widget.data['total_plays'] == 1 ? ' Play' : ' Plays'),
             style: TextStyle(
-              color: context.watch<TautulliState>().statisticsType ==
+              color:
+                  context.watch<TautulliState>().statisticsType ==
                       TautulliStatsType.PLAYS
                   ? LunaColours.accent
                   : null,
-              fontWeight: context.watch<TautulliState>().statisticsType ==
+              fontWeight:
+                  context.watch<TautulliState>().statisticsType ==
                       TautulliStatsType.PLAYS
                   ? LunaUI.FONT_WEIGHT_BOLD
                   : null,
@@ -55,14 +56,17 @@ class _State extends State<TautulliStatisticsUserTile> {
           TextSpan(text: LunaUI.TEXT_BULLET.pad()),
           widget.data['total_duration'] != null
               ? TextSpan(
-                  text: Duration(seconds: widget.data['total_duration'])
-                      .asWordsTimestamp(),
+                  text: Duration(
+                    seconds: widget.data['total_duration'],
+                  ).asWordsTimestamp(),
                   style: TextStyle(
-                    color: context.watch<TautulliState>().statisticsType ==
+                    color:
+                        context.watch<TautulliState>().statisticsType ==
                             TautulliStatsType.DURATION
                         ? LunaColours.accent
                         : null,
-                    fontWeight: context.watch<TautulliState>().statisticsType ==
+                    fontWeight:
+                        context.watch<TautulliState>().statisticsType ==
                             TautulliStatsType.DURATION
                         ? LunaUI.FONT_WEIGHT_BOLD
                         : null,
@@ -76,13 +80,13 @@ class _State extends State<TautulliStatisticsUserTile> {
               text:
                   'Last Streamed ${DateTime.fromMillisecondsSinceEpoch(widget.data['last_play'] * 1000).asAge()}',
             )
-          : const TextSpan(text: LunaUI.TEXT_EMDASH)
+          : const TextSpan(text: LunaUI.TEXT_EMDASH),
     ];
   }
 
   Future<void> _onTap() async {
-    TautulliRoutes.USER_DETAILS.go(params: {
-      'user': widget.data['user_id']!.toString(),
-    });
+    TautulliRoutes.USER_DETAILS.go(
+      params: {'user': widget.data['user_id']!.toString()},
+    );
   }
 }

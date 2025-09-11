@@ -87,7 +87,7 @@ Future<List<String>> getChanges(String flavor) async {
   final currentVersion = int.parse(git.stdout) + 1000000000;
 
   // Get latest released version of this flavor
-  const base = 'https://downloads.lunasea.app/latest/';
+  const base = 'https://downloads.thriftwood.app/latest/';
   final endpoint = '$base/$flavor/VERSION.txt';
   final result = await Dio().get(endpoint);
   final lastVersion = int.parse(result.data as String);

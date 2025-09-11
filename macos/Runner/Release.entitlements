@@ -12,7 +12,7 @@
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)app.lunasea.lunasea</string>
+		<string>$(AppIdentifierPrefix)app.thriftwood.thriftwood</string>
 	</array>
 </dict>
 </plist>

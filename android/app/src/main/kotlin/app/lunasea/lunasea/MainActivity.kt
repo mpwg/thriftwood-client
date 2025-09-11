@@ -1,4 +1,4 @@
-package app.lunasea.lunasea
+package app.thriftwood.thriftwood
 
 import io.flutter.embedding.android.FlutterActivity
 

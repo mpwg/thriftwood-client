@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/nzbget.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/nzbget.dart';
 
 class NZBGetDialogs {
   NZBGetDialogs._();
@@ -39,7 +39,10 @@ class NZBGetDialogs {
   }
 
   static Future<List<dynamic>> queueSettings(
-      BuildContext context, String title, bool isPaused) async {
+    BuildContext context,
+    String title,
+    bool isPaused,
+  ) async {
     List<List<dynamic>> _options = [
       isPaused
           ? ['Resume Job', Icons.play_arrow_rounded, 'status']
@@ -96,7 +99,8 @@ class NZBGetDialogs {
       ],
       content: [
         LunaDialog.textContent(
-            text: 'Are you sure you want to delete this job?'),
+          text: 'Are you sure you want to delete this job?',
+        ),
       ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
@@ -104,7 +108,9 @@ class NZBGetDialogs {
   }
 
   static Future<List<dynamic>> renameJob(
-      BuildContext context, String originalName) async {
+    BuildContext context,
+    String originalName,
+  ) async {
     bool _flag = false;
     final _formKey = GlobalKey<FormState>();
     final _textController = TextEditingController()..text = originalName;
@@ -120,10 +126,7 @@ class NZBGetDialogs {
       context: context,
       title: 'Rename Job',
       buttons: [
-        LunaDialog.button(
-          text: 'Rename',
-          onPressed: () => _setValues(true),
-        ),
+        LunaDialog.button(text: 'Rename', onPressed: () => _setValues(true)),
       ],
       content: [
         Form(
@@ -170,7 +173,9 @@ class NZBGetDialogs {
   }
 
   static Future<List<dynamic>> changeCategory(
-      BuildContext context, List<NZBGetCategoryData> categories) async {
+    BuildContext context,
+    List<NZBGetCategoryData> categories,
+  ) async {
     bool _flag = false;
     NZBGetCategoryData? _category;
 
@@ -215,10 +220,7 @@ class NZBGetDialogs {
       context: context,
       title: 'Set Password',
       buttons: [
-        LunaDialog.button(
-          text: 'Set',
-          onPressed: () => _setValues(true),
-        ),
+        LunaDialog.button(text: 'Set', onPressed: () => _setValues(true)),
       ],
       content: [
         Form(
@@ -265,7 +267,8 @@ class NZBGetDialogs {
       ],
       content: [
         LunaDialog.textContent(
-            text: 'Are you sure you want to remove the history for this job?'),
+          text: 'Are you sure you want to remove the history for this job?',
+        ),
       ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
@@ -346,10 +349,7 @@ class NZBGetDialogs {
       context: context,
       title: 'Add NZB by URL',
       buttons: [
-        LunaDialog.button(
-          text: 'Add',
-          onPressed: () => _setValues(true),
-        ),
+        LunaDialog.button(text: 'Add', onPressed: () => _setValues(true)),
       ],
       content: [
         Form(
@@ -375,7 +375,9 @@ class NZBGetDialogs {
   }
 
   static Future<List<dynamic>> speedLimit(
-      BuildContext context, String currentSpeed) async {
+    BuildContext context,
+    String currentSpeed,
+  ) async {
     List<List<dynamic>> _options = [
       ['Unlimited', Icons.timeline_rounded, 0],
       ['125 MB/s', Icons.timeline_rounded, 128000],
@@ -430,10 +432,7 @@ class NZBGetDialogs {
       context: context,
       title: 'Custom Speed Limit',
       buttons: [
-        LunaDialog.button(
-          text: 'Set',
-          onPressed: () => _setValues(true),
-        ),
+        LunaDialog.button(text: 'Set', onPressed: () => _setValues(true)),
       ],
       content: [
         LunaDialog.textContent(text: 'Please enter a speed limit in KB/s.'),
@@ -460,7 +459,9 @@ class NZBGetDialogs {
   }
 
   static Future<List<dynamic>> historySettings(
-      BuildContext context, String title) async {
+    BuildContext context,
+    String title,
+  ) async {
     List<List<dynamic>> _options = [
       ['Retry Job', Icons.autorenew_rounded, 'retry'],
       ['Hide History', Icons.visibility_off_rounded, 'hide'],
@@ -544,10 +545,7 @@ class NZBGetDialogs {
       context: context,
       title: 'Custom Pause Duration',
       buttons: [
-        LunaDialog.button(
-          text: 'Pause',
-          onPressed: () => _setValues(true),
-        ),
+        LunaDialog.button(text: 'Pause', onPressed: () => _setValues(true)),
       ],
       content: [
         LunaDialog.richText(
@@ -555,24 +553,26 @@ class NZBGetDialogs {
             LunaDialog.textSpanContent(text: 'Please enter how long in '),
             LunaDialog.bolded(text: 'minutes'),
             LunaDialog.textSpanContent(
-                text: ' you want to pause the queue for.'),
+              text: ' you want to pause the queue for.',
+            ),
           ],
           alignment: TextAlign.center,
         ),
         Form(
           key: _formKey,
           child: LunaDialog.textFormInput(
-              controller: _textController,
-              title: 'Pause Duration in Minutes',
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => _setValues(true),
-              validator: (value) {
-                int? _value = int.tryParse(value!);
-                if (_value == null || _value < 1) {
-                  return 'Must be at least 1';
-                }
-                return null;
-              }),
+            controller: _textController,
+            title: 'Pause Duration in Minutes',
+            keyboardType: TextInputType.number,
+            onSubmitted: (_) => _setValues(true),
+            validator: (value) {
+              int? _value = int.tryParse(value!);
+              if (_value == null || _value < 1) {
+                return 'Must be at least 1';
+              }
+              return null;
+            },
+          ),
         ),
       ],
       contentPadding: LunaDialog.inputTextDialogContentPadding(),

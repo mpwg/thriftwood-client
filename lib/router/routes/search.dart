@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/modules/search/routes/categories/route.dart';
-import 'package:lunasea/modules/search/routes/indexers/route.dart';
-import 'package:lunasea/modules/search/routes/results/route.dart';
-import 'package:lunasea/modules/search/routes/search/route.dart';
-import 'package:lunasea/modules/search/routes/subcategories/route.dart';
-import 'package:lunasea/router/routes.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/modules/search/routes/categories/route.dart';
+import 'package:thriftwood/modules/search/routes/indexers/route.dart';
+import 'package:thriftwood/modules/search/routes/results/route.dart';
+import 'package:thriftwood/modules/search/routes/search/route.dart';
+import 'package:thriftwood/modules/search/routes/subcategories/route.dart';
+import 'package:thriftwood/router/routes.dart';
+import 'package:thriftwood/vendor.dart';
 
 enum SearchRoutes with LunaRoutesMixin {
   HOME('/search'),

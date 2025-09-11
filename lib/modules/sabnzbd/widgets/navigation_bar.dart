@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class SABnzbdNavigationBar extends StatelessWidget {
-  static List<ScrollController> scrollControllers =
-      List.generate(icons.length, (_) => ScrollController());
+  static List<ScrollController> scrollControllers = List.generate(
+    icons.length,
+    (_) => ScrollController(),
+  );
   final PageController? pageController;
 
   static const List<IconData> icons = [
@@ -11,15 +13,10 @@ class SABnzbdNavigationBar extends StatelessWidget {
     Icons.history_rounded,
   ];
 
-  static const List<String> titles = [
-    'Queue',
-    'History',
-  ];
+  static const List<String> titles = ['Queue', 'History'];
 
-  const SABnzbdNavigationBar({
-    Key? key,
-    required this.pageController,
-  }) : super(key: key);
+  const SABnzbdNavigationBar({Key? key, required this.pageController})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

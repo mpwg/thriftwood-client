@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/modules/lidarr.dart';
-import 'package:lunasea/router/routes/lidarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/string/links.dart';
+import 'package:thriftwood/modules/lidarr.dart';
+import 'package:thriftwood/router/routes/lidarr.dart';
 
 class LidarrRoute extends StatefulWidget {
-  const LidarrRoute({
-    Key? key,
-  }) : super(key: key);
+  const LidarrRoute({Key? key}) : super(key: key);
 
   @override
   State<LidarrRoute> createState() => _State();
@@ -28,8 +26,9 @@ class _State extends State<LidarrRoute> {
   @override
   void initState() {
     super.initState();
-    _pageController =
-        LunaPageController(initialPage: LidarrDatabase.NAVIGATION_INDEX.read());
+    _pageController = LunaPageController(
+      initialPage: LidarrDatabase.NAVIGATION_INDEX.read(),
+    );
   }
 
   @override
@@ -124,42 +123,71 @@ class _State extends State<LidarrRoute> {
         case 'update_library':
           await _api
               .updateLibrary()
-              .then((_) => showLunaSuccessSnackBar(
+              .then(
+                (_) => showLunaSuccessSnackBar(
                   title: 'Updating Library...',
-                  message: 'Updating your library in the background'))
-              .catchError((error) => showLunaErrorSnackBar(
-                  title: 'Failed to Update Library', error: error));
+                  message: 'Updating your library in the background',
+                ),
+              )
+              .catchError(
+                (error) => showLunaErrorSnackBar(
+                  title: 'Failed to Update Library',
+                  error: error,
+                ),
+              );
           break;
         case 'rss_sync':
           await _api
               .triggerRssSync()
-              .then((_) => showLunaSuccessSnackBar(
+              .then(
+                (_) => showLunaSuccessSnackBar(
                   title: 'Running RSS Sync...',
-                  message: 'Running RSS sync in the background'))
-              .catchError((error) => showLunaErrorSnackBar(
-                  title: 'Failed to Run RSS Sync', error: error));
+                  message: 'Running RSS sync in the background',
+                ),
+              )
+              .catchError(
+                (error) => showLunaErrorSnackBar(
+                  title: 'Failed to Run RSS Sync',
+                  error: error,
+                ),
+              );
           break;
         case 'backup':
           await _api
               .triggerBackup()
-              .then((_) => showLunaSuccessSnackBar(
+              .then(
+                (_) => showLunaSuccessSnackBar(
                   title: 'Backing Up Database...',
-                  message: 'Backing up database in the background'))
-              .catchError((error) => showLunaErrorSnackBar(
-                  title: 'Failed to Backup Database', error: error));
+                  message: 'Backing up database in the background',
+                ),
+              )
+              .catchError(
+                (error) => showLunaErrorSnackBar(
+                  title: 'Failed to Backup Database',
+                  error: error,
+                ),
+              );
           break;
         case 'missing_search':
           {
-            List<dynamic> values =
-                await LidarrDialogs.searchAllMissing(context);
+            List<dynamic> values = await LidarrDialogs.searchAllMissing(
+              context,
+            );
             if (values[0])
               await _api
                   .searchAllMissing()
-                  .then((_) => showLunaSuccessSnackBar(
+                  .then(
+                    (_) => showLunaSuccessSnackBar(
                       title: 'Searching...',
-                      message: 'Search for all missing albums'))
-                  .catchError((error) => showLunaErrorSnackBar(
-                      title: 'Failed to Search', error: error));
+                      message: 'Search for all missing albums',
+                    ),
+                  )
+                  .catchError(
+                    (error) => showLunaErrorSnackBar(
+                      title: 'Failed to Search',
+                      error: error,
+                    ),
+                  );
             break;
           }
         default:

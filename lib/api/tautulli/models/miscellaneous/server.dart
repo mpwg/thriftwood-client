@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'server.g.dart';
 
@@ -8,7 +8,9 @@ part 'server.g.dart';
 class TautulliServer {
   /// Is SSL required for this server?
   @JsonKey(
-      name: 'httpsRequired', fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'httpsRequired',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? httpsRequired;
 
   /// Is this a local server instance?
@@ -17,8 +19,9 @@ class TautulliServer {
 
   /// Client identifier key.
   @JsonKey(
-      name: 'clientIdentifier',
-      fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'clientIdentifier',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? clientIdentifier;
 
   /// Plex Media Server label.

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
-import 'package:lunasea/modules/settings.dart';
-import 'package:lunasea/types/list_view_option.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
+import 'package:thriftwood/modules/settings.dart';
+import 'package:thriftwood/types/list_view_option.dart';
 
 class ConfigurationRadarrDefaultOptionsRoute extends StatefulWidget {
-  const ConfigurationRadarrDefaultOptionsRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationRadarrDefaultOptionsRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationRadarrDefaultOptionsRoute> createState() => _State();
@@ -55,7 +53,7 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
     return _db.listenableBuilder(
       builder: (context, _) {
         return LunaBlock(
-          title: 'lunasea.View'.tr(),
+          title: 'thriftwood.View'.tr(),
           body: [TextSpan(text: _db.read().readable)],
           trailing: const LunaIconButton.arrow(),
           onTap: () async {
@@ -68,7 +66,7 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
 
             Tuple2<bool, int> values = await SettingsDialogs().setDefaultOption(
               context,
-              title: 'lunasea.View'.tr(),
+              title: 'thriftwood.View'.tr(),
               values: titles,
               icons: icons,
             );
@@ -107,8 +105,9 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
           if (values.item1) {
             _db.update(RadarrMoviesSorting.values[values.item2]);
             context.read<RadarrState>().moviesSortType = _db.read();
-            context.read<RadarrState>().moviesSortAscending =
-                RadarrDatabase.DEFAULT_SORTING_MOVIES_ASCENDING.read();
+            context.read<RadarrState>().moviesSortAscending = RadarrDatabase
+                .DEFAULT_SORTING_MOVIES_ASCENDING
+                .read();
           }
         },
       ),
@@ -123,16 +122,17 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
         body: [
           TextSpan(
             text: _db.read()
-                ? 'lunasea.Ascending'.tr()
-                : 'lunasea.Descending'.tr(),
+                ? 'thriftwood.Ascending'.tr()
+                : 'thriftwood.Descending'.tr(),
           ),
         ],
         trailing: LunaSwitch(
           value: _db.read(),
           onChanged: (value) {
             _db.update(value);
-            context.read<RadarrState>().moviesSortType =
-                RadarrDatabase.DEFAULT_SORTING_MOVIES.read();
+            context.read<RadarrState>().moviesSortType = RadarrDatabase
+                .DEFAULT_SORTING_MOVIES
+                .read();
             context.read<RadarrState>().moviesSortAscending = _db.read();
           },
         ),
@@ -205,8 +205,8 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
         body: [
           TextSpan(
             text: _db.read()
-                ? 'lunasea.Ascending'.tr()
-                : 'lunasea.Descending'.tr(),
+                ? 'thriftwood.Ascending'.tr()
+                : 'thriftwood.Descending'.tr(),
           ),
         ],
         trailing: LunaSwitch(

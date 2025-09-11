@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeriesDetailsSeasonsPage extends StatefulWidget {
   final SonarrSeries? series;
 
-  const SonarrSeriesDetailsSeasonsPage({
-    Key? key,
-    required this.series,
-  }) : super(key: key);
+  const SonarrSeriesDetailsSeasonsPage({Key? key, required this.series})
+    : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -31,9 +29,8 @@ class _State extends State<SonarrSeriesDetailsSeasonsPage> {
     return LunaRefreshIndicator(
       key: _refreshKey,
       context: context,
-      onRefresh: () async => context.read<SonarrState>().fetchSeries(
-            widget.series!.id!,
-          ),
+      onRefresh: () async =>
+          context.read<SonarrState>().fetchSeries(widget.series!.id!),
       child: _list(),
     );
   }
@@ -42,7 +39,7 @@ class _State extends State<SonarrSeriesDetailsSeasonsPage> {
     if (widget.series?.seasons?.isEmpty ?? true) {
       return LunaMessage(
         text: 'sonarr.NoSeasonsFound'.tr(),
-        buttonText: 'lunasea.Refresh'.tr(),
+        buttonText: 'thriftwood.Refresh'.tr(),
         onTap: _refreshKey.currentState!.show,
       );
     }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/models/external_module.dart';
-import 'package:lunasea/modules/settings.dart';
-import 'package:lunasea/widgets/pages/invalid_route.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/models/external_module.dart';
+import 'package:thriftwood/modules/settings.dart';
+import 'package:thriftwood/widgets/pages/invalid_route.dart';
 
 class ConfigurationExternalModulesEditRoute extends StatefulWidget {
   final int moduleId;
@@ -56,8 +56,9 @@ class _State extends State<ConfigurationExternalModulesEditRoute>
             bool result = await SettingsDialogs().deleteExternalModule(context);
             if (result) {
               showLunaSuccessSnackBar(
-                  title: 'settings.DeleteModuleSuccess'.tr(),
-                  message: _module!.displayName);
+                title: 'settings.DeleteModuleSuccess'.tr(),
+                message: _module!.displayName,
+              );
               _module!.delete();
               Navigator.of(context).pop();
             }
@@ -76,10 +77,7 @@ class _State extends State<ConfigurationExternalModulesEditRoute>
         _module = LunaBox.externalModules.read(widget.moduleId);
         return LunaListView(
           controller: scrollController,
-          children: [
-            _displayNameTile(),
-            _hostTile(),
-          ],
+          children: [_displayNameTile(), _hostTile()],
         );
       },
     );
@@ -91,7 +89,7 @@ class _State extends State<ConfigurationExternalModulesEditRoute>
       title: 'settings.DisplayName'.tr(),
       body: [
         TextSpan(
-          text: _displayName.isEmpty ? 'lunasea.NotSet'.tr() : _displayName,
+          text: _displayName.isEmpty ? 'thriftwood.NotSet'.tr() : _displayName,
         ),
       ],
       trailing: const LunaIconButton.arrow(),
@@ -111,16 +109,11 @@ class _State extends State<ConfigurationExternalModulesEditRoute>
     String _host = _module!.host;
     return LunaBlock(
       title: 'settings.Host'.tr(),
-      body: [
-        TextSpan(text: _host.isEmpty ? 'lunasea.NotSet'.tr() : _host),
-      ],
+      body: [TextSpan(text: _host.isEmpty ? 'thriftwood.NotSet'.tr() : _host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> values =
-            await SettingsDialogs().editExternalModuleHost(
-          context,
-          prefill: _host,
-        );
+        Tuple2<bool, String> values = await SettingsDialogs()
+            .editExternalModuleHost(context, prefill: _host);
         if (values.item1) _module!.host = values.item2;
         _module!.save();
       },

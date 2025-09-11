@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class RadarrNavigationBar extends StatelessWidget {
   final PageController? pageController;
@@ -16,16 +16,14 @@ class RadarrNavigationBar extends StatelessWidget {
   ];
 
   static List<String> get titles => [
-        'radarr.Movies'.tr(),
-        'radarr.Upcoming'.tr(),
-        'radarr.Missing'.tr(),
-        'radarr.More'.tr(),
-      ];
+    'radarr.Movies'.tr(),
+    'radarr.Upcoming'.tr(),
+    'radarr.Missing'.tr(),
+    'radarr.More'.tr(),
+  ];
 
-  const RadarrNavigationBar({
-    Key? key,
-    required this.pageController,
-  }) : super(key: key);
+  const RadarrNavigationBar({Key? key, required this.pageController})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 export 'ui/appbar.dart';
 export 'ui/assets.dart';
@@ -93,20 +93,28 @@ class LunaUI {
   static const EdgeInsets MARGIN_DEFAULT = EdgeInsets.all(DEFAULT_MARGIN_SIZE);
   static const EdgeInsets MARGIN_HALF = EdgeInsets.all(MARGIN_SIZE_HALF);
 
-  static const EdgeInsets MARGIN_DEFAULT_HORIZONTAL =
-      EdgeInsets.symmetric(horizontal: DEFAULT_MARGIN_SIZE);
-  static const EdgeInsets MARGIN_DEFAULT_VERTICAL =
-      EdgeInsets.symmetric(vertical: DEFAULT_MARGIN_SIZE);
+  static const EdgeInsets MARGIN_DEFAULT_HORIZONTAL = EdgeInsets.symmetric(
+    horizontal: DEFAULT_MARGIN_SIZE,
+  );
+  static const EdgeInsets MARGIN_DEFAULT_VERTICAL = EdgeInsets.symmetric(
+    vertical: DEFAULT_MARGIN_SIZE,
+  );
 
-  static const EdgeInsets MARGIN_HALF_HORIZONTAL =
-      EdgeInsets.symmetric(horizontal: MARGIN_SIZE_HALF);
-  static const EdgeInsets MARGIN_HALF_VERTICAL =
-      EdgeInsets.symmetric(vertical: MARGIN_SIZE_HALF);
+  static const EdgeInsets MARGIN_HALF_HORIZONTAL = EdgeInsets.symmetric(
+    horizontal: MARGIN_SIZE_HALF,
+  );
+  static const EdgeInsets MARGIN_HALF_VERTICAL = EdgeInsets.symmetric(
+    vertical: MARGIN_SIZE_HALF,
+  );
 
   static const EdgeInsets MARGIN_H_DEFAULT_V_HALF = EdgeInsets.symmetric(
-      horizontal: DEFAULT_MARGIN_SIZE, vertical: MARGIN_SIZE_HALF);
+    horizontal: DEFAULT_MARGIN_SIZE,
+    vertical: MARGIN_SIZE_HALF,
+  );
   static const EdgeInsets MARGIN_H_HALF_V_DEFAULT = EdgeInsets.symmetric(
-      horizontal: MARGIN_SIZE_HALF, vertical: DEFAULT_MARGIN_SIZE);
+    horizontal: MARGIN_SIZE_HALF,
+    vertical: DEFAULT_MARGIN_SIZE,
+  );
 
   // <--> Borders
   static bool get shouldUseBorder {

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class SonarrSeriesDetailsNavigationBar extends StatelessWidget {
-  static List<ScrollController> scrollControllers =
-      List.generate(icons.length, (_) => ScrollController());
+  static List<ScrollController> scrollControllers = List.generate(
+    icons.length,
+    (_) => ScrollController(),
+  );
 
   static const List<IconData> icons = [
     Icons.subject_rounded,

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/extensions/int/duration.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/router/routes/radarr.dart';
-import 'package:lunasea/vendor.dart';
-import 'package:lunasea/widgets/ui.dart';
-import 'package:lunasea/modules/radarr/core/api_helper.dart';
-import 'package:lunasea/modules/radarr/core/state.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/abstract.dart';
+import 'package:thriftwood/extensions/int/duration.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/router/routes/radarr.dart';
+import 'package:thriftwood/vendor.dart';
+import 'package:thriftwood/widgets/ui.dart';
+import 'package:thriftwood/modules/radarr/core/api_helper.dart';
+import 'package:thriftwood/modules/radarr/core/state.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/abstract.dart';
 
 class CalendarRadarrData extends CalendarData {
   bool hasFile;
@@ -56,15 +56,13 @@ class CalendarRadarrData extends CalendarData {
             fontWeight: LunaUI.FONT_WEIGHT_BOLD,
             color: LunaColours.accent,
           ),
-        )
+        ),
     ];
   }
 
   @override
   Future<void> enterContent(BuildContext context) async {
-    RadarrRoutes.MOVIE.go(params: {
-      'movie': id.toString(),
-    });
+    RadarrRoutes.MOVIE.go(params: {'movie': id.toString()});
   }
 
   @override
@@ -82,9 +80,7 @@ class CalendarRadarrData extends CalendarData {
 
   @override
   Future<void> trailingOnLongPress(BuildContext context) async {
-    RadarrRoutes.MOVIE_RELEASES.go(params: {
-      'movie': id.toString(),
-    });
+    RadarrRoutes.MOVIE_RELEASES.go(params: {'movie': id.toString()});
   }
 
   @override

@@ -6,7 +6,7 @@ library tautulli;
 
 // Imports
 import 'package:dio/dio.dart';
-import 'package:lunasea/api/tautulli/commands.dart';
+import 'package:thriftwood/api/tautulli/commands.dart';
 
 /// The core class to handle all connections to Tautulli.
 /// Gives you easy access to all implemented command handlers, initialized and ready to call.
@@ -48,9 +48,7 @@ class TautulliAPI {
     Dio _dio = Dio(
       BaseOptions(
         baseUrl: host.endsWith('/') ? '${host}api/v2' : '$host/api/v2',
-        queryParameters: {
-          'apikey': apiKey,
-        },
+        queryParameters: {'apikey': apiKey},
         contentType: Headers.jsonContentType,
         responseType: ResponseType.json,
         headers: headers,
@@ -92,9 +90,7 @@ class TautulliAPI {
   ///     ),
   /// );
   /// ```
-  factory TautulliAPI.from({
-    required Dio client,
-  }) {
+  factory TautulliAPI.from({required Dio client}) {
     return TautulliAPI._internal(
       httpClient: client,
       activity: TautulliCommandHandlerActivity(client),

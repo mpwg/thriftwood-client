@@ -1,15 +1,13 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/router/routes/sonarr.dart';
-import 'package:lunasea/system/webhooks.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/router/routes/sonarr.dart';
+import 'package:thriftwood/system/webhooks.dart';
 
 class SonarrWebhooks extends LunaWebhooks {
   @override
   Future<void> handle(Map<dynamic, dynamic> data) async {
     _EventType? event = _EventType.GRAB.fromKey(data['event']);
     if (event == null)
-      LunaLogger().warning(
-        'Unknown event type: ${data['event'] ?? 'null'}',
-      );
+      LunaLogger().warning('Unknown event type: ${data['event'] ?? 'null'}');
     event?.execute(data);
   }
 }
@@ -66,10 +64,14 @@ extension _EventTypeExtension on _EventType {
 
   Future<void> _downloadEvent(Map<dynamic, dynamic> data) async =>
       _goToSeasonDetails(
-          int.tryParse(data['seriesId']), int.tryParse(data['seasonNumber']));
+        int.tryParse(data['seriesId']),
+        int.tryParse(data['seasonNumber']),
+      );
   Future<void> _episodeFileDeleteEvent(Map<dynamic, dynamic> data) async =>
       _goToSeasonDetails(
-          int.tryParse(data['seriesId']), int.tryParse(data['seasonNumber']));
+        int.tryParse(data['seriesId']),
+        int.tryParse(data['seasonNumber']),
+      );
   Future<void> _healthEvent(Map<dynamic, dynamic> data) async =>
       LunaModule.SONARR.launch();
   Future<void> _renameEvent(Map<dynamic, dynamic> data) async =>
@@ -87,9 +89,7 @@ extension _EventTypeExtension on _EventType {
     if (seriesId != null) {
       return SonarrRoutes.SERIES.go(
         buildTree: true,
-        params: {
-          'series': seriesId.toString(),
-        },
+        params: {'series': seriesId.toString()},
       );
     }
     return LunaModule.SONARR.launch();

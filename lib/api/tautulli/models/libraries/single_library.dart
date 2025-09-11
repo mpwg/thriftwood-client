@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'single_library.g.dart';
 
@@ -18,29 +18,38 @@ class TautulliSingleLibrary {
 
   /// The library's section ID.
   @JsonKey(
-      name: 'section_id', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'section_id',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? sectionId;
 
   /// THe name of the library section in Plex.
   @JsonKey(
-      name: 'section_name', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'section_name',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? sectionName;
 
   /// The type of content stored in this library.
   @JsonKey(
-      name: 'section_type',
-      toJson: TautulliUtilities.sectionTypeToJson,
-      fromJson: TautulliUtilities.sectionTypeFromJson)
+    name: 'section_type',
+    toJson: TautulliUtilities.sectionTypeToJson,
+    fromJson: TautulliUtilities.sectionTypeFromJson,
+  )
   final TautulliSectionType? sectionType;
 
   /// The library's thumbnail in Tautulli.
   @JsonKey(
-      name: 'library_thumb', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'library_thumb',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? libraryThumb;
 
   /// The library's artwork in Tautulli.
   @JsonKey(
-      name: 'library_art', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'library_art',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? libraryArt;
 
   /// The amount of content in this library.
@@ -49,12 +58,16 @@ class TautulliSingleLibrary {
 
   /// The amount of parent content in this library (e.g., seasons, albums).
   @JsonKey(
-      name: 'parent_count', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'parent_count',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? parentCount;
 
   /// The amount of child content in this library (e.g., songs, episodes).
   @JsonKey(
-      name: 'child_count', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'child_count',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? childCount;
 
   /// Is the library active?
@@ -67,19 +80,23 @@ class TautulliSingleLibrary {
 
   /// Are notifications enable for the library on creation of content?
   @JsonKey(
-      name: 'do_notify_created',
-      fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'do_notify_created',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? doNotifyCreated;
 
   /// Are you currently tracking/keeping history for this library?
   @JsonKey(
-      name: 'keep_history', fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'keep_history',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? keepSection;
 
   /// Is the library section deleted?
   @JsonKey(
-      name: 'deleted_section',
-      fromJson: TautulliUtilities.ensureBooleanFromJson)
+    name: 'deleted_section',
+    fromJson: TautulliUtilities.ensureBooleanFromJson,
+  )
   final bool? deletedSection;
 
   TautulliSingleLibrary({

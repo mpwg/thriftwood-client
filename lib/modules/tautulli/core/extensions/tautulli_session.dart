@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/duration/timestamp.dart';
-import 'package:lunasea/extensions/int/bytes.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/duration/timestamp.dart';
+import 'package:thriftwood/extensions/int/bytes.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 extension TautulliSessionAudioExtension on TautulliSession {
   String get _language {
-    if (audioLanguage?.isEmpty ?? true) return 'lunasea.Unknown'.tr();
+    if (audioLanguage?.isEmpty ?? true) return 'thriftwood.Unknown'.tr();
     return audioLanguage!.toTitleCase();
   }
 
@@ -54,12 +54,12 @@ extension TautulliSessionAudioExtension on TautulliSession {
 
 extension TautulliSessionContainerExtension on TautulliSession {
   String get _container {
-    if (container?.isEmpty ?? true) return 'lunasea.Unknown'.tr();
+    if (container?.isEmpty ?? true) return 'thriftwood.Unknown'.tr();
     return container!.toUpperCase();
   }
 
   String get _streamContainer {
-    if (streamContainer?.isEmpty ?? true) return 'lunasea.Unknown'.tr();
+    if (streamContainer?.isEmpty ?? true) return 'thriftwood.Unknown'.tr();
     return streamContainer!.toUpperCase();
   }
 
@@ -74,7 +74,7 @@ extension TautulliSessionContainerExtension on TautulliSession {
 
 extension TautulliSessionSubtitleExtension on TautulliSession {
   String get _language {
-    if (subtitleLanguage?.isEmpty ?? true) return 'lunasea.Unknown'.tr();
+    if (subtitleLanguage?.isEmpty ?? true) return 'thriftwood.Unknown'.tr();
     return subtitleLanguage!.toTitleCase();
   }
 
@@ -133,23 +133,23 @@ extension TautulliSessionStreamExtension on TautulliSession {
 
 extension TautulliSessionVideoExtension on TautulliSession {
   String get _codec {
-    if (videoCodec?.isEmpty ?? true) return 'lunasea.Unknown'.tr();
+    if (videoCodec?.isEmpty ?? true) return 'thriftwood.Unknown'.tr();
     return videoCodec!.toUpperCase();
   }
 
   String get _streamCodec {
-    if (streamVideoCodec?.isEmpty ?? true) return 'lunasea.Unknown'.tr();
+    if (streamVideoCodec?.isEmpty ?? true) return 'thriftwood.Unknown'.tr();
     return streamVideoCodec!.toUpperCase();
   }
 
   String get _fullResolution {
-    if (videoFullResolution?.isEmpty ?? true) return 'lunasea.Unknown'.tr();
+    if (videoFullResolution?.isEmpty ?? true) return 'thriftwood.Unknown'.tr();
     return videoFullResolution!;
   }
 
   String get _streamFullResolution {
     if (streamVideoFullResolution?.isEmpty ?? true)
-      return 'lunasea.Unknown'.tr();
+      return 'thriftwood.Unknown'.tr();
     return streamVideoFullResolution!;
   }
 
@@ -256,11 +256,11 @@ extension TautulliSessionExtension on TautulliSession {
   String get lunaDuration {
     double _percent = (this.progressPercent ?? 0) / 100;
     String _progress = Duration(
-            seconds:
-                ((this.streamDuration ?? const Duration(seconds: 0)).inSeconds *
-                        _percent)
-                    .floor())
-        .asNumberTimestamp();
+      seconds:
+          ((this.streamDuration ?? const Duration(seconds: 0)).inSeconds *
+                  _percent)
+              .floor(),
+    ).asNumberTimestamp();
     String _total = this.streamDuration!.asNumberTimestamp();
     return '$_progress/$_total (${this.progressPercent}%)';
   }
@@ -318,19 +318,19 @@ extension TautulliSessionExtension on TautulliSession {
   String? lunaArtworkPath(BuildContext context) {
     switch (this.mediaType) {
       case TautulliMediaType.EPISODE:
-        return context
-            .read<TautulliState>()
-            .getImageURLFromRatingKey(this.grandparentRatingKey);
+        return context.read<TautulliState>().getImageURLFromRatingKey(
+          this.grandparentRatingKey,
+        );
       case TautulliMediaType.TRACK:
-        return context
-            .read<TautulliState>()
-            .getImageURLFromRatingKey(this.parentRatingKey);
+        return context.read<TautulliState>().getImageURLFromRatingKey(
+          this.parentRatingKey,
+        );
       case TautulliMediaType.MOVIE:
       case TautulliMediaType.LIVE:
       default:
-        return context
-            .read<TautulliState>()
-            .getImageURLFromRatingKey(this.ratingKey);
+        return context.read<TautulliState>().getImageURLFromRatingKey(
+          this.ratingKey,
+        );
     }
   }
 
@@ -362,12 +362,13 @@ extension TautulliSessionExtension on TautulliSession {
     try {
       double _percent = this.progressPercent! / 100;
       Duration _progress = Duration(
-          seconds: (this.streamDuration!.inSeconds * _percent).floor());
+        seconds: (this.streamDuration!.inSeconds * _percent).floor(),
+      );
       Duration _eta = this.streamDuration! - _progress;
       return DateTime.now().add(_eta).asTimeOnly();
     } catch (error, stack) {
       LunaLogger().error('Failed to calculate ETA', error, stack);
-      return 'lunasea.Unknown'.tr();
+      return 'thriftwood.Unknown'.tr();
     }
   }
 

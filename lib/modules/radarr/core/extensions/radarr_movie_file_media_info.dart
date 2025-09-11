@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 extension LunaRadarrMovieFileMediaInfo on RadarrMovieFileMediaInfo {
   String get lunaVideoBitDepth {

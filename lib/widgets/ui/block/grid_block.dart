@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaGridBlock extends StatelessWidget {
   static const MAX_CROSS_AXIS_EXTENT = 180.0;
@@ -87,7 +87,7 @@ class LunaGridBlock extends StatelessWidget {
   Widget _fadeInBackground(BuildContext context) {
     if (backgroundUrl == null) return const SizedBox();
 
-    final _percent = LunaSeaDatabase.THEME_IMAGE_BACKGROUND_OPACITY.read();
+    final _percent = thriftwoodDatabase.THEME_IMAGE_BACKGROUND_OPACITY.read();
     if (_percent == 0) return const SizedBox(height: 0, width: 0);
 
     double _opacity = _percent / 100;

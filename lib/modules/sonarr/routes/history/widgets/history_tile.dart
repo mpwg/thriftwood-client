@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/sonarr.dart';
-import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/sonarr.dart';
+import 'package:thriftwood/router/routes/sonarr.dart';
 
-enum SonarrHistoryTileType {
-  ALL,
-  SERIES,
-  SEASON,
-  EPISODE,
-}
+enum SonarrHistoryTileType { ALL, SERIES, SEASON, EPISODE }
 
 class SonarrHistoryTile extends StatelessWidget {
   final SonarrHistoryRecord history;
@@ -96,13 +91,15 @@ class SonarrHistoryTile extends StatelessWidget {
             backgroundColor: LunaColours.blueGrey,
           ),
       ],
-      expandedTableContent: history.eventType?.lunaTableContent(
+      expandedTableContent:
+          history.eventType?.lunaTableContent(
             history: history,
             showSourceTitle: type != SonarrHistoryTileType.ALL,
           ) ??
           [],
-      onLongPress:
-          _hasLongPressAction() ? () async => _onLongPress(context) : null,
+      onLongPress: _hasLongPressAction()
+          ? () async => _onLongPress(context)
+          : null,
     );
   }
 
@@ -110,19 +107,19 @@ class SonarrHistoryTile extends StatelessWidget {
     switch (type) {
       case SonarrHistoryTileType.ALL:
         final id = history.series?.id ?? series?.id ?? -1;
-        return SonarrRoutes.SERIES.go(params: {
-          'series': id.toString(),
-        });
+        return SonarrRoutes.SERIES.go(params: {'series': id.toString()});
       case SonarrHistoryTileType.SERIES:
         if (_hasEpisodeInfo()) {
           final seriesId =
               history.seriesId ?? history.series?.id ?? series!.id ?? -1;
           final seasonNum =
               history.episode?.seasonNumber ?? episode?.seasonNumber ?? -1;
-          return SonarrRoutes.SERIES_SEASON.go(params: {
-            'series': seriesId.toString(),
-            'season': seasonNum.toString(),
-          });
+          return SonarrRoutes.SERIES_SEASON.go(
+            params: {
+              'series': seriesId.toString(),
+              'season': seasonNum.toString(),
+            },
+          );
         }
         break;
       default:
@@ -131,20 +128,21 @@ class SonarrHistoryTile extends StatelessWidget {
   }
 
   TextSpan _subtitle1() {
-    return TextSpan(children: [
-      TextSpan(
-        text: history.lunaSeasonEpisode() ??
-            episode?.lunaSeasonEpisode() ??
-            LunaUI.TEXT_EMDASH,
-      ),
-      const TextSpan(text: ': '),
-      TextSpan(
-        text: history.episode?.title ?? episode?.title ?? LunaUI.TEXT_EMDASH,
-        style: const TextStyle(
-          fontStyle: FontStyle.italic,
+    return TextSpan(
+      children: [
+        TextSpan(
+          text:
+              history.thriftwoodsonEpisode() ??
+              episode?.thriftwoodsonEpisode() ??
+              LunaUI.TEXT_EMDASH,
         ),
-      ),
-    ]);
+        const TextSpan(text: ': '),
+        TextSpan(
+          text: history.episode?.title ?? episode?.title ?? LunaUI.TEXT_EMDASH,
+          style: const TextStyle(fontStyle: FontStyle.italic),
+        ),
+      ],
+    );
   }
 
   TextSpan _subtitle2() {

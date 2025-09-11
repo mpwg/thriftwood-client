@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/sabnzbd/models/stage_log.dart';
+import 'package:thriftwood/api/sabnzbd/models/stage_log.dart';
 
 part 'history.g.dart';
 
@@ -8,9 +8,7 @@ part 'history.g.dart';
 class SABnzbdHistory {
   _SABnzbdHistoryResult history;
 
-  SABnzbdHistory({
-    required this.history,
-  });
+  SABnzbdHistory({required this.history});
 
   @override
   String toString() => json.encode(this.toJson());

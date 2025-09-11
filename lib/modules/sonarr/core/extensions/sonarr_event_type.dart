@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/double/time.dart';
-import 'package:lunasea/modules/sonarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/double/time.dart';
+import 'package:thriftwood/modules/sonarr.dart';
 
 extension SonarrEventTypeLunaExtension on SonarrEventType {
   Color lunaColour() {
@@ -70,13 +70,13 @@ extension SonarrEventTypeLunaExtension on SonarrEventType {
         return 'sonarr.EpisodeFileDeleted'.tr();
       case SonarrEventType.DOWNLOAD_FOLDER_IMPORTED:
         return 'sonarr.EpisodeImported'.tr(
-          args: [record.quality?.quality?.name ?? 'lunasea.Unknown'.tr()],
+          args: [record.quality?.quality?.name ?? 'thriftwood.Unknown'.tr()],
         );
       case SonarrEventType.DOWNLOAD_FAILED:
         return 'sonarr.DownloadFailed'.tr();
       case SonarrEventType.GRABBED:
         return 'sonarr.GrabbedFrom'.tr(
-          args: [record.data!['indexer'] ?? 'lunasea.Unknown'.tr()],
+          args: [record.data!['indexer'] ?? 'thriftwood.Unknown'.tr()],
         );
       case SonarrEventType.DOWNLOAD_IGNORED:
         return 'sonarr.DownloadIgnored'.tr();
@@ -187,7 +187,7 @@ extension SonarrEventTypeLunaExtension on SonarrEventType {
         case 'Manual':
           return 'sonarr.DeleteReasonManual'.tr();
         default:
-          return 'lunasea.Unknown'.tr();
+          return 'thriftwood.Unknown'.tr();
       }
     }
 

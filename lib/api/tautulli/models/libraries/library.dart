@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'library.g.dart';
 
@@ -11,19 +11,24 @@ part 'library.g.dart';
 class TautulliLibrary {
   /// The library's section ID.
   @JsonKey(
-      name: 'section_id', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'section_id',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? sectionId;
 
   /// THe name of the library section in Plex.
   @JsonKey(
-      name: 'section_name', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'section_name',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? sectionName;
 
   /// The type of content stored in this library.
   @JsonKey(
-      name: 'section_type',
-      toJson: TautulliUtilities.sectionTypeToJson,
-      fromJson: TautulliUtilities.sectionTypeFromJson)
+    name: 'section_type',
+    toJson: TautulliUtilities.sectionTypeToJson,
+    fromJson: TautulliUtilities.sectionTypeFromJson,
+  )
   final TautulliSectionType? sectionType;
 
   /// The metadata agent being used for the library.
@@ -48,12 +53,16 @@ class TautulliLibrary {
 
   /// The amount of parent content in this library (e.g., seasons, albums).
   @JsonKey(
-      name: 'parent_count', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'parent_count',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? parentCount;
 
   /// The amount of child content in this library (e.g., songs, episodes).
   @JsonKey(
-      name: 'child_count', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'child_count',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? childCount;
 
   TautulliLibrary({

@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliLogsPlexMediaScannerLogTile extends StatelessWidget {
   final TautulliPlexLog log;
 
-  const TautulliLogsPlexMediaScannerLogTile({
-    Key? key,
-    required this.log,
-  }) : super(key: key);
+  const TautulliLogsPlexMediaScannerLogTile({Key? key, required this.log})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LunaExpandableListTile(
       title: log.message!.trim(),
-      collapsedSubtitles: [
-        _subtitle1(),
-        _subtitle2(),
-      ],
+      collapsedSubtitles: [_subtitle1(), _subtitle2()],
       expandedTableContent: _tableContent(),
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/route.dart';
-import 'package:lunasea/router/routes.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/route.dart';
+import 'package:thriftwood/router/routes.dart';
+import 'package:thriftwood/vendor.dart';
 
 enum DashboardRoutes with LunaRoutesMixin {
   HOME('/dashboard');

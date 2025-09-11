@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:lunasea/database/tables/lunasea.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/database/tables/thriftwood.dart';
+import 'package:thriftwood/vendor.dart';
 
 // ignore: always_use_package_imports
 import '../network.dart';
@@ -24,13 +24,13 @@ class IO extends HttpOverrides implements LunaNetwork {
     final HttpClient client = super.createHttpClient(context);
 
     // Disable TLS validation
-    if (!LunaSeaDatabase.NETWORKING_TLS_VALIDATION.read())
+    if (!thriftwoodDatabase.NETWORKING_TLS_VALIDATION.read())
       client.badCertificateCallback = (cert, host, port) => true;
 
     // Set User-Agent
     PackageInfo.fromPlatform()
         .then((info) => client.userAgent = generateUserAgent(info))
-        .catchError((_) => client.userAgent = 'LunaSea/Unknown');
+        .catchError((_) => client.userAgent = 'thriftwood/Unknown');
 
     return client;
   }

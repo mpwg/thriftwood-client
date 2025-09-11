@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/sabnzbd.dart';
-import 'package:lunasea/widgets/pages/invalid_route.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/sabnzbd.dart';
+import 'package:thriftwood/widgets/pages/invalid_route.dart';
 
 class HistoryStagesRoute extends StatefulWidget {
   final SABnzbdHistoryData? history;
 
-  const HistoryStagesRoute({
-    Key? key,
-    required this.history,
-  }) : super(key: key);
+  const HistoryStagesRoute({Key? key, required this.history}) : super(key: key);
 
   @override
   State<HistoryStagesRoute> createState() => _State();
@@ -34,10 +31,8 @@ class _State extends State<HistoryStagesRoute> with LunaScrollControllerMixin {
     );
   }
 
-  PreferredSizeWidget _appBar() => LunaAppBar(
-        title: 'Stages',
-        scrollControllers: [scrollController],
-      );
+  PreferredSizeWidget _appBar() =>
+      LunaAppBar(title: 'Stages', scrollControllers: [scrollController]);
 
   Widget _body() {
     return LunaListView(
@@ -48,8 +43,10 @@ class _State extends State<HistoryStagesRoute> with LunaScrollControllerMixin {
           title: widget.history!.stageLog[index]['name'],
           body: [
             TextSpan(
-              text: widget.history!.stageLog[index]['actions'][0]
-                  .replaceAll('<br/>', '.\n'),
+              text: widget.history!.stageLog[index]['actions'][0].replaceAll(
+                '<br/>',
+                '.\n',
+              ),
             ),
           ],
           trailing: const LunaIconButton.arrow(),
@@ -58,7 +55,10 @@ class _State extends State<HistoryStagesRoute> with LunaScrollControllerMixin {
                 .join(',\n')
                 .replaceAll('<br/>', '.\n');
             LunaDialogs().textPreview(
-                context, widget.history!.stageLog[index]['name'], _data);
+              context,
+              widget.history!.stageLog[index]['name'],
+              _data,
+            );
           },
         ),
       ),

@@ -18,5 +18,5 @@ Thriftwood even comes with support for webhook-based push notifications, multipl
 
 > Please note that Thriftwood is purely a remote control application, it does not offer any functionality without software installed on a server/computer.
 
-- [Email](mailto:hello@lunasea.app)
-- [Website](https://www.lunasea.app)
+- [Email](mailto:hello@thriftwood.app)
+- [Website](https://www.thriftwood.app)

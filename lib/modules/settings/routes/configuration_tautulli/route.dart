@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
-import 'package:lunasea/router/routes/settings.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
+import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationTautulliRoute extends StatefulWidget {
-  const ConfigurationTautulliRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationTautulliRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationTautulliRoute> createState() => _State();
@@ -96,7 +94,9 @@ class _State extends State<ConfigurationTautulliRoute>
         return LunaBlock(
           title: 'tautulli.DefaultTerminationMessage'.tr(),
           body: [
-            TextSpan(text: message.isEmpty ? 'lunasea.NotSet'.tr() : message),
+            TextSpan(
+              text: message.isEmpty ? 'thriftwood.NotSet'.tr() : message,
+            ),
           ],
           trailing: const LunaIconButton(icon: Icons.videocam_off_rounded),
           onTap: () async {
@@ -111,20 +111,24 @@ class _State extends State<ConfigurationTautulliRoute>
 
   Widget _activityRefreshRate() {
     const _db = TautulliDatabase.REFRESH_RATE;
-    return _db.listenableBuilder(builder: (context, _) {
-      String refreshRate = _db.read() == 1
-          ? 'lunasea.EverySecond'.tr()
-          : 'lunasea.EverySeconds'.tr(args: [_db.read().toString()]);
-      return LunaBlock(
-        title: 'tautulli.ActivityRefreshRate'.tr(),
-        body: [TextSpan(text: refreshRate)],
-        trailing: const LunaIconButton(icon: LunaIcons.REFRESH),
-        onTap: () async {
-          List<dynamic> _values = await TautulliDialogs.setRefreshRate(context);
-          if (_values[0]) _db.update(_values[1]);
-        },
-      );
-    });
+    return _db.listenableBuilder(
+      builder: (context, _) {
+        String refreshRate = _db.read() == 1
+            ? 'thriftwood.EverySecond'.tr()
+            : 'thriftwood.EverySeconds'.tr(args: [_db.read().toString()]);
+        return LunaBlock(
+          title: 'tautulli.ActivityRefreshRate'.tr(),
+          body: [TextSpan(text: refreshRate)],
+          trailing: const LunaIconButton(icon: LunaIcons.REFRESH),
+          onTap: () async {
+            List<dynamic> _values = await TautulliDialogs.setRefreshRate(
+              context,
+            );
+            if (_values[0]) _db.update(_values[1]);
+          },
+        );
+      },
+    );
   }
 
   Widget _statisticsItemCount() {
@@ -132,8 +136,8 @@ class _State extends State<ConfigurationTautulliRoute>
     return _db.listenableBuilder(
       builder: (context, _) {
         String statisticsItems = _db.read() == 1
-            ? 'lunasea.OneItem'.tr()
-            : 'lunasea.Items'.tr(args: [_db.read().toString()]);
+            ? 'thriftwood.OneItem'.tr()
+            : 'thriftwood.Items'.tr(args: [_db.read().toString()]);
         return LunaBlock(
           title: 'tautulli.StatisticsItemCount'.tr(),
           body: [TextSpan(text: statisticsItems)],

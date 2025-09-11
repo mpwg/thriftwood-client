@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/widgets/sheets/download_client/sheet.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/database/models/profile.dart';
+import 'package:thriftwood/widgets/sheets/download_client/sheet.dart';
+import 'package:thriftwood/widgets/ui.dart';
 
 class DownloadClientButton extends StatelessWidget {
-  const DownloadClientButton({
-    super.key,
-  });
+  const DownloadClientButton({super.key});
 
   @override
   Widget build(BuildContext context) {

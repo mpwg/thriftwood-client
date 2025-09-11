@@ -1,12 +1,12 @@
-import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/database/tables/dashboard.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/abstract.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/lidarr.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/radarr.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/sonarr.dart';
-import 'package:lunasea/widgets/ui.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/database/models/profile.dart';
+import 'package:thriftwood/database/tables/dashboard.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/abstract.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/lidarr.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/radarr.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/sonarr.dart';
+import 'package:thriftwood/widgets/ui.dart';
+import 'package:thriftwood/vendor.dart';
 
 class API {
   final LunaProfile profile;
@@ -113,7 +113,6 @@ class API {
         )?.toLocal().floor();
         DateTime? release;
         if (physicalRelease != null || digitalRelease != null) {
-          if (digitalRelease == null) release = physicalRelease;
           release ??= digitalRelease.isBefore(physicalRelease)
               ? digitalRelease
               : physicalRelease;

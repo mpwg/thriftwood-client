@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaCard extends Card {
   LunaCard({
@@ -12,17 +12,17 @@ class LunaCard extends Card {
     double? height,
     double? width,
   }) : super(
-          key: key,
-          child: Container(
-            child: child,
-            decoration: decoration,
-            height: height,
-            width: width,
-          ),
-          margin: margin,
-          color: color ?? Theme.of(context).primaryColor,
-          shape: LunaUI.shapeBorder,
-          elevation: 0.0,
-          clipBehavior: Clip.antiAlias,
-        );
+         key: key,
+         child: Container(
+           child: child,
+           decoration: decoration,
+           height: height,
+           width: width,
+         ),
+         margin: margin,
+         color: color ?? Theme.of(context).primaryColor,
+         shape: LunaUI.shapeBorder,
+         elevation: 0.0,
+         clipBehavior: Clip.antiAlias,
+       );
 }

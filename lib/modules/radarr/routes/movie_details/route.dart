@@ -1,18 +1,15 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
-import 'package:lunasea/modules/radarr/routes/movie_details/sheets/links.dart';
-import 'package:lunasea/router/routes/radarr.dart';
-import 'package:lunasea/widgets/pages/invalid_route.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
+import 'package:thriftwood/modules/radarr/routes/movie_details/sheets/links.dart';
+import 'package:thriftwood/router/routes/radarr.dart';
+import 'package:thriftwood/widgets/pages/invalid_route.dart';
 
 class MovieDetailsRoute extends StatefulWidget {
   final int movieId;
 
-  const MovieDetailsRoute({
-    Key? key,
-    required this.movieId,
-  }) : super(key: key);
+  const MovieDetailsRoute({Key? key, required this.movieId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -26,8 +23,9 @@ class _State extends State<MovieDetailsRoute> with LunaLoadCallbackMixin {
   @override
   Future<void> loadCallback() async {
     if (widget.movieId > 0) {
-      RadarrMovie? result =
-          _findMovie(await context.read<RadarrState>().movies!);
+      RadarrMovie? result = _findMovie(
+        await context.read<RadarrState>().movies!,
+      );
       setState(() => movie = result);
       context.read<RadarrState>().fetchQualityProfiles();
       context.read<RadarrState>().fetchTags();
@@ -44,9 +42,7 @@ class _State extends State<MovieDetailsRoute> with LunaLoadCallbackMixin {
   }
 
   RadarrMovie? _findMovie(List<RadarrMovie> movies) {
-    return movies.firstWhereOrNull(
-      (movie) => movie.id == widget.movieId,
-    );
+    return movies.firstWhereOrNull((movie) => movie.id == widget.movieId);
   }
 
   List<RadarrTag> _findTags(List<int?>? tagIds, List<RadarrTag> tags) {
@@ -54,10 +50,10 @@ class _State extends State<MovieDetailsRoute> with LunaLoadCallbackMixin {
   }
 
   RadarrQualityProfile? _findQualityProfile(
-      int? profileId, List<RadarrQualityProfile> profiles) {
-    return profiles.firstWhereOrNull(
-      (profile) => profile.id == profileId,
-    );
+    int? profileId,
+    List<RadarrQualityProfile> profiles,
+  ) {
+    return profiles.firstWhereOrNull((profile) => profile.id == profileId);
   }
 
   @override
@@ -71,8 +67,9 @@ class _State extends State<MovieDetailsRoute> with LunaLoadCallbackMixin {
       scaffoldKey: _scaffoldKey,
       module: LunaModule.RADARR,
       appBar: _appBar(),
-      bottomNavigationBar:
-          context.watch<RadarrState>().enabled ? _bottomNavigationBar() : null,
+      bottomNavigationBar: context.watch<RadarrState>().enabled
+          ? _bottomNavigationBar()
+          : null,
       body: _body(),
     );
   }
@@ -90,9 +87,9 @@ class _State extends State<MovieDetailsRoute> with LunaLoadCallbackMixin {
         ),
         LunaIconButton(
           icon: LunaIcons.EDIT,
-          onPressed: () => RadarrRoutes.MOVIE_EDIT.go(params: {
-            'movie': widget.movieId.toString(),
-          }),
+          onPressed: () => RadarrRoutes.MOVIE_EDIT.go(
+            params: {'movie': widget.movieId.toString()},
+          ),
         ),
         RadarrAppBarMovieSettingsAction(movieId: widget.movieId),
       ];
@@ -140,10 +137,13 @@ class _State extends State<MovieDetailsRoute> with LunaLoadCallbackMixin {
                 context: context,
               );
             RadarrQualityProfile? qualityProfile = _findQualityProfile(
-                movie!.qualityProfileId,
-                snapshot.data![0] as List<RadarrQualityProfile>);
-            List<RadarrTag> tags =
-                _findTags(movie!.tags, snapshot.data![1] as List<RadarrTag>);
+              movie!.qualityProfileId,
+              snapshot.data![0] as List<RadarrQualityProfile>,
+            );
+            List<RadarrTag> tags = _findTags(
+              movie!.tags,
+              snapshot.data![1] as List<RadarrTag>,
+            );
             return _pages(qualityProfile, tags);
           }
           return const LunaLoader();

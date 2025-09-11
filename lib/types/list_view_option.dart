@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 part 'list_view_option.g.dart';
 
@@ -31,9 +31,9 @@ extension LunaListViewOptionExtension on LunaListViewOption {
   String get readable {
     switch (this) {
       case LunaListViewOption.BLOCK_VIEW:
-        return 'lunasea.BlockView'.tr();
+        return 'thriftwood.BlockView'.tr();
       case LunaListViewOption.GRID_VIEW:
-        return 'lunasea.GridView'.tr();
+        return 'thriftwood.GridView'.tr();
     }
   }
 

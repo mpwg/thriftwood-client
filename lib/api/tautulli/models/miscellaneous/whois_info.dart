@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'whois_info.g.dart';
 
@@ -16,10 +16,7 @@ class TautulliWHOISInfo {
   @JsonKey(name: 'nets', toJson: _subnetsToMap, fromJson: _subnetsToObjectArray)
   final List<TautulliWHOISSubnet>? subnets;
 
-  TautulliWHOISInfo({
-    this.host,
-    this.subnets,
-  });
+  TautulliWHOISInfo({this.host, this.subnets});
 
   /// Returns a JSON-encoded string version of this object.
   @override
@@ -33,12 +30,14 @@ class TautulliWHOISInfo {
   Map<String, dynamic> toJson() => _$TautulliWHOISInfoToJson(this);
 
   static List<TautulliWHOISSubnet> _subnetsToObjectArray(
-          List<dynamic> subnets) =>
-      subnets
-          .map((subnet) =>
-              TautulliWHOISSubnet.fromJson((subnet as Map<String, dynamic>)))
-          .toList();
+    List<dynamic> subnets,
+  ) => subnets
+      .map(
+        (subnet) =>
+            TautulliWHOISSubnet.fromJson((subnet as Map<String, dynamic>)),
+      )
+      .toList();
   static List<Map<String, dynamic>>? _subnetsToMap(
-          List<TautulliWHOISSubnet>? subnets) =>
-      subnets?.map((subnet) => subnet.toJson()).toList();
+    List<TautulliWHOISSubnet>? subnets,
+  ) => subnets?.map((subnet) => subnet.toJson()).toList();
 }

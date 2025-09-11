@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'user_player_stats.g.dart';
 
@@ -12,12 +12,16 @@ class TautulliUserPlayerStats {
 
   /// The total amount of plays from this user's player in this period.
   @JsonKey(
-      name: 'total_plays', fromJson: TautulliUtilities.ensureIntegerFromJson)
+    name: 'total_plays',
+    fromJson: TautulliUtilities.ensureIntegerFromJson,
+  )
   final int? totalPlays;
 
   /// The name of the player.
   @JsonKey(
-      name: 'player_name', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'player_name',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? playerName;
 
   /// The platform of the player.
@@ -26,7 +30,9 @@ class TautulliUserPlayerStats {
 
   /// The name of the platform.
   @JsonKey(
-      name: 'platform_name', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'platform_name',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? platformName;
 
   TautulliUserPlayerStats({

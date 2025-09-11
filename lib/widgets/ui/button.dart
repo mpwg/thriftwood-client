@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lunasea/system/state.dart';
-import 'package:lunasea/types/loading_state.dart';
-import 'package:lunasea/widgets/ui.dart';
+import 'package:thriftwood/system/state.dart';
+import 'package:thriftwood/types/loading_state.dart';
+import 'package:thriftwood/widgets/ui.dart';
 
-enum LunaButtonType {
-  TEXT,
-  ICON,
-  LOADER,
-}
+enum LunaButtonType { TEXT, ICON, LOADER }
 
 /// A Luna-styled button.
 class LunaButton extends Card {
@@ -26,37 +22,38 @@ class LunaButton extends Card {
     Function? onLongPress,
     LunaLoadingState? loadingState,
   }) : super(
-          key: key,
-          child: InkWell(
-            child: Container(
-              child: child,
-              decoration: decoration,
-              height: height,
-              alignment: alignment,
-            ),
-            borderRadius: BorderRadius.circular(LunaUI.BORDER_RADIUS),
-            onTap: () async {
-              HapticFeedback.lightImpact();
-              if (onTap != null && loadingState != LunaLoadingState.ACTIVE)
-                onTap();
-            },
-            onLongPress: () async {
-              HapticFeedback.heavyImpact();
-              if (onLongPress != null &&
-                  loadingState != LunaLoadingState.ACTIVE) onLongPress();
-            },
-          ),
-          margin: margin,
-          color: backgroundColor != null
-              ? backgroundColor.withOpacity(LunaUI.OPACITY_DIMMED)
-              : Theme.of(LunaState.context)
-                  .canvasColor
-                  .withOpacity(LunaUI.OPACITY_DIMMED),
-          shape:
-              backgroundColor != null ? LunaShapeBorder() : LunaUI.shapeBorder,
-          elevation: LunaUI.ELEVATION,
-          clipBehavior: Clip.antiAlias,
-        );
+         key: key,
+         child: InkWell(
+           child: Container(
+             child: child,
+             decoration: decoration,
+             height: height,
+             alignment: alignment,
+           ),
+           borderRadius: BorderRadius.circular(LunaUI.BORDER_RADIUS),
+           onTap: () async {
+             HapticFeedback.lightImpact();
+             if (onTap != null && loadingState != LunaLoadingState.ACTIVE)
+               onTap();
+           },
+           onLongPress: () async {
+             HapticFeedback.heavyImpact();
+             if (onLongPress != null && loadingState != LunaLoadingState.ACTIVE)
+               onLongPress();
+           },
+         ),
+         margin: margin,
+         color: backgroundColor != null
+             ? backgroundColor.withOpacity(LunaUI.OPACITY_DIMMED)
+             : Theme.of(
+                 LunaState.context,
+               ).canvasColor.withOpacity(LunaUI.OPACITY_DIMMED),
+         shape: backgroundColor != null
+             ? LunaShapeBorder()
+             : LunaUI.shapeBorder,
+         elevation: LunaUI.ELEVATION,
+         clipBehavior: Clip.antiAlias,
+       );
 
   /// Create a default button.
   ///
@@ -175,13 +172,10 @@ class LunaButton extends Card {
           children: [
             if (icon != null)
               Padding(
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: iconSize,
-                ),
+                child: Icon(icon, color: color, size: iconSize),
                 padding: const EdgeInsets.only(
-                    right: LunaUI.DEFAULT_MARGIN_SIZE / 2),
+                  right: LunaUI.DEFAULT_MARGIN_SIZE / 2,
+                ),
               ),
             Flexible(
               child: Text(
@@ -198,8 +192,9 @@ class LunaButton extends Card {
             ),
           ],
         ),
-        padding:
-            const EdgeInsets.symmetric(horizontal: LunaUI.DEFAULT_MARGIN_SIZE),
+        padding: const EdgeInsets.symmetric(
+          horizontal: LunaUI.DEFAULT_MARGIN_SIZE,
+        ),
       ),
       margin: margin,
       height: height,
@@ -256,11 +251,7 @@ class LunaButton extends Card {
     LunaLoadingState? loadingState,
   }) {
     return LunaButton._(
-      child: Icon(
-        icon,
-        color: color,
-        size: iconSize,
-      ),
+      child: Icon(icon, color: color, size: iconSize),
       margin: margin,
       height: height,
       backgroundColor: backgroundColor,

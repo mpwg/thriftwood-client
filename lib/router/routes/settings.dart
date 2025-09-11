@@ -1,57 +1,57 @@
 import 'package:flutter/material.dart';
 
-import 'package:lunasea/database/models/indexer.dart';
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/modules/settings/routes/configuration/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_general/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_dashboard/pages/calendar_settings.dart';
-import 'package:lunasea/modules/settings/routes/configuration_dashboard/pages/default_pages.dart';
-import 'package:lunasea/modules/settings/routes/configuration_dashboard/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_drawer/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_external_modules/pages/add_module.dart';
-import 'package:lunasea/modules/settings/routes/configuration_external_modules/pages/edit_module.dart';
-import 'package:lunasea/modules/settings/routes/configuration_external_modules/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_lidarr/pages/connection_details.dart';
-import 'package:lunasea/modules/settings/routes/configuration_lidarr/pages/default_pages.dart';
-import 'package:lunasea/modules/settings/routes/configuration_lidarr/pages/headers.dart';
-import 'package:lunasea/modules/settings/routes/configuration_lidarr/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_nzbget/pages/connection_details.dart';
-import 'package:lunasea/modules/settings/routes/configuration_nzbget/pages/default_pages.dart';
-import 'package:lunasea/modules/settings/routes/configuration_nzbget/pages/headers.dart';
-import 'package:lunasea/modules/settings/routes/configuration_nzbget/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_quick_actions/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_radarr/pages/connection_details.dart';
-import 'package:lunasea/modules/settings/routes/configuration_radarr/pages/default_options.dart';
-import 'package:lunasea/modules/settings/routes/configuration_radarr/pages/default_pages.dart';
-import 'package:lunasea/modules/settings/routes/configuration_radarr/pages/headers.dart';
-import 'package:lunasea/modules/settings/routes/configuration_radarr/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_sabnzbd/pages/connection_details.dart';
-import 'package:lunasea/modules/settings/routes/configuration_sabnzbd/pages/default_pages.dart';
-import 'package:lunasea/modules/settings/routes/configuration_sabnzbd/pages/headers.dart';
-import 'package:lunasea/modules/settings/routes/configuration_sabnzbd/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_search/pages/add_indexer.dart';
-import 'package:lunasea/modules/settings/routes/configuration_search/pages/add_indexer_headers.dart';
-import 'package:lunasea/modules/settings/routes/configuration_search/pages/edit_indexer.dart';
-import 'package:lunasea/modules/settings/routes/configuration_search/pages/edit_indexer_headers.dart';
-import 'package:lunasea/modules/settings/routes/configuration_search/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_sonarr/pages/connection_details.dart';
-import 'package:lunasea/modules/settings/routes/configuration_sonarr/pages/default_options.dart';
-import 'package:lunasea/modules/settings/routes/configuration_sonarr/pages/default_pages.dart';
-import 'package:lunasea/modules/settings/routes/configuration_sonarr/pages/headers.dart';
-import 'package:lunasea/modules/settings/routes/configuration_sonarr/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_tautulli/pages/connection_details.dart';
-import 'package:lunasea/modules/settings/routes/configuration_tautulli/pages/default_pages.dart';
-import 'package:lunasea/modules/settings/routes/configuration_tautulli/pages/headers.dart';
-import 'package:lunasea/modules/settings/routes/configuration_tautulli/route.dart';
-import 'package:lunasea/modules/settings/routes/configuration_wake_on_lan/route.dart';
-import 'package:lunasea/modules/settings/routes/profiles/route.dart';
-import 'package:lunasea/modules/settings/routes/settings/route.dart';
-import 'package:lunasea/modules/settings/routes/system/route.dart';
-import 'package:lunasea/modules/settings/routes/system_logs/pages/log_details.dart';
-import 'package:lunasea/modules/settings/routes/system_logs/route.dart';
-import 'package:lunasea/router/routes.dart';
-import 'package:lunasea/types/log_type.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/database/models/indexer.dart';
+import 'package:thriftwood/modules.dart';
+import 'package:thriftwood/modules/settings/routes/configuration/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_general/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_dashboard/pages/calendar_settings.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_dashboard/pages/default_pages.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_dashboard/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_drawer/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_external_modules/pages/add_module.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_external_modules/pages/edit_module.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_external_modules/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_lidarr/pages/connection_details.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_lidarr/pages/default_pages.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_lidarr/pages/headers.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_lidarr/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_nzbget/pages/connection_details.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_nzbget/pages/default_pages.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_nzbget/pages/headers.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_nzbget/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_quick_actions/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_radarr/pages/connection_details.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_radarr/pages/default_options.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_radarr/pages/default_pages.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_radarr/pages/headers.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_radarr/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_sabnzbd/pages/connection_details.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_sabnzbd/pages/default_pages.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_sabnzbd/pages/headers.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_sabnzbd/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_search/pages/add_indexer.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_search/pages/add_indexer_headers.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_search/pages/edit_indexer.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_search/pages/edit_indexer_headers.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_search/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_sonarr/pages/connection_details.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_sonarr/pages/default_options.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_sonarr/pages/default_pages.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_sonarr/pages/headers.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_sonarr/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_tautulli/pages/connection_details.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_tautulli/pages/default_pages.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_tautulli/pages/headers.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_tautulli/route.dart';
+import 'package:thriftwood/modules/settings/routes/configuration_wake_on_lan/route.dart';
+import 'package:thriftwood/modules/settings/routes/profiles/route.dart';
+import 'package:thriftwood/modules/settings/routes/settings/route.dart';
+import 'package:thriftwood/modules/settings/routes/system/route.dart';
+import 'package:thriftwood/modules/settings/routes/system_logs/pages/log_details.dart';
+import 'package:thriftwood/modules/settings/routes/system_logs/route.dart';
+import 'package:thriftwood/router/routes.dart';
+import 'package:thriftwood/types/log_type.dart';
+import 'package:thriftwood/vendor.dart';
 
 enum SettingsRoutes with LunaRoutesMixin {
   HOME('/settings'),
@@ -135,10 +135,12 @@ enum SettingsRoutes with LunaRoutesMixin {
       case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_ADD:
         return route(widget: const ConfigurationExternalModulesAddRoute());
       case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_EDIT:
-        return route(builder: (_, state) {
-          final moduleId = int.tryParse(state.pathParameters['id']!) ?? -1;
-          return ConfigurationExternalModulesEditRoute(moduleId: moduleId);
-        });
+        return route(
+          builder: (_, state) {
+            final moduleId = int.tryParse(state.pathParameters['id']!) ?? -1;
+            return ConfigurationExternalModulesEditRoute(moduleId: moduleId);
+          },
+        );
       case SettingsRoutes.CONFIGURATION_LIDARR:
         return route(widget: const ConfigurationLidarrRoute());
       case SettingsRoutes.CONFIGURATION_LIDARR_CONNECTION_DETAILS:
@@ -190,20 +192,26 @@ enum SettingsRoutes with LunaRoutesMixin {
       case SettingsRoutes.CONFIGURATION_SEARCH_ADD_INDEXER:
         return route(widget: const ConfigurationSearchAddIndexerRoute());
       case SettingsRoutes.CONFIGURATION_SEARCH_ADD_INDEXER_HEADERS:
-        return route(builder: (_, state) {
-          final indexer = state.extra as LunaIndexer?;
-          return ConfigurationSearchAddIndexerHeadersRoute(indexer: indexer);
-        });
+        return route(
+          builder: (_, state) {
+            final indexer = state.extra as LunaIndexer?;
+            return ConfigurationSearchAddIndexerHeadersRoute(indexer: indexer);
+          },
+        );
       case SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER:
-        return route(builder: (_, state) {
-          final id = int.tryParse(state.pathParameters['id']!) ?? -1;
-          return ConfigurationSearchEditIndexerRoute(id: id);
-        });
+        return route(
+          builder: (_, state) {
+            final id = int.tryParse(state.pathParameters['id']!) ?? -1;
+            return ConfigurationSearchEditIndexerRoute(id: id);
+          },
+        );
       case SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER_HEADERS:
-        return route(builder: (_, state) {
-          final id = int.tryParse(state.pathParameters['id']!) ?? -1;
-          return ConfigurationSearchEditIndexerHeadersRoute(id: id);
-        });
+        return route(
+          builder: (_, state) {
+            final id = int.tryParse(state.pathParameters['id']!) ?? -1;
+            return ConfigurationSearchEditIndexerHeadersRoute(id: id);
+          },
+        );
       case SettingsRoutes.CONFIGURATION_SONARR:
         return route(widget: const ConfigurationSonarrRoute());
       case SettingsRoutes.CONFIGURATION_SONARR_CONNECTION_DETAILS:
@@ -237,10 +245,12 @@ enum SettingsRoutes with LunaRoutesMixin {
       case SettingsRoutes.SYSTEM_LOGS:
         return route(widget: const SystemLogsRoute());
       case SettingsRoutes.SYSTEM_LOGS_DETAILS:
-        return route(builder: (_, state) {
-          final type = LunaLogType.fromKey(state.pathParameters['type']!);
-          return SystemLogsDetailsRoute(type: type);
-        });
+        return route(
+          builder: (_, state) {
+            final type = LunaLogType.fromKey(state.pathParameters['type']!);
+            return SystemLogsDetailsRoute(type: type);
+          },
+        );
     }
   }
 
@@ -310,7 +320,8 @@ enum SettingsRoutes with LunaRoutesMixin {
       case SettingsRoutes.CONFIGURATION_SABNZBD_CONNECTION_DETAILS:
         return [
           SettingsRoutes
-              .CONFIGURATION_SABNZBD_CONNECTION_DETAILS_HEADERS.routes,
+              .CONFIGURATION_SABNZBD_CONNECTION_DETAILS_HEADERS
+              .routes,
         ];
       case SettingsRoutes.CONFIGURATION_SEARCH:
         return [
@@ -318,9 +329,7 @@ enum SettingsRoutes with LunaRoutesMixin {
           SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER.routes,
         ];
       case SettingsRoutes.CONFIGURATION_SEARCH_ADD_INDEXER:
-        return [
-          SettingsRoutes.CONFIGURATION_SEARCH_ADD_INDEXER_HEADERS.routes,
-        ];
+        return [SettingsRoutes.CONFIGURATION_SEARCH_ADD_INDEXER_HEADERS.routes];
       case SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER:
         return [
           SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER_HEADERS.routes,
@@ -343,7 +352,8 @@ enum SettingsRoutes with LunaRoutesMixin {
       case SettingsRoutes.CONFIGURATION_TAUTULLI_CONNECTION_DETAILS:
         return [
           SettingsRoutes
-              .CONFIGURATION_TAUTULLI_CONNECTION_DETAILS_HEADERS.routes,
+              .CONFIGURATION_TAUTULLI_CONNECTION_DETAILS_HEADERS
+              .routes,
         ];
       case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES:
         return [
@@ -351,13 +361,9 @@ enum SettingsRoutes with LunaRoutesMixin {
           SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_EDIT.routes,
         ];
       case SettingsRoutes.SYSTEM:
-        return [
-          SettingsRoutes.SYSTEM_LOGS.routes,
-        ];
+        return [SettingsRoutes.SYSTEM_LOGS.routes];
       case SettingsRoutes.SYSTEM_LOGS:
-        return [
-          SettingsRoutes.SYSTEM_LOGS_DETAILS.routes,
-        ];
+        return [SettingsRoutes.SYSTEM_LOGS_DETAILS.routes];
       default:
         return const <GoRoute>[];
     }

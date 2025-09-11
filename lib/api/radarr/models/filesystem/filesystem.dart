@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/api/radarr/models.dart';
+import 'package:thriftwood/api/radarr/models.dart';
 
 part 'filesystem.g.dart';
 
@@ -16,11 +16,7 @@ class RadarrFileSystem {
   @JsonKey(name: 'files')
   List<RadarrFileSystemFile>? files;
 
-  RadarrFileSystem({
-    this.parent,
-    this.directories,
-    this.files,
-  });
+  RadarrFileSystem({this.parent, this.directories, this.files});
 
   /// Returns a JSON-encoded string version of this object.
   @override

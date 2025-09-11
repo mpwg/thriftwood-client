@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/lidarr.dart';
-import 'package:lunasea/router/routes/settings.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/lidarr.dart';
+import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationLidarrRoute extends StatefulWidget {
-  const ConfigurationLidarrRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationLidarrRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationLidarrRoute> createState() => _State();

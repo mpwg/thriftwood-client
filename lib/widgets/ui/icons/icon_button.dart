@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 class LunaIconButton extends StatelessWidget {
   final IconData? icon;
@@ -65,11 +65,13 @@ class LunaIconButton extends StatelessWidget {
         alignment: alignment,
         padding: EdgeInsets.zero,
         onPressed: _onPressed() as void Function()?,
-        mouseCursor: mouseCursor ??
+        mouseCursor:
+            mouseCursor ??
             (onPressed != null ? SystemMouseCursors.click : MouseCursor.defer),
       ),
       hoverColor: Colors.transparent,
-      mouseCursor: mouseCursor ??
+      mouseCursor:
+          mouseCursor ??
           (onLongPress != null ? SystemMouseCursors.click : MouseCursor.defer),
       onLongPress: _onLongPress() as void Function()?,
     );
@@ -104,15 +106,9 @@ class LunaIconButton extends StatelessWidget {
   Widget _icon() {
     assert((text != null || icon != null), 'both text and icon cannot be null');
     if (loadingState == LunaLoadingState.ERROR) {
-      return Icon(
-        Icons.error_rounded,
-        color: color,
-      );
+      return Icon(Icons.error_rounded, color: color);
     } else if (icon != null) {
-      return Icon(
-        icon,
-        color: color,
-      );
+      return Icon(icon, color: color);
     } else {
       return Text(
         text!,

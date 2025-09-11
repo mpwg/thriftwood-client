@@ -1,8 +1,8 @@
 /// Library containing all logic and accessors to make calls to Sonarr's API.
 library sonarr_commands;
 
-import 'package:lunasea/api/sonarr/models.dart';
-import 'package:lunasea/api/sonarr/types.dart';
+import 'package:thriftwood/api/sonarr/models.dart';
+import 'package:thriftwood/api/sonarr/types.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 

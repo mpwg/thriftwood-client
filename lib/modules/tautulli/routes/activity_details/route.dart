@@ -1,15 +1,13 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 class ActivityDetailsRoute extends StatefulWidget {
   final int sessionKey;
 
-  const ActivityDetailsRoute({
-    Key? key,
-    required this.sessionKey,
-  }) : super(key: key);
+  const ActivityDetailsRoute({Key? key, required this.sessionKey})
+    : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -39,21 +37,21 @@ class _State extends State<ActivityDetailsRoute>
       scaffoldKey: _scaffoldKey,
       appBar: _appBar() as PreferredSizeWidget?,
       body: _body(),
-      bottomNavigationBar:
-          TautulliActivityDetailsBottomActionBar(sessionKey: widget.sessionKey),
+      bottomNavigationBar: TautulliActivityDetailsBottomActionBar(
+        sessionKey: widget.sessionKey,
+      ),
     );
   }
 
   Widget _appBar() {
     return LunaAppBar(
-        title: 'tautulli.ActivityDetails'.tr(),
-        scrollControllers: [
-          scrollController
-        ],
-        actions: [
-          TautulliActivityDetailsUserAction(sessionKey: widget.sessionKey),
-          TautulliActivityDetailsMetadataAction(sessionKey: widget.sessionKey),
-        ]);
+      title: 'tautulli.ActivityDetails'.tr(),
+      scrollControllers: [scrollController],
+      actions: [
+        TautulliActivityDetailsUserAction(sessionKey: widget.sessionKey),
+        TautulliActivityDetailsMetadataAction(sessionKey: widget.sessionKey),
+      ],
+    );
   }
 
   Widget _body() {
@@ -63,7 +61,8 @@ class _State extends State<ActivityDetailsRoute>
       onRefresh: _refresh,
       child: FutureBuilder(
         future: context.select<TautulliState, Future<TautulliActivity?>>(
-            (state) => state.activity!),
+          (state) => state.activity!,
+        ),
         builder: (context, AsyncSnapshot<TautulliActivity?> snapshot) {
           if (snapshot.hasError) {
             if (snapshot.connectionState != ConnectionState.waiting)
@@ -77,7 +76,8 @@ class _State extends State<ActivityDetailsRoute>
           if (snapshot.hasData) {
             TautulliSession? session = snapshot.data!.sessions!
                 .firstWhereOrNull(
-                    (element) => element.sessionKey == widget.sessionKey);
+                  (element) => element.sessionKey == widget.sessionKey,
+                );
             return _session(session);
           }
           return const LunaLoader();

@@ -14,15 +14,15 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Setup Environment
-        uses: JagandeepBrar/lunasea/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
         with:
           platform: windows
 
-      - name: Build LunaSea
+      - name: Build thriftwood
         run: npm run build:windows
 
       - name: Prepare Artifact
-        run: Compress-Archive -path ${{ github.workspace }}\build\windows\x64\runner\Release\* ${{github.workspace}}\output\lunasea-windows-amd64.zip
+        run: Compress-Archive -path ${{ github.workspace }}\build\windows\x64\runner\Release\* ${{github.workspace}}\output\thriftwood-windows-amd64.zip
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -35,12 +35,12 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Setup Environment
-        uses: JagandeepBrar/lunasea/.github/actions/prepare_for_build@master
+        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@master
         with:
           platform: windows
           code-signing-certificate: ${{ secrets.CODE_SIGNING_CERTIFICATE }}
 
-      - name: Build LunaSea
+      - name: Build thriftwood
         run: |
           flutter pub run msix:create `
           --certificate-password=${{ secrets.CODE_SIGNING_PASSWORD }} `

@@ -1,7 +1,7 @@
 default_platform(:mac)
 
 platform :mac do
-  desc "Create the LunaSea Keychain"
+  desc "Create the thriftwood Keychain"
   lane :keychain_create do
     create_keychain(
       name: ENV["MATCH_KEYCHAIN_NAME"],
@@ -13,7 +13,7 @@ platform :mac do
     )
   end
 
-  desc "Delete the LunaSea Keychain"
+  desc "Delete the thriftwood Keychain"
   lane :keychain_delete do
     delete_keychain(name: ENV["MATCH_KEYCHAIN_NAME"])
   end
@@ -74,20 +74,20 @@ platform :mac do
       export_method: "developer-id",
       export_options: {
         provisioningProfiles: {
-          "app.lunasea.lunasea" => "match Direct app.lunasea.lunasea macos",
+          "app.thriftwood.thriftwood" => "match Direct app.thriftwood.thriftwood macos",
         }
       }
     )
 
     notarize(
-      package: "LunaSea.app",
+      package: "thriftwood.app",
       use_notarytool: true,
     )
     sh("mkdir", "-p", "../../output")
-    sh("mv", "../LunaSea.app", "../../output/LunaSea.app")
+    sh("mv", "../thriftwood.app", "../../output/thriftwood.app")
     Dir.chdir("../../output") do
-      sh("zip", "-r", "-y", "lunasea-macos-amd64.zip", "LunaSea.app")
-      sh("rm", "-rf", "LunaSea.app")
+      sh("zip", "-r", "-y", "thriftwood-macos-amd64.zip", "thriftwood.app")
+      sh("rm", "-rf", "thriftwood.app")
     end
 
     keychain_delete
@@ -111,12 +111,12 @@ platform :mac do
       export_method: "app-store",
       export_options: {
         provisioningProfiles: {
-          "app.lunasea.lunasea" => "match AppStore app.lunasea.lunasea macos"
+          "app.thriftwood.thriftwood" => "match AppStore app.thriftwood.thriftwood macos"
         }
       },
     )
     sh("mkdir", "-p", "../../output")
-    sh("mv", "../LunaSea.pkg", "../../output/lunasea-macos-amd64.pkg")
+    sh("mv", "../thriftwood.pkg", "../../output/thriftwood-macos-amd64.pkg")
 
     keychain_delete
   end
@@ -139,20 +139,20 @@ platform :mac do
       export_method: "developer-id",
       export_options: {
         provisioningProfiles: {
-          "app.lunasea.lunasea" => "match Direct app.lunasea.lunasea macos",
+          "app.thriftwood.thriftwood" => "match Direct app.thriftwood.thriftwood macos",
         }
       }
     )
     
     Dir.chdir("../") do
-      sh("create-dmg", "LunaSea.app", "--overwrite")
+      sh("create-dmg", "thriftwood.app", "--overwrite")
     end
     notarize(
-      package: "LunaSea #{options[:build_version]}.dmg",
-      bundle_id: "app.lunasea.lunasea.DiskImage",
+      package: "thriftwood #{options[:build_version]}.dmg",
+      bundle_id: "app.thriftwood.thriftwood.DiskImage",
       use_notarytool: true,
     )
-    sh("mv", "../LunaSea #{options[:build_version]}.dmg", "../../output/lunasea-macos-amd64.dmg")
+    sh("mv", "../thriftwood #{options[:build_version]}.dmg", "../../output/thriftwood-macos-amd64.dmg")
 
     keychain_delete
   end

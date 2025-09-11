@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/extensions/scroll_controller.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:thriftwood/extensions/scroll_controller.dart';
+import 'package:thriftwood/vendor.dart';
 
-import 'package:lunasea/widgets/ui.dart';
-import 'package:lunasea/modules/dashboard/core/api/data/abstract.dart';
-import 'package:lunasea/modules/dashboard/core/state.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/content_block.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
+import 'package:thriftwood/widgets/ui.dart';
+import 'package:thriftwood/modules/dashboard/core/api/data/abstract.dart';
+import 'package:thriftwood/modules/dashboard/core/state.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/content_block.dart';
+import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
 
 class ScheduleView extends StatefulWidget {
   final Map<DateTime, List<CalendarData>> events;
 
-  const ScheduleView({
-    Key? key,
-    required this.events,
-  }) : super(key: key);
+  const ScheduleView({Key? key, required this.events}) : super(key: key);
 
   @override
   State<ScheduleView> createState() => _State();
@@ -30,9 +27,7 @@ class _State extends State<ScheduleView> {
     if (widget.events.isEmpty) {
       return LunaListView(
         controller: controller,
-        children: [
-          LunaMessage.inList(text: 'dashboard.NoNewContent'.tr()),
-        ],
+        children: [LunaMessage.inList(text: 'dashboard.NoNewContent'.tr())],
       );
     }
 
@@ -84,9 +79,7 @@ class _State extends State<ScheduleView> {
     final extent = LunaBlock.calculateItemExtent(3);
     final offset = 39.30 + events.length * extent;
     final slivers = [
-      SliverToBoxAdapter(
-        child: LunaHeader(text: _formatter.format(day)),
-      ),
+      SliverToBoxAdapter(child: LunaHeader(text: _formatter.format(day))),
       SliverFixedExtentList(
         delegate: SliverChildBuilderDelegate(
           (_, index) => ContentBlock(events[index]),

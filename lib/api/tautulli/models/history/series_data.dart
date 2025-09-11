@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'series_data.g.dart';
 
@@ -15,10 +15,7 @@ class TautulliSeriesData {
   @JsonKey(name: 'data', fromJson: TautulliUtilities.ensureIntegerListFromJson)
   final List<int?>? data;
 
-  TautulliSeriesData({
-    this.name,
-    this.data,
-  });
+  TautulliSeriesData({this.name, this.data});
 
   /// Returns a JSON-encoded string version of this object.
   @override

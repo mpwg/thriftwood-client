@@ -1,5 +1,5 @@
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/tautulli.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/tautulli.dart';
 
 part 'newsletter.g.dart';
 
@@ -20,12 +20,16 @@ class TautulliNewsletter {
 
   /// Label of the newsletter agent.
   @JsonKey(
-      name: 'agent_label', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'agent_label',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? agentLabel;
 
   /// Friendly name (description) of the newsletter.
   @JsonKey(
-      name: 'friendly_name', fromJson: TautulliUtilities.ensureStringFromJson)
+    name: 'friendly_name',
+    fromJson: TautulliUtilities.ensureStringFromJson,
+  )
   final String? friendlyName;
 
   /// The Crontab schedule.

@@ -1,4 +1,4 @@
-import 'package:lunasea/core.dart';
+import 'package:thriftwood/core.dart';
 
 part 'qualityprofile.g.dart';
 
@@ -9,8 +9,5 @@ class LidarrQualityProfile {
   @HiveField(1)
   String? name;
 
-  LidarrQualityProfile({
-    required this.id,
-    required this.name,
-  });
+  LidarrQualityProfile({required this.id, required this.name});
 }

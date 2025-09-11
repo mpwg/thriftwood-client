@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/extensions/datetime.dart';
-import 'package:lunasea/extensions/string/string.dart';
-import 'package:lunasea/modules/radarr.dart';
-import 'package:lunasea/router/routes/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/extensions/datetime.dart';
+import 'package:thriftwood/extensions/string/string.dart';
+import 'package:thriftwood/modules/radarr.dart';
+import 'package:thriftwood/router/routes/radarr.dart';
 
 class RadarrMissingTile extends StatefulWidget {
   static final itemExtent = LunaBlock.calculateItemExtent(3);

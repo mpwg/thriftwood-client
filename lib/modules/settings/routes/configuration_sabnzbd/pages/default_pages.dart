@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/database/tables/sabnzbd.dart';
-import 'package:lunasea/modules/sabnzbd.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/database/tables/sabnzbd.dart';
+import 'package:thriftwood/modules/sabnzbd.dart';
 
 class ConfigurationSABnzbdDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationSABnzbdDefaultPagesRoute({
-    Key? key,
-  }) : super(key: key);
+  const ConfigurationSABnzbdDefaultPagesRoute({Key? key}) : super(key: key);
 
   @override
   State<ConfigurationSABnzbdDefaultPagesRoute> createState() => _State();
@@ -33,19 +31,14 @@ class _State extends State<ConfigurationSABnzbdDefaultPagesRoute>
   }
 
   Widget _body() {
-    return LunaListView(
-      controller: scrollController,
-      children: [
-        _homePage(),
-      ],
-    );
+    return LunaListView(controller: scrollController, children: [_homePage()]);
   }
 
   Widget _homePage() {
     const _db = SABnzbdDatabase.NAVIGATION_INDEX;
     return _db.listenableBuilder(
       builder: (context, _) => LunaBlock(
-        title: 'lunasea.Home'.tr(),
+        title: 'thriftwood.Home'.tr(),
         body: [TextSpan(text: SABnzbdNavigationBar.titles[_db.read()])],
         trailing: LunaIconButton(icon: SABnzbdNavigationBar.icons[_db.read()]),
         onTap: () async {

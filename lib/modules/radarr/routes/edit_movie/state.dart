@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/core.dart';
-import 'package:lunasea/modules/radarr.dart';
+import 'package:thriftwood/core.dart';
+import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrMoviesEditState extends ChangeNotifier {
   RadarrMovie? _movie;
@@ -51,8 +51,9 @@ class RadarrMoviesEditState extends ChangeNotifier {
   }
 
   void initializeQualityProfile(List<RadarrQualityProfile> qualityProfiles) {
-    _qualityProfile = qualityProfiles
-        .firstWhere((profile) => profile.id == movie?.qualityProfileId);
+    _qualityProfile = qualityProfiles.firstWhere(
+      (profile) => profile.id == movie?.qualityProfileId,
+    );
   }
 
   late RadarrAvailability _availability;
