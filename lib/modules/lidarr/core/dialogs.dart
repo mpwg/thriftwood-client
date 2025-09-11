@@ -4,7 +4,7 @@ import 'package:thriftwood/extensions/int/bytes.dart';
 import 'package:thriftwood/modules/lidarr.dart';
 
 class LidarrDialogs {
-  Future<Tuple2<bool, LidarrMonitorStatus?>> selectMonitoringOption(
+  Future<(bool, LidarrMonitorStatus?)> selectMonitoringOption(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -30,7 +30,7 @@ class LidarrDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _value);
+    return (_flag, _value);
   }
 
   static Future<List<dynamic>> editQualityProfile(

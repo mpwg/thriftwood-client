@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 extension SonarrQueueRecordExtension on SonarrQueueRecord {
-  Tuple3<String, IconData, Color> lunaStatusParameters({
+  (String, IconData, Color) lunaStatusParameters({
     bool canBeWhite = true,
   }) {
     SonarrQueueStatus? _status = this.status;
@@ -93,7 +93,7 @@ extension SonarrQueueRecordExtension on SonarrQueueRecord {
       }
     }
 
-    return Tuple3(_title, _icon, _color);
+    return (_title, _icon, _color);
   }
 
   String lunaPercentage() {

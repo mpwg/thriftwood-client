@@ -76,12 +76,12 @@ class _State extends State<ConfigurationExternalModulesAddRoute>
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> values = await LunaDialogs().editText(
+        (bool, String) values = await LunaDialogs().editText(
           context,
           'settings.DisplayName'.tr(),
           prefill: _displayName,
         );
-        if (values.item1) setState(() => _module.displayName = values.item2);
+        if (values.$1) setState(() => _module.displayName = values.$2);
       },
     );
   }
@@ -93,9 +93,9 @@ class _State extends State<ConfigurationExternalModulesAddRoute>
       body: [TextSpan(text: _host.isEmpty ? 'thriftwood.NotSet'.tr() : _host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> values = await SettingsDialogs()
+        (bool, String) values = await SettingsDialogs()
             .editExternalModuleHost(context, prefill: _host);
-        if (values.item1) setState(() => _module.host = values.item2);
+        if (values.$1) setState(() => _module.host = values.$2);
       },
     );
   }

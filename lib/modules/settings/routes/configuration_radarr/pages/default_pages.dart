@@ -49,12 +49,12 @@ class _State extends State<ConfigurationRadarrDefaultPagesRoute>
         body: [TextSpan(text: RadarrNavigationBar.titles[_db.read()])],
         trailing: LunaIconButton(icon: RadarrNavigationBar.icons[_db.read()]),
         onTap: () async {
-          Tuple2<bool, int> values = await RadarrDialogs().setDefaultPage(
+          (bool, int) values = await RadarrDialogs().setDefaultPage(
             context,
             titles: RadarrNavigationBar.titles,
             icons: RadarrNavigationBar.icons,
           );
-          if (values.item1) _db.update(values.item2);
+          if (values.$1) _db.update(values.$2);
         },
       ),
     );
@@ -72,12 +72,12 @@ class _State extends State<ConfigurationRadarrDefaultPagesRoute>
           icon: RadarrMovieDetailsNavigationBar.icons[_db.read()],
         ),
         onTap: () async {
-          Tuple2<bool, int> values = await RadarrDialogs().setDefaultPage(
+          (bool, int) values = await RadarrDialogs().setDefaultPage(
             context,
             titles: RadarrMovieDetailsNavigationBar.titles,
             icons: RadarrMovieDetailsNavigationBar.icons,
           );
-          if (values.item1) _db.update(values.item2);
+          if (values.$1) _db.update(values.$2);
         },
       ),
     );
@@ -93,12 +93,12 @@ class _State extends State<ConfigurationRadarrDefaultPagesRoute>
           icon: RadarrAddMovieNavigationBar.icons[_db.read()],
         ),
         onTap: () async {
-          Tuple2<bool, int> values = await RadarrDialogs().setDefaultPage(
+          (bool, int) values = await RadarrDialogs().setDefaultPage(
             context,
             titles: RadarrAddMovieNavigationBar.titles,
             icons: RadarrAddMovieNavigationBar.icons,
           );
-          if (values.item1) _db.update(values.item2);
+          if (values.$1) _db.update(values.$2);
         },
       ),
     );
@@ -116,12 +116,12 @@ class _State extends State<ConfigurationRadarrDefaultPagesRoute>
           icon: RadarrSystemStatusNavigationBar.icons[_db.read()],
         ),
         onTap: () async {
-          Tuple2<bool, int> values = await RadarrDialogs().setDefaultPage(
+          (bool, int) values = await RadarrDialogs().setDefaultPage(
             context,
             titles: RadarrSystemStatusNavigationBar.titles,
             icons: RadarrSystemStatusNavigationBar.icons,
           );
-          if (values.item1) _db.update(values.item2);
+          if (values.$1) _db.update(values.$2);
         },
       ),
     );

@@ -73,11 +73,11 @@ class _State extends State<NZBGetQueueFAB> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) =>
-      Selector<NZBGetState, Tuple2<bool, bool>>(
-        selector: (_, model) => Tuple2(model.error, model.paused),
+      Selector<NZBGetState, (bool, bool)>(
+        selector: (_, model) => (model.error, model.paused),
         builder: (context, data, _) {
-          data.item2 ? _iconController.forward() : _iconController.reverse();
-          return data.item1
+          data.$2 ? _iconController.forward() : _iconController.reverse();
+          return data.$1
               ? Container()
               : ScaleTransition(
                   scale: _hideController,
@@ -85,7 +85,7 @@ class _State extends State<NZBGetQueueFAB> with TickerProviderStateMixin {
                     child: LunaFloatingActionButtonAnimated(
                       controller: _iconController,
                       icon: AnimatedIcons.pause_play,
-                      onPressed: () => _toggle(context, data.item2),
+                      onPressed: () => _toggle(context, data.$2),
                     ),
                     onLongPress: () => _toggleFor(context),
                     borderRadius: BorderRadius.circular(28.0),

@@ -88,12 +88,12 @@ class _State extends State<SABnzbdHistory>
         onTap: loadCallback,
       );
     }
-    return Selector<SABnzbdState, Tuple2<String, bool>>(
+    return Selector<SABnzbdState, (String, bool)>(
       selector: (_, model) =>
-          Tuple2(model.historySearchFilter, model.historyHideFailed),
+          (model.historySearchFilter, model.historyHideFailed),
       builder: (context, data, _) {
-        List<SABnzbdHistoryData> _filtered = _filter(data.item1);
-        _filtered = data.item2 ? _hide(_filtered) : _filtered;
+        List<SABnzbdHistoryData> _filtered = _filter(data.$1);
+        _filtered = data.$2 ? _hide(_filtered) : _filtered;
         return _listBody(_filtered);
       },
     );

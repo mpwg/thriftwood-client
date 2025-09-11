@@ -33,10 +33,10 @@ class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
   }
 
   Future<void> _importModeOnTap(BuildContext context) async {
-    Tuple2<bool, RadarrImportMode?> result = await RadarrDialogs()
+    (bool, RadarrImportMode?) result = await RadarrDialogs()
         .setManualImportMode(context);
-    if (result.item1)
-      RadarrDatabase.MANUAL_IMPORT_DEFAULT_MODE.update(result.item2!.value);
+    if (result.$1)
+      RadarrDatabase.MANUAL_IMPORT_DEFAULT_MODE.update(result.$2!.value);
   }
 
   Future<void> _importOnTap(BuildContext context) async {
@@ -65,12 +65,12 @@ class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
       List<RadarrManualImportFile> _files = [];
       _imports.forEach((import) {
         if (_allValid) {
-          Tuple2<RadarrManualImportFile?, String?> _file = RadarrAPIHelper()
+          (RadarrManualImportFile?, String?) _file = RadarrAPIHelper()
               .buildManualImportFile(import: import);
-          if (_file.item1 != null) {
-            _files.add(_file.item1!);
+          if (_file.$1 != null) {
+            _files.add(_file.$1!);
           } else {
-            showLunaInfoSnackBar(title: 'Invalid Inputs', message: _file.item2);
+            showLunaInfoSnackBar(title: 'Invalid Inputs', message: _file.$2);
             _allValid = false;
           }
         }

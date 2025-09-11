@@ -28,13 +28,13 @@ class SonarrSeriesAddDetailsLanguageProfileTile extends StatelessWidget {
     List<SonarrLanguageProfile> _profiles = await context
         .read<SonarrState>()
         .languageProfiles!;
-    Tuple2<bool, SonarrLanguageProfile?> result = await SonarrDialogs()
+    (bool, SonarrLanguageProfile?) result = await SonarrDialogs()
         .editLanguageProfiles(context, _profiles);
-    if (result.item1) {
+    if (result.$1) {
       context.read<SonarrSeriesAddDetailsState>().languageProfile =
-          result.item2!;
+          result.$2!;
       SonarrDatabase.ADD_SERIES_DEFAULT_LANGUAGE_PROFILE.update(
-        result.item2!.id,
+        result.$2!.id,
       );
     }
   }

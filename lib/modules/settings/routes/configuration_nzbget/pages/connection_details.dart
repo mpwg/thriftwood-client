@@ -52,12 +52,12 @@ class _State extends State<ConfigurationNZBGetConnectionDetailsRoute>
       body: [TextSpan(text: host.isEmpty ? 'thriftwood.NotSet'.tr() : host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> _values = await SettingsDialogs().editHost(
+        (bool, String) _values = await SettingsDialogs().editHost(
           context,
           prefill: host,
         );
-        if (_values.item1) {
-          LunaProfile.current.nzbgetHost = _values.item2;
+        if (_values.$1) {
+          LunaProfile.current.nzbgetHost = _values.$2;
           LunaProfile.current.save();
           context.read<NZBGetState>().reset();
         }
@@ -74,13 +74,13 @@ class _State extends State<ConfigurationNZBGetConnectionDetailsRoute>
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> _values = await LunaDialogs().editText(
+        (bool, String) _values = await LunaDialogs().editText(
           context,
           'settings.Username'.tr(),
           prefill: username,
         );
-        if (_values.item1) {
-          LunaProfile.current.nzbgetUser = _values.item2;
+        if (_values.$1) {
+          LunaProfile.current.nzbgetUser = _values.$2;
           LunaProfile.current.save();
           context.read<NZBGetState>().reset();
         }
@@ -101,7 +101,7 @@ class _State extends State<ConfigurationNZBGetConnectionDetailsRoute>
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        Tuple2<bool, String> _values = await LunaDialogs().editText(
+        (bool, String) _values = await LunaDialogs().editText(
           context,
           'settings.Password'.tr(),
           prefill: password,
@@ -111,8 +111,8 @@ class _State extends State<ConfigurationNZBGetConnectionDetailsRoute>
             ),
           ],
         );
-        if (_values.item1) {
-          LunaProfile.current.nzbgetPass = _values.item2;
+        if (_values.$1) {
+          LunaProfile.current.nzbgetPass = _values.$2;
           LunaProfile.current.save();
           context.read<NZBGetState>().reset();
         }

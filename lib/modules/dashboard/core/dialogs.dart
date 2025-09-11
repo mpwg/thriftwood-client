@@ -6,7 +6,7 @@ import 'package:thriftwood/vendor.dart';
 import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
 
 class DashboardDialogs {
-  Future<Tuple2<bool, int>> defaultPage(BuildContext context) async {
+  Future<(bool, int)> defaultPage(BuildContext context) async {
     bool _flag = false;
     int _index = 0;
 
@@ -31,10 +31,10 @@ class DashboardDialogs {
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
 
-    return Tuple2(_flag, _index);
+    return (_flag, _index);
   }
 
-  Future<Tuple2<bool, int>> setPastDays(BuildContext context) async {
+  Future<(bool, int)> setPastDays(BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
@@ -77,10 +77,10 @@ class DashboardDialogs {
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
 
-    return Tuple2(_flag, int.tryParse(_textController.text) ?? 14);
+    return (_flag, int.tryParse(_textController.text) ?? 14);
   }
 
-  Future<Tuple2<bool, int>> setFutureDays(BuildContext context) async {
+  Future<(bool, int)> setFutureDays(BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
@@ -123,6 +123,6 @@ class DashboardDialogs {
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
 
-    return Tuple2(_flag, int.tryParse(_textController.text) ?? 14);
+    return (_flag, int.tryParse(_textController.text) ?? 14);
   }
 }

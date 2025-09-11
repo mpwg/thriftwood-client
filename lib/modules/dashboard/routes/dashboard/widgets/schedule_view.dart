@@ -32,7 +32,7 @@ class _State extends State<ScheduleView> {
     }
 
     final schedule = _buildSchedule();
-    Future.microtask(() => controller.animateToOffset(schedule.item2));
+    Future.microtask(() => controller.animateToOffset(schedule.$2));
 
     return LunaCustomScrollView(
       controller: controller,
@@ -40,7 +40,7 @@ class _State extends State<ScheduleView> {
         const SliverPadding(
           padding: EdgeInsets.symmetric(vertical: LunaUI.MARGIN_SIZE_HALF),
         ),
-        ...schedule.item1,
+        ...schedule.$1,
         const SliverPadding(
           padding: EdgeInsets.only(bottom: LunaUI.MARGIN_SIZE_HALF),
         ),
@@ -48,7 +48,7 @@ class _State extends State<ScheduleView> {
     );
   }
 
-  Tuple2<List<Widget>, double> _buildSchedule() {
+  (List<Widget), double> _buildSchedule() {
     double offset = 0.0;
     double offsetOfSelected = 0.0;
 
@@ -65,15 +65,15 @@ class _State extends State<ScheduleView> {
       final hasEvents = widget.events[key]?.isNotEmpty ?? false;
       if (hasEvents) {
         final built = _buildDay(key);
-        offset += built.item2;
-        days.addAll(built.item1);
+        offset += built.$2;
+        days.addAll(built.$1);
       }
     }
 
-    return Tuple2(days, offsetOfSelected);
+    return (days, offsetOfSelected);
   }
 
-  Tuple2<List<Widget>, double> _buildDay(DateTime day) {
+  (List<Widget), double> _buildDay(DateTime day) {
     List<CalendarData> events = widget.events[day]!;
 
     final extent = LunaBlock.calculateItemExtent(3);
@@ -89,6 +89,6 @@ class _State extends State<ScheduleView> {
       ),
     ];
 
-    return Tuple2(slivers, offset);
+    return (slivers, offset);
   }
 }

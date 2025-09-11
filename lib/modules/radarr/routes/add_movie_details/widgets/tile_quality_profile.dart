@@ -17,11 +17,11 @@ class RadarrAddMovieDetailsQualityProfileTile extends StatelessWidget {
           List<RadarrQualityProfile> qualityProfiles = await context
               .read<RadarrState>()
               .qualityProfiles!;
-          Tuple2<bool, RadarrQualityProfile?> values = await RadarrDialogs()
+          (bool, RadarrQualityProfile?) values = await RadarrDialogs()
               .editQualityProfile(context, qualityProfiles);
-          if (values.item1)
+          if (values.$1)
             context.read<RadarrAddMovieDetailsState>().qualityProfile =
-                values.item2!;
+                values.$2!;
         },
       ),
     );

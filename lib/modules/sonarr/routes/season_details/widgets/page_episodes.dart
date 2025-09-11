@@ -71,11 +71,11 @@ class _State extends State<SonarrSeasonDetailsEpisodesPage>
             state.selectedEpisodes.length,
           );
 
-          if (result.item1) {
+          if (result.$1) {
             final eps = (await state.episodes)!.values
                 .filter((ep) => state.selectedEpisodes.contains(ep.id!))
                 .toList();
-            result.item2!.execute(context, eps);
+            result.$2!.execute(context, eps);
             state.clearSelectedEpisodes();
           }
         },

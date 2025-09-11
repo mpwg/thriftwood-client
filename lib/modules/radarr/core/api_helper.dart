@@ -603,16 +603,16 @@ class RadarrAPIHelper {
   }
 
   /// Given a [RadarrManualImport] instance, create a [RadarrManualImportFile] which is sent within the command to start the import.
-  Tuple2<RadarrManualImportFile?, String?> buildManualImportFile({
+  (RadarrManualImportFile?, String?) buildManualImportFile({
     required RadarrManualImport import,
   }) {
     if (import.movie == null || import.movie!.id == null)
-      return const Tuple2(null, 'All selections must have a movie set');
+      return const (null, 'All selections must have a movie set');
     if (import.quality == null || (import.quality?.quality?.id ?? -1) < 0)
-      return const Tuple2(null, 'All selections must have a quality set');
+      return const (null, 'All selections must have a quality set');
     if ((import.languages?.length ?? 0) == 0)
-      return const Tuple2(null, 'All selections must have a language set');
-    return Tuple2(
+      return const (null, 'All selections must have a language set');
+    return (
       RadarrManualImportFile(
         path: import.path,
         movieId: import.movie!.id,

@@ -26,10 +26,10 @@ class SonarrSeasonHeader extends StatelessWidget {
           .toggleSeasonEpisodes(seasonNumber!),
       onLongPress: () async {
         HapticFeedback.heavyImpact();
-        Tuple2<bool, SonarrSeasonSettingsType?> result = await SonarrDialogs()
+        (bool, SonarrSeasonSettingsType?) result = await SonarrDialogs()
             .seasonSettings(context, seasonNumber);
-        if (result.item1) {
-          result.item2!.execute(context, seriesId, seasonNumber);
+        if (result.$1) {
+          result.$2!.execute(context, seriesId, seasonNumber);
         }
       },
     );

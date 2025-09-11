@@ -7,10 +7,10 @@ class LunaDialogs {
   ///
   /// Can pass in [prefill] String to prefill the [TextFormField]. Can also pass in a list of [TextSpan] tp show text above the field.
   ///
-  /// Returns list containing:
-  /// - 0: Flag (true if they hit save, false if they cancelled the prompt)
-  /// - 1: Value from the [TextEditingController].
-  Future<Tuple2<bool, String>> editText(
+  /// Returns record containing:
+  /// - $1: Flag (true if they hit save, false if they cancelled the prompt)
+  /// - $2: Value from the [TextEditingController].
+  Future<(bool, String)> editText(
       BuildContext context, String dialogTitle,
       {String prefill = '', List<TextSpan>? extraText}) async {
     bool _flag = false;
@@ -50,7 +50,7 @@ class LunaDialogs {
           ? LunaDialog.inputDialogContentPadding()
           : LunaDialog.inputTextDialogContentPadding(),
     );
-    return Tuple2(_flag, _textController.text);
+    return (_flag, _textController.text);
   }
 
   /// Show a text preview dialog.

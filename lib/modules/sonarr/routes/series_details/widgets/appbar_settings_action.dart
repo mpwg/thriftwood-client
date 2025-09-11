@@ -21,9 +21,9 @@ class SonarrAppBarSeriesSettingsAction extends StatelessWidget {
               return LunaIconButton(
                 icon: Icons.more_vert_rounded,
                 onPressed: () async {
-                  Tuple2<bool, SonarrSeriesSettingsType?> values =
+                  (bool, SonarrSeriesSettingsType?) values =
                       await SonarrDialogs().seriesSettings(context, series);
-                  if (values.item1) values.item2!.execute(context, series);
+                  if (values.$1) values.$2!.execute(context, series);
                 },
               );
           }

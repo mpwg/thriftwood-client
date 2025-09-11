@@ -27,9 +27,9 @@ class SonarrSeriesEditSeriesTypeTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    Tuple2<bool, SonarrSeriesType?> result = await SonarrDialogs()
+    (bool, SonarrSeriesType?) result = await SonarrDialogs()
         .editSeriesType(context);
-    if (result.item1)
-      context.read<SonarrSeriesEditState>().seriesType = result.item2!;
+    if (result.$1)
+      context.read<SonarrSeriesEditState>().seriesType = result.$2!;
   }
 }

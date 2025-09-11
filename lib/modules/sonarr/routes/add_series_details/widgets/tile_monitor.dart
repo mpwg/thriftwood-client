@@ -23,12 +23,12 @@ class SonarrSeriesAddDetailsMonitorTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    Tuple2<bool, SonarrSeriesMonitorType?> result = await SonarrDialogs()
+    (bool, SonarrSeriesMonitorType?) result = await SonarrDialogs()
         .editMonitorType(context);
-    if (result.item1) {
-      context.read<SonarrSeriesAddDetailsState>().monitorType = result.item2!;
+    if (result.$1) {
+      context.read<SonarrSeriesAddDetailsState>().monitorType = result.$2!;
       SonarrDatabase.ADD_SERIES_DEFAULT_MONITOR_TYPE.update(
-        result.item2!.value!,
+        result.$2!.value!,
       );
     }
   }

@@ -23,9 +23,9 @@ class SonarrTagsAppBarActionAddTag extends StatelessWidget {
   }
 
   Future<void> _onPressed(BuildContext context) async {
-    Tuple2<bool, String> result = await SonarrDialogs().addNewTag(context);
-    if (result.item1)
-      SonarrAPIController().addTag(context: context, label: result.item2).then((
+    (bool, String) result = await SonarrDialogs().addNewTag(context);
+    if (result.$1)
+      SonarrAPIController().addTag(context: context, label: result.$2).then((
         value,
       ) {
         if (value) context.read<SonarrState>().fetchTags();

@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/search.dart';
 import 'package:thriftwood/utils/profile_tools.dart';
 
 class SearchDialogs {
-  Future<Tuple2<bool, SearchDownloadType?>> downloadResult(
+  Future<(bool, SearchDownloadType?)> downloadResult(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -102,6 +102,6 @@ class SearchDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return Tuple2(_flag, _type);
+    return (_flag, _type);
   }
 }

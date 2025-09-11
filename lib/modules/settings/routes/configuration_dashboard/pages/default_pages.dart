@@ -45,7 +45,7 @@ class _State extends State<ConfigurationDashboardDefaultPagesRoute>
         trailing: LunaIconButton(icon: HomeNavigationBar.icons[_db.read()]),
         onTap: () async {
           final values = await DashboardDialogs().defaultPage(context);
-          if (values.item1) _db.update(values.item2);
+          if (values.$1) _db.update(values.$2);
         },
       ),
     );

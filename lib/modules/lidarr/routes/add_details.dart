@@ -207,9 +207,9 @@ class _State extends State<AddArtistDetailsRoute>
               trailing: const LunaIconButton.arrow(),
               body: [TextSpan(text: _status.readable)],
               onTap: () async {
-                Tuple2<bool, LidarrMonitorStatus?> _result =
+                (bool, LidarrMonitorStatus?) _result =
                     await LidarrDialogs().selectMonitoringOption(context);
-                if (_result.item1) _db.update(_result.item2!.key);
+                if (_result.$1) _db.update(_result.$2!.key);
               },
             );
           },

@@ -25,9 +25,9 @@ class SonarrSeriesEditQualityProfileTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    Tuple2<bool, SonarrQualityProfile?> result = await SonarrDialogs()
+    (bool, SonarrQualityProfile?) result = await SonarrDialogs()
         .editQualityProfile(context, profiles);
-    if (result.item1)
-      context.read<SonarrSeriesEditState>().qualityProfile = result.item2!;
+    if (result.$1)
+      context.read<SonarrSeriesEditState>().qualityProfile = result.$2!;
   }
 }

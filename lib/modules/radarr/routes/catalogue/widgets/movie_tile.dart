@@ -211,8 +211,8 @@ class _State extends State<RadarrCatalogueTile> {
   }
 
   Future<void> _onLongPress() async {
-    Tuple2<bool, RadarrMovieSettingsType?> values = await RadarrDialogs()
+    (bool, RadarrMovieSettingsType?) values = await RadarrDialogs()
         .movieSettings(context, widget.movie);
-    if (values.item1) values.item2!.execute(context, widget.movie);
+    if (values.$1) values.$2!.execute(context, widget.movie);
   }
 }

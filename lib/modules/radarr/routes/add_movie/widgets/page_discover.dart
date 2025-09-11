@@ -41,11 +41,11 @@ class _State extends State<RadarrAddMovieDiscoverPage>
         builder: (context, movies, _) =>
             Selector<
               RadarrAddMovieState,
-              Tuple2<Future<List<RadarrMovie>>?, Future<List<RadarrExclusion>>?>
+              (Future<List<RadarrMovie)>?, Future<List<RadarrExclusion>>?>
             >(
-              selector: (_, state) => Tuple2(state.discovery, state.exclusions),
+              selector: (_, state) => (state.discovery, state.exclusions),
               builder: (context, tuple, _) => FutureBuilder(
-                future: Future.wait([movies!, tuple.item1!, tuple.item2!]),
+                future: Future.wait([movies!, tuple.$1!, tuple.$2!]),
                 builder: (context, AsyncSnapshot<List<Object>> snapshot) {
                   if (snapshot.hasError) {
                     if (snapshot.connectionState != ConnectionState.waiting)
