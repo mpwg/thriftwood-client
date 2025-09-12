@@ -226,8 +226,6 @@
 			dependencies = (
 			);
 			name = ThriftwoodNative;
-			packageProductDependencies = (
-			);
 			productName = ThriftwoodNative;
 			productReference = 30000000000000000000001 /* ThriftwoodNative.app */;
 			productType = "com.apple.product-type.application";
@@ -256,8 +254,6 @@
 				Base,
 			);
 			mainGroup = 30000013000000000000001;
-			packageReferences = (
-			);
 			productRefGroup = 30000015000000000000001 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

@@ -1,74 +1,267 @@
-# Fastlane configuration for Thriftwood iOS
-# See https://docs.fastlane.tools for details
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
 
 default_platform(:ios)
 
+# Global configuration
+SCHEME_NAME = "ThriftwoodNative"
+WORKSPACE_PATH = "./ThriftwoodNative.xcodeproj"
+APP_IDENTIFIER = "app.thriftwood.native"
+
 platform :ios do
   before_all do
-    # Ensure we have the required environment variables
-    ensure_env_vars(
-      env_vars: ['APPLE_ID', 'ITUNES_TEAM_ID', 'APPSTORE_TEAM_ID']
-    )
-    setup_ci
-    # Skip prompts for automated runs
-    ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
-    ENV["FASTLANE_HIDE_GITHUB_ISSUES"] = "1"
-    # automatic code signing
-    update_code_signing_settings(
-      use_automatic_signing: true,
-      path: "ThriftwoodNative.xcodeproj"
-    )
+    ensure_xcode_version(version: "15.0")
+    
+    # Setup keychain for CI
+    if is_ci
+      create_keychain(
+        name: "CI",
+        password: ENV["KEYCHAIN_PASSWORD"],
+        default_keychain: true,
+        unlock: true,
+        timeout: 3600,
+        lock_when_sleeps: false
+      )
+    end
   end
 
-  desc "Build and sign IPA for App Store/TestFlight"
-  lane :build do
-    match(type: "appstore", readonly: true) # Handles provisioning profiles and certificates
-    gym(
-      scheme: "ThriftwoodNative", 
-      export_method: "app-store",
-      skip_codesigning: false,
-      clean: true
-    ) # Build IPA
+  after_all do |lane|
+    # Clean up keychain on CI
+    if is_ci
+      delete_keychain(name: "CI")
+    end
   end
 
-  desc "Deploy to TestFlight"
+  error do |lane, exception|
+    # Clean up keychain on CI even if there's an error
+    if is_ci
+      delete_keychain(name: "CI") rescue nil
+    end
+  end
+
+  # MARK: - Development Builds
+
+  desc "Build development version for testing"
+  lane :dev do
+    setup_ci_if_needed
+    
+    sync_code_signing(type: "development")
+    
+    build_app(
+      scheme: SCHEME_NAME,
+      project: WORKSPACE_PATH,
+      configuration: "Debug",
+      export_method: "development",
+      output_directory: "./build/development",
+      output_name: "#{SCHEME_NAME}-development.ipa",
+      clean: true,
+      include_bitcode: false,
+      skip_profile_detection: true
+    )
+    
+    UI.success("✅ Development build completed successfully!")
+  end
+
+  # MARK: - Beta Builds (TestFlight)
+
+  desc "Build and upload to TestFlight"
   lane :beta do
-    build
-    pilot(
-      skip_waiting_for_build_processing: false,
-      skip_submission: true
-    ) # Upload to TestFlight
+    setup_ci_if_needed
+    
+    # Increment build number
+    increment_build_number(
+      build_number: latest_testflight_build_number + 1,
+      xcodeproj: WORKSPACE_PATH
+    )
+    
+    sync_code_signing(type: "appstore")
+    
+    build_app(
+      scheme: SCHEME_NAME,
+      project: WORKSPACE_PATH,
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build/testflight",
+      output_name: "#{SCHEME_NAME}-testflight.ipa",
+      clean: true,
+      include_bitcode: false,
+      skip_profile_detection: true
+    )
+    
+    upload_to_testflight(
+      app_identifier: APP_IDENTIFIER,
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      changelog: "Bug fixes and improvements"
+    )
+    
+    UI.success("✅ TestFlight upload completed successfully!")
   end
 
-  desc "Deploy to App Store"
+  # MARK: - Production Builds (App Store)
+
+  desc "Build and upload to App Store"
   lane :release do
-    build
-    deliver(
-      force: true,
-      skip_screenshots: true,
+    setup_ci_if_needed
+    
+    # Ensure we're on main branch for releases
+    ensure_git_branch(branch: 'main')
+    
+    # Increment version number (patch version)
+    increment_version_number(
+      bump_type: "patch",
+      xcodeproj: WORKSPACE_PATH
+    )
+    
+    # Increment build number
+    increment_build_number(
+      build_number: latest_testflight_build_number + 1,
+      xcodeproj: WORKSPACE_PATH
+    )
+    
+    sync_code_signing(type: "appstore")
+    
+    build_app(
+      scheme: SCHEME_NAME,
+      project: WORKSPACE_PATH,
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build/appstore",
+      output_name: "#{SCHEME_NAME}-appstore.ipa",
+      clean: true,
+      include_bitcode: false,
+      skip_profile_detection: true
+    )
+    
+    upload_to_app_store(
+      app_identifier: APP_IDENTIFIER,
       skip_metadata: true,
-      submit_for_review: false
-    ) # Upload to App Store Connect
-  end
-
-  desc "Take screenshots"
-  lane :screenshots do
-    capture_screenshots
-  end
-
-  desc "Update metadata only"
-  lane :metadata do
-    deliver(
-      skip_binary_upload: true,
+      skip_screenshots: true,
+      submit_for_review: false, # Manual submission for production
+      automatic_release: false,
       force: true
     )
+    
+    # Commit version bump
+    commit_version_bump(
+      message: "Version bump for App Store release",
+      xcodeproj: WORKSPACE_PATH
+    )
+    
+    # Add git tag
+    add_git_tag(
+      tag: get_version_number(xcodeproj: WORKSPACE_PATH)
+    )
+    
+    UI.success("✅ App Store upload completed successfully!")
+    UI.success("🏷️  Tagged version: #{get_version_number(xcodeproj: WORKSPACE_PATH)}")
   end
 
-  desc "Sync code signing certificates"
+  # MARK: - Build Only (for CI validation)
+
+  desc "Build app without distribution (for CI validation)"
+  lane :build do
+    setup_ci_if_needed
+    
+    sync_code_signing(type: "development")
+    
+    build_app(
+      scheme: SCHEME_NAME,
+      project: WORKSPACE_PATH,
+      configuration: "Debug",
+      export_method: "development",
+      output_directory: "./build/validation",
+      output_name: "#{SCHEME_NAME}-validation.ipa",
+      clean: true,
+      include_bitcode: false,
+      skip_profile_detection: true,
+      skip_archive: false
+    )
+    
+    UI.success("✅ Build validation completed successfully!")
+  end
+
+  # MARK: - Code Signing
+
+  desc "Sync development certificates and provisioning profiles"
   lane :certificates do
-    match(type: "development", readonly: true)
-    # App Store certificates are set to readonly: true to prevent accidental creation of new distribution certificates,
-    # which can invalidate existing ones and disrupt App Store deployments. Development certificates are also set to readonly: true to prevent accidental creation in CI/CD environments.
-    match(type: "appstore", readonly: true)
+    setup_ci_if_needed
+    sync_code_signing(type: "development")
+    sync_code_signing(type: "appstore")
+  end
+
+  desc "Update certificates and push to git"
+  lane :update_certificates do
+    match(type: "development", force_for_new_devices: true)
+    match(type: "appstore")
+    UI.success("✅ Certificates updated and pushed to git!")
+  end
+
+  # MARK: - Helper Methods
+
+  private_lane :setup_ci_if_needed do
+    if is_ci
+      setup_ci(
+        provider: "github-actions"
+      )
+    end
+  end
+
+  private_lane :sync_code_signing do |options|
+    type = options[:type]
+    
+    match(
+      type: type,
+      app_identifier: APP_IDENTIFIER,
+      git_url: ENV["MATCH_GIT_URL"],
+      git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"],
+      keychain_name: is_ci ? "CI" : nil,
+      keychain_password: is_ci ? ENV["KEYCHAIN_PASSWORD"] : nil,
+      readonly: is_ci
+    )
+  end
+
+  # MARK: - Utility Lanes
+
+  desc "Show current version and build number"
+  lane :version do
+    version = get_version_number(xcodeproj: WORKSPACE_PATH)
+    build = get_build_number(xcodeproj: WORKSPACE_PATH)
+    UI.message("📱 Current version: #{version} (#{build})")
+  end
+
+  desc "Show available lanes"
+  lane :lanes do
+    UI.header("📋 Available Fastlane Lanes")
+    UI.message("🔨 Development:")
+    UI.message("  • fastlane dev        - Build development version")
+    UI.message("  • fastlane build      - Build for CI validation")
+    UI.message("")
+    UI.message("🧪 Testing:")
+    UI.message("  • fastlane beta       - Build and upload to TestFlight")
+    UI.message("")
+    UI.message("🚀 Production:")
+    UI.message("  • fastlane release    - Build and upload to App Store")
+    UI.message("")
+    UI.message("🔐 Code Signing:")
+    UI.message("  • fastlane certificates        - Sync existing certificates")
+    UI.message("  • fastlane update_certificates - Update and push new certificates")
+    UI.message("")
+    UI.message("ℹ️  Utility:")
+    UI.message("  • fastlane version    - Show current app version")
+    UI.message("  • fastlane lanes      - Show this help")
   end
 end

@@ -1,72 +1,207 @@
-fastlane documentation
-----
+# Fastlane Configuration for Thriftwood Native
 
-# Installation
+This directory contains the Fastlane configuration for automating iOS app builds, code signing, and distribution.
 
-Make sure you have the latest version of the Xcode command line tools installed:
+## 🚀 Available Lanes
 
-```sh
-xcode-select --install
+### Development & Testing
+- **`fastlane build`** - Build app for CI validation (no signing required)
+- **`fastlane dev`** - Build development version with development certificates
+- **`fastlane beta`** - Build and upload to TestFlight (auto-increments build number)
+
+### Production
+- **`fastlane release`** - Build and upload to App Store (auto-increments version & build, creates git tag)
+
+### Code Signing
+- **`fastlane certificates`** - Sync development and App Store certificates/profiles
+- **`fastlane update_certificates`** - Update certificates and push to Match repository
+
+### Utilities
+- **`fastlane version`** - Show current app version and build number
+- **`fastlane lanes`** - Show available lanes with descriptions
+
+## 🔧 Setup
+
+### Prerequisites
+1. **Ruby & Bundler**: Install Ruby (3.3+) and Bundler
+2. **Xcode**: Latest stable version (15.0+)
+3. **Apple Developer Account**: Valid paid developer account
+4. **Git Repository**: For Match certificate storage
+
+### Installation
+```bash
+# Install Ruby dependencies
+bundle install
+
+# Verify Fastlane installation
+bundle exec fastlane version
 ```
 
-For _fastlane_ installation instructions, see [Installing _fastlane_](https://docs.fastlane.tools/#installing-fastlane)
+### Match (Code Signing) Setup
+Fastlane uses Match for automatic certificate and provisioning profile management.
 
-# Available Actions
+#### Initial Match Setup (One Time)
+```bash
+# Initialize Match repository (creates certificates repo)
+bundle exec fastlane match init
 
-## iOS
+# Create development certificates
+bundle exec fastlane match development
 
-### ios build
-
-```sh
-[bundle exec] fastlane ios build
+# Create App Store certificates  
+bundle exec fastlane match appstore
 ```
 
-Build and sign IPA for App Store/TestFlight
+## 🔐 Required Environment Variables
 
-### ios beta
+Set these in your CI/CD system or local `.env` file:
 
-```sh
-[bundle exec] fastlane ios beta
+### Apple Developer
+- `APPLE_ID` - Your Apple Developer account email
+- `DEVELOPMENT_TEAM` - Apple Developer Team ID (10 character string)
+- `APPSTORE_TEAM_ID` - App Store Connect Team ID
+- `ITUNES_TEAM_ID` - iTunes Connect Team ID (usually same as APPSTORE_TEAM_ID)
+
+### App Store Connect API
+- `APP_STORE_CONNECT_API_KEY_KEY_ID` - API Key ID from App Store Connect
+- `APP_STORE_CONNECT_API_KEY_ISSUER_ID` - Issuer ID from App Store Connect
+- `APP_STORE_CONNECT_API_KEY_CONTENT` - Base64 encoded .p8 key content
+
+### Match (Code Signing)
+- `MATCH_PASSWORD` - Passphrase for encrypting certificates
+- `MATCH_GIT_URL` - Git repository URL for storing certificates
+- `MATCH_GIT_BASIC_AUTHORIZATION` - Base64 encoded git credentials (user:token)
+
+### CI/CD (GitHub Actions)
+- `KEYCHAIN_PASSWORD` - Password for temporary keychain (CI only)
+
+## 🏗️ GitHub Actions Integration
+
+The workflow supports multiple deployment scenarios following a structured Git flow.
+
+### Branch Strategy
+- **`main`**: Production-ready code → TestFlight deployment
+- **`develop`**: Development code → Development builds with artifacts  
+- **`feature/*`**: Feature branches → Build validation only (via PRs)
+
+### Tag Strategy
+- **`v*`**: Version tags (e.g., `v1.0.0`, `v1.2.3`) → App Store deployment
+- Follow semantic versioning: `major.minor.patch`
+- Support pre-release tags: `v2.0.0-beta.1`
+
+### Automatic Deployments
+1. **PR to develop/main**: Build validation only (`fastlane build`)
+2. **Push to develop**: Development build (`fastlane dev`) with artifacts
+3. **Push to main**: TestFlight deployment (`fastlane beta`)
+4. **Create version tag**: App Store deployment (`fastlane release`) + GitHub release
+
+### Manual Deployments
+Use GitHub's "Run workflow" button from any branch:
+- Choose **beta** for TestFlight deployment
+- Choose **production** for App Store deployment
+
+### Workflow Structure
+```yaml
+Jobs:
+├── build-and-test      # Always runs - validates build
+├── deploy-dev          # develop branch only
+├── deploy-beta         # main branch or manual
+└── deploy-production   # version tags or manual
 ```
 
-Deploy to TestFlight
+### Creating Version Tags
+```bash
+# Create and push a version tag for App Store release
+git tag v1.2.3
+git push origin v1.2.3
 
-### ios release
-
-```sh
-[bundle exec] fastlane ios release
+# Or create annotated tag with release notes
+git tag -a v1.2.3 -m "Release version 1.2.3 - Bug fixes and improvements"
+git push origin v1.2.3
 ```
 
-Deploy to App Store
+## 📱 Local Development
 
-### ios screenshots
+### Building Locally
+```bash
+# Development build
+bundle exec fastlane dev
 
-```sh
-[bundle exec] fastlane ios screenshots
+# TestFlight build (requires valid certificates)
+bundle exec fastlane beta
+
+# App Store build (requires main branch)
+bundle exec fastlane release
 ```
 
-Take screenshots
+### Version Management
+```bash
+# Check current version
+bundle exec fastlane version
 
-### ios metadata
-
-```sh
-[bundle exec] fastlane ios metadata
+# Versions are auto-incremented by lanes:
+# - beta: increments build number
+# - release: increments patch version + build number
 ```
 
-Update metadata only
+## 🔧 Configuration Details
 
-### ios certificates
+### App Configuration
+- **Bundle ID**: `app.thriftwood.native`
+- **Scheme**: `ThriftwoodNative`
+- **Project**: `ThriftwoodNative.xcodeproj`
 
-```sh
-[bundle exec] fastlane ios certificates
+### Build Settings
+- **Development**: Debug configuration, development export method
+- **TestFlight/App Store**: Release configuration, app-store export method
+- **Bitcode**: Disabled (not required for iOS 14+)
+- **Profile Detection**: Skipped (uses Match profiles)
+
+### Keychain Management (CI)
+- Creates temporary keychain `CI` with provided password
+- Automatically cleans up keychain after builds
+- Handles errors gracefully with cleanup
+
+## 🚨 Troubleshooting
+
+### Common Issues
+
+#### Missing Certificates
+```bash
+# Re-sync certificates
+bundle exec fastlane certificates
+
+# Force update if needed
+bundle exec fastlane update_certificates
 ```
 
-Sync code signing certificates
+#### Build Number Conflicts
+```bash
+# Check current TestFlight build number
+# Fastlane auto-increments based on latest TestFlight build
+bundle exec fastlane beta --verbose
+```
 
-----
+#### Match Repository Issues
+```bash
+# Check Match status
+bundle exec fastlane match development --readonly
 
-This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
+# Regenerate certificates if corrupted
+bundle exec fastlane match nuke development
+bundle exec fastlane match nuke distribution
+bundle exec fastlane update_certificates
+```
 
-More information about _fastlane_ can be found on [fastlane.tools](https://fastlane.tools).
+### Debug Mode
+Add `--verbose` to any lane for detailed output:
+```bash
+bundle exec fastlane build --verbose
+```
 
-The documentation of _fastlane_ can be found on [docs.fastlane.tools](https://docs.fastlane.tools).
+## 📚 Additional Resources
+
+- [Fastlane Documentation](https://docs.fastlane.tools/)
+- [Match Code Signing](https://docs.fastlane.tools/actions/match/)
+- [App Store Connect API](https://developer.apple.com/documentation/appstoreconnectapi)
+- [GitHub Actions for iOS](https://docs.github.com/en/actions/guides/building-and-testing-swift)
