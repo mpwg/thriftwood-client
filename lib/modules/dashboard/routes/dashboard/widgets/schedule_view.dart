@@ -48,7 +48,7 @@ class _State extends State<ScheduleView> {
     );
   }
 
-  (List<Widget), double> _buildSchedule() {
+  (List<Widget>, double) _buildSchedule() {
     double offset = 0.0;
     double offsetOfSelected = 0.0;
 
@@ -73,7 +73,7 @@ class _State extends State<ScheduleView> {
     return (days, offsetOfSelected);
   }
 
-  (List<Widget), double> _buildDay(DateTime day) {
+  (List<Widget>, double) _buildDay(DateTime day) {
     List<CalendarData> events = widget.events[day]!;
 
     final extent = LunaBlock.calculateItemExtent(3);

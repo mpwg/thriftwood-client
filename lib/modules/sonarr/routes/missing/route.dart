@@ -43,7 +43,7 @@ class _State extends State<SonarrMissingRoute>
       child:
           Selector<
             SonarrState,
-            (Future<Map<int, SonarrSeries)>?, Future<SonarrMissing>?>
+            (Future<Map<int, SonarrSeries>>?, Future<SonarrMissing>?)
           >(
             selector: (_, state) => (state.series, state.missing),
             builder: (context, tuple, _) => FutureBuilder(

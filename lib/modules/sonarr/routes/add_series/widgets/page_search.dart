@@ -32,7 +32,7 @@ class _State extends State<SonarrAddSeriesSearchPage>
       builder: (context, state, _) =>
           Selector<
             SonarrAddSeriesState,
-            (Future<List<SonarrSeries)>?, Future<List<SonarrExclusion>>?>
+            (Future<List<SonarrSeries>>?, Future<List<SonarrExclusion>>?)
           >(
             selector: (_, state) => (state.lookup, state.exclusions),
             builder: (context, tuple, _) {

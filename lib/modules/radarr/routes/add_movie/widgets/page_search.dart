@@ -58,7 +58,7 @@ class _State extends State<RadarrAddMovieSearchPage>
       builder: (context, movies, _) =>
           Selector<
             RadarrAddMovieState,
-            (Future<List<RadarrMovie)>?, Future<List<RadarrExclusion>>?>
+            (Future<List<RadarrMovie>>?, Future<List<RadarrExclusion>>?)
           >(
             selector: (_, state) => (state.lookup, state.exclusions),
             builder: (context, tuple, _) {
