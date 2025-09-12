@@ -9,7 +9,7 @@ echo "🚀 Setting up Fastlane for Thriftwood iOS..."
 
 # Check if we're in the right directory
 if [[ ! -d "ThriftwoodNative" ]]; then
-    echo "❌ Please run this script from the iosnative directory"
+    echo "❌ Please run this script from the project root directory (where the 'ThriftwoodNative' folder is located)"
     exit 1
 fi
 
