@@ -1,4 +1,5 @@
-git_url("https://github.com/mpwg/fastlane-private.git")
+# Set the MATCH_GIT_URL environment variable to your private certificate repository URL
+git_url(ENV['MATCH_GIT_URL'])
 
 storage_mode("git")
 
