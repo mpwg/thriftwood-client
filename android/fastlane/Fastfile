@@ -1,44 +1,87 @@
 default_platform(:android)
 
 platform :android do
-  desc "Build App Bundle"
+  desc "Setup signing configuration"
+  lane :setup_signing do
+    unless File.exist?("../key.properties")
+      UI.user_error!("❌ Missing key.properties file. Please create it from key.properties.sample and add your keystore information.")
+    end
+    
+    keystore_properties = File.read("../key.properties").split("\n").map { |line| line.split("=") }.to_h
+    keystore_file = keystore_properties["storeFile"]
+    
+    unless keystore_file && File.exist?("../../#{keystore_file}")
+      UI.user_error!("❌ Keystore file not found: #{keystore_file}. Please ensure your keystore exists and key.properties is configured correctly.")
+    end
+    
+    UI.success("✅ Signing configuration verified")
+  end
+
+  desc "Build App Bundle (AAB)"
   lane :build_aab do |options|
+    setup_signing
+    flutter_clean
+    
     sh(
       "flutter",
       "build",
       "appbundle",
       "--release",
-      "--build-number=#{options[:build_number]}",
+      "--build-number=#{options[:build_number] || ENV['BUILD_NUMBER'] || '1'}",
     )
 
     sh("mkdir", "-p", "../../output")
-    sh("mv", "../../build/app/outputs/bundle/release/app-release.aab", "../../output/thriftwood-android.aab")
+    sh("cp", "../../build/app/outputs/bundle/release/app-release.aab", "../../output/thriftwood-android.aab")
+    
+    UI.success("✅ App Bundle built successfully: output/thriftwood-android.aab")
   end
 
   desc "Build APK"
   lane :build_apk do |options|
+    setup_signing
+    flutter_clean
+    
     sh(
       "flutter",
       "build",
       "apk",
       "--release",
-      "--build-number=#{options[:build_number]}",
+      "--build-number=#{options[:build_number] || ENV['BUILD_NUMBER'] || '1'}",
     )
 
     sh("mkdir", "-p", "../../output")
-    sh("mv", "../../build/app/outputs/flutter-apk/app-release.apk", "../../output/thriftwood-android.apk")
+    sh("cp", "../../build/app/outputs/flutter-apk/app-release.apk", "../../output/thriftwood-android.apk")
+    
+    UI.success("✅ APK built successfully: output/thriftwood-android.apk")
+  end
+
+  desc "Build both APK and AAB"
+  lane :build_all do |options|
+    build_apk(options)
+    build_aab(options)
   end
 
   desc "Deploy to Google Play Store"
   lane :deploy_playstore do |options|
+    unless options[:aab] && File.exist?(options[:aab])
+      UI.user_error!("❌ AAB file required for Play Store deployment. Build with build_aab first.")
+    end
+    
     upload_to_play_store(
       aab: options[:aab],
-      skip_upload_metadata: true,
-      skip_upload_images: true,
-      skip_upload_screenshots: true,
+      skip_upload_metadata: options[:skip_metadata] || true,
+      skip_upload_images: options[:skip_images] || true,
+      skip_upload_screenshots: options[:skip_screenshots] || true,
       timeout: 600,
-      track: options[:track],
+      track: options[:track] || "internal",
       version_name: options[:version_name],
     )
+    
+    UI.success("✅ Successfully deployed to Google Play Store")
+  end
+
+  private_lane :flutter_clean do
+    sh("flutter", "clean")
+    UI.message("🧹 Flutter clean completed")
   end
 end

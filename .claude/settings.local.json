@@ -6,7 +6,12 @@
       "WebSearch",
       "WebFetch(domain:pub.dev)",
       "Bash(flutter build:*)",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(bundle install:*)",
+      "Bash(gem install:*)",
+      "Bash(bundle exec fastlane:*)",
+      "Bash(flutter clean:*)",
+      "Bash(./gradlew:*)"
     ],
     "deny": [],
     "ask": []

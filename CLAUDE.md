@@ -21,12 +21,15 @@ npm run generate:assets
 npm run generate:localization
 
 # Platform builds
-npm run build:android    # Clean + build APK release
-npm run build:ios        # Clean + build IPA release  
-npm run build:linux      # Clean + build Linux release
-npm run build:macos      # Clean + build macOS release
-npm run build:windows    # Clean + build Windows release
-npm run build:web        # Clean + build web release
+npm run build:android         # Build signed APK via Fastlane
+npm run build:android:apk     # Build signed APK via Fastlane
+npm run build:android:aab     # Build signed AAB (App Bundle) via Fastlane
+npm run build:android:all     # Build both APK and AAB via Fastlane
+npm run build:ios             # Clean + build IPA release  
+npm run build:linux           # Clean + build Linux release
+npm run build:macos           # Clean + build macOS release
+npm run build:windows         # Clean + build Windows release
+npm run build:web             # Clean + build web release
 
 # Development
 npm run profile          # Run in Flutter profile mode
@@ -44,11 +47,37 @@ npm run cocoapods:nuke:macos          # Complete macOS Pod reset
 npm run cocoapods:clear_cache         # Clear CocoaPods cache
 ```
 
-**Fastlane (iOS/Android deployment):**
+**Android Fastlane Commands:**
+```bash
+npm run prepare:signing:android       # Validate Android keystore setup
+npm run deploy:android                # Deploy to Google Play Store
+npm run fastlane:update:android       # Update Android fastlane dependencies
+```
+
+**iOS/macOS Fastlane Commands:**
 ```bash
 npm run fastlane:update               # Update all platforms
+npm run fastlane:update:ios           # Update iOS fastlane dependencies
+npm run fastlane:update:macos         # Update macOS fastlane dependencies
 npm run prepare:keychain:ios          # Setup iOS signing keychain
 npm run prepare:keychain:macos        # Setup macOS signing keychain
+```
+
+**Android Signing Setup:**
+```bash
+# 1. Create keystore (one-time setup)
+keytool -genkey -v -keystore key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias thriftwood
+
+# 2. Create key.properties from sample
+cp android/key.properties.sample android/key.properties
+# Edit android/key.properties with your keystore details:
+# storePassword=your_keystore_password
+# keyPassword=your_key_password  
+# keyAlias=thriftwood
+# storeFile=../key.jks
+
+# 3. Validate setup
+npm run prepare:signing:android
 ```
 
 **Release Management:**
@@ -145,3 +174,20 @@ lib/
 - **Minimum Versions**: iOS 13.0+, Android API 21+
 - **Theme System**: Custom theming with AMOLED black theme support
 - **Localization**: Easy Localization with English fallback
+
+### Android Build System
+
+- **Fastlane Integration**: Android builds use Fastlane for automated signing and deployment
+- **Signing Validation**: All Android builds verify keystore configuration before building
+- **Output Directory**: Built files are placed in `output/` directory as `thriftwood-android.apk` or `thriftwood-android.aab`
+- **Build Types**: Supports both APK (for direct installation) and AAB (for Play Store distribution)
+- **Error Handling**: Fastlane provides detailed error messages for missing keystore or configuration issues
+
+### Fastlane Lanes Available
+
+**Android (`android/fastlane/Fastfile`):**
+- `setup_signing` - Validates keystore and key.properties configuration
+- `build_apk` - Builds signed APK with automatic validation
+- `build_aab` - Builds signed App Bundle for Play Store
+- `build_all` - Builds both APK and AAB formats
+- `deploy_playstore` - Uploads to Google Play Store with validation

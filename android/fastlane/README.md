@@ -15,13 +15,21 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## Android
 
+### android setup_signing
+
+```sh
+[bundle exec] fastlane android setup_signing
+```
+
+Setup signing configuration
+
 ### android build_aab
 
 ```sh
 [bundle exec] fastlane android build_aab
 ```
 
-Build App Bundle
+Build App Bundle (AAB)
 
 ### android build_apk
 
@@ -30,6 +38,14 @@ Build App Bundle
 ```
 
 Build APK
+
+### android build_all
+
+```sh
+[bundle exec] fastlane android build_all
+```
+
+Build both APK and AAB
 
 ### android deploy_playstore
 

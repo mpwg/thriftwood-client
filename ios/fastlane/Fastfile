@@ -46,17 +46,37 @@ platform :ios do
     )
   end
 
+  desc "Setup environment and validate configuration"
+  lane :setup_environment do
+    required_env_vars = [
+      "MATCH_KEYCHAIN_NAME",
+      "MATCH_KEYCHAIN_PASSWORD", 
+      "IOS_CODESIGNING_IDENTITY"
+    ]
+    
+    missing_vars = required_env_vars.select { |var| ENV[var].nil? || ENV[var].empty? }
+    
+    unless missing_vars.empty?
+      UI.user_error!("❌ Missing required environment variables: #{missing_vars.join(', ')}")
+    end
+    
+    UI.success("✅ Environment configuration verified")
+  end
+
   desc "Build App Package for App Store"
   lane :build_appstore do |options|
+    setup_environment
     keychain_create
     keychain_setup
+    flutter_clean
 
     sh(
       "flutter", "build", "ios",
       "--release",
       "--no-codesign",
-      "--build-number=#{options[:build_number]}",
+      "--build-number=#{options[:build_number] || ENV['BUILD_NUMBER'] || '1'}",
     )
+    
     build_ios_app(
       scheme: "Runner",
       workspace: "Runner.xcworkspace",
@@ -68,22 +88,70 @@ platform :ios do
         }
       }
     )
+    
     sh("mkdir", "-p", "../../output")
-    sh("mv", "../../ios/Runner.ipa", "../../output/thriftwood-ios.ipa")
+    sh("cp", "Runner.ipa", "../../output/thriftwood-ios.ipa")
+    
+    UI.success("✅ iOS App Store build completed: output/thriftwood-ios.ipa")
+
+    keychain_delete
+  end
+
+  desc "Build for development/testing"
+  lane :build_development do |options|
+    setup_environment
+    keychain_create
+    keychain_setup
+    flutter_clean
+
+    sh(
+      "flutter", "build", "ios",
+      "--release",
+      "--no-codesign",
+      "--build-number=#{options[:build_number] || ENV['BUILD_NUMBER'] || '1'}",
+    )
+    
+    build_ios_app(
+      scheme: "Runner",
+      workspace: "Runner.xcworkspace",
+      export_method: "development",
+      codesigning_identity: ENV["IOS_CODESIGNING_IDENTITY"],
+      export_options: {
+        provisioningProfiles: {
+          "app.thriftwood.thriftwood" => "match Development app.thriftwood.thriftwood"
+        }
+      }
+    )
+    
+    sh("mkdir", "-p", "../../output")
+    sh("cp", "Runner.ipa", "../../output/thriftwood-ios-dev.ipa")
+    
+    UI.success("✅ iOS Development build completed: output/thriftwood-ios-dev.ipa")
 
     keychain_delete
   end
 
   desc "Deploy to App Store Connect"
   lane :deploy_appstore do |options|
+    unless options[:ipa] && File.exist?(options[:ipa])
+      UI.user_error!("❌ IPA file required for App Store deployment. Build with build_appstore first.")
+    end
+    
     connect_appstore_connect
 
     upload_to_testflight(
-      changelog: File.read("./changelog.txt"),
-      distribute_external: true,
+      changelog: options[:changelog] || "New build via Fastlane",
+      distribute_external: options[:distribute_external] || false,
       groups: options[:groups],
       ipa: options[:ipa],
-      notify_external_testers: true,
+      notify_external_testers: options[:notify_external_testers] || false,
     )
+    
+    UI.success("✅ Successfully deployed to App Store Connect")
+  end
+
+  private_lane :flutter_clean do
+    sh("flutter", "clean")
+    UI.message("🧹 Flutter clean completed")
   end
 end
