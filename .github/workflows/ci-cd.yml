@@ -148,10 +148,10 @@ jobs:
           fi
      
       - name: Install latest development profiles and certificates 
-        run: fastlane match development
+        run: bundle exec fastlane match development
       
       - name: fastlane match appstore
-        run: fastlane match appstore
+        run: bundle exec fastlane match appstore
       
       - name: Build & Sign iOS App
         run: fastlane build
