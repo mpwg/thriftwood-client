@@ -25,30 +25,26 @@ jobs:
       APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
       APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      FASTLANE_SKIP_UPDATE_CHECK: ${{ secrets.FASTLANE_SKIP_UPDATE_CHECK }}
-      FASTLANE_HIDE_GITHUB_ISSUES: ${{ secrets.FASTLANE_HIDE_GITHUB_ISSUES }}
+      FASTLANE_SKIP_UPDATE_CHECK: 1
+      FASTLANE_HIDE_GITHUB_ISSUES: 1
       FASTLANE_HIDE_CHANGELOG: 1
       DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
       MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
     strategy:
       matrix:
         os: [macos-latest]
-        platform: [ios, macos]
+        platform: [ios]
     steps:
       - uses: actions/checkout@v5
       - name: Set up Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.2"
-      - name: Cache Ruby gems
-        uses: actions/cache@v4
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-bundler-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bundler-
+          bundler-cache: true
+
       - name: Install dependencies (Fastlane)
-        run: bundle install --path vendor/bundle
+        run: bundle install
+
       - name: Validate required secrets
         shell: bash
         run: |
@@ -116,8 +112,11 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.2"
+          bundler-cache: true
+
       - name: Install Fastlane
         run: gem install fastlane
+
       - name: Validate required secrets
         shell: bash
         run: |
