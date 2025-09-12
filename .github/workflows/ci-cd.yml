@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   build-test:
     name: Build & Test Matrix
@@ -28,6 +31,8 @@ jobs:
       - name: Build & Test
         run: |
           if [ "${{ matrix.platform }}" = "ios" ]; then
+            # Ensure consistent shell execution
+            shell: bash
             cd iosnative && fastlane build
           elif [ "${{ matrix.platform }}" = "macos" ]; then
             cd iosnative/fastlane-macos && fastlane build
