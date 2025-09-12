@@ -63,9 +63,9 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.platform }}" = "ios" ]; then
-            cd iosnative && fastlane build
+           fastlane build
           elif [ "${{ matrix.platform }}" = "macos" ]; then
-            cd iosnative/fastlane-macos && fastlane build
+            fastlane-macos build
           elif [ "${{ matrix.platform }}" = "android" ]; then
             echo "Android build step here"
           elif [ "${{ matrix.platform }}" = "linux" ]; then
@@ -132,11 +132,11 @@ jobs:
             exit 1
           fi
       - name: Build & Sign iOS App
-        run: cd iosnative && fastlane build
+        run: fastlane build
 #      - name: Deploy to TestFlight
-#        run: cd iosnative && fastlane beta
+#        run: fastlane beta
 #      - name: Deploy to App Store
-#        run: cd iosnative && fastlane release
+#        run: fastlane release
 #      - name: Deploy macOS App
-#        run: cd iosnative && fastlane-macos release
+#        run: fastlane-macos release
 # Add Android, Linux, Windows release steps here

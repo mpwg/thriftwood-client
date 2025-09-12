@@ -1,84 +1,164 @@
-# Thriftwood
+# Fastlane Configuration for Thriftwood iOS
 
-![Thriftwood logo](assets/images/branding_logo.png)
+This directory contains the Fastlane configuration for building and deploying the Thriftwood iOS app using App Store Connect API Keys for secure, automated builds.
 
-A cross-platform Flutter client for managing and monitoring home media services (Radarr, Sonarr, Lidarr, NZBGet, SABnzbd, Tautulli and more). Thriftwood is designed to provide a fast, extensible, and privacy-friendly native experience on desktop and mobile platforms.
+## Prerequisites
 
-## Highlights
+- Xcode installed and configured
+- Ruby with Bundler
+- Access to the Apple Developer Portal
+- App Store Connect API Key
+- Access to the private certificates repository
 
-- Modular architecture with first-class integrations for popular media services.
-- Localized UI with many language files under `assets/localization`.
-- Native iOS companion project available in `iosnative/ThriftwoodNative`.
-- Desktop-friendly features such as window management, theming and caching.
+## Quick Setup
 
-## Features
+Run the setup script to get started:
 
-- Dashboard with calendar and upcoming items
-- Module support: Radarr, Sonarr, Lidarr, NZBGet, SABnzbd, Tautulli, Overseerr, etc.
-- External modules and plugin support
-- Dark mode / theming and AMOLED support
-- Configurable network, cache and recovery modes
-- Logging, database backup/restore, and diagnostics
-
-## Quick start
-
-Requirements:
-
-- Xcode (for iOS native project)
-
-
-If you plan to contribute:
-
-1. Fork the repo and create a feature branch.
-2. Follow the existing code style and minimal comment guidelines.
-3. Add tests for new behavior where appropriate.
-4. Open a PR against `main` (or `native` if your change targets the native branch).
-
-## License
-
-See the `LICENSE.md` in this repository for license details.
-
-## Fastlane Setup
-
-### iOS
-
-- Fastlane lanes are defined in `iosnative/fastlane/Fastfile`:
-  - `build`: Build and sign IPA
-  - `beta`: Deploy to TestFlight
-  - `release`: Deploy to App Store
-  - `screenshots`: Take screenshots
-  - `metadata`: Update App Store metadata
-
-### macOS
-
-- Fastlane lanes are defined in `iosnative/fastlane-macos/Fastfile`:
-  - `build`: Build and sign app
-  - `notarize`: Notarize app
-  - `release`: Deploy to App Store
-
-## CI/CD
-
-- GitHub Actions workflow in `.github/workflows/ci-cd.yml`:
-  - Build/test matrix for iOS, macOS, Android, Linux, Windows
-  - Release automation for iOS/macOS
-  - Add platform-specific build/test/release steps as needed
-
-## Usage
-
-### Local Fastlane
-
-```sh
-cd iosnative && fastlane [lane]
-cd iosnative && fastlane-macos [lane]
+```bash
+./setup_fastlane.sh
 ```
 
-### CI/CD Workflow
+## Manual Setup
 
-- On push/PR to `main`, builds and tests all platforms
-- On merge to `main`, releases to TestFlight/App Store
+### 1. Install Dependencies
 
-## Next Steps
+```bash
+cd ThriftwoodNative
+bundle install
+```
 
-- Add Android, Linux, Windows Fastlane and CI/CD steps
-- Integrate automated tests for all platforms
-- Ensure all secrets/certificates are securely managed
+### 2. Configure Environment Variables
+
+Copy the example environment file and fill in your details:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your actual values:
+
+- `APPLE_ID`: Your Apple Developer account email
+- `ITUNES_TEAM_ID`: Your App Store Connect Team ID
+- `APPSTORE_TEAM_ID`: Your Developer Portal Team ID
+- `APP_STORE_CONNECT_API_KEY_*`: Your API key configuration
+- `MATCH_PASSWORD`: Password for your certificates repository
+
+### 3. App Store Connect API Key Setup
+
+1. Log into [App Store Connect](https://appstoreconnect.apple.com)
+2. Go to Users and Access > Keys
+3. Create a new API key with Admin or Developer access
+4. Download the `.p8` file
+5. Copy the entire content of the `.p8` file (including the BEGIN/END lines)
+6. Update your `.env` file with the key details:
+   - `APP_STORE_CONNECT_API_KEY_KEY_ID`: The key ID from App Store Connect
+   - `APP_STORE_CONNECT_API_KEY_ISSUER_ID`: Your issuer ID
+   - `APP_STORE_CONNECT_API_KEY_CONTENT`: The full content of your `.p8` file
+
+#### Example of setting the key content
+
+```bash
+APP_STORE_CONNECT_API_KEY_CONTENT="-----BEGIN PRIVATE KEY-----
+MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg...
+...your key content here...
+-----END PRIVATE KEY-----"
+```
+
+### 4. Find Your Team IDs
+
+You can find your team IDs in:
+
+- **App Store Connect Team ID**: App Store Connect > Membership
+- **Developer Portal Team ID**: Developer Portal > Membership
+
+Or use Spaceship to list them:
+
+```bash
+bundle exec fastlane spaceship
+```
+
+## Available Lanes
+
+### Building
+
+```bash
+# Build the app for App Store/TestFlight
+bundle exec fastlane ios build
+```
+
+### TestFlight Deployment
+
+```bash
+# Build and upload to TestFlight
+bundle exec fastlane ios beta
+```
+
+### App Store Release
+
+```bash
+# Build and upload to App Store (does not submit for review)
+bundle exec fastlane ios release
+```
+
+### Code Signing
+
+```bash
+# Sync certificates and provisioning profiles
+bundle exec fastlane ios certificates
+```
+
+### Metadata and Screenshots
+
+```bash
+# Update app metadata only
+bundle exec fastlane ios metadata
+
+# Take screenshots
+bundle exec fastlane ios screenshots
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"Could not find certificate"**
+   - Run `bundle exec fastlane ios certificates` first
+   - Ensure your `MATCH_PASSWORD` is correct
+
+2. **"Invalid API Key"**
+   - Verify your API key file path and permissions
+   - Check that the key ID and issuer ID are correct
+
+3. **"Team ID not found"**
+   - Verify your team IDs in the `.env` file
+   - Use `bundle exec fastlane spaceship` to list available teams
+
+### Debugging
+
+Add `--verbose` to any command for detailed output:
+
+```bash
+bundle exec fastlane ios build --verbose
+```
+
+## Security Notes
+
+- Never commit the `.env` file or `.p8` API key files
+- The `private_keys/` directory is gitignored for security
+- API keys are more secure than passwords for CI/CD environments
+
+## File Structure
+
+```text
+/
+├── .env.example          # Template for environment variables
+├── .env                  # Your actual environment variables (gitignored)
+├── private_keys/         # Directory for API key files (gitignored)
+├── setup_fastlane.sh     # Setup script
+├── fastlane/
+│   ├── Appfile          # App configuration
+│   ├── Fastfile         # Lane definitions
+│   └── Matchfile        # Code signing configuration
+└── ThriftwoodNative/
+    └── Gemfile          # Ruby dependencies
+```
