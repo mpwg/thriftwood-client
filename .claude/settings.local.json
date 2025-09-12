@@ -11,7 +11,9 @@
       "Bash(gem install:*)",
       "Bash(bundle exec fastlane:*)",
       "Bash(flutter clean:*)",
-      "Bash(./gradlew:*)"
+      "Bash(./gradlew:*)",
+      "Read(//Users/mat/code/fastlane_private/**)",
+      "Read(//Users/mat/code/**)"
     ],
     "deny": [],
     "ask": []

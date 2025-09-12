@@ -40,9 +40,9 @@ platform :ios do
   desc "Connect to App Store Connect"
   lane :connect_appstore_connect do
     app_store_connect_api_key(
-      key_id: ENV["APPLE_STORE_CONNECT_KEY_ID"],
+      key_id: "SNT5D984B4",
       issuer_id: ENV["APPLE_STORE_CONNECT_ISSUER_ID"],
-      key_filepath: ENV["APPLE_STORE_CONNECT_KEY_FILEPATH"],
+      key_filepath: File.expand_path("~/code/fastlane_private/AuthKey_SNT5D984B4.p8"),
     )
   end
 
@@ -84,7 +84,7 @@ platform :ios do
       codesigning_identity: ENV["IOS_CODESIGNING_IDENTITY"],
       export_options: {
         provisioningProfiles: {
-          "app.thriftwood.thriftwood" => "match AppStore app.thriftwood.thriftwood"
+          "eu.mpwg.thriftwood" => "match AppStore eu.mpwg.thriftwood"
         }
       }
     )
@@ -118,7 +118,7 @@ platform :ios do
       codesigning_identity: ENV["IOS_CODESIGNING_IDENTITY"],
       export_options: {
         provisioningProfiles: {
-          "app.thriftwood.thriftwood" => "match Development app.thriftwood.thriftwood"
+          "eu.mpwg.thriftwood" => "match Development eu.mpwg.thriftwood"
         }
       }
     )

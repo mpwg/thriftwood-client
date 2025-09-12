@@ -50,9 +50,9 @@ platform :mac do
   desc "Connect to App Store Connect"
   lane :connect_appstore_connect do
     app_store_connect_api_key(
-      key_id: ENV["APPLE_STORE_CONNECT_KEY_ID"],
+      key_id: "SNT5D984B4",
       issuer_id: ENV["APPLE_STORE_CONNECT_ISSUER_ID"],
-      key_filepath: ENV["APPLE_STORE_CONNECT_KEY_FILEPATH"],
+      key_filepath: File.expand_path("~/code/fastlane_private/AuthKey_SNT5D984B4.p8"),
     )
   end
 
@@ -74,7 +74,7 @@ platform :mac do
       export_method: "developer-id",
       export_options: {
         provisioningProfiles: {
-          "app.thriftwood.thriftwood" => "match Direct app.thriftwood.thriftwood macos",
+          "eu.mpwg.thriftwood" => "match Direct eu.mpwg.thriftwood macos",
         }
       }
     )
@@ -111,7 +111,7 @@ platform :mac do
       export_method: "app-store",
       export_options: {
         provisioningProfiles: {
-          "app.thriftwood.thriftwood" => "match AppStore app.thriftwood.thriftwood macos"
+          "eu.mpwg.thriftwood" => "match AppStore eu.mpwg.thriftwood macos"
         }
       },
     )
@@ -139,7 +139,7 @@ platform :mac do
       export_method: "developer-id",
       export_options: {
         provisioningProfiles: {
-          "app.thriftwood.thriftwood" => "match Direct app.thriftwood.thriftwood macos",
+          "eu.mpwg.thriftwood" => "match Direct eu.mpwg.thriftwood macos",
         }
       }
     )
@@ -149,7 +149,7 @@ platform :mac do
     end
     notarize(
       package: "thriftwood #{options[:build_version]}.dmg",
-      bundle_id: "app.thriftwood.thriftwood.DiskImage",
+      bundle_id: "eu.mpwg.thriftwood.DiskImage",
       use_notarytool: true,
     )
     sh("mv", "../thriftwood #{options[:build_version]}.dmg", "../../output/thriftwood-macos-amd64.dmg")

@@ -14,7 +14,7 @@
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)app.thriftwood.thriftwood</string>
+		<string>$(AppIdentifierPrefix)eu.mpwg.thriftwood</string>
 	</array>
 </dict>
 </plist>

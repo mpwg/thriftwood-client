@@ -67,7 +67,13 @@ platform :android do
       UI.user_error!("❌ AAB file required for Play Store deployment. Build with build_aab first.")
     end
     
+    json_key_file = File.expand_path("~/code/fastlane_private/just-me-471904-c84636727fd0.json")
+    unless File.exist?(json_key_file)
+      UI.user_error!("❌ Google Play Console JSON key file not found: #{json_key_file}")
+    end
+    
     upload_to_play_store(
+      json_key: json_key_file,
       aab: options[:aab],
       skip_upload_metadata: options[:skip_metadata] || true,
       skip_upload_images: options[:skip_images] || true,

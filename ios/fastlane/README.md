@@ -47,6 +47,14 @@ Setup the Keychain
 
 Connect to App Store Connect
 
+### ios setup_environment
+
+```sh
+[bundle exec] fastlane ios setup_environment
+```
+
+Setup environment and validate configuration
+
 ### ios build_appstore
 
 ```sh
@@ -54,6 +62,14 @@ Connect to App Store Connect
 ```
 
 Build App Package for App Store
+
+### ios build_development
+
+```sh
+[bundle exec] fastlane ios build_development
+```
+
+Build for development/testing
 
 ### ios deploy_appstore
 

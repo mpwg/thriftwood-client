@@ -1,4 +1,4 @@
 git_url("git@github.com:mpwg/fastlane-match-storage.git")
 storage_mode("git")
-app_identifier(["app.thriftwood.thriftwood"])
+app_identifier(["eu.mpwg.thriftwood"])
 platform("ios")

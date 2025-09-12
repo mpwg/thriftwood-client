@@ -1,4 +1,4 @@
-package app.thriftwood.thriftwood
+package eu.mpwg.thriftwood
 
 import io.flutter.embedding.android.FlutterActivity
 

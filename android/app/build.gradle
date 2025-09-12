@@ -29,7 +29,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "app.thriftwood.thriftwood"
+    namespace = "eu.mpwg.thriftwood"
     compileSdkVersion 35
     compileSdk = 36
 
@@ -47,7 +47,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "app.thriftwood.thriftwood"
+        applicationId "eu.mpwg.thriftwood"
         minSdkVersion 24
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
