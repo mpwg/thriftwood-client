@@ -10,7 +10,7 @@ platform :android do
     keystore_properties = File.read("../key.properties").split("\n").map { |line| line.split("=") }.to_h
     keystore_file = keystore_properties["storeFile"]
     
-    unless keystore_file && File.exist?("../../#{keystore_file}")
+    unless keystore_file && File.exist?("../app/#{keystore_file}")
       UI.user_error!("❌ Keystore file not found: #{keystore_file}. Please ensure your keystore exists and key.properties is configured correctly.")
     end
     
