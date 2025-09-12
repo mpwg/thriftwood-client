@@ -1,0 +1,142 @@
+# GitHub Actions CI/CD for Thriftwood
+# See https://docs.github.com/en/actions for details
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Build & Test Matrix
+    runs-on: ${{ matrix.os }}
+    env:
+      # Load Fastlane / Apple credentials from repository secrets
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      ITUNES_TEAM_ID: ${{ secrets.ITUNES_TEAM_ID }}
+      APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
+      APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      FASTLANE_SKIP_UPDATE_CHECK: 1
+      FASTLANE_HIDE_GITHUB_ISSUES: 1
+      FASTLANE_HIDE_CHANGELOG: 1
+      DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
+      MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        platform: [ios]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Ruby (for Fastlane)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Install dependencies (Fastlane)
+        run: bundle install
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          missing=()
+          for v in APPLE_ID MATCH_PASSWORD DEVELOPMENT_TEAM MATCH_GIT_URL APP_STORE_CONNECT_API_KEY_KEY_ID APP_STORE_CONNECT_API_KEY_ISSUER_ID APP_STORE_CONNECT_API_KEY_CONTENT; do
+            if [ -z "${!v}" ]; then
+              missing+=($v)
+            fi
+          done
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "Missing required secrets: ${missing[*]}"
+            echo "Please add these names to repository Secrets (Settings → Secrets & variables → Actions)."
+            exit 1
+          fi
+      - name: Build & Test
+        shell: bash
+        run: |
+          if [ "${{ matrix.platform }}" = "ios" ]; then
+            cd iosnative && fastlane build
+          elif [ "${{ matrix.platform }}" = "macos" ]; then
+            cd iosnative/fastlane-macos && fastlane build
+          elif [ "${{ matrix.platform }}" = "android" ]; then
+            echo "Android build step here"
+          elif [ "${{ matrix.platform }}" = "linux" ]; then
+            echo "Linux build step here"
+          elif [ "${{ matrix.platform }}" = "windows" ]; then
+            echo "Windows build step here"
+          fi
+      - name: Run Tests
+        run: |
+          if [ "${{ matrix.platform }}" = "ios" ]; then
+            echo "iOS test step here"
+          elif [ "${{ matrix.platform }}" = "macos" ]; then
+            echo "macOS test step here"
+          elif [ "${{ matrix.platform }}" = "android" ]; then
+            echo "Android test step here"
+          elif [ "${{ matrix.platform }}" = "linux" ]; then
+            echo "Linux test step here"
+          elif [ "${{ matrix.platform }}" = "windows" ]; then
+            echo "Windows test step here"
+          fi
+
+  release:
+    name: Release Automation
+    needs: build-test
+    runs-on: macos-latest
+    if: github.ref == 'refs/heads/main'
+    env:
+      # Ensure release job also has the same env mapping from secrets
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      ITUNES_TEAM_ID: ${{ secrets.ITUNES_TEAM_ID }}
+      APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
+      APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      FASTLANE_SKIP_UPDATE_CHECK: ${{ secrets.FASTLANE_SKIP_UPDATE_CHECK }}
+      FASTLANE_HIDE_GITHUB_ISSUES: ${{ secrets.FASTLANE_HIDE_GITHUB_ISSUES }}
+      FASTLANE_HIDE_CHANGELOG: ${{ secrets.FASTLANE_HIDE_CHANGELOG }}
+      DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
+      MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Ruby (for Fastlane)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Install Fastlane
+        run: gem install fastlane
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          missing=()
+          for v in APPLE_ID MATCH_PASSWORD DEVELOPMENT_TEAM MATCH_GIT_URL APP_STORE_CONNECT_API_KEY_KEY_ID APP_STORE_CONNECT_API_KEY_ISSUER_ID APP_STORE_CONNECT_API_KEY_CONTENT; do
+            if [ -z "${!v}" ]; then
+              missing+=($v)
+            fi
+          done
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "Missing required secrets: ${missing[*]}"
+            echo "Please add these names to repository Secrets (Settings → Secrets & variables → Actions)."
+            exit 1
+          fi
+      - name: Build & Sign iOS App
+        run: cd iosnative && fastlane build
+#      - name: Deploy to TestFlight
+#        run: cd iosnative && fastlane beta
+#      - name: Deploy to App Store
+#        run: cd iosnative && fastlane release
+#      - name: Deploy macOS App
+#        run: cd iosnative && fastlane-macos release
+# Add Android, Linux, Windows release steps here

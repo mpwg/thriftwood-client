@@ -37,3 +37,48 @@ If you plan to contribute:
 ## License
 
 See the `LICENSE.md` in this repository for license details.
+
+## Fastlane Setup
+
+### iOS
+
+- Fastlane lanes are defined in `iosnative/fastlane/Fastfile`:
+  - `build`: Build and sign IPA
+  - `beta`: Deploy to TestFlight
+  - `release`: Deploy to App Store
+  - `screenshots`: Take screenshots
+  - `metadata`: Update App Store metadata
+
+### macOS
+
+- Fastlane lanes are defined in `iosnative/fastlane-macos/Fastfile`:
+  - `build`: Build and sign app
+  - `notarize`: Notarize app
+  - `release`: Deploy to App Store
+
+## CI/CD
+
+- GitHub Actions workflow in `.github/workflows/ci-cd.yml`:
+  - Build/test matrix for iOS, macOS, Android, Linux, Windows
+  - Release automation for iOS/macOS
+  - Add platform-specific build/test/release steps as needed
+
+## Usage
+
+### Local Fastlane
+
+```sh
+cd iosnative && fastlane [lane]
+cd iosnative && fastlane-macos [lane]
+```
+
+### CI/CD Workflow
+
+- On push/PR to `main`, builds and tests all platforms
+- On merge to `main`, releases to TestFlight/App Store
+
+## Next Steps
+
+- Add Android, Linux, Windows Fastlane and CI/CD steps
+- Integrate automated tests for all platforms
+- Ensure all secrets/certificates are securely managed

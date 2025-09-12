@@ -49,6 +49,15 @@ Package.resolved
 
 Carthage/Build/
 
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+.env
+*.p8
+private_keys/
+
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo.
