@@ -61,9 +61,9 @@ platform :ios do
 
   desc "Sync code signing certificates"
   lane :certificates do
-    match(type: "development", readonly: false)
+    match(type: "development", readonly: true)
     # App Store certificates are set to readonly: true to prevent accidental creation of new distribution certificates,
-    # which can invalidate existing ones and disrupt App Store deployments. Development certificates can be created as needed.
+    # which can invalidate existing ones and disrupt App Store deployments. Development certificates are also set to readonly: true to prevent accidental creation in CI/CD environments.
     match(type: "appstore", readonly: true)
   end
 end
