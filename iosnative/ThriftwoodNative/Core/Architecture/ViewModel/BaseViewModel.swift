@@ -59,8 +59,4 @@ class BaseViewModel: ViewModel, ObservableObject {
     func clearError() {
         error = nil
     }
-
-    deinit {
-        cancellables.forEach { $0.cancel() }
-    }
 }
