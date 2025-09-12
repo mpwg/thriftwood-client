@@ -63,6 +63,13 @@ jobs:
             echo "Please add these names to repository Secrets (Settings → Secrets & variables → Actions)."
             exit 1
           fi
+
+      - name: Install latest development profiles and certificates 
+        run: fastlane match development
+      
+      - name: fastlane match appstore
+        run: fastlane match appstore
+        
       - name: Build & Test
         shell: bash
         run: |
@@ -139,6 +146,13 @@ jobs:
             echo "Please add these names to repository Secrets (Settings → Secrets & variables → Actions)."
             exit 1
           fi
+     
+      - name: Install latest development profiles and certificates 
+        run: fastlane match development
+      
+      - name: fastlane match appstore
+        run: fastlane match appstore
+      
       - name: Build & Sign iOS App
         run: fastlane build
 #      - name: Deploy to TestFlight
