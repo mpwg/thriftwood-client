@@ -62,6 +62,6 @@ platform :ios do
   desc "Sync code signing certificates"
   lane :certificates do
     match(type: "development", readonly: false)
-    match(type: "appstore", readonly: false)
+    match(type: "appstore", readonly: true)
   end
 end
