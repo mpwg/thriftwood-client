@@ -1,0 +1,41 @@
+/* App Name */
+"app_name" = "Thriftwood Native";
+
+/* Dashboard */
+"dashboard_title" = "Dashboard";
+"dashboard_loading" = "Loading dashboard...";
+"dashboard_error" = "Failed to load dashboard";
+
+/* Settings */
+"settings_title" = "Settings";
+"settings_appearance" = "Appearance";
+"settings_theme" = "Theme";
+"settings_theme_light" = "Light";
+"settings_theme_dark" = "Dark";
+"settings_theme_system" = "System";
+"settings_notifications" = "Notifications";
+"settings_enable_notifications" = "Enable Notifications";
+"settings_about" = "About";
+"settings_version" = "Version";
+"settings_analytics" = "Analytics";
+
+/* Modules */
+"module_sonarr" = "Sonarr";
+"module_radarr" = "Radarr";
+"module_lidarr" = "Lidarr";
+"module_overseerr" = "Overseerr";
+"module_enabled" = "Enabled";
+"module_disabled" = "Disabled";
+
+/* Common */
+"ok" = "OK";
+"cancel" = "Cancel";
+"error" = "Error";
+"loading" = "Loading";
+"retry" = "Retry";
+
+/* Errors */
+"error_network_unavailable" = "Network connection unavailable";
+"error_data_not_found" = "Data not found";
+"error_unauthorized" = "Unauthorized access";
+"error_unknown" = "An unknown error occurred";

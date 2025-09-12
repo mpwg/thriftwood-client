@@ -1,29 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build:android:*)",
-      "Bash(flutter pub:*)",
-      "WebSearch",
-      "WebFetch(domain:pub.dev)",
-      "Bash(flutter build:*)",
-      "Bash(flutter analyze:*)",
-      "Bash(bundle install:*)",
-      "Bash(gem install:*)",
-      "Bash(bundle exec fastlane:*)",
-      "Bash(flutter clean:*)",
-      "Bash(./gradlew:*)",
-      "Read(//Users/mat/code/fastlane_private/**)",
-      "Read(//Users/mat/code/**)",
-      "Bash(flutter:*)",
-      "Bash(npm run prepare:signing:android:*)",
-      "Bash(pod install:*)",
-      "Bash(export PATH=\"$PATH\":\"$HOME/.pub-cache/bin\")",
-      "Bash(npm run generate:*)",
-      "Bash(keytool:*)",
-      "Read(//Users/mat/**)",
-      "Bash(npm run build:ios:*)",
-      "Bash(gh *)"
-     ],
+      "Bash(gh label:*)"
+    ],
     "deny": [],
     "ask": []
   }
