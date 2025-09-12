@@ -13,6 +13,11 @@ platform :ios do
     # Skip prompts for automated runs
     ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
     ENV["FASTLANE_HIDE_GITHUB_ISSUES"] = "1"
+    # automatic code signing
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path: "ThriftwoodNative.xcodeproj"
+    )
   end
 
   desc "Build and sign IPA for App Store/TestFlight"
