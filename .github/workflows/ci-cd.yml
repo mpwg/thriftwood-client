@@ -43,7 +43,7 @@ jobs:
           ruby-version: "3.4"
           bundler-cache: true
 
-      - name: Setuop Fastlane
+      - name: Setup Fastlane
         uses: tashi-iu/setup-fastlane@v1
 
       - name: Install dependencies 
