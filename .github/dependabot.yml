@@ -10,13 +10,3 @@ updates:
     schedule:
       interval: "weekly"
 
-  - package-ecosystem: "gradle" # See documentation for possible values
-    directory: "/android" # Location of package manifests
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "pub" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    schedule:
-      interval: "weekly"
-
