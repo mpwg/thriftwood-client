@@ -22,13 +22,8 @@
       "Bash(keytool:*)",
       "Read(//Users/mat/**)",
       "Bash(npm run build:ios:*)",
-      "Bash(gh label create:*)",
-      "Bash(gh issue create:*)",
-      "Bash(gh issue list:*)",
-      "Bash(gh milestone create:*)",
-      "Bash(gh api:*)",
-      "Bash(gh issue edit:*)"
-    ],
+      "Bash(gh *)"
+     ],
     "deny": [],
     "ask": []
   }
