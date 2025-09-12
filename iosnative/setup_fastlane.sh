@@ -44,7 +44,7 @@ fi
 # Check if bundle is available
 if ! command -v bundle >/dev/null 2>&1; then
     echo "❌ Bundler is not installed. Install it with:"
-    echo "   gem install bundler"
+    echo "   gem install --user-install bundler"
     exit 1
 fi
 
