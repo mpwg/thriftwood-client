@@ -1,163 +1,89 @@
-# Fastlane Configuration for Thriftwood iOS
+# Thriftwood Client
 
-This directory contains the Fastlane configuration for building and deploying the Thriftwood iOS app using App Store Connect API Keys for secure, automated builds.
+![Thriftwood icon](assets/icon/icon.png)
 
-## Prerequisites
+Thriftwood Client is a native SwiftUI application and supporting tooling for the Thriftwood ecosystem. The repository contains the SwiftUI app sources (macOS/iOS), localization and branding assets, and Fastlane configuration for automating iOS builds and releases.
 
-- Xcode installed and configured
-- Ruby with Bundler
-- Access to the Apple Developer Portal
-- App Store Connect API Key
-- Access to the private certificates repository
+## Highlights
 
-## Quick Setup
+- Native SwiftUI app with modular architecture (Coordinators, Repositories, ViewModels).
+- Fastlane-based CI/CD for iOS builds, signing, and distribution.
+- Localized UI with many languages under `assets/localization`.
+- Assets and icons in `assets/` and `ThriftwoodNative/Resources`.
 
-Run the setup script to get started:
+## Quick start (developer)
+
+Prerequisites:
+
+- Xcode (latest stable)
+- Ruby and Bundler (for Fastlane tasks)
+
+Open and run the app locally:
+
+```bash
+open ThriftwoodNative/ThriftwoodNative.xcodeproj
+```
+
+Select the desired target (macOS / iOS / simulator) in Xcode and run.
+
+## Fastlane / CI (iOS)
+
+This repository includes Fastlane lanes to automate building, code signing, TestFlight and App Store uploads.
+
+Setup helper:
 
 ```bash
 ./setup_fastlane.sh
 ```
 
-## Manual Setup
-
-### 1. Install Dependencies
+Install Ruby dependencies:
 
 ```bash
 cd ThriftwoodNative
 bundle install
 ```
 
-### 2. Configure Environment Variables
+Fastlane expects sensitive values (API keys, team IDs, match password) to be provided via environment variables or a secrets manager. See `.env.example` for the variables the lanes use.
 
-Copy the example environment file and fill in your details:
+> [!warning]
+> Never commit `.env`, `.p8` files, or private keys. The `private_keys/` directory is gitignored.
 
-```bash
-cp .env.example .env
-```
+### Common lanes
 
-Edit `.env` with your actual values:
+- `bundle exec fastlane ios build` — build the app
+- `bundle exec fastlane ios beta` — build + upload to TestFlight
+- `bundle exec fastlane ios release` — build + upload to App Store (does not submit for review)
+- `bundle exec fastlane ios certificates` — sync code signing profiles via match
 
-- `APPLE_ID`: Your Apple Developer account email
-- `ITUNES_TEAM_ID`: Your App Store Connect Team ID
-- `APPSTORE_TEAM_ID`: Your Developer Portal Team ID
-- `APP_STORE_CONNECT_API_KEY_*`: Your API key configuration
-- `MATCH_PASSWORD`: Password for your certificates repository
+Use `bundle exec fastlane lanes` to list available lanes and `--verbose` for debugging.
 
-### 3. App Store Connect API Key Setup
+## Project layout
 
-1. Log into [App Store Connect](https://appstoreconnect.apple.com)
-2. Go to Users and Access > Keys
-3. Create a new API key with Admin or Developer access
-4. Download the `.p8` file
-5. Copy the entire content of the `.p8` file (including the BEGIN/END lines)
-6. Update your `.env` file with the key details:
-   - `APP_STORE_CONNECT_API_KEY_KEY_ID`: The key ID from App Store Connect
-   - `APP_STORE_CONNECT_API_KEY_ISSUER_ID`: Your issuer ID
-   - `APP_STORE_CONNECT_API_KEY_CONTENT`: The full content of your `.p8` file
+- `ThriftwoodNative/` — Native app source (SwiftUI) and Xcode project
+  - `App/` — App entry and scene (`ThriftwoodNativeApp.swift`, `ContentView.swift`)
+  - `Core/` — Shared types, networking, repositories and services (`SharedTypes.swift`)
+  - `Features/` — Feature modules (Dashboard, Settings)
+  - `Resources/` — Asset catalogs and localized strings
+- `assets/` — Branding, icons and localization files
+- `fastlane/` & `fastlane-macos/` — Fastlane lanes and config
+- `private_keys/` — Local-only folder for API keys (gitignored)
 
-#### Example of setting the key content
+## Localization
 
-```bash
-APP_STORE_CONNECT_API_KEY_CONTENT="-----BEGIN PRIVATE KEY-----
-MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg...
-...your key content here...
------END PRIVATE KEY-----"
-```
+UI translations are under `assets/localization` and `ThriftwoodNative/Resources/en.lproj/Localizable.strings`. The repo includes multiple translations ready to ship.
 
-### 4. Find Your Team IDs
+## Developer notes
 
-You can find your team IDs in:
+- Architecture: repositories for data access, view models for presentation, coordinators for navigation.
+- Networking: `NetworkService` and `APIEndpoint` abstractions; implementations live in `ThriftwoodNative/Core/SharedTypes.swift`.
+- Storage: `StorageService` backed by `UserDefaults` for simple persistence; swap to file or DB as needed.
 
-- **App Store Connect Team ID**: App Store Connect > Membership
-- **Developer Portal Team ID**: Developer Portal > Membership
+## Where to look next
 
-Or use Spaceship to list them:
+- App entry: `ThriftwoodNative/App/ThriftwoodNativeApp.swift`
+- Shared models & services: `ThriftwoodNative/Core/SharedTypes.swift`
+- Fastlane lanes: `fastlane/Fastfile` and `fastlane-macos/Fastfile`
 
-```bash
-bundle exec fastlane spaceship
-```
+---
 
-## Available Lanes
-
-### Building
-
-```bash
-# Build the app for App Store/TestFlight
-bundle exec fastlane ios build
-```
-
-### TestFlight Deployment
-
-```bash
-# Build and upload to TestFlight
-bundle exec fastlane ios beta
-```
-
-### App Store Release
-
-```bash
-# Build and upload to App Store (does not submit for review)
-bundle exec fastlane ios release
-```
-
-### Code Signing
-
-```bash
-# Sync certificates and provisioning profiles
-bundle exec fastlane ios certificates
-```
-
-### Metadata and Screenshots
-
-```bash
-# Update app metadata only
-bundle exec fastlane ios metadata
-
-# Take screenshots
-bundle exec fastlane ios screenshots
-```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **"Could not find certificate"**
-   - Run `bundle exec fastlane ios certificates` first
-   - Ensure your `MATCH_PASSWORD` is correct
-
-2. **"Invalid API Key"**
-   - Verify your API key file path and permissions
-   - Check that the key ID and issuer ID are correct
-
-3. **"Team ID not found"**
-   - Verify your team IDs in the `.env` file
-   - Use `bundle exec fastlane spaceship` to list available teams
-
-### Debugging
-
-Add `--verbose` to any command for detailed output:
-
-```bash
-bundle exec fastlane ios build --verbose
-```
-
-## Security Notes
-
-- Never commit the `.env` file or `.p8` API key files
-- The `private_keys/` directory is gitignored for security
-- API keys are more secure than passwords for CI/CD environments
-
-## File Structure
-
-```text
-/
-├── .env.example          # Template for environment variables
-├── .env                  # Your actual environment variables (gitignored)
-├── private_keys/         # Directory for API key files (gitignored)
-├── setup_fastlane.sh     # Setup script
-├── fastlane/
-│   ├── Appfile          # App configuration
-│   ├── Fastfile         # Lane definitions
-│   └── Matchfile        # Code signing configuration
-├── Gemfile              # Ruby dependencies
-```
+If you'd like, I can add a short developer checklist (run locally, simulator, debug logging) or create a small PR template — tell me which to add next.
