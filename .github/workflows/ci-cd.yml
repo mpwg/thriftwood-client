@@ -29,10 +29,9 @@ jobs:
       - name: Install Fastlane
         run: gem install fastlane
       - name: Build & Test
+        shell: bash
         run: |
           if [ "${{ matrix.platform }}" = "ios" ]; then
-            # Ensure consistent shell execution
-            shell: bash
             cd iosnative && fastlane build
           elif [ "${{ matrix.platform }}" = "macos" ]; then
             cd iosnative/fastlane-macos && fastlane build
