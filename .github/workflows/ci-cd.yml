@@ -30,7 +30,7 @@ jobs:
           if [ "${{ matrix.platform }}" = "ios" ]; then
             cd iosnative && fastlane build
           elif [ "${{ matrix.platform }}" = "macos" ]; then
-            cd iosnative && fastlane-macos build
+            cd iosnative/fastlane-macos && fastlane build
           elif [ "${{ matrix.platform }}" = "android" ]; then
             echo "Android build step here"
           elif [ "${{ matrix.platform }}" = "linux" ]; then
