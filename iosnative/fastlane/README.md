@@ -53,7 +53,15 @@ Take screenshots
 [bundle exec] fastlane ios metadata
 ```
 
-Update metadata
+Update metadata only
+
+### ios certificates
+
+```sh
+[bundle exec] fastlane ios certificates
+```
+
+Sync code signing certificates
 
 ----
 

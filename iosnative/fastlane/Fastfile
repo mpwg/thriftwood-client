@@ -17,7 +17,7 @@ platform :ios do
 
   desc "Build and sign IPA for App Store/TestFlight"
   lane :build do
-    match(type: "appstore", readonly: true) # Handles provisioning profiles and certificates
+    match(type: "appstore", readonly: false) # Handles provisioning profiles and certificates
     gym(
       scheme: "ThriftwoodNative", 
       export_method: "app-store",
