@@ -25,11 +25,14 @@ fi
 
 echo "🔑 Converting $P8_FILE to environment variable format..."
 echo ""
-echo "Copy the following line to your .env file:"
+echo "⚠️  Security Warning: Private key content will NOT be shown in the terminal to avoid accidental exposure."
+echo "   The environment variable line will be written to 'output.env'."
 echo ""
-echo "APP_STORE_CONNECT_API_KEY_CONTENT=\"$(cat "$P8_FILE")\""
+echo "Writing environment variable to output.env..."
+echo "APP_STORE_CONNECT_API_KEY_CONTENT=\"$(cat "$P8_FILE")\"" > output.env
 echo ""
 echo "✅ Conversion complete!"
+echo "   You can now copy the line from 'output.env' to your .env file."
 echo ""
 echo "💡 Tip: You can also copy the content manually from the .p8 file"
 echo "    and paste it directly into the .env file, preserving the newlines."
