@@ -4,22 +4,46 @@
 default_platform(:ios)
 
 platform :ios do
+  before_all do
+    # Ensure we have the required environment variables
+    ensure_env_vars(
+      env_vars: ['APPLE_ID', 'ITUNES_TEAM_ID', 'APPSTORE_TEAM_ID']
+    )
+    
+    # Skip prompts for automated runs
+    ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
+    ENV["FASTLANE_HIDE_GITHUB_ISSUES"] = "1"
+  end
+
   desc "Build and sign IPA for App Store/TestFlight"
   lane :build do
-    match(type: "appstore") # Handles provisioning profiles and certificates
-    gym(scheme: "ThriftwoodNative", export_method: "app-store") # Build IPA
+    match(type: "appstore", readonly: true) # Handles provisioning profiles and certificates
+    gym(
+      scheme: "ThriftwoodNative", 
+      export_method: "app-store",
+      skip_codesigning: false,
+      clean: true
+    ) # Build IPA
   end
 
   desc "Deploy to TestFlight"
   lane :beta do
     build
-    pilot # Upload to TestFlight
+    pilot(
+      skip_waiting_for_build_processing: false,
+      skip_submission: true
+    ) # Upload to TestFlight
   end
 
   desc "Deploy to App Store"
   lane :release do
     build
-    deliver(force: true) # Upload to App Store Connect
+    deliver(
+      force: true,
+      skip_screenshots: true,
+      skip_metadata: true,
+      submit_for_review: false
+    ) # Upload to App Store Connect
   end
 
   desc "Take screenshots"
@@ -27,8 +51,17 @@ platform :ios do
     capture_screenshots
   end
 
-  desc "Update metadata"
+  desc "Update metadata only"
   lane :metadata do
-    deliver(skip_upload: true, force: true)
+    deliver(
+      skip_binary_upload: true,
+      force: true
+    )
+  end
+
+  desc "Sync code signing certificates"
+  lane :certificates do
+    match(type: "development", readonly: false)
+    match(type: "appstore", readonly: false)
   end
 end

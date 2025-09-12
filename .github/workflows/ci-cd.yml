@@ -15,10 +15,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        platform: [ios, macos, android, linux, windows]
+        os: [macos-latest]
+        platform: [ios, macos]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
@@ -58,17 +58,19 @@ jobs:
     runs-on: macos-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.2"
       - name: Install Fastlane
         run: gem install fastlane
-      - name: Deploy to TestFlight
-        run: cd iosnative && fastlane beta
-      - name: Deploy to App Store
-        run: cd iosnative && fastlane release
-      - name: Deploy macOS App
-        run: cd iosnative && fastlane-macos release
-      # Add Android, Linux, Windows release steps here
+      - name: Build & Sign iOS App
+        run: cd iosnative && fastlane build
+#      - name: Deploy to TestFlight
+#        run: cd iosnative && fastlane beta
+#      - name: Deploy to App Store
+#        run: cd iosnative && fastlane release
+#      - name: Deploy macOS App
+#        run: cd iosnative && fastlane-macos release
+# Add Android, Linux, Windows release steps here
