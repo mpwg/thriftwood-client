@@ -10,6 +10,16 @@
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
 
+# Load environment variables from .env file if it exists, otherwise use system environment variables
+env_file_path = File.join(File.dirname(__FILE__), '..', '.env')
+if File.exist?(env_file_path)
+  require 'dotenv'
+  Dotenv.load(env_file_path)
+  UI.message("📄 Loaded environment variables from .env file")
+else
+  UI.message("🌍 Using system environment variables (no .env file found)")
+end
+
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
@@ -22,7 +32,7 @@ APP_IDENTIFIER = "app.thriftwood.native"
 
 platform :ios do
   before_all do
-    ensure_xcode_version(version: "15.0")
+#    ensure_xcode_version(version: "15.0")
     
     # Setup keychain for CI
     if is_ci
@@ -57,7 +67,7 @@ platform :ios do
   lane :dev do
     setup_ci_if_needed
     
-    sync_code_signing(type: "development")
+    sync_certificates(type: "development")
     
     build_app(
       scheme: SCHEME_NAME,
@@ -86,7 +96,7 @@ platform :ios do
       xcodeproj: WORKSPACE_PATH
     )
     
-    sync_code_signing(type: "appstore")
+    sync_certificates(type: "appstore")
     
     build_app(
       scheme: SCHEME_NAME,
@@ -132,7 +142,7 @@ platform :ios do
       xcodeproj: WORKSPACE_PATH
     )
     
-    sync_code_signing(type: "appstore")
+    sync_certificates(type: "appstore")
     
     build_app(
       scheme: SCHEME_NAME,
@@ -176,7 +186,7 @@ platform :ios do
   lane :build do
     setup_ci_if_needed
     
-    sync_code_signing(type: "development")
+    sync_certificates(type: "development")
     
     build_app(
       scheme: SCHEME_NAME,
@@ -199,8 +209,8 @@ platform :ios do
   desc "Sync development certificates and provisioning profiles"
   lane :certificates do
     setup_ci_if_needed
-    sync_code_signing(type: "development")
-    sync_code_signing(type: "appstore")
+    sync_certificates(type: "development")
+    sync_certificates(type: "appstore")
   end
 
   desc "Update certificates and push to git"
@@ -220,7 +230,7 @@ platform :ios do
     end
   end
 
-  private_lane :sync_code_signing do |options|
+  private_lane :sync_certificates do |options|
     type = options[:type]
     
     match(
@@ -244,7 +254,7 @@ platform :ios do
   end
 
   desc "Show available lanes"
-  lane :lanes do
+  lane :show_help do
     UI.header("📋 Available Fastlane Lanes")
     UI.message("🔨 Development:")
     UI.message("  • fastlane dev        - Build development version")
@@ -262,6 +272,6 @@ platform :ios do
     UI.message("")
     UI.message("ℹ️  Utility:")
     UI.message("  • fastlane version    - Show current app version")
-    UI.message("  • fastlane lanes      - Show this help")
+    UI.message("  • fastlane show_help  - Show this help")
   end
 end

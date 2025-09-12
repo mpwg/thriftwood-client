@@ -4,7 +4,10 @@
       "Bash(cat:*)",
       "Bash(gh:*)",
       "Bash(find:*)",
-      "Bash(xcodebuild:*)"
+      "Bash(xcodebuild:*)",
+      "Bash(bundle exec fastlane:*)",
+      "Bash(bundle install)",
+      "Bash(ruby:*)"
     ],
     "deny": [],
     "ask": []

@@ -34,7 +34,7 @@ bundle exec fastlane update_certificates
 bundle exec fastlane version
 
 # Show available lanes with descriptions
-bundle exec fastlane lanes
+bundle exec fastlane show_help
 ```
 
 ### CI/CD Pipeline
