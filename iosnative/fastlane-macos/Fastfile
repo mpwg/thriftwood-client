@@ -1,0 +1,27 @@
+# Fastlane configuration for Thriftwood macOS
+# See https://docs.fastlane.tools for details
+
+default_platform(:mac)
+
+platform :mac do
+  desc "Build and sign app for App Store"
+  lane :build do
+    match(type: "appstore") # Handles provisioning profiles and certificates
+    gym(scheme: "ThriftwoodNative", export_method: "app-store") # Build app
+  end
+
+  desc "Notarize app"
+  lane :notarize do
+    build
+    notarize(
+      username: ENV["APPLE_ID"],
+      team_id: ENV["APPLE_TEAM_ID"]
+    )
+  end
+
+  desc "Deploy to App Store"
+  lane :release do
+    notarize
+    deliver(force: true) # Upload to App Store Connect
+  end
+end

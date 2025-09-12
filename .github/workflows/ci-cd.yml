@@ -1,0 +1,74 @@
+# GitHub Actions CI/CD for Thriftwood
+# See https://docs.github.com/en/actions for details
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test:
+    name: Build & Test Matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        platform: [ios, macos, android, linux, windows]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby (for Fastlane)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+      - name: Install Fastlane
+        run: gem install fastlane
+      - name: Build & Test
+        run: |
+          if [ "${{ matrix.platform }}" = "ios" ]; then
+            cd iosnative && fastlane build
+          elif [ "${{ matrix.platform }}" = "macos" ]; then
+            cd iosnative && fastlane-macos build
+          elif [ "${{ matrix.platform }}" = "android" ]; then
+            echo "Android build step here"
+          elif [ "${{ matrix.platform }}" = "linux" ]; then
+            echo "Linux build step here"
+          elif [ "${{ matrix.platform }}" = "windows" ]; then
+            echo "Windows build step here"
+          fi
+      - name: Run Tests
+        run: |
+          if [ "${{ matrix.platform }}" = "ios" ]; then
+            echo "iOS test step here"
+          elif [ "${{ matrix.platform }}" = "macos" ]; then
+            echo "macOS test step here"
+          elif [ "${{ matrix.platform }}" = "android" ]; then
+            echo "Android test step here"
+          elif [ "${{ matrix.platform }}" = "linux" ]; then
+            echo "Linux test step here"
+          elif [ "${{ matrix.platform }}" = "windows" ]; then
+            echo "Windows test step here"
+          fi
+
+  release:
+    name: Release Automation
+    needs: build-test
+    runs-on: macos-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby (for Fastlane)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+      - name: Install Fastlane
+        run: gem install fastlane
+      - name: Deploy to TestFlight
+        run: cd iosnative && fastlane beta
+      - name: Deploy to App Store
+        run: cd iosnative && fastlane release
+      - name: Deploy macOS App
+        run: cd iosnative && fastlane-macos release
+      # Add Android, Linux, Windows release steps here
