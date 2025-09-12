@@ -30,6 +30,7 @@ echo "   The environment variable line will be written to 'output.env'."
 echo ""
 echo "Writing environment variable to output.env..."
 echo "APP_STORE_CONNECT_API_KEY_CONTENT=\"$(cat "$P8_FILE")\"" > output.env
+chmod 600 output.env
 echo ""
 echo "✅ Conversion complete!"
 echo "   You can now copy the line from 'output.env' to your .env file."
