@@ -22,7 +22,7 @@ name: CI/CD
 on:
   push:
     branches: [main, develop]
-    tags: ["v*"]  # Version tags like v1.0.0, v1.2.3, v2.0.0-beta.1
+    tags: ["v*"] # Version tags like v1.0.0, v1.2.3, v2.0.0-beta.1
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
@@ -69,7 +69,7 @@ jobs:
       - name: Set up Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.3"
+          ruby-version: "3.4"
           bundler-cache: true
 
       - name: Setup Fastlane
@@ -131,7 +131,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -249,7 +249,7 @@ jobs:
       - name: Set up Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.3"
+          ruby-version: "3.4"
           bundler-cache: true
 
       - name: Setup Fastlane

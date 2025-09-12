@@ -224,9 +224,7 @@ platform :ios do
 
   private_lane :setup_ci_if_needed do
     if is_ci
-      setup_ci(
-        provider: "github-actions"
-      )
+      setup_ci
     end
   end
 
