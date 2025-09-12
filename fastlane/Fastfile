@@ -9,7 +9,7 @@ platform :ios do
     ensure_env_vars(
       env_vars: ['APPLE_ID', 'ITUNES_TEAM_ID', 'APPSTORE_TEAM_ID']
     )
-    
+    setup_ci
     # Skip prompts for automated runs
     ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
     ENV["FASTLANE_HIDE_GITHUB_ISSUES"] = "1"
