@@ -51,11 +51,7 @@ fi
 # Install gems
 echo "💎 Installing Ruby gems..."
 cd ThriftwoodNative
-if [[ ! -f "Gemfile.lock" ]]; then
-    bundle install
-else
-    bundle install --quiet
-fi
+bundle install
 cd ..
 
 echo ""
