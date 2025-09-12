@@ -48,45 +48,6 @@ final class NetworkServiceImpl: NetworkService, @unchecked Sendable {
     }
 }
 
-/// Storage service implementation using SwiftData or UserDefaults
-final class StorageServiceImpl: StorageService, @unchecked Sendable {
-    private let userDefaults: UserDefaults
-    private let encoder: JSONEncoder
-    private let decoder: JSONDecoder
-
-    init(userDefaults: UserDefaults = .standard) {
-        self.userDefaults = userDefaults
-        self.encoder = JSONEncoder()
-        self.decoder = JSONDecoder()
-    }
-
-    func save<T: Codable>(_ object: T, forKey key: String) async throws {
-        do {
-            let data = try encoder.encode(object)
-            userDefaults.set(data, forKey: key)
-        } catch {
-            throw StorageError.encodingError(error)
-        }
-    }
-
-    func load<T: Codable>(_ type: T.Type, forKey key: String) async throws -> T? {
-        guard let data = userDefaults.data(forKey: key) else {
-            return nil
-        }
-
-        do {
-            let object = try decoder.decode(type, from: data)
-            return object
-        } catch {
-            throw StorageError.decodingError(error)
-        }
-    }
-
-    func delete(forKey key: String) async throws {
-        userDefaults.removeObject(forKey: key)
-    }
-}
-
 // MARK: - Error Types
 
 enum NetworkError: LocalizedError {
