@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(gh label:*)"
+      "Bash(cat:*)",
+      "Bash(gh:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
