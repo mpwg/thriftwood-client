@@ -71,6 +71,14 @@ Update certificates and push to git
 
 Show current version and build number
 
+### ios content_provider_id
+
+```sh
+[bundle exec] fastlane ios content_provider_id
+```
+
+Get Content Provider ID from App Store Connect
+
 ### ios show_help
 
 ```sh
