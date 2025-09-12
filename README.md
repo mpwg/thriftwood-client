@@ -159,6 +159,5 @@ bundle exec fastlane ios build --verbose
 │   ├── Appfile          # App configuration
 │   ├── Fastfile         # Lane definitions
 │   └── Matchfile        # Code signing configuration
-└── ThriftwoodNative/
-    └── Gemfile          # Ruby dependencies
+├── Gemfile              # Ruby dependencies
 ```
