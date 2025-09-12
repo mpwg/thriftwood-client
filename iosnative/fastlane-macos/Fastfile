@@ -15,7 +15,7 @@ platform :mac do
     build
     notarize(
       username: ENV["APPLE_ID"],
-      team_id: ENV["APPLE_TEAM_ID"]
+      team_id: ENV["APPSTORE_TEAM_ID"]
     )
   end
 
