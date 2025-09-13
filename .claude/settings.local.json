@@ -4,7 +4,18 @@
       "Bash(cat:*)",
       "Bash(gh:*)",
       "Bash(find:*)",
-      "Bash(xcodebuild:*)"
+      "Bash(xcodebuild:*)",
+      "Bash(bundle exec fastlane:*)",
+      "Bash(bundle install)",
+      "Bash(ruby:*)",
+      "Read(//Users/mat/.asdf/installs/ruby/3.4.5/lib/ruby/gems/3.4.0/gems/fastlane-2.228.0/**)",
+      "Bash(env)",
+      "Bash(sed:*)",
+      "Bash(security find-identity:*)",
+      "Read(//Users/mat/Library/MobileDevice/**)",
+      "Bash(security cms:*)",
+      "Bash(plutil -p:*)",
+      "Bash(spaceship:*)"
     ],
     "deny": [],
     "ask": []

@@ -15,13 +15,13 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
-### ios build
+### ios dev
 
 ```sh
-[bundle exec] fastlane ios build
+[bundle exec] fastlane ios dev
 ```
 
-Build and sign IPA for App Store/TestFlight
+Build development version for testing
 
 ### ios beta
 
@@ -29,7 +29,7 @@ Build and sign IPA for App Store/TestFlight
 [bundle exec] fastlane ios beta
 ```
 
-Deploy to TestFlight
+Build and upload to TestFlight
 
 ### ios release
 
@@ -37,23 +37,15 @@ Deploy to TestFlight
 [bundle exec] fastlane ios release
 ```
 
-Deploy to App Store
+Build and upload to App Store
 
-### ios screenshots
-
-```sh
-[bundle exec] fastlane ios screenshots
-```
-
-Take screenshots
-
-### ios metadata
+### ios build
 
 ```sh
-[bundle exec] fastlane ios metadata
+[bundle exec] fastlane ios build
 ```
 
-Update metadata only
+Build app without distribution (for CI validation)
 
 ### ios certificates
 
@@ -61,7 +53,31 @@ Update metadata only
 [bundle exec] fastlane ios certificates
 ```
 
-Sync code signing certificates
+Sync development certificates and provisioning profiles
+
+### ios update_certificates
+
+```sh
+[bundle exec] fastlane ios update_certificates
+```
+
+Update certificates and push to git
+
+### ios version
+
+```sh
+[bundle exec] fastlane ios version
+```
+
+Show current version and build number
+
+### ios show_help
+
+```sh
+[bundle exec] fastlane ios show_help
+```
+
+Show available lanes
 
 ----
 
