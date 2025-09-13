@@ -28,34 +28,55 @@ Select the desired target (macOS / iOS / simulator) in Xcode and run.
 
 ## Fastlane / CI (iOS)
 
-This repository includes Fastlane lanes to automate building, code signing, TestFlight and App Store uploads.
+This repository includes Fastlane lanes to automate building, code signing, TestFlight and App Store uploads, with GitHub Actions CI/CD pipeline.
 
-Setup helper:
-
-```bash
-./setup_fastlane.sh
-```
+### Setup
 
 Install Ruby dependencies:
 
 ```bash
-cd ThriftwoodNative
 bundle install
 ```
 
-Fastlane expects sensitive values (API keys, team IDs, match password) to be provided via environment variables or a secrets manager. See `.env.example` for the variables the lanes use.
+Configure environment variables:
+
+```bash
+# Copy the template and fill in your actual values
+cp .env.example .env
+
+# Import secrets to GitHub repository (optional, for CI/CD)
+gh secret set -f .env
+```
+
+Environment variables are organized into sections:
+- **Apple Developer Account**: Apple ID and team information
+- **App Store Connect Authentication**: API key (recommended) or session cookie
+- **Code Signing**: Fastlane Match configuration for certificate management
+- **CI/CD Environment**: GitHub Actions specific settings
 
 > [!warning]
 > Never commit `.env`, `.p8` files, or private keys. The `private_keys/` directory is gitignored.
 
 ### Common lanes
 
-- `bundle exec fastlane ios build` — build the app
-- `bundle exec fastlane ios beta` — build + upload to TestFlight
-- `bundle exec fastlane ios release` — build + upload to App Store (does not submit for review)
-- `bundle exec fastlane ios certificates` — sync code signing profiles via match
+- `bundle exec fastlane build` — build for CI validation (no signing required)
+- `bundle exec fastlane dev` — build development version
+- `bundle exec fastlane beta` — build + upload to TestFlight (auto-increments build number)
+- `bundle exec fastlane release` — build + upload to App Store (auto-increments version + build, creates git tag)
+- `bundle exec fastlane certificates` — sync code signing certificates and provisioning profiles
+- `bundle exec fastlane update_certificates` — update certificates and push to Match repository
+- `bundle exec fastlane version` — show current app version and build number
+- `bundle exec fastlane show_help` — show available lanes with descriptions
 
-Use `bundle exec fastlane lanes` to list available lanes and `--verbose` for debugging.
+### CI/CD Pipeline
+
+The project uses GitHub Actions with multi-stage deployment:
+- **`main`** branch → TestFlight deployment
+- **`develop`** branch → Dev builds with artifacts
+- **`feature/*`** branches → Build validation only (via PRs)
+- **`v*` tags** → App Store deployment + GitHub release
+
+See [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md) for detailed workflow information.
 
 ## Project layout
 
@@ -65,7 +86,8 @@ Use `bundle exec fastlane lanes` to list available lanes and `--verbose` for deb
   - `Features/` — Feature modules (Dashboard, Settings)
   - `Resources/` — Asset catalogs and localized strings
 - `assets/` — Branding, icons and localization files
-- `fastlane/` & `fastlane-macos/` — Fastlane lanes and config
+- `fastlane/` — Fastlane lanes and configuration
+- `.github/workflows/` — GitHub Actions CI/CD pipeline
 - `private_keys/` — Local-only folder for API keys (gitignored)
 
 ## Localization
@@ -82,7 +104,9 @@ UI translations are under `assets/localization` and `ThriftwoodNative/Resources/
 
 - App entry: `ThriftwoodNative/App/ThriftwoodNativeApp.swift`
 - Shared models & services: `ThriftwoodNative/Core/SharedTypes.swift`
-- Fastlane lanes: `fastlane/Fastfile` and `fastlane-macos/Fastfile`
+- Fastlane lanes: `fastlane/Fastfile`
+- CI/CD workflows: `.github/workflows/ci-cd.yml`
+- Development guide: `CLAUDE.md`
 
 ---
 
