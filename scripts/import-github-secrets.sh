@@ -184,14 +184,19 @@ import_secrets() {
 
         printf "  %-30s ... " "$key"
 
-        # Import secret using gh CLI
-        if echo "$value" | gh secret set "$key" --repo "$REPOSITORY" 2>/dev/null; then
+        # Import secret using gh CLI (securely via temporary file)
+        local tmpfile
+        tmpfile=$(mktemp)
+        chmod 600 "$tmpfile"
+        printf '%s' "$value" > "$tmpfile"
+        if gh secret set "$key" --repo "$REPOSITORY" < "$tmpfile" 2>/dev/null; then
             echo -e "${GREEN}✓${NC}"
             ((success_count++))
         else
             echo -e "${RED}✗${NC}"
             ((error_count++))
         fi
+        rm -f "$tmpfile"
     done
 
     echo
