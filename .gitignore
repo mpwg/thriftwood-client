@@ -50,16 +50,6 @@ Package.resolved
 Carthage/Build/
 
 # Fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
-.env
-*.p8
-private_keys/
-
-# fastlane
-#
 # It is recommended to not store the screenshots in the git repo.
 # Instead, use fastlane to re-generate the screenshots whenever they are needed.
 # For more information about the recommended setup visit:
@@ -69,6 +59,9 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+.env
+*.p8
+private_keys/
 
 # General
 .DS_Store
