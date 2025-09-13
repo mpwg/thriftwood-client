@@ -178,13 +178,11 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Set up Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3"
           bundler-cache: true
-
       - name: Setup Fastlane
         run: |
           gem install fastlane --version "~> 2.228.0"
