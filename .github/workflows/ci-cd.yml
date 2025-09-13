@@ -84,7 +84,7 @@ jobs:
       - name: Set up Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "latest"
+          ruby-version: "3.4"
           bundler-cache: true
 
       - name: Bundle install
@@ -137,7 +137,7 @@ jobs:
       - name: Set up Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "latest"
+          ruby-version: "3.4"
           bundler-cache: true
 
       - name: Bundle install
@@ -189,7 +189,7 @@ jobs:
       - name: Set up Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "latest"
+          ruby-version: "3.4"
           bundler-cache: true
 
       - name: Bundle install
@@ -246,7 +246,7 @@ jobs:
       - name: Set up Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "latest"
+          ruby-version: "3.4"
           bundler-cache: true
 
       - name: Bundle install
