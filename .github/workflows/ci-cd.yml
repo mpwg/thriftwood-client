@@ -47,9 +47,9 @@ jobs:
       # Load Fastlane / Apple credentials from repository secrets
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
-      APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-      APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
-      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+      APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       FASTLANE_SKIP_UPDATE_CHECK: 1
       FASTLANE_HIDE_GITHUB_ISSUES: 1
@@ -80,7 +80,7 @@ jobs:
         shell: bash
         run: |
           missing=()
-          for v in APPLE_ID MATCH_PASSWORD DEVELOPMENT_TEAM MATCH_GIT_URL APP_STORE_CONNECT_API_KEY APP_STORE_CONNECT_API_ISSUER_ID APP_STORE_CONNECT_API_KEY_ID MATCH_GIT_BASIC_AUTHORIZATION KEYCHAIN_PASSWORD; do
+          for v in APPLE_ID MATCH_PASSWORD DEVELOPMENT_TEAM MATCH_GIT_URL APP_STORE_CONNECT_API_KEY_CONTENT APP_STORE_CONNECT_API_KEY_ISSUER_ID APP_STORE_CONNECT_API_KEY_KEY_ID MATCH_GIT_BASIC_AUTHORIZATION KEYCHAIN_PASSWORD; do
             if [ -z "${!v}" ]; then
               missing+=($v)
             fi
@@ -113,9 +113,12 @@ jobs:
     runs-on: macos-26
     if: github.ref == 'refs/heads/develop'
     env:
+      # Load Fastlane / Apple credentials from repository secrets
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
-      FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+      APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       FASTLANE_SKIP_UPDATE_CHECK: 1
       FASTLANE_HIDE_GITHUB_ISSUES: 1
@@ -162,9 +165,12 @@ jobs:
       github.ref == 'refs/heads/main' || 
       (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_type == 'beta')
     env:
+      # Load Fastlane / Apple credentials from repository secrets
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
-      FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+      APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       FASTLANE_SKIP_UPDATE_CHECK: 1
       FASTLANE_HIDE_GITHUB_ISSUES: 1
@@ -212,9 +218,12 @@ jobs:
       startsWith(github.ref, 'refs/tags/v') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_type == 'production')
     env:
+      # Load Fastlane / Apple credentials from repository secrets
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
-      FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+      APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       FASTLANE_SKIP_UPDATE_CHECK: 1
       FASTLANE_HIDE_GITHUB_ISSUES: 1
