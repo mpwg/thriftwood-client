@@ -47,7 +47,9 @@ jobs:
       # Load Fastlane / Apple credentials from repository secrets
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
-      FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+      APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+      APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       FASTLANE_SKIP_UPDATE_CHECK: 1
       FASTLANE_HIDE_GITHUB_ISSUES: 1
@@ -78,7 +80,7 @@ jobs:
         shell: bash
         run: |
           missing=()
-          for v in APPLE_ID MATCH_PASSWORD DEVELOPMENT_TEAM MATCH_GIT_URL FASTLANE_SESSION MATCH_GIT_BASIC_AUTHORIZATION KEYCHAIN_PASSWORD; do
+          for v in APPLE_ID MATCH_PASSWORD DEVELOPMENT_TEAM MATCH_GIT_URL APP_STORE_CONNECT_API_KEY APP_STORE_CONNECT_API_ISSUER_ID APP_STORE_CONNECT_API_KEY_ID MATCH_GIT_BASIC_AUTHORIZATION KEYCHAIN_PASSWORD; do
             if [ -z "${!v}" ]; then
               missing+=($v)
             fi
@@ -174,7 +176,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -183,9 +185,11 @@ jobs:
         with:
           ruby-version: "3.3"
           bundler-cache: true
-      - name: Setup Fastlane
+
+      # Install Gem dependencies
+      - name: Install Gems
         run: |
-          gem install fastlane --version "~> 2.228.0"
+          gem install bundler
           bundle install
 
       - name: Build and upload to TestFlight
@@ -222,7 +226,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
