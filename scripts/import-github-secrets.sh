@@ -138,7 +138,9 @@ parse_env_file() {
             local value="${BASH_REMATCH[2]}"
 
             # Remove surrounding quotes if present
-            if [[ "$value" =~ ^[\"\'](.*)[\"\']+$ ]]; then
+            if [[ "$value" =~ ^\"(.*)\"$ ]]; then
+                value="${BASH_REMATCH[1]}"
+            elif [[ "$value" =~ ^\'(.*)\'$ ]]; then
                 value="${BASH_REMATCH[1]}"
             fi
 
