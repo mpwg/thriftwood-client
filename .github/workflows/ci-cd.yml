@@ -42,7 +42,7 @@ permissions:
 jobs:
   build-and-test:
     name: Build & Test
-    runs-on: macos-latest
+    runs-on: macos-26
     env:
       # Load Fastlane / Apple credentials from repository secrets
       APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -109,7 +109,7 @@ jobs:
   deploy-dev:
     name: Deploy Development
     needs: build-and-test
-    runs-on: macos-latest
+    runs-on: macos-26
     if: github.ref == 'refs/heads/develop'
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -157,7 +157,7 @@ jobs:
   deploy-beta:
     name: Deploy to TestFlight
     needs: build-and-test
-    runs-on: macos-latest
+    runs-on: macos-26
     if: |
       github.ref == 'refs/heads/main' || 
       (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_type == 'beta')
@@ -208,7 +208,7 @@ jobs:
   deploy-production:
     name: Deploy to App Store
     needs: build-and-test
-    runs-on: macos-latest
+    runs-on: macos-26
     if: |
       startsWith(github.ref, 'refs/tags/v') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_type == 'production')
