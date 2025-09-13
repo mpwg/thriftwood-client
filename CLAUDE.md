@@ -49,7 +49,7 @@ The project uses GitHub Actions with comprehensive multi-stage deployment follow
 - **`v*` tags**: Version tags → App Store deployment + GitHub release
 
 **Required Repository Secrets:**
-`APPLE_ID`, `DEVELOPMENT_TEAM`, `APPSTORE_TEAM_ID`, `ITUNES_TEAM_ID`, `APP_STORE_CONNECT_API_KEY_*`, `MATCH_PASSWORD`, `MATCH_GIT_URL`, `MATCH_GIT_BASIC_AUTHORIZATION`, `KEYCHAIN_PASSWORD`
+`APPLE_ID`, `DEVELOPMENT_TEAM`, `APPSTORE_TEAM_ID`, `ITUNES_TEAM_ID`, `FASTLANE_SESSION`, `MATCH_PASSWORD`, `MATCH_GIT_URL`, `MATCH_GIT_BASIC_AUTHORIZATION`, `KEYCHAIN_PASSWORD`
 
 ## Architecture
 
@@ -99,7 +99,7 @@ Structured error types: `NetworkError`, `StorageError`, `ViewModelError` with `L
 Uses Fastlane Match for code signing certificate management. Required environment variables are defined in `.github/workflows/ci-cd.yml` and must be configured as repository secrets:
 
 - `APPLE_ID`, `DEVELOPMENT_TEAM`, `APPSTORE_TEAM_ID`, `ITUNES_TEAM_ID`
-- `APP_STORE_CONNECT_API_KEY_*` (Key ID, Issuer ID, Content)
+- `FASTLANE_SESSION` (Session cookie for App Store Connect authentication)
 - `MATCH_PASSWORD`, `MATCH_GIT_URL`, `MATCH_GIT_BASIC_AUTHORIZATION`
 - `KEYCHAIN_PASSWORD`
 

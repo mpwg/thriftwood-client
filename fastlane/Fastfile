@@ -65,142 +65,142 @@ platform :ios do
 
   desc "Build development version for testing"
   lane :dev do
-    with_ci_setup do
-      sync_certificates(type: "development")
+    setup_ci_if_needed
 
-      build_app(common_build_config.merge({
-        configuration: "Debug",
-        export_method: "development",
-        output_directory: "./build/development",
-        output_name: "#{SCHEME_NAME}-development.ipa",
-        skip_profile_detection: false
-      }))
+    sync_certificates(type: "development")
 
-      UI.success("✅ Development build completed successfully!")
-    end
+    build_app(common_build_config.merge({
+      configuration: "Debug",
+      export_method: "development",
+      output_directory: "./build/development",
+      output_name: "#{SCHEME_NAME}-development.ipa",
+      skip_profile_detection: false
+    }))
+
+    UI.success("✅ Development build completed successfully!")
   end
 
   # MARK: - Beta Builds (TestFlight)
 
   desc "Build and upload to TestFlight"
   lane :beta do
-    with_ci_setup do
-      # Increment build number
-      increment_build_number(
-        build_number: latest_testflight_build_number + 1,
-        xcodeproj: WORKSPACE_PATH
-      )
+    setup_ci_if_needed
 
-      sync_certificates(type: "appstore")
+    # Increment build number
+    increment_build_number(
+      build_number: latest_testflight_build_number + 1,
+      xcodeproj: WORKSPACE_PATH
+    )
 
-      build_app(common_build_config.merge({
-        configuration: "Release",
-        export_method: "app-store",
-        output_directory: "./build/testflight",
-        output_name: "#{SCHEME_NAME}-testflight.ipa",
-        skip_profile_detection: true
-      }))
+    sync_certificates(type: "appstore")
 
-      upload_to_testflight(
-        app_identifier: APP_IDENTIFIER,
-        skip_waiting_for_build_processing: true,
-        distribute_external: false,
-        notify_external_testers: false,
-        changelog: "Bug fixes and improvements"
-      )
+    build_app(common_build_config.merge({
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build/testflight",
+      output_name: "#{SCHEME_NAME}-testflight.ipa",
+      skip_profile_detection: true
+    }))
 
-      UI.success("✅ TestFlight upload completed successfully!")
-    end
+    upload_to_testflight(
+      app_identifier: APP_IDENTIFIER,
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      changelog: "Bug fixes and improvements"
+    )
+
+    UI.success("✅ TestFlight upload completed successfully!")
   end
 
   # MARK: - Production Builds (App Store)
 
   desc "Build and upload to App Store"
   lane :release do
-    with_ci_setup do
-      # Ensure we're on main branch for releases
-      ensure_git_branch(branch: 'main')
+    setup_ci_if_needed
 
-      # Increment version number (patch version)
-      increment_version_number(
-        bump_type: "patch",
-        xcodeproj: WORKSPACE_PATH
-      )
+    # Ensure we're on main branch for releases
+    ensure_git_branch(branch: 'main')
 
-      # Increment build number
-      increment_build_number(
-        build_number: latest_testflight_build_number + 1,
-        xcodeproj: WORKSPACE_PATH
-      )
+    # Increment version number (patch version)
+    increment_version_number(
+      bump_type: "patch",
+      xcodeproj: WORKSPACE_PATH
+    )
 
-      sync_certificates(type: "appstore")
+    # Increment build number
+    increment_build_number(
+      build_number: latest_testflight_build_number + 1,
+      xcodeproj: WORKSPACE_PATH
+    )
 
-      build_app(common_build_config.merge({
-        configuration: "Release",
-        export_method: "app-store",
-        output_directory: "./build/appstore",
-        output_name: "#{SCHEME_NAME}-appstore.ipa",
-        skip_profile_detection: true
-      }))
+    sync_certificates(type: "appstore")
 
-      upload_to_app_store(
-        app_identifier: APP_IDENTIFIER,
-        skip_metadata: true,
-        skip_screenshots: true,
-        submit_for_review: false, # Manual submission for production
-        automatic_release: false,
-        force: true
-      )
+    build_app(common_build_config.merge({
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build/appstore",
+      output_name: "#{SCHEME_NAME}-appstore.ipa",
+      skip_profile_detection: true
+    }))
 
-      # Commit version bump
-      commit_version_bump(
-        message: "Version bump for App Store release",
-        xcodeproj: WORKSPACE_PATH
-      )
+    upload_to_app_store(
+      app_identifier: APP_IDENTIFIER,
+      skip_metadata: true,
+      skip_screenshots: true,
+      submit_for_review: false, # Manual submission for production
+      automatic_release: false,
+      force: true
+    )
 
-      # Add git tag
-      add_git_tag(
-        tag: get_version_number(xcodeproj: WORKSPACE_PATH)
-      )
+    # Commit version bump
+    commit_version_bump(
+      message: "Version bump for App Store release",
+      xcodeproj: WORKSPACE_PATH
+    )
 
-      UI.success("✅ App Store upload completed successfully!")
-      UI.success("🏷️  Tagged version: #{get_version_number(xcodeproj: WORKSPACE_PATH)}")
-    end
+    # Add git tag
+    add_git_tag(
+      tag: get_version_number(xcodeproj: WORKSPACE_PATH)
+    )
+
+    UI.success("✅ App Store upload completed successfully!")
+    UI.success("🏷️  Tagged version: #{get_version_number(xcodeproj: WORKSPACE_PATH)}")
   end
 
   # MARK: - Build Only (for CI validation)
 
   desc "Build app without distribution (for CI validation)"
   lane :build do
-    with_ci_setup do
-      sync_certificates(type: "development")
+    setup_ci_if_needed
 
-      build_app(common_build_config.merge({
-        configuration: "Debug",
-        export_method: "development",
-        output_directory: "./build/validation",
-        output_name: "#{SCHEME_NAME}-validation.ipa",
-        skip_profile_detection: true,
-        skip_archive: false
-      }))
+    sync_certificates(type: "development")
 
-      UI.success("✅ Build validation completed successfully!")
-    end
+    build_app(common_build_config.merge({
+      configuration: "Debug",
+      export_method: "development",
+      output_directory: "./build/validation",
+      output_name: "#{SCHEME_NAME}-validation.ipa",
+      skip_profile_detection: true,
+      skip_archive: false
+    }))
+
+    UI.success("✅ Build validation completed successfully!")
   end
 
   # MARK: - Code Signing
 
   desc "Sync development certificates and provisioning profiles"
   lane :certificates do
-    with_ci_setup do
-      sync_certificates(type: "development")
-      sync_certificates(type: "appstore")
-    end
+    setup_ci_if_needed
+    sync_certificates(type: "development")
+    sync_certificates(type: "appstore")
   end
 
   desc "Update certificates and push to git"
   lane :update_certificates do
     configure_app_store_connect
+    UI.success("DEBUG: Before updating certificates")
 
     match(
       type: "development",
@@ -208,25 +208,27 @@ platform :ios do
       git_url: ENV["MATCH_GIT_URL"],
       git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"],
       force_for_new_devices: true,
-      readonly: false
+      readonly: false,
+      verbose: true
     )
+    UI.success("DEBUG: After updating development certificates")
     match(
       type: "appstore",
       app_identifier: APP_IDENTIFIER,
       git_url: ENV["MATCH_GIT_URL"],
       git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"],
-      readonly: false
+      readonly: false,
+      verbose: true
     )
     UI.success("✅ Certificates updated and pushed to git!")
   end
 
   # MARK: - Helper Methods
 
-  private_lane :with_ci_setup do |&block|
+  private_lane :setup_ci_if_needed do
     if is_ci
       setup_ci
     end
-    block.call if block_given?
   end
 
   private_lane :common_build_config do
@@ -235,24 +237,17 @@ platform :ios do
       project: WORKSPACE_PATH,
       clean: true,
       include_bitcode: false,
-      # Disable Xcode's automatic code signing - let Fastlane handle it
-      disable_automatic_code_signing: true,
-      code_signing_identity: "",  # Let match determine the identity
-      provisioning_profile: "",   # Let match determine the profile
+      # Let match determine the identity and profile
+      codesigning_identity: "",  # Let match determine the identity
       export_xcargs: "-allowProvisioningUpdates"
     }
   end
 
   private_lane :configure_app_store_connect do
-    if ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"] && ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"] && ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
-      UI.message("🔑 Configuring App Store Connect API key")
-      app_store_connect_api_key(
-        key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
-        issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
-        key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
-      )
+    if ENV["FASTLANE_SESSION"]
+      UI.message("🔑 Using FASTLANE_SESSION for App Store Connect authentication")
     else
-      UI.message("⚠️  App Store Connect API key not configured")
+      UI.message("⚠️  FASTLANE_SESSION not configured - some operations may require manual authentication")
     end
   end
 
@@ -269,7 +264,7 @@ platform :ios do
       raise "Missing required environment variables for code signing"
     end
 
-    # Configure App Store Connect API key if available (required for creating new certificates)
+    # Configure App Store Connect authentication if available (required for creating new certificates)
     configure_app_store_connect
 
     UI.message("🔐 Syncing #{type} certificates and provisioning profiles with fastlane match")
