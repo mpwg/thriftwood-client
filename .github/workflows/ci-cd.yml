@@ -65,17 +65,6 @@ jobs:
         with:
           fetch-depth: 0 # Needed for git operations
 
-      - name: Set up Ruby (for Fastlane)
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.4"
-          bundler-cache: true
-
-      - name: Setup Fastlane
-        run: |
-          gem install fastlane --version "~> 2.228.0"
-          bundle install
-
       - name: Validate required secrets
         shell: bash
         run: |
@@ -134,17 +123,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Ruby (for Fastlane)
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.3"
-          bundler-cache: true
-
-      - name: Setup Fastlane
-        run: |
-          gem install fastlane --version "~> 2.228.0"
-          bundle install
-
       - name: Build development version
         run: |
           bundle exec fastlane dev
@@ -186,17 +164,6 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set up Ruby (for Fastlane)
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.3"
-          bundler-cache: true
-
-      # Install Gem dependencies
-      - name: Install Gems
-        run: |
-          gem install bundler
-          bundle install
 
       - name: Build and upload to TestFlight
         run: |
@@ -244,17 +211,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Set up Ruby (for Fastlane)
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.4"
-          bundler-cache: true
-
-      - name: Setup Fastlane
-        run: |
-          gem install fastlane --version "~> 2.228.0"
-          bundle install
 
       - name: Build and upload to App Store
         run: |
