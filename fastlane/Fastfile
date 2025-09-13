@@ -66,10 +66,9 @@ platform :ios do
   desc "Build development version for testing"
   lane :dev do
     setup_ci_if_needed
-    
-    # Skip certificate sync for now since certificates are already installed
-    # sync_certificates(type: "development")
-    
+
+    sync_certificates(type: "development")
+
     build_app(
       scheme: SCHEME_NAME,
       project: WORKSPACE_PATH,
@@ -251,25 +250,52 @@ platform :ios do
 
   private_lane :sync_certificates do |options|
     type = options[:type]
-    
-    # Configure App Store Connect API key only if all values are present
+
+    # Validate required environment variables
+    required_match_vars = ["MATCH_GIT_URL", "MATCH_PASSWORD"]
+    missing_vars = required_match_vars.select { |var| ENV[var].nil? || ENV[var].empty? }
+
+    if missing_vars.any?
+      UI.error("❌ Missing required environment variables for fastlane match: #{missing_vars.join(', ')}")
+      UI.error("💡 Please check your .env file or environment configuration")
+      raise "Missing required environment variables for code signing"
+    end
+
+    # Configure App Store Connect API key if available (required for creating new certificates)
     if ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"] && ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"] && ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
+      UI.message("🔑 Configuring App Store Connect API key")
       app_store_connect_api_key(
         key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
         issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
         key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
       )
+    else
+      UI.message("⚠️  App Store Connect API key not configured - using existing certificates only")
     end
-    
-    match(
-      type: type,
-      app_identifier: APP_IDENTIFIER,
-      git_url: ENV["MATCH_GIT_URL"],
-      git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"],
-      keychain_name: is_ci ? "CI" : nil,
-      keychain_password: is_ci ? ENV["KEYCHAIN_PASSWORD"] : nil,
-      readonly: is_ci
-    )
+
+    UI.message("🔐 Syncing #{type} certificates and provisioning profiles with fastlane match")
+
+    begin
+      match(
+        type: type,
+        app_identifier: APP_IDENTIFIER,
+        git_url: ENV["MATCH_GIT_URL"],
+        git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"],
+        keychain_name: is_ci ? "CI" : nil,
+        keychain_password: is_ci ? ENV["KEYCHAIN_PASSWORD"] : nil,
+        readonly: is_ci,
+        verbose: true
+      )
+      UI.success("✅ Successfully synced #{type} certificates")
+    rescue => e
+      UI.error("❌ Failed to sync certificates: #{e.message}")
+      UI.error("💡 Common solutions:")
+      UI.error("   • Check MATCH_PASSWORD is correct")
+      UI.error("   • Verify MATCH_GIT_URL is accessible")
+      UI.error("   • Ensure certificates exist in match repository")
+      UI.error("   • Run 'fastlane update_certificates' if certificates need to be created")
+      raise e
+    end
   end
 
   # MARK: - Utility Lanes
