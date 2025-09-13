@@ -65,163 +65,143 @@ platform :ios do
 
   desc "Build development version for testing"
   lane :dev do
-    setup_ci_if_needed
+    with_ci_setup do
+      sync_certificates(type: "development")
 
-    sync_certificates(type: "development")
+      build_app(common_build_config.merge({
+        configuration: "Debug",
+        export_method: "development",
+        output_directory: "./build/development",
+        output_name: "#{SCHEME_NAME}-development.ipa",
+        skip_profile_detection: false
+      }))
 
-    build_app(
-      scheme: SCHEME_NAME,
-      project: WORKSPACE_PATH,
-      configuration: "Debug",
-      export_method: "development",
-      output_directory: "./build/development",
-      output_name: "#{SCHEME_NAME}-development.ipa",
-      clean: true,
-      include_bitcode: false,
-      skip_profile_detection: false
-    )
-    
-    UI.success("✅ Development build completed successfully!")
+      UI.success("✅ Development build completed successfully!")
+    end
   end
 
   # MARK: - Beta Builds (TestFlight)
 
   desc "Build and upload to TestFlight"
   lane :beta do
-    setup_ci_if_needed
-    
-    # Increment build number
-    increment_build_number(
-      build_number: latest_testflight_build_number + 1,
-      xcodeproj: WORKSPACE_PATH
-    )
-    
-    sync_certificates(type: "appstore")
-    
-    build_app(
-      scheme: SCHEME_NAME,
-      project: WORKSPACE_PATH,
-      configuration: "Release",
-      export_method: "app-store",
-      output_directory: "./build/testflight",
-      output_name: "#{SCHEME_NAME}-testflight.ipa",
-      clean: true,
-      include_bitcode: false,
-      skip_profile_detection: true
-    )
-    
-    upload_to_testflight(
-      app_identifier: APP_IDENTIFIER,
-      skip_waiting_for_build_processing: true,
-      distribute_external: false,
-      notify_external_testers: false,
-      changelog: "Bug fixes and improvements"
-    )
-    
-    UI.success("✅ TestFlight upload completed successfully!")
+    with_ci_setup do
+      # Increment build number
+      increment_build_number(
+        build_number: latest_testflight_build_number + 1,
+        xcodeproj: WORKSPACE_PATH
+      )
+
+      sync_certificates(type: "appstore")
+
+      build_app(common_build_config.merge({
+        configuration: "Release",
+        export_method: "app-store",
+        output_directory: "./build/testflight",
+        output_name: "#{SCHEME_NAME}-testflight.ipa",
+        skip_profile_detection: true
+      }))
+
+      upload_to_testflight(
+        app_identifier: APP_IDENTIFIER,
+        skip_waiting_for_build_processing: true,
+        distribute_external: false,
+        notify_external_testers: false,
+        changelog: "Bug fixes and improvements"
+      )
+
+      UI.success("✅ TestFlight upload completed successfully!")
+    end
   end
 
   # MARK: - Production Builds (App Store)
 
   desc "Build and upload to App Store"
   lane :release do
-    setup_ci_if_needed
-    
-    # Ensure we're on main branch for releases
-    ensure_git_branch(branch: 'main')
-    
-    # Increment version number (patch version)
-    increment_version_number(
-      bump_type: "patch",
-      xcodeproj: WORKSPACE_PATH
-    )
-    
-    # Increment build number
-    increment_build_number(
-      build_number: latest_testflight_build_number + 1,
-      xcodeproj: WORKSPACE_PATH
-    )
-    
-    sync_certificates(type: "appstore")
-    
-    build_app(
-      scheme: SCHEME_NAME,
-      project: WORKSPACE_PATH,
-      configuration: "Release",
-      export_method: "app-store",
-      output_directory: "./build/appstore",
-      output_name: "#{SCHEME_NAME}-appstore.ipa",
-      clean: true,
-      include_bitcode: false,
-      skip_profile_detection: true
-    )
-    
-    upload_to_app_store(
-      app_identifier: APP_IDENTIFIER,
-      skip_metadata: true,
-      skip_screenshots: true,
-      submit_for_review: false, # Manual submission for production
-      automatic_release: false,
-      force: true
-    )
-    
-    # Commit version bump
-    commit_version_bump(
-      message: "Version bump for App Store release",
-      xcodeproj: WORKSPACE_PATH
-    )
-    
-    # Add git tag
-    add_git_tag(
-      tag: get_version_number(xcodeproj: WORKSPACE_PATH)
-    )
-    
-    UI.success("✅ App Store upload completed successfully!")
-    UI.success("🏷️  Tagged version: #{get_version_number(xcodeproj: WORKSPACE_PATH)}")
+    with_ci_setup do
+      # Ensure we're on main branch for releases
+      ensure_git_branch(branch: 'main')
+
+      # Increment version number (patch version)
+      increment_version_number(
+        bump_type: "patch",
+        xcodeproj: WORKSPACE_PATH
+      )
+
+      # Increment build number
+      increment_build_number(
+        build_number: latest_testflight_build_number + 1,
+        xcodeproj: WORKSPACE_PATH
+      )
+
+      sync_certificates(type: "appstore")
+
+      build_app(common_build_config.merge({
+        configuration: "Release",
+        export_method: "app-store",
+        output_directory: "./build/appstore",
+        output_name: "#{SCHEME_NAME}-appstore.ipa",
+        skip_profile_detection: true
+      }))
+
+      upload_to_app_store(
+        app_identifier: APP_IDENTIFIER,
+        skip_metadata: true,
+        skip_screenshots: true,
+        submit_for_review: false, # Manual submission for production
+        automatic_release: false,
+        force: true
+      )
+
+      # Commit version bump
+      commit_version_bump(
+        message: "Version bump for App Store release",
+        xcodeproj: WORKSPACE_PATH
+      )
+
+      # Add git tag
+      add_git_tag(
+        tag: get_version_number(xcodeproj: WORKSPACE_PATH)
+      )
+
+      UI.success("✅ App Store upload completed successfully!")
+      UI.success("🏷️  Tagged version: #{get_version_number(xcodeproj: WORKSPACE_PATH)}")
+    end
   end
 
   # MARK: - Build Only (for CI validation)
 
   desc "Build app without distribution (for CI validation)"
   lane :build do
-    setup_ci_if_needed
-    
-    sync_certificates(type: "development")
-    
-    build_app(
-      scheme: SCHEME_NAME,
-      project: WORKSPACE_PATH,
-      configuration: "Debug",
-      export_method: "development",
-      output_directory: "./build/validation",
-      output_name: "#{SCHEME_NAME}-validation.ipa",
-      clean: true,
-      include_bitcode: false,
-      skip_profile_detection: true,
-      skip_archive: false
-    )
-    
-    UI.success("✅ Build validation completed successfully!")
+    with_ci_setup do
+      sync_certificates(type: "development")
+
+      build_app(common_build_config.merge({
+        configuration: "Debug",
+        export_method: "development",
+        output_directory: "./build/validation",
+        output_name: "#{SCHEME_NAME}-validation.ipa",
+        skip_profile_detection: true,
+        skip_archive: false
+      }))
+
+      UI.success("✅ Build validation completed successfully!")
+    end
   end
 
   # MARK: - Code Signing
 
   desc "Sync development certificates and provisioning profiles"
   lane :certificates do
-    setup_ci_if_needed
-    sync_certificates(type: "development")
-    sync_certificates(type: "appstore")
+    with_ci_setup do
+      sync_certificates(type: "development")
+      sync_certificates(type: "appstore")
+    end
   end
 
   desc "Update certificates and push to git"
   lane :update_certificates do
-    # Configure App Store Connect API
-    app_store_connect_api_key(
-      key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
-      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
-      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
-    )
-    
+    configure_app_store_connect
+
     match(
       type: "development",
       app_identifier: APP_IDENTIFIER,
@@ -242,9 +222,32 @@ platform :ios do
 
   # MARK: - Helper Methods
 
-  private_lane :setup_ci_if_needed do
+  private_lane :with_ci_setup do |&block|
     if is_ci
       setup_ci
+    end
+    block.call if block_given?
+  end
+
+  private_lane :common_build_config do
+    {
+      scheme: SCHEME_NAME,
+      project: WORKSPACE_PATH,
+      clean: true,
+      include_bitcode: false
+    }
+  end
+
+  private_lane :configure_app_store_connect do
+    if ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"] && ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"] && ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
+      UI.message("🔑 Configuring App Store Connect API key")
+      app_store_connect_api_key(
+        key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
+        issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
+        key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
+      )
+    else
+      UI.message("⚠️  App Store Connect API key not configured")
     end
   end
 
@@ -262,16 +265,7 @@ platform :ios do
     end
 
     # Configure App Store Connect API key if available (required for creating new certificates)
-    if ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"] && ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"] && ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
-      UI.message("🔑 Configuring App Store Connect API key")
-      app_store_connect_api_key(
-        key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
-        issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
-        key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
-      )
-    else
-      UI.message("⚠️  App Store Connect API key not configured - using existing certificates only")
-    end
+    configure_app_store_connect
 
     UI.message("🔐 Syncing #{type} certificates and provisioning profiles with fastlane match")
 
@@ -307,249 +301,6 @@ platform :ios do
     UI.message("📱 Current version: #{version} (#{build})")
   end
 
-  desc "Get Content Provider ID from App Store Connect"
-  lane :content_provider_id do
-    # Configure App Store Connect API key
-    if ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"] && ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"] && ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
-      begin
-        require 'jwt'
-        require 'net/http'
-        require 'json'
-        
-        # Generate JWT token for App Store Connect API
-        key_id = ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"]
-        issuer_id = ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"]
-        key_content = ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
-        
-        # Create JWT payload
-        payload = {
-          iss: issuer_id,
-          iat: Time.now.to_i,
-          exp: Time.now.to_i + (20 * 60), # 20 minutes
-          aud: "appstoreconnect-v1"
-        }
-        
-        # Generate JWT token
-        private_key = OpenSSL::PKey::EC.new(key_content)
-        token = JWT.encode(payload, private_key, 'ES256', { kid: key_id })
-        
-        # Make API request to get users
-        uri = URI('https://api.appstoreconnect.apple.com/v1/users')
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true
-        
-        request = Net::HTTP::Get.new(uri)
-        request['Authorization'] = "Bearer #{token}"
-        request['Content-Type'] = 'application/json'
-        
-        response = http.request(request)
-        
-        if response.code == '200'
-          data = JSON.parse(response.body)
-          
-          if data['data'] && data['data'].any?
-            user = data['data'].first
-            
-            # Look for provider information in the relationships or links
-            if user['relationships'] && user['relationships']['visibleApps']
-              visible_apps_link = user.dig('relationships', 'visibleApps', 'links', 'self')
-              
-              if visible_apps_link && visible_apps_link.include?('providers/')
-                provider_match = visible_apps_link.match(/providers\/(\d+)/)
-                if provider_match
-                  provider_id = provider_match[1]
-                  UI.success("🆔 Content Provider ID: #{provider_id}")
-                else
-                  UI.message("📋 Found provider link but couldn't extract ID: #{visible_apps_link}")
-                end
-              else
-                UI.message("📋 No provider information found in user relationships")
-                
-                # Try to get apps and extract provider ID from there
-                UI.message("📋 Trying to get provider ID from apps endpoint...")
-                apps_uri = URI('https://api.appstoreconnect.apple.com/v1/apps')
-                apps_request = Net::HTTP::Get.new(apps_uri)
-                apps_request['Authorization'] = "Bearer #{token}"
-                apps_request['Content-Type'] = 'application/json'
-                
-                apps_response = http.request(apps_request)
-                if apps_response.code == '200'
-                  apps_data = JSON.parse(apps_response.body)
-                  if apps_data['data'] && apps_data['data'].any?
-                    app = apps_data['data'].first
-                    UI.message("📋 Found app: #{app['attributes']['name'] rescue 'Unknown'}")
-                    
-                    # Check all links in the app for provider information
-                    app_links = []
-                    app_links << app.dig('links', 'self') if app['links'] && app['links']['self']
-                    
-                    if app['relationships']
-                      app['relationships'].each do |rel_name, rel_data|
-                        if rel_data['links'] && rel_data['links']['self']
-                          app_links << rel_data['links']['self']
-                        end
-                      end
-                    end
-                    
-                    # Look for provider ID in any of the links
-                    provider_found = false
-                    app_links.each do |link|
-                      if link && link.include?('providers/')
-                        provider_match = link.match(/providers\/(\d+)/)
-                        if provider_match
-                          provider_id = provider_match[1]
-                          UI.success("🆔 Content Provider ID: #{provider_id}")
-                          provider_found = true
-                          break
-                        end
-                      end
-                    end
-                    
-                    unless provider_found
-                      UI.message("📋 No provider ID found in app links")
-                      
-                      # Try to get the provider ID from financial reports endpoint
-                      UI.message("📋 Trying financial reports endpoint...")
-                      reports_uri = URI('https://api.appstoreconnect.apple.com/v1/financialReports')
-                      reports_request = Net::HTTP::Get.new(reports_uri)
-                      reports_request['Authorization'] = "Bearer #{token}"
-                      reports_request['Content-Type'] = 'application/json'
-                      
-                      reports_response = http.request(reports_request)
-                      if reports_response.code == '200'
-                        reports_data = JSON.parse(reports_response.body)
-                        UI.message("📋 Financial reports response: #{reports_data}")
-                      elsif reports_response.code == '403' && reports_response.body.include?('providerId')
-                        # The error message often contains the provider ID
-                        error_body = JSON.parse(reports_response.body)
-                        error_detail = error_body.dig('errors', 0, 'detail') || ''
-                        if error_detail.include?('providerId')
-                          provider_match = error_detail.match(/providerId[:\s=]+(\d+)/)
-                          if provider_match
-                            provider_id = provider_match[1]
-                            UI.success("🆔 Content Provider ID (from error): #{provider_id}")
-                            provider_found = true
-                          end
-                        end
-                        UI.message("📋 Financial reports error (may contain provider info): #{error_body}")
-                      else
-                        UI.message("📋 Financial reports request failed: #{reports_response.code} - #{reports_response.body}")
-                      end
-                    end
-                    
-                    # Last resort: try to extract from the app's self link pattern
-                    unless provider_found
-                      self_link = app.dig('links', 'self')
-                      if self_link
-                        UI.message("📋 App self link: #{self_link}")
-                        # Sometimes the provider ID is embedded differently in the API structure
-                        # Let's check if we can get it from other API endpoints that might reference it
-                        
-                        # Try to get bundle IDs which might have provider references
-                        bundle_uri = URI('https://api.appstoreconnect.apple.com/v1/bundleIds')
-                        bundle_request = Net::HTTP::Get.new(bundle_uri)
-                        bundle_request['Authorization'] = "Bearer #{token}"
-                        bundle_request['Content-Type'] = 'application/json'
-                        
-                        bundle_response = http.request(bundle_request)
-                        if bundle_response.code == '200'
-                          bundle_data = JSON.parse(bundle_response.body)
-                          if bundle_data['data'] && bundle_data['data'].any?
-                            bundle = bundle_data['data'].first
-                            bundle_links = []
-                            bundle_links << bundle.dig('links', 'self') if bundle['links']
-                            if bundle['relationships']
-                              bundle['relationships'].each do |rel_name, rel_data|
-                                if rel_data['links'] && rel_data['links']['self']
-                                  bundle_links << rel_data['links']['self']
-                                end
-                              end
-                            end
-                            
-                            bundle_links.each do |link|
-                              if link && link.include?('providers/')
-                                provider_match = link.match(/providers\/(\d+)/)
-                                if provider_match
-                                  provider_id = provider_match[1]
-                                  UI.success("🆔 Content Provider ID (from bundle): #{provider_id}")
-                                  provider_found = true
-                                  break
-                                end
-                              end
-                            end
-                            
-                            unless provider_found
-                              UI.message("📋 Bundle links: #{bundle_links}")
-                            end
-                          end
-                        else
-                          UI.message("📋 Bundle request failed: #{bundle_response.code}")
-                        end
-                        
-                        # Try to get the app with all includes to see if provider info is there
-                        unless provider_found
-                          UI.message("📋 Trying app detail with includes...")
-                          app_detail_uri = URI("https://api.appstoreconnect.apple.com/v1/apps/#{app['id']}?include=appInfos")
-                          app_detail_request = Net::HTTP::Get.new(app_detail_uri)
-                          app_detail_request['Authorization'] = "Bearer #{token}"
-                          app_detail_request['Content-Type'] = 'application/json'
-                          
-                          app_detail_response = http.request(app_detail_request)
-                          if app_detail_response.code == '200'
-                            app_detail_data = JSON.parse(app_detail_response.body)
-                            UI.message("📋 App detail response keys: #{app_detail_data.keys}")
-                            if app_detail_data['included']
-                              UI.message("📋 Found #{app_detail_data['included'].length} included items")
-                            end
-                          end
-                        end
-                        
-                        # Final fallback: the simplest approach - just tell user their team ID and suggest manual lookup
-                        unless provider_found
-                          UI.message("📋 Content Provider ID not automatically discoverable through API")
-                          UI.message("💡 Your Team ID: #{ENV['APPSTORE_TEAM_ID'] || 'Not set'}")
-                          UI.message("💡 To find Content Provider ID manually:")
-                          UI.message("   1. Go to App Store Connect → Users and Access → API Keys")
-                          UI.message("   2. Your Content Provider ID will be displayed there")
-                          UI.message("   3. It's usually a different number than your Team ID")
-                          UI.message("💡 Alternatively, you can:")
-                          UI.message("   1. Go to Sales and Trends in App Store Connect")
-                          UI.message("   2. Look at the URL - it will contain providers/[YOUR_PROVIDER_ID]")
-                          UI.message("   3. Or check any financial report downloads which include it")
-                        end
-                      end
-                    end
-                  else
-                    UI.message("📋 No apps found in the response")
-                  end
-                else
-                  UI.error("❌ Apps API request failed with status #{apps_response.code}")
-                  UI.error("Response: #{apps_response.body}")
-                end
-              end
-            else
-              UI.message("📋 No relationships data found for user")
-              UI.message("📋 User data: #{user}")
-            end
-          else
-            UI.error("❌ No user data returned from API")
-          end
-        else
-          UI.error("❌ API request failed with status #{response.code}")
-          UI.error("Response: #{response.body}")
-        end
-        
-      rescue => e
-        UI.error("❌ Error retrieving Content Provider ID: #{e.message}")
-        UI.message("💡 Make sure your App Store Connect API key has the correct permissions")
-        UI.message("💡 Error class: #{e.class}")
-      end
-    else
-      UI.error("❌ App Store Connect API key environment variables not set")
-      UI.message("💡 Required: APP_STORE_CONNECT_API_KEY_KEY_ID, APP_STORE_CONNECT_API_KEY_ISSUER_ID, APP_STORE_CONNECT_API_KEY_CONTENT")
-    end
-  end
-
   desc "Show available lanes"
   lane :show_help do
     UI.header("📋 Available Fastlane Lanes")
@@ -568,8 +319,7 @@ platform :ios do
     UI.message("  • fastlane update_certificates - Update and push new certificates")
     UI.message("")
     UI.message("ℹ️  Utility:")
-    UI.message("  • fastlane version             - Show current app version")
-    UI.message("  • fastlane content_provider_id - Get Content Provider ID from App Store Connect")
-    UI.message("  • fastlane show_help           - Show this help")
+    UI.message("  • fastlane version   - Show current app version")
+    UI.message("  • fastlane show_help - Show this help")
   end
 end
