@@ -234,7 +234,12 @@ platform :ios do
       scheme: SCHEME_NAME,
       project: WORKSPACE_PATH,
       clean: true,
-      include_bitcode: false
+      include_bitcode: false,
+      # Disable Xcode's automatic code signing - let Fastlane handle it
+      disable_automatic_code_signing: true,
+      code_signing_identity: "",  # Let match determine the identity
+      provisioning_profile: "",   # Let match determine the profile
+      export_xcargs: "-allowProvisioningUpdates"
     }
   end
 
@@ -268,6 +273,7 @@ platform :ios do
     configure_app_store_connect
 
     UI.message("🔐 Syncing #{type} certificates and provisioning profiles with fastlane match")
+    UI.message("🚧 Ensuring Fastlane handles code signing (not Xcode automatic signing)")
 
     begin
       match(
@@ -278,9 +284,13 @@ platform :ios do
         keychain_name: is_ci ? "CI" : nil,
         keychain_password: is_ci ? ENV["KEYCHAIN_PASSWORD"] : nil,
         readonly: is_ci,
-        verbose: true
+        verbose: true,
+        # Ensure Fastlane manages signing, not Xcode
+        skip_confirmation: true,
+        shallow_clone: true
       )
       UI.success("✅ Successfully synced #{type} certificates")
+      UI.message("🔒 Code signing will be handled by Fastlane, not Xcode")
     rescue => e
       UI.error("❌ Failed to sync certificates: #{e.message}")
       UI.error("💡 Common solutions:")
