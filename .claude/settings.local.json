@@ -15,7 +15,8 @@
       "Read(//Users/mat/Library/MobileDevice/**)",
       "Bash(security cms:*)",
       "Bash(plutil -p:*)",
-      "Bash(spaceship:*)"
+      "Bash(spaceship:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []
