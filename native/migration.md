@@ -303,48 +303,75 @@ TASKS:
 5. Implement music library statistics and management
 ```
 
-### Phase 5: Advanced Features
+### Phase 5: Download Clients & Analytics
 
-#### Task 5.1: Push Notifications
+#### Task 5.1: Download Client Integration
 
-```
-OBJECTIVE: Implement native push notification handling
+```swift
+OBJECTIVE: NZBGet and SABnzbd download monitoring
 TASKS:
-1. Configure push notification capabilities
-2. Implement AppDelegate/SceneDelegate handlers
-3. Create NotificationService:
-   - Register for remote notifications
-   - Handle notification payloads
-   - Process background notifications
-4. Implement in-app notification UI
-5. Test notification delivery and handling
+1. Create DownloadsView with unified queue monitoring:
+   - Active downloads with progress bars
+   - Queue management (pause, resume, delete)
+   - Speed and ETA indicators
+2. Implement client-specific features:
+   - NZBGet post-processing status
+   - SABnzbd category management
+   - History with repair/unpack status
+3. Create download statistics dashboard:
+   - Speed graphs and bandwidth usage
+   - Storage space monitoring
+   - Weekly/monthly download statistics
+4. Add download control actions:
+   - Queue reordering and prioritization
+   - Pause/resume individual downloads
+   - Server shutdown/restart controls
 ```
 
-#### Task 5.2: Background Tasks
+#### Task 5.2: Tautulli Analytics
 
-```
-OBJECTIVE: Migrate background processing features
+```swift
+OBJECTIVE: Plex statistics and user management via Tautulli
 TASKS:
-1. Identify background tasks in Flutter
-2. Implement using BackgroundTasks framework:
-   - Background refresh
-   - Background processing
-3. Set up background URL sessions
-4. Implement background location updates (if needed)
-5. Test background execution
+1. Create TautulliHomeView with server overview:
+   - Current activity with live sessions
+   - Server statistics and performance
+   - Recently added media highlights
+2. Implement user management screens:
+   - User list with watch statistics
+   - Individual user details and history
+   - Login/IP address tracking
+3. Create analytics dashboards:
+   - Play statistics with graphs
+   - Most watched content rankings
+   - User activity patterns
+4. Add server management features:
+   - Media library scanning
+   - Server logs and notifications
+   - System information monitoring
 ```
 
-#### Task 5.3: Platform Integrations
+#### Task 5.3: Search & Utilities
 
-```
-OBJECTIVE: Implement iOS-specific features
+```swift
+OBJECTIVE: Cross-service search and utility features
 TASKS:
-1. Camera/Photo library integration
-2. Implement ShareSheet functionality
-3. Add Siri Shortcuts (if applicable)
-4. Integrate with HealthKit (if applicable)
-5. Implement Widget Extension (if applicable)
-6. Add App Clips support (if applicable)
+1. Create unified search interface:
+   - Search across Radarr, Sonarr, Lidarr simultaneously
+   - Indexer management and testing
+   - Search result aggregation and deduplication
+2. Implement Wake-on-LAN functionality:
+   - Server discovery and configuration
+   - Magic packet sending with validation
+   - Scheduled wake-up options
+3. Add external module support:
+   - Custom service integration framework
+   - URL scheme handling for external apps
+   - Third-party service bookmarks
+4. Create utility screens:
+   - System logs viewer with filtering
+   - Cache management and clearing
+   - Import/export configuration tools
 ```
 
 ### Phase 6: Polish & Optimization
@@ -439,81 +466,143 @@ TASKS:
    // Check performance metrics
    ```
 
-## Code Migration Patterns
+## Thriftwood-Specific Migration Patterns
 
-### Flutter Widget to SwiftUI View
+### Service Module State Migration
 
-**Flutter Pattern:**
+**Flutter Provider Pattern (Thriftwood):**
 
 ```dart
-class CustomWidget extends StatefulWidget {
-  @override
-  _CustomWidgetState createState() => _CustomWidgetState();
-}
-
-class _CustomWidgetState extends State<CustomWidget> {
-  String data = "";
-
-  void fetchData() async {
-    // API call
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Text(data),
-    );
+class RadarrState extends ChangeNotifier {
+  RadarrAPI? api;
+  bool enabled = false;
+  Map<int, Future<RadarrMovie>> movies = {};
+  
+  void setMovie(int id, Future<RadarrMovie> future) {
+    movies[id] = future;
+    notifyListeners();
   }
 }
+
+// Usage in Widget:
+context.read<RadarrState>().setMovie(movieId, 
+  context.read<RadarrState>().api!.movies.getMovie(movieId: movieId)
+);
 ```
 
-**SwiftUI Equivalent:**
+**SwiftUI ObservableObject (Native):**
 
 ```swift
-struct CustomView: View {
-    @StateObject private var viewModel = CustomViewModel()
-
-    var body: some View {
-        Text(viewModel.data)
-            .onAppear {
-                viewModel.fetchData()
-            }
-    }
-}
-
 @MainActor
-class CustomViewModel: ObservableObject {
-    @Published var data = ""
-
-    func fetchData() async {
-        // API call
+class RadarrStore: ObservableObject {
+    @Published var isEnabled = false
+    @Published var movies: [Int: RadarrMovie] = [:]
+    @Published var loadingStates: [Int: Bool] = [:]
+    
+    private let apiClient: RadarrAPIClient
+    
+    func loadMovie(id: Int) async {
+        loadingStates[id] = true
+        do {
+            movies[id] = try await apiClient.getMovie(id: id)
+        } catch {
+            // Handle error
+        }
+        loadingStates[id] = false
     }
 }
 ```
 
-### State Management Migration
+### API Client Migration Pattern
 
-**Flutter Provider/Riverpod:**
+**Flutter Retrofit/Dio Pattern:**
 
 ```dart
-final dataProvider = StateNotifierProvider<DataNotifier, DataState>((ref) {
-  return DataNotifier();
-});
+@RestApi(baseUrl: "http://localhost:7878/api/v3/")
+abstract class RadarrAPI {
+  factory RadarrAPI(Dio dio) = _RadarrAPI;
+
+  @GET("/movie")
+  Future<List<RadarrMovie>> getMovies();
+  
+  @GET("/movie/{id}")
+  Future<RadarrMovie> getMovie(@Path("id") int movieId);
+}
 ```
 
-**SwiftUI EnvironmentObject:**
+**SwiftUI URLSession Pattern:**
 
 ```swift
-@MainActor
-class DataStore: ObservableObject {
-    @Published var dataState: DataState = .initial
+actor RadarrAPIClient {
+    private let baseURL: URL
+    private let session: URLSession
+    private let headers: [String: String]
+    
+    func getMovies() async throws -> [RadarrMovie] {
+        let url = baseURL.appendingPathComponent("movie")
+        var request = URLRequest(url: url)
+        headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
+        
+        let (data, _) = try await session.data(for: request)
+        return try JSONDecoder().decode([RadarrMovie].self, from: data)
+    }
+    
+    func getMovie(id: Int) async throws -> RadarrMovie {
+        let url = baseURL.appendingPathComponent("movie/\(id)")
+        var request = URLRequest(url: url)
+        headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
+        
+        let (data, _) = try await session.data(for: request)
+        return try JSONDecoder().decode(RadarrMovie.self, from: data)
+    }
+}
+```
+
+### Profile System Migration
+
+**Flutter Hive Profile System:**
+
+```dart
+@HiveType(typeId: 0)
+class LunaProfile extends HiveObject {
+  @HiveField(0) 
+  String radarrHost = '';
+  @HiveField(1)
+  String radarrApiKey = '';
+  @HiveField(2)
+  Map<String, dynamic> radarrHeaders = {};
 }
 
-// In App:
-@StateObject private var dataStore = DataStore()
+// Usage:
+final profile = LunaBox.profiles.read('default');
+```
 
-// In Views:
-@EnvironmentObject var dataStore: DataStore
+**SwiftUI SwiftData Profile System:**
+
+```swift
+@Model
+class ThriftwoodProfile {
+    var name: String
+    var radarrHost: String
+    var radarrApiKey: String
+    var radarrHeaders: [String: String]
+    
+    init(name: String) {
+        self.name = name
+        self.radarrHost = ""
+        self.radarrApiKey = ""
+        self.radarrHeaders = [:]
+    }
+}
+
+@MainActor
+class ProfileManager: ObservableObject {
+    @Published var activeProfile: ThriftwoodProfile?
+    
+    func loadProfile(named: String) async {
+        // Load from SwiftData
+    }
+}
 ```
 
 ## Testing Strategy
@@ -541,13 +630,14 @@ class DataStore: ObservableObject {
 
 ## Success Metrics
 
-1. **Feature Parity**: 100% of Flutter features implemented
-2. **Performance**: App launch time < 1 second
-3. **Crash Rate**: < 0.1%
-4. **Memory Usage**: < 100MB for typical session
-5. **Test Coverage**: > 80% code coverage
-6. **Accessibility**: Pass all Xcode accessibility audits
-7. **App Size**: Smaller than or equal to Flutter version
+1. **Service Integration Parity**: 100% of Radarr, Sonarr, Lidarr, NZBGet, SABnzbd, Tautulli APIs supported
+2. **Profile System**: Multi-profile configuration with import/export functionality
+3. **Performance**: App launch < 1 second, API response handling < 500ms
+4. **Media Library Support**: Handle large libraries (10,000+ movies/shows) without performance degradation  
+5. **Offline Capability**: Graceful handling of service outages with cached data
+6. **Theme Consistency**: AMOLED black theme and custom accent colors match Flutter version
+7. **Test Coverage**: > 80% coverage for API clients and core business logic
+8. **App Store Ready**: Pass all iOS guidelines and accessibility requirements
 
 ## Risk Mitigation
 
