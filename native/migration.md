@@ -35,11 +35,12 @@ This document outlines a systematic approach to migrate Thriftwood's iOS impleme
 
 ### Core Principles
 
-- **Module-by-Module Migration**: Convert one service integration at a time
+- **MVVM Architecture**: Clear separation of View, ViewModel, and Model layers
+- **Swift 6 Concurrency**: Actor-based API clients with data race safety
+- **Modern State Management**: Use `@Observable` macro and async/await patterns
 - **Service API Compatibility**: Maintain exact API compatibility with existing services
-- **Profile System Preservation**: Keep multi-profile configuration system
-- **SwiftUI + Combine**: Use modern iOS patterns for state management
-- **iOS 16+ Target**: Leverage latest SwiftUI capabilities for media-focused UI
+- **Profile System Preservation**: Keep multi-profile configuration system with SwiftData
+- **iOS 17+ Target**: Leverage latest SwiftUI and Swift 6 capabilities
 - **Fastlane Integration**: Maintain existing CI/CD pipeline
 
 ### Phase Overview
@@ -466,6 +467,119 @@ TASKS:
    // Check performance metrics
    ```
 
+## MVVM Architecture & Swift 6 Patterns
+
+### Modern SwiftUI MVVM Architecture
+
+The target architecture follows Apple's modern SwiftUI patterns with strict MVVM separation:
+
+#### Layer Responsibilities
+
+1. **Model Layer**
+
+   - Pure data structures (`struct` with `Codable`, `Sendable`)
+   - SwiftData persistence models (`@Model` classes)
+   - Business logic encapsulated in services
+
+2. **ViewModel Layer**
+
+   - `@Observable` classes (Swift 5.9+) for reactive state
+   - `@MainActor` isolation for UI thread safety
+   - Async/await for all asynchronous operations
+   - No direct UI dependencies
+
+3. **View Layer**
+   - SwiftUI views with declarative UI
+   - `@State` for view-specific ViewModels
+   - `@Environment` for shared dependencies
+   - Minimal business logic
+
+#### Swift 6 Concurrency Requirements
+
+- **Actor Isolation**: API clients and services use `actor` for data race safety
+- **Sendable Conformance**: All data crossing concurrency boundaries must be `Sendable`
+- **MainActor UI**: All ViewModels that update UI are `@MainActor` isolated
+- **Structured Concurrency**: Use `async/await` with proper task management
+
+#### Example Modern MVVM Pattern
+
+```swift
+// Model - Pure data, Sendable
+struct ServiceConfiguration: Codable, Sendable {
+    let host: String
+    let apiKey: String
+    let headers: [String: String]
+}
+
+// Service - Actor for thread safety
+actor ServiceAPIClient {
+    private let config: ServiceConfiguration
+
+    init(config: ServiceConfiguration) {
+        self.config = config
+    }
+
+    func fetchData() async throws -> [ServiceItem] {
+        // Network operations isolated in actor
+    }
+}
+
+// ViewModel - MainActor for UI updates
+@Observable
+@MainActor
+class ServiceViewModel {
+    var items: [ServiceItem] = []
+    var isLoading = false
+    var errorMessage: String?
+
+    private let apiClient: ServiceAPIClient
+
+    init(apiClient: ServiceAPIClient) {
+        self.apiClient = apiClient
+    }
+
+    func loadData() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            items = try await apiClient.fetchData()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+}
+
+// View - Declarative UI only
+struct ServiceView: View {
+    @State private var viewModel: ServiceViewModel
+
+    init(apiClient: ServiceAPIClient) {
+        self._viewModel = State(initialValue: ServiceViewModel(apiClient: apiClient))
+    }
+
+    var body: some View {
+        NavigationView {
+            Group {
+                if viewModel.isLoading {
+                    ProgressView()
+                } else {
+                    ServiceListView(items: viewModel.items)
+                }
+            }
+            .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
+                Button("OK") { viewModel.errorMessage = nil }
+            } message: {
+                Text(viewModel.errorMessage ?? "")
+            }
+        }
+        .task {
+            await viewModel.loadData()
+        }
+    }
+}
+```
+
 ## Thriftwood-Specific Migration Patterns
 
 ### Service Module State Migration
@@ -477,7 +591,7 @@ class RadarrState extends ChangeNotifier {
   RadarrAPI? api;
   bool enabled = false;
   Map<int, Future<RadarrMovie>> movies = {};
-  
+
   void setMovie(int id, Future<RadarrMovie> future) {
     movies[id] = future;
     notifyListeners();
@@ -485,30 +599,74 @@ class RadarrState extends ChangeNotifier {
 }
 
 // Usage in Widget:
-context.read<RadarrState>().setMovie(movieId, 
+context.read<RadarrState>().setMovie(movieId,
   context.read<RadarrState>().api!.movies.getMovie(movieId: movieId)
 );
 ```
 
-**SwiftUI ObservableObject (Native):**
+**SwiftUI Modern MVVM (Native):**
 
 ```swift
+// Model
+struct RadarrMovie: Codable, Identifiable, Sendable {
+    let id: Int
+    let title: String
+    let status: String
+    let year: Int
+}
+
+// ViewModel (Observable)
+@Observable
 @MainActor
-class RadarrStore: ObservableObject {
-    @Published var isEnabled = false
-    @Published var movies: [Int: RadarrMovie] = [:]
-    @Published var loadingStates: [Int: Bool] = [:]
-    
+class RadarrViewModel {
+    var isEnabled = false
+    var movies: [Int: RadarrMovie] = [:]
+    var loadingStates: [Int: Bool] = [:]
+    var errorMessage: String?
+
     private let apiClient: RadarrAPIClient
-    
+
+    init(apiClient: RadarrAPIClient) {
+        self.apiClient = apiClient
+    }
+
     func loadMovie(id: Int) async {
         loadingStates[id] = true
+        errorMessage = nil
+
         do {
             movies[id] = try await apiClient.getMovie(id: id)
         } catch {
-            // Handle error
+            errorMessage = error.localizedDescription
         }
+
         loadingStates[id] = false
+    }
+}
+
+// View
+struct RadarrMovieView: View {
+    @State private var viewModel: RadarrViewModel
+    let movieId: Int
+
+    init(movieId: Int, apiClient: RadarrAPIClient) {
+        self.movieId = movieId
+        self._viewModel = State(initialValue: RadarrViewModel(apiClient: apiClient))
+    }
+
+    var body: some View {
+        Group {
+            if viewModel.loadingStates[movieId] == true {
+                ProgressView()
+            } else if let movie = viewModel.movies[movieId] {
+                MovieDetailView(movie: movie)
+            } else if let error = viewModel.errorMessage {
+                ErrorView(message: error)
+            }
+        }
+        .task {
+            await viewModel.loadMovie(id: movieId)
+        }
     }
 }
 ```
@@ -524,7 +682,7 @@ abstract class RadarrAPI {
 
   @GET("/movie")
   Future<List<RadarrMovie>> getMovies();
-  
+
   @GET("/movie/{id}")
   Future<RadarrMovie> getMovie(@Path("id") int movieId);
 }
@@ -537,21 +695,21 @@ actor RadarrAPIClient {
     private let baseURL: URL
     private let session: URLSession
     private let headers: [String: String]
-    
+
     func getMovies() async throws -> [RadarrMovie] {
         let url = baseURL.appendingPathComponent("movie")
         var request = URLRequest(url: url)
         headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
-        
+
         let (data, _) = try await session.data(for: request)
         return try JSONDecoder().decode([RadarrMovie].self, from: data)
     }
-    
+
     func getMovie(id: Int) async throws -> RadarrMovie {
         let url = baseURL.appendingPathComponent("movie/\(id)")
         var request = URLRequest(url: url)
         headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
-        
+
         let (data, _) = try await session.data(for: request)
         return try JSONDecoder().decode(RadarrMovie.self, from: data)
     }
@@ -565,7 +723,7 @@ actor RadarrAPIClient {
 ```dart
 @HiveType(typeId: 0)
 class LunaProfile extends HiveObject {
-  @HiveField(0) 
+  @HiveField(0)
   String radarrHost = '';
   @HiveField(1)
   String radarrApiKey = '';
@@ -577,16 +735,17 @@ class LunaProfile extends HiveObject {
 final profile = LunaBox.profiles.read('default');
 ```
 
-**SwiftUI SwiftData Profile System:**
+**SwiftUI SwiftData Profile System (Modern):**
 
 ```swift
+// Model
 @Model
-class ThriftwoodProfile {
+class ThriftwoodProfile: Sendable {
     var name: String
     var radarrHost: String
     var radarrApiKey: String
     var radarrHeaders: [String: String]
-    
+
     init(name: String) {
         self.name = name
         self.radarrHost = ""
@@ -595,10 +754,61 @@ class ThriftwoodProfile {
     }
 }
 
+// ViewModel
+@Observable
 @MainActor
-class ProfileManager: ObservableObject {
-    @Published var activeProfile: ThriftwoodProfile?
-    
+class ProfileViewModel {
+    var activeProfile: ThriftwoodProfile?
+    var availableProfiles: [ThriftwoodProfile] = []
+    var isLoading = false
+    var errorMessage: String?
+
+    private let profileService: ProfileService
+
+    init(profileService: ProfileService) {
+        self.profileService = profileService
+    }
+
+    func loadProfiles() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            availableProfiles = try await profileService.fetchProfiles()
+            if activeProfile == nil {
+                activeProfile = availableProfiles.first
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func switchProfile(_ profile: ThriftwoodProfile) async {
+        activeProfile = profile
+        // Notify other services of profile change
+        await NotificationCenter.default.post(name: .profileChanged, object: profile)
+    }
+}
+
+// Service (Actor for thread safety)
+actor ProfileService {
+    private let modelContext: ModelContext
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+    }
+
+    func fetchProfiles() throws -> [ThriftwoodProfile] {
+        let descriptor = FetchDescriptor<ThriftwoodProfile>()
+        return try modelContext.fetch(descriptor)
+    }
+
+    func saveProfile(_ profile: ThriftwoodProfile) throws {
+        modelContext.insert(profile)
+        try modelContext.save()
+    }
+}
+
     func loadProfile(named: String) async {
         // Load from SwiftData
     }
@@ -630,30 +840,42 @@ class ProfileManager: ObservableObject {
 
 ## Success Metrics
 
-1. **Service Integration Parity**: 100% of Radarr, Sonarr, Lidarr, NZBGet, SABnzbd, Tautulli APIs supported
-2. **Profile System**: Multi-profile configuration with import/export functionality
-3. **Performance**: App launch < 1 second, API response handling < 500ms
-4. **Media Library Support**: Handle large libraries (10,000+ movies/shows) without performance degradation  
-5. **Offline Capability**: Graceful handling of service outages with cached data
-6. **Theme Consistency**: AMOLED black theme and custom accent colors match Flutter version
-7. **Test Coverage**: > 80% coverage for API clients and core business logic
-8. **App Store Ready**: Pass all iOS guidelines and accessibility requirements
+1. **MVVM Architecture Compliance**: Clear separation of Model, ViewModel, and View layers
+2. **Swift 6 Concurrency**: 100% data race safety with actor isolation and Sendable conformance
+3. **Modern State Management**: All state uses `@Observable` macro with async/await patterns
+4. **Service Integration Parity**: 100% of Radarr, Sonarr, Lidarr, NZBGet, SABnzbd, Tautulli APIs supported
+5. **Profile System**: Multi-profile configuration with SwiftData persistence
+6. **Performance**: App launch < 1 second, zero main thread blocking operations
+7. **Media Library Support**: Handle large libraries (10,000+ movies/shows) with efficient SwiftUI Lists
+8. **Offline Capability**: Graceful handling of service outages with cached data
+9. **Theme Consistency**: AMOLED black theme using modern SwiftUI styling
+10. **Test Coverage**: > 80% coverage using Swift Testing framework
+11. **Accessibility**: Full VoiceOver support and Dynamic Type compliance
+12. **App Store Ready**: Pass all iOS 17+ guidelines and SwiftUI best practices## Risk Mitigation
 
-## Risk Mitigation
+### Swift 6 Migration Risks
+
+- **Concurrency Complexity**: Start with actors early, use Swift 6 migration guide
+- **Sendable Conformance**: Plan data model architecture to support Sendable requirements
+- **MainActor Isolation**: Carefully design ViewModel boundaries to avoid cross-actor calls
+- **Legacy Dependencies**: Audit third-party packages for Swift 6 compatibility
+- **Learning Curve**: Allocate time for team Swift 6 training and experimentation
 
 ### Technical Risks
 
-- **SwiftUI Limitations**: Have UIKit fallback plan for complex components
-- **State Management Complexity**: Use Combine framework for complex flows
-- **Performance Issues**: Profile early and often
-- **Third-party Dependencies**: Find native alternatives early
+- **SwiftUI Complexity**: Use modern SwiftUI patterns, avoid UIKit unless necessary
+- **State Management**: Leverage `@Observable` instead of complex Combine flows
+- **Performance Issues**: Profile with Instruments early and often, use Swift 6 optimizations
+- **API Integration**: Design actor-based API clients from the start
+- **Data Race Safety**: Enable strict concurrency checking from day one
 
 ### Process Risks
 
-- **Timeline Delays**: Build buffer into each phase
-- **Feature Creep**: Strictly maintain feature parity first
-- **Testing Gaps**: Automate testing from day one
-- **Knowledge Gaps**: Document all decisions and patterns
+- **Timeline Delays**: Build 20% buffer for Swift 6 learning curve
+- **Architecture Drift**: Enforce MVVM with code reviews and architecture guidelines
+- **Testing Strategy**: Migrate to Swift Testing framework early in process
+- **Knowledge Transfer**: Document Swift 6 patterns and MVVM decisions
+- **Tooling Compatibility**: Verify all development tools support Swift 6
 
 ## Rollback Strategy
 
@@ -680,28 +902,64 @@ If critical issues arise:
 
 ### Team Skills Needed
 
-- SwiftUI expertise (iOS 16+)
-- Combine framework knowledge
-- REST API integration experience
-- Core Data/SwiftData experience
-- Testing frameworks (XCTest)
-- CI/CD experience (Xcode Cloud/Fastlane)
+- **SwiftUI expertise (iOS 17+)** with modern patterns
+- **Swift 6 Concurrency** (actors, async/await, Sendable)
+- **MVVM Architecture** with `@Observable` macro
+- **SwiftData** for modern persistence
+- **Swift Testing** framework (replacing XCTest)
+- **REST API integration** with URLSession and actors
+- **CI/CD experience** (Xcode Cloud/Fastlane)
+- **Accessibility** implementation (VoiceOver, Dynamic Type)
 
 ### Development Tools
 
-- Xcode 15+
-- Swift 5.9+
-- SwiftLint
-- Swift Package Manager
-- Instruments for profiling
-- Proxyman/Charles for network debugging
+- **Xcode 16+** (required for Swift 6 and Swift Testing)
+- **Swift 6.0+** with strict concurrency checking enabled
+- **SwiftLint** configured for Swift 6 patterns
+- **Swift Package Manager** for dependencies
+- **Swift Testing** for unit and integration tests
+- **Instruments** for profiling and memory analysis
+- **Accessibility Inspector** for accessibility validation
+- **Proxyman/Charles** for network debugging
+
+### Swift 6 Configuration Requirements
+
+**Xcode Project Settings:**
+
+- Swift Language Version: Swift 6
+- Strict Concurrency Checking: Complete
+- iOS Deployment Target: iOS 17.0+
+- Enable Swift Testing Framework: Yes
+
+**Build Configuration:**
+
+```swift
+// Package.swift configuration
+.target(
+    name: "Thriftwood",
+    swiftSettings: [
+        .enableExperimentalFeature("StrictConcurrency"),
+        .enableUpcomingFeature("BareSlashRegexLiterals"),
+        .enableUpcomingFeature("ConciseMagicFile"),
+        .enableUpcomingFeature("ForwardTrailingClosures"),
+        .enableUpcomingFeature("ImplicitOpenExistentials")
+    ]
+)
+```
+
+**Compiler Flags:**
+
+- `-strict-concurrency=complete`
+- `-enable-actor-data-race-checks`
+- `-warn-swift3-objc-inference-minimal`
 
 ### Time Estimates
 
-- Total Duration: 16 weeks
-- Developer Resources: 2-3 iOS developers
-- QA Resources: 1 QA engineer
-- Review Checkpoints: Weekly
+- Total Duration: 18 weeks (adjusted for Swift 6 migration complexity)
+- Developer Resources: 2-3 iOS developers with Swift 6 expertise
+- QA Resources: 1 QA engineer familiar with Swift Testing
+- Architecture Review: Weekly with focus on MVVM compliance
+- Performance Review: Bi-weekly using Instruments
 
 ---
 
