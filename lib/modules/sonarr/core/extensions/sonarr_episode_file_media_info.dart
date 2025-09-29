@@ -1,6 +1,6 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/int/bytes.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/int/bytes.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 extension SonarrEpisodeFileMediaInfoExtension on SonarrEpisodeFileMediaInfo {
   String get lunaVideoBitDepth {

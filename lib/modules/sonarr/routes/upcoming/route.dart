@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrUpcomingRoute extends StatefulWidget {
-  const SonarrUpcomingRoute({super.key});
+  const SonarrUpcomingRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SonarrUpcomingRoute> createState() => _State();
@@ -39,11 +41,13 @@ class _State extends State<SonarrUpcomingRoute>
       context: context,
       key: _refreshKey,
       onRefresh: loadCallback,
-      child: Selector<SonarrState,
-          (Future<Map<int?, SonarrSeries>>?, Future<List<SonarrCalendar>>?)>(
-        selector: (_, state) => (state.series, state.upcoming),
+      child: Selector<
+          SonarrState,
+          Tuple2<Future<Map<int?, SonarrSeries>>?,
+              Future<List<SonarrCalendar>>?>>(
+        selector: (_, state) => Tuple2(state.series, state.upcoming),
         builder: (context, tuple, _) => FutureBuilder(
-          future: Future.wait([tuple.$1!, tuple.$2!]),
+          future: Future.wait([tuple.item1!, tuple.item2!]),
           builder: (context, AsyncSnapshot<List<Object>> snapshot) {
             if (snapshot.hasError) {
               if (snapshot.connectionState != ConnectionState.waiting) {
@@ -53,9 +57,7 @@ class _State extends State<SonarrUpcomingRoute>
                   snapshot.stackTrace,
                 );
               }
-              return LunaMessage.error(
-                onTap: _refreshKey.currentState!.show,
-              );
+              return LunaMessage.error(onTap: _refreshKey.currentState!.show);
             }
             if (snapshot.hasData)
               return _episodes(
@@ -76,22 +78,19 @@ class _State extends State<SonarrUpcomingRoute>
     if (upcoming.isEmpty) {
       return LunaMessage(
         text: 'sonarr.NoEpisodesFound'.tr(),
-        buttonText: 'thriftwood.Refresh'.tr(),
+        buttonText: 'lunasea.Refresh'.tr(),
         onTap: _refreshKey.currentState?.show,
       );
     }
     // Split episodes into days into a map
-    Map<String, Map<String, dynamic>> _episodeMap = upcoming.fold({}, (
-      map,
-      entry,
-    ) {
+    Map<String, Map<String, dynamic>> _episodeMap =
+        upcoming.fold({}, (map, entry) {
       if (entry.airDateUtc == null) return map;
       String _date = DateFormat('y-MM-dd').format(entry.airDateUtc!.toLocal());
       if (!map.containsKey(_date))
         map[_date] = {
-          'date': DateFormat(
-            'EEEE / MMMM dd, y',
-          ).format(entry.airDateUtc!.toLocal()),
+          'date': DateFormat('EEEE / MMMM dd, y')
+              .format(entry.airDateUtc!.toLocal()),
           'entries': [],
         };
       (map[_date]!['entries'] as List).add(entry);
@@ -102,13 +101,11 @@ class _State extends State<SonarrUpcomingRoute>
     _episodeMap.keys.toList()
       ..sort()
       ..forEach((key) {
-        _episodeWidgets.add(
-          _buildDay(
-            (_episodeMap[key]!['date'] as String?),
-            (_episodeMap[key]!['entries'] as List).cast<SonarrCalendar>(),
-            series,
-          ),
-        );
+        _episodeWidgets.add(_buildDay(
+          (_episodeMap[key]!['date'] as String?),
+          (_episodeMap[key]!['entries'] as List).cast<SonarrCalendar>(),
+          series,
+        ));
       });
     // Return the list
     return LunaListView(

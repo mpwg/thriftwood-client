@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/nzbget.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/nzbget.dart';
 
 class NZBGetQueueTile extends StatefulWidget {
   final int index;
@@ -13,8 +13,8 @@ class NZBGetQueueTile extends StatefulWidget {
     required this.index,
     required this.queueContext,
     required this.refresh,
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -37,10 +37,7 @@ class _State extends State<NZBGetQueueTile> {
   Future<void> _handlePopup() async {
     _Helper _helper = _Helper(widget.queueContext, widget.data, widget.refresh);
     List values = await NZBGetDialogs.queueSettings(
-      widget.queueContext,
-      widget.data.name,
-      widget.data.paused,
-    );
+        widget.queueContext, widget.data.name, widget.data.paused);
     if (values[0])
       switch (values[1]) {
         case 'status':
@@ -72,14 +69,21 @@ class _Helper {
   final NZBGetQueueData data;
   final Function refresh;
 
-  _Helper(this.context, this.data, this.refresh);
+  _Helper(
+    this.context,
+    this.data,
+    this.refresh,
+  );
 
   Future<void> _pauseJob() async {
     await NZBGetAPI.from(LunaProfile.current).pauseSingleJob(data.id).then((_) {
       showLunaSuccessSnackBar(title: 'Job Paused', message: data.name);
       refresh();
     }).catchError((error) {
-      showLunaErrorSnackBar(title: 'Failed to Pause Job', error: error);
+      showLunaErrorSnackBar(
+        title: 'Failed to Pause Job',
+        error: error,
+      );
     });
   }
 
@@ -90,14 +94,16 @@ class _Helper {
       showLunaSuccessSnackBar(title: 'Job Resumed', message: data.name);
       refresh();
     }).catchError((error) {
-      showLunaErrorSnackBar(title: 'Failed to Resume Job', error: error);
+      showLunaErrorSnackBar(
+        title: 'Failed to Resume Job',
+        error: error,
+      );
     });
   }
 
   Future<void> _category() async {
-    List<NZBGetCategoryData> categories = await NZBGetAPI.from(
-      LunaProfile.current,
-    ).getCategories();
+    List<NZBGetCategoryData> categories =
+        await NZBGetAPI.from(LunaProfile.current).getCategories();
     List values = await NZBGetDialogs.changeCategory(context, categories);
     if (values[0])
       await NZBGetAPI.from(LunaProfile.current)
@@ -125,9 +131,8 @@ class _Helper {
           .setJobPriority(data.id, values[1])
           .then((_) {
         showLunaSuccessSnackBar(
-          title: 'Priority Set (${(values[1] as NZBGetPriority?).name})',
-          message: data.name,
-        );
+            title: 'Priority Set (${(values[1] as NZBGetPriority?).name})',
+            message: data.name);
         refresh();
       }).catchError((error) {
         showLunaErrorSnackBar(
@@ -146,7 +151,10 @@ class _Helper {
         showLunaSuccessSnackBar(title: 'Job Renamed', message: values[1]);
         refresh();
       }).catchError((error) {
-        showLunaErrorSnackBar(title: 'Failed to Rename Job', error: error);
+        showLunaErrorSnackBar(
+          title: 'Failed to Rename Job',
+          error: error,
+        );
       });
   }
 
@@ -157,7 +165,10 @@ class _Helper {
         showLunaSuccessSnackBar(title: 'Job Deleted', message: data.name);
         refresh();
       }).catchError((error) {
-        showLunaErrorSnackBar(title: 'Failed to Delete Job', error: error);
+        showLunaErrorSnackBar(
+          title: 'Failed to Delete Job',
+          error: error,
+        );
       });
   }
 
@@ -167,10 +178,7 @@ class _Helper {
       await NZBGetAPI.from(LunaProfile.current)
           .setJobPassword(data.id, values[1])
           .then((_) {
-        showLunaSuccessSnackBar(
-          title: 'Job Password Set',
-          message: data.name,
-        );
+        showLunaSuccessSnackBar(title: 'Job Password Set', message: data.name);
         refresh();
       }).catchError((error) {
         showLunaErrorSnackBar(

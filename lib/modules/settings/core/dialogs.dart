@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 import 'package:wake_on_lan/wake_on_lan.dart';
-import 'package:thriftwood/database/tables/thriftwood.dart';
-import 'package:thriftwood/modules.dart';
-import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_day.dart';
-import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_size.dart';
-import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_type.dart';
-import 'package:thriftwood/modules/settings/core/types/header.dart';
-import 'package:thriftwood/system/state.dart';
-import 'package:thriftwood/utils/validator.dart';
-import 'package:thriftwood/vendor.dart';
-import 'package:thriftwood/widgets/ui.dart';
+import 'package:lunasea/database/tables/lunasea.dart';
+import 'package:lunasea/modules.dart';
+import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_day.dart';
+import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_size.dart';
+import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_type.dart';
+import 'package:lunasea/modules/settings/core/types/header.dart';
+import 'package:lunasea/system/state.dart';
+import 'package:lunasea/utils/validator.dart';
+import 'package:lunasea/vendor.dart';
+import 'package:lunasea/widgets/ui.dart';
 
 class SettingsDialogs {
-  Future<(bool, int)> setDefaultOption(
+  Future<Tuple2<bool, int>> setDefaultOption(
     BuildContext context, {
     required String title,
     required List<String?> values,
@@ -43,7 +43,7 @@ class SettingsDialogs {
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
 
-    return (_flag, _index);
+    return Tuple2(_flag, _index);
   }
 
   Future<bool> confirmAccountSignOut(BuildContext context) async {
@@ -64,13 +64,15 @@ class SettingsDialogs {
           onPressed: () => _setValues(true),
         ),
       ],
-      content: [LunaDialog.textContent(text: 'settings.SignOutHint1'.tr())],
+      content: [
+        LunaDialog.textContent(text: 'settings.SignOutHint1'.tr()),
+      ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
     return _flag;
   }
 
-  Future<(bool, String)> editHost(
+  Future<Tuple2<bool, String>> editHost(
     BuildContext context, {
     String prefill = '',
   }) async {
@@ -90,7 +92,7 @@ class SettingsDialogs {
       title: 'settings.Host'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Set'.tr(),
+          text: 'lunasea.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -135,10 +137,10 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
-    return (_flag, _textController.text);
+    return Tuple2(_flag, _textController.text);
   }
 
-  Future<(bool, String)> editExternalModuleHost(
+  Future<Tuple2<bool, String>> editExternalModuleHost(
     BuildContext context, {
     String prefill = '',
   }) async {
@@ -158,7 +160,7 @@ class SettingsDialogs {
       title: 'settings.Host'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Set'.tr(),
+          text: 'lunasea.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -199,7 +201,7 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
-    return (_flag, _textController.text);
+    return Tuple2(_flag, _textController.text);
   }
 
   Future<bool> deleteIndexer(BuildContext context) async {
@@ -215,7 +217,7 @@ class SettingsDialogs {
       title: 'settings.DeleteIndexer'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Delete'.tr(),
+          text: 'lunasea.Delete'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -241,7 +243,7 @@ class SettingsDialogs {
       title: 'settings.DeleteModule'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Delete'.tr(),
+          text: 'lunasea.Delete'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -267,7 +269,7 @@ class SettingsDialogs {
       title: 'settings.DeleteHeader'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Delete'.tr(),
+          text: 'lunasea.Delete'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -280,7 +282,7 @@ class SettingsDialogs {
     return _flag;
   }
 
-  Future<(bool, HeaderType?)> addHeader(BuildContext context) async {
+  Future<Tuple2<bool, HeaderType?>> addHeader(BuildContext context) async {
     bool _flag = false;
     HeaderType? _type;
 
@@ -304,10 +306,10 @@ class SettingsDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return (_flag, _type);
+    return Tuple2(_flag, _type);
   }
 
-  Future<(bool, String, String)> addCustomHeader(
+  Future<Tuple3<bool, String, String>> addCustomHeader(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -327,7 +329,7 @@ class SettingsDialogs {
       title: 'settings.CustomHeader'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Add'.tr(),
+          text: 'lunasea.Add'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -360,10 +362,10 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputDialogContentPadding(),
     );
-    return (_flag, _key.text, _value.text);
+    return Tuple3(_flag, _key.text, _value.text);
   }
 
-  Future<(bool, String, String)> addBasicAuthenticationHeader(
+  Future<Tuple3<bool, String, String>> addBasicAuthenticationHeader(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -383,7 +385,7 @@ class SettingsDialogs {
       title: 'settings.BasicAuthentication'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Add'.tr(),
+          text: 'lunasea.Add'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -430,7 +432,7 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
-    return (_flag, _username.text, _password.text);
+    return Tuple3(_flag, _username.text, _password.text);
   }
 
   Future<bool> clearLogs(BuildContext context) async {
@@ -446,18 +448,20 @@ class SettingsDialogs {
       title: 'settings.ClearLogs'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Clear'.tr(),
+          text: 'lunasea.Clear'.tr(),
           onPressed: () => _setValues(true),
           textColor: LunaColours.red,
         ),
       ],
-      content: [LunaDialog.textContent(text: 'settings.ClearLogsHint1'.tr())],
+      content: [
+        LunaDialog.textContent(text: 'settings.ClearLogsHint1'.tr()),
+      ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
     return _flag;
   }
 
-  Future<(bool, String)> confirmDeleteAccount(
+  Future<Tuple2<bool, String>> confirmDeleteAccount(
     BuildContext context,
   ) async {
     final _formKey = GlobalKey<FormState>();
@@ -476,7 +480,7 @@ class SettingsDialogs {
       title: 'settings.DeleteAccount'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Delete'.tr(),
+          text: 'lunasea.Delete'.tr(),
           onPressed: () => _setValues(true),
           textColor: LunaColours.red,
         ),
@@ -515,10 +519,10 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
-    return (_flag, _textController.text);
+    return Tuple2(_flag, _textController.text);
   }
 
-  Future<(bool, String, String)> updateAccountEmail(
+  Future<Tuple3<bool, String, String>> updateAccountEmail(
     BuildContext context,
   ) async {
     final _formKey = GlobalKey<FormState>();
@@ -538,7 +542,7 @@ class SettingsDialogs {
       title: 'settings.UpdateEmail'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Update'.tr(),
+          text: 'lunasea.Update'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -574,10 +578,10 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
-    return (_flag, _emailController.text, _passwordController.text);
+    return Tuple3(_flag, _emailController.text, _passwordController.text);
   }
 
-  Future<(bool, String, String)> updateAccountPassword(
+  Future<Tuple3<bool, String, String>> updateAccountPassword(
     BuildContext context,
   ) async {
     final _formKey = GlobalKey<FormState>();
@@ -597,7 +601,7 @@ class SettingsDialogs {
       title: 'settings.UpdatePassword'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Update'.tr(),
+          text: 'lunasea.Update'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -634,10 +638,10 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
-    return (_flag, _newPassController.text, _currentPassController.text);
+    return Tuple3(_flag, _newPassController.text, _currentPassController.text);
   }
 
-  Future<(bool, String)> addProfile(
+  Future<Tuple2<bool, String>> addProfile(
     BuildContext context,
     List<String?> profiles,
   ) async {
@@ -657,7 +661,7 @@ class SettingsDialogs {
       title: 'settings.AddProfile'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Add'.tr(),
+          text: 'lunasea.Add'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -682,10 +686,10 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputDialogContentPadding(),
     );
-    return (_flag, _controller.text);
+    return Tuple2(_flag, _controller.text);
   }
 
-  Future<(bool, String)> renameProfile(
+  Future<Tuple2<bool, String>> renameProfile(
     BuildContext context,
     List<String> profiles,
   ) async {
@@ -712,10 +716,10 @@ class SettingsDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return (_flag, _profile);
+    return Tuple2(_flag, _profile);
   }
 
-  Future<(bool, String)> renameProfileSelected(
+  Future<Tuple2<bool, String>> renameProfileSelected(
     BuildContext context,
     List<String?> profiles,
   ) async {
@@ -735,10 +739,9 @@ class SettingsDialogs {
       title: 'settings.RenameProfile'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Rename'.tr(),
-          onPressed: () => _setValues(true),
-          textColor: LunaColours.accent,
-        ),
+            text: 'lunasea.Rename'.tr(),
+            onPressed: () => _setValues(true),
+            textColor: LunaColours.accent),
       ],
       content: [
         Form(
@@ -761,10 +764,10 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputDialogContentPadding(),
     );
-    return (_flag, _controller.text);
+    return Tuple2(_flag, _controller.text);
   }
 
-  Future<(bool, String)> deleteProfile(
+  Future<Tuple2<bool, String>> deleteProfile(
     BuildContext context,
     List<String> profiles,
   ) async {
@@ -791,10 +794,10 @@ class SettingsDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return (_flag, _profile);
+    return Tuple2(_flag, _profile);
   }
 
-  Future<(bool, String)> enabledProfile(
+  Future<Tuple2<bool, String>> enabledProfile(
     BuildContext context,
     List<String> profiles,
   ) async {
@@ -821,10 +824,10 @@ class SettingsDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return (_flag, _profile);
+    return Tuple2(_flag, _profile);
   }
 
-  Future<(bool, CalendarStartingDay?)> editCalendarStartingDay(
+  Future<Tuple2<bool, CalendarStartingDay?>> editCalendarStartingDay(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -850,10 +853,10 @@ class SettingsDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return (_flag, _startingDate);
+    return Tuple2(_flag, _startingDate);
   }
 
-  Future<(bool, CalendarStartingSize?)> editCalendarStartingSize(
+  Future<Tuple2<bool, CalendarStartingSize?>> editCalendarStartingSize(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -879,10 +882,10 @@ class SettingsDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return (_flag, _startingSize);
+    return Tuple2(_flag, _startingSize);
   }
 
-  Future<(bool, CalendarStartingType?)> editCalendarStartingView(
+  Future<Tuple2<bool, CalendarStartingType?>> editCalendarStartingView(
     BuildContext context,
   ) async {
     bool _flag = false;
@@ -917,10 +920,10 @@ class SettingsDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return (_flag, _startingType);
+    return Tuple2(_flag, _startingType);
   }
 
-  Future<(bool, String)> editBroadcastAddress(
+  Future<Tuple2<bool, String>> editBroadcastAddress(
     BuildContext context,
     String prefill,
   ) async {
@@ -940,7 +943,7 @@ class SettingsDialogs {
       title: 'settings.BroadcastAddress'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Set'.tr(),
+          text: 'lunasea.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -977,10 +980,10 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
-    return (_flag, _controller.text);
+    return Tuple2(_flag, _controller.text);
   }
 
-  Future<(bool, String)> editMACAddress(
+  Future<Tuple2<bool, String>> editMACAddress(
     BuildContext context,
     String prefill,
   ) async {
@@ -1000,7 +1003,7 @@ class SettingsDialogs {
       title: 'settings.MACAddress'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Set'.tr(),
+          text: 'lunasea.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -1038,7 +1041,7 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
-    return (_flag, _controller.text);
+    return Tuple2(_flag, _controller.text);
   }
 
   Future<bool> dismissTooltipBanners(BuildContext context) async {
@@ -1054,7 +1057,7 @@ class SettingsDialogs {
       title: 'settings.DismissBanners'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Dismiss'.tr(),
+          text: 'lunasea.Dismiss'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -1082,7 +1085,7 @@ class SettingsDialogs {
       title: 'settings.ClearImageCache'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Clear'.tr(),
+          text: 'lunasea.Clear'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -1110,7 +1113,7 @@ class SettingsDialogs {
       title: 'settings.ClearConfiguration'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Clear'.tr(),
+          text: 'lunasea.Clear'.tr(),
           textColor: LunaColours.red,
           onPressed: () => _setValues(true),
         ),
@@ -1127,7 +1130,7 @@ class SettingsDialogs {
     return _flag;
   }
 
-  Future<(bool, String)> decryptBackup(BuildContext context) async {
+  Future<Tuple2<bool, String>> decryptBackup(BuildContext context) async {
     bool _flag = false;
     final _formKey = GlobalKey<FormState>();
     final _textController = TextEditingController();
@@ -1144,7 +1147,7 @@ class SettingsDialogs {
       title: 'settings.DecryptBackup'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Restore'.tr(),
+          text: 'lunasea.Restore'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -1165,10 +1168,10 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
-    return (_flag, _textController.text);
+    return Tuple2(_flag, _textController.text);
   }
 
-  Future<(bool, String)> backupConfiguration(BuildContext context) async {
+  Future<Tuple2<bool, String>> backupConfiguration(BuildContext context) async {
     bool _flag = false;
     final _formKey = GlobalKey<FormState>();
     final _textController = TextEditingController();
@@ -1185,7 +1188,7 @@ class SettingsDialogs {
       title: 'settings.BackupConfiguration'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.BackUp'.tr(),
+          text: 'lunasea.BackUp'.tr(),
           textColor: LunaColours.accent,
           onPressed: () => _setValues(true),
         ),
@@ -1216,19 +1219,17 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
-    return (_flag, _textController.text);
+    return Tuple2(_flag, _textController.text);
   }
 
-  Future<(bool, int)> changeBackgroundImageOpacity(
+  Future<Tuple2<bool, int>> changeBackgroundImageOpacity(
     BuildContext context,
   ) async {
     bool _flag = false;
     int _opacity = 0;
     final _formKey = GlobalKey<FormState>();
     final _textController = TextEditingController()
-      ..text = thriftwoodDatabase.THEME_IMAGE_BACKGROUND_OPACITY
-          .read()
-          .toString();
+      ..text = LunaSeaDatabase.THEME_IMAGE_BACKGROUND_OPACITY.read().toString();
 
     void _setValues(bool flag) {
       if (_formKey.currentState!.validate()) {
@@ -1243,7 +1244,7 @@ class SettingsDialogs {
       title: 'settings.ImageBackgroundOpacity'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Set'.tr(),
+          text: 'lunasea.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
@@ -1265,9 +1266,10 @@ class SettingsDialogs {
             validator: (value) {
               int? _opacity = int.tryParse(value!);
               if (_opacity == null || _opacity < 0 || _opacity > 100)
-                return 'settings.MustBeValueBetween'.tr(
-                  args: [0.toString(), 100.toString()],
-                );
+                return 'settings.MustBeValueBetween'.tr(args: [
+                  0.toString(),
+                  100.toString(),
+                ]);
               return null;
             },
           ),
@@ -1275,7 +1277,7 @@ class SettingsDialogs {
       ],
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
-    return (_flag, _opacity);
+    return Tuple2(_flag, _opacity);
   }
 
   Future<void> accountHelpMessage(BuildContext context) async {
@@ -1287,7 +1289,7 @@ class SettingsDialogs {
     );
   }
 
-  Future<(bool, LunaModule?)> selectBootModule() async {
+  Future<Tuple2<bool, LunaModule?>> selectBootModule() async {
     final context = LunaState.context;
     bool _flag = false;
     LunaModule? _module;
@@ -1321,6 +1323,6 @@ class SettingsDialogs {
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
 
-    return (_flag, _module);
+    return Tuple2(_flag, _module);
   }
 }

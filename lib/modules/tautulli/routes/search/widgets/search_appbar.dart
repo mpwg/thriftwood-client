@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 // ignore: non_constant_identifier_names
-Widget TautulliSearchAppBar({required ScrollController scrollController}) =>
+Widget TautulliSearchAppBar({
+  required ScrollController scrollController,
+}) =>
     LunaAppBar(
       title: 'Search',
       scrollControllers: [scrollController],
@@ -13,7 +15,10 @@ Widget TautulliSearchAppBar({required ScrollController scrollController}) =>
 class _SearchBar extends StatefulWidget implements PreferredSizeWidget {
   final ScrollController scrollController;
 
-  const _SearchBar({super.key, required this.scrollController});
+  const _SearchBar({
+    Key? key,
+    required this.scrollController,
+  }) : super(key: key);
 
   @override
   Size get preferredSize =>

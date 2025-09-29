@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrSeriesAddDetailsRootFolderTile extends StatelessWidget {
-  const SonarrSeriesAddDetailsRootFolderTile({super.key});
+  const SonarrSeriesAddDetailsRootFolderTile({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +25,11 @@ class SonarrSeriesAddDetailsRootFolderTile extends StatelessWidget {
   Future<void> _onTap(BuildContext context) async {
     List<SonarrRootFolder> _folders =
         await context.read<SonarrState>().rootFolders!;
-    (bool, SonarrRootFolder?) result =
+    Tuple2<bool, SonarrRootFolder?> result =
         await SonarrDialogs().editRootFolder(context, _folders);
-    if (result.$1) {
-      context.read<SonarrSeriesAddDetailsState>().rootFolder = result.$2!;
-      SonarrDatabase.ADD_SERIES_DEFAULT_ROOT_FOLDER.update(result.$2!.id);
+    if (result.item1) {
+      context.read<SonarrSeriesAddDetailsState>().rootFolder = result.item2!;
+      SonarrDatabase.ADD_SERIES_DEFAULT_ROOT_FOLDER.update(result.item2!.id);
     }
   }
 }

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
-import 'package:thriftwood/router/router.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
+import 'package:lunasea/router/router.dart';
 
 class ArtistEditRoute extends StatefulWidget {
   final LidarrCatalogueData? data;
   final int? artistId;
 
-  const ArtistEditRoute(
-      {super.key, required this.data, required this.artistId});
+  const ArtistEditRoute({
+    Key? key,
+    required this.data,
+    required this.artistId,
+  }) : super(key: key);
 
   @override
   State<ArtistEditRoute> createState() => _State();
@@ -96,7 +99,7 @@ class _State extends State<ArtistEditRoute> with LunaScrollControllerMixin {
     return LunaBottomActionBar(
       actions: [
         LunaButton.text(
-          text: 'thriftwood.Update'.tr(),
+          text: 'lunasea.Update'.tr(),
           icon: Icons.edit_rounded,
           onTap: _save,
         ),
@@ -155,27 +158,20 @@ class _State extends State<ArtistEditRoute> with LunaScrollControllerMixin {
       );
 
   Future<void> _changePath() async {
-    (bool, String) _values = await LunaDialogs().editText(
-      context,
-      'Artist Path',
-      prefill: _path!,
-    );
-    if (_values.$1 && mounted) setState(() => _path = _values.$2);
+    Tuple2<bool, String> _values =
+        await LunaDialogs().editText(context, 'Artist Path', prefill: _path!);
+    if (_values.item1 && mounted) setState(() => _path = _values.item2);
   }
 
   Future<void> _changeProfile() async {
-    List<dynamic> _values = await LidarrDialogs.editQualityProfile(
-      context,
-      _qualityProfiles,
-    );
+    List<dynamic> _values =
+        await LidarrDialogs.editQualityProfile(context, _qualityProfiles);
     if (_values[0] && mounted) setState(() => _qualityProfile = _values[1]);
   }
 
   Future<void> _changeMetadata() async {
-    List<dynamic> _values = await LidarrDialogs.editMetadataProfile(
-      context,
-      _metadataProfiles,
-    );
+    List<dynamic> _values =
+        await LidarrDialogs.editMetadataProfile(context, _metadataProfiles);
     if (_values[0] && mounted) setState(() => _metadataProfile = _values[1]);
   }
 
@@ -205,7 +201,10 @@ class _State extends State<ArtistEditRoute> with LunaScrollControllerMixin {
       LunaRouter.router.pop();
     }).catchError((error, stack) {
       LunaLogger().error('Failed to update artist', error, stack);
-      showLunaErrorSnackBar(title: 'Failed to Update', error: error);
+      showLunaErrorSnackBar(
+        title: 'Failed to Update',
+        error: error,
+      );
     });
   }
 }

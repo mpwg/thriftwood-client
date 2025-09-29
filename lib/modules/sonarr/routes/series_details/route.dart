@@ -1,15 +1,18 @@
-import 'package:thriftwood/utils/collection_utils.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/modules/sonarr/routes/series_details/sheets/links.dart';
-import 'package:thriftwood/router/routes/sonarr.dart';
-import 'package:thriftwood/widgets/pages/invalid_route.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/modules/sonarr/routes/series_details/sheets/links.dart';
+import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:lunasea/widgets/pages/invalid_route.dart';
 
 class SeriesDetailsRoute extends StatefulWidget {
   final int seriesId;
 
-  const SeriesDetailsRoute({super.key, required this.seriesId});
+  const SeriesDetailsRoute({
+    Key? key,
+    required this.seriesId,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -41,7 +44,10 @@ class _State extends State<SeriesDetailsRoute> with LunaLoadCallbackMixin {
     );
   }
 
-  List<SonarrTag> _findTags(List<int>? tagIds, List<SonarrTag> tags) {
+  List<SonarrTag> _findTags(
+    List<int>? tagIds,
+    List<SonarrTag> tags,
+  ) {
     return tags.where((tag) => tagIds!.contains(tag.id)).toList();
   }
 
@@ -111,7 +117,9 @@ class _State extends State<SeriesDetailsRoute> with LunaLoadCallbackMixin {
 
   Widget? _bottomNavigationBar() {
     if (series == null) return null;
-    return SonarrSeriesDetailsNavigationBar(pageController: _pageController);
+    return SonarrSeriesDetailsNavigationBar(
+      pageController: _pageController,
+    );
   }
 
   Widget _body() {
@@ -151,10 +159,8 @@ class _State extends State<SeriesDetailsRoute> with LunaLoadCallbackMixin {
               series!.languageProfileId,
               snapshot.data![1] as List<SonarrLanguageProfile>,
             );
-            List<SonarrTag> tags = _findTags(
-              series!.tags,
-              snapshot.data![2] as List<SonarrTag>,
-            );
+            List<SonarrTag> tags =
+                _findTags(series!.tags, snapshot.data![2] as List<SonarrTag>);
             return _pages(
               qualityProfile: quality,
               languageProfile: language,
@@ -173,8 +179,10 @@ class _State extends State<SeriesDetailsRoute> with LunaLoadCallbackMixin {
     required List<SonarrTag> tags,
   }) {
     return ChangeNotifierProvider(
-      create: (context) =>
-          SonarrSeriesDetailsState(context: context, series: series!),
+      create: (context) => SonarrSeriesDetailsState(
+        context: context,
+        series: series!,
+      ),
       builder: (context, _) => LunaPageView(
         controller: _pageController,
         children: [

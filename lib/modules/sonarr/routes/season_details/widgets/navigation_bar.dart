@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/router/routes/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/router/routes/sonarr.dart';
 
 class SonarrSeasonDetailsNavigationBar extends StatefulWidget {
   static const List<IconData> icons = [
@@ -14,20 +14,18 @@ class SonarrSeasonDetailsNavigationBar extends StatefulWidget {
     'sonarr.History'.tr(),
   ];
 
-  static List<ScrollController> scrollControllers = List.generate(
-    icons.length,
-    (_) => ScrollController(),
-  );
+  static List<ScrollController> scrollControllers =
+      List.generate(icons.length, (_) => ScrollController());
   final PageController? pageController;
   final int seriesId;
   final int seasonNumber;
 
   const SonarrSeasonDetailsNavigationBar({
-    super.key,
+    Key? key,
     required this.pageController,
     required this.seriesId,
     required this.seasonNumber,
-  });
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -76,11 +74,9 @@ class _State extends State<SonarrSeasonDetailsNavigationBar> {
   }
 
   Future<void> _manual() async {
-    return SonarrRoutes.RELEASES.go(
-      queryParams: {
-        'series': widget.seriesId.toString(),
-        'season': widget.seasonNumber.toString(),
-      },
-    );
+    return SonarrRoutes.RELEASES.go(queryParams: {
+      'series': widget.seriesId.toString(),
+      'season': widget.seasonNumber.toString(),
+    });
   }
 }

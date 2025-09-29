@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrSeriesSearchBar extends StatefulWidget {
   final ScrollController scrollController;
 
-  const SonarrSeriesSearchBar({super.key, required this.scrollController});
+  const SonarrSeriesSearchBar({
+    Key? key,
+    required this.scrollController,
+  }) : super(key: key);
 
   @override
   State<SonarrSeriesSearchBar> createState() => _State();
@@ -62,8 +65,12 @@ class _State extends State<SonarrSeriesSearchBar> {
               Flexible(
                 child: SonarrSeriesSearchBarFilterButton(controller: _sc),
               ),
-              Flexible(child: SonarrSeriesSearchBarSortButton(controller: _sc)),
-              Flexible(child: SonarrSeriesSearchBarViewButton(controller: _sc)),
+              Flexible(
+                child: SonarrSeriesSearchBarSortButton(controller: _sc),
+              ),
+              Flexible(
+                child: SonarrSeriesSearchBarViewButton(controller: _sc),
+              ),
             ],
           ),
         ),

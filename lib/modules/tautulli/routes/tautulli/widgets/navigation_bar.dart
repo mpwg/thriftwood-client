@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliNavigationBar extends StatefulWidget {
   final PageController? pageController;
-  static List<ScrollController> scrollControllers = List.generate(
-    icons.length,
-    (_) => ScrollController(),
-  );
+  static List<ScrollController> scrollControllers =
+      List.generate(icons.length, (_) => ScrollController());
 
   static const List<IconData> icons = [
     Icons.timelapse_rounded,
@@ -23,7 +21,10 @@ class TautulliNavigationBar extends StatefulWidget {
         'tautulli.More'.tr(),
       ];
 
-  const TautulliNavigationBar({super.key, required this.pageController});
+  const TautulliNavigationBar({
+    Key? key,
+    required this.pageController,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -60,10 +61,8 @@ class _State extends State<TautulliNavigationBar> {
       leadingOnTab: [
         FutureBuilder(
           future: context.watch<TautulliState>().activity,
-          builder: (
-            BuildContext context,
-            AsyncSnapshot<TautulliActivity?> snapshot,
-          ) =>
+          builder: (BuildContext context,
+                  AsyncSnapshot<TautulliActivity?> snapshot) =>
               LunaNavigationBarBadge(
             text:
                 snapshot.hasData ? snapshot.data!.streamCount.toString() : '?',

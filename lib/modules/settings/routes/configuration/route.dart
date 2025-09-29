@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/settings.dart';
-import 'package:thriftwood/router/routes/settings.dart';
-import 'package:thriftwood/system/quick_actions/quick_actions.dart';
-import 'package:thriftwood/utils/profile_tools.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/settings.dart';
+import 'package:lunasea/router/routes/settings.dart';
+import 'package:lunasea/system/quick_actions/quick_actions.dart';
+import 'package:lunasea/utils/profile_tools.dart';
 
 class ConfigurationRoute extends StatefulWidget {
-  const ConfigurationRoute({super.key});
+  const ConfigurationRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationRoute> createState() => _State();
@@ -40,7 +42,7 @@ class _State extends State<ConfigurationRoute> with LunaScrollControllerMixin {
           icon: Icons.switch_account_rounded,
           onPressed: () async {
             final dialogs = SettingsDialogs();
-            final enabledProfile = thriftwoodDatabase.ENABLED_PROFILE.read();
+            final enabledProfile = LunaSeaDatabase.ENABLED_PROFILE.read();
             final profiles = LunaProfile.list;
             profiles.removeWhere((p) => p == enabledProfile);
 
@@ -56,8 +58,8 @@ class _State extends State<ConfigurationRoute> with LunaScrollControllerMixin {
               LunaState.context,
               profiles,
             );
-            if (selected.$1) {
-              LunaProfileTools().changeTo(selected.$2);
+            if (selected.item1) {
+              LunaProfileTools().changeTo(selected.item2);
             }
           },
         );
@@ -95,17 +97,16 @@ class _State extends State<ConfigurationRoute> with LunaScrollControllerMixin {
   }
 
   List<Widget> _moduleList() {
-    return ([
-      LunaModule.DASHBOARD,
-      ...LunaModule.active,
-    ]).map(_tileFromModuleMap).toList();
+    return ([LunaModule.DASHBOARD, ...LunaModule.active])
+        .map(_tileFromModuleMap)
+        .toList();
   }
 
   Widget _tileFromModuleMap(LunaModule module) {
     return LunaBlock(
       title: module.title,
       body: [
-        TextSpan(text: 'settings.ConfigureModule'.tr(args: [module.title])),
+        TextSpan(text: 'settings.ConfigureModule'.tr(args: [module.title]))
       ],
       trailing: LunaIconButton(icon: module.icon),
       onTap: module.settingsRoute!.go,

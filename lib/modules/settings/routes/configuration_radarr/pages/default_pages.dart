@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class ConfigurationRadarrDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationRadarrDefaultPagesRoute({super.key});
+  const ConfigurationRadarrDefaultPagesRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationRadarrDefaultPagesRoute> createState() => _State();
@@ -49,12 +51,12 @@ class _State extends State<ConfigurationRadarrDefaultPagesRoute>
         body: [TextSpan(text: RadarrNavigationBar.titles[_db.read()])],
         trailing: LunaIconButton(icon: RadarrNavigationBar.icons[_db.read()]),
         onTap: () async {
-          (bool, int) values = await RadarrDialogs().setDefaultPage(
+          Tuple2<bool, int> values = await RadarrDialogs().setDefaultPage(
             context,
             titles: RadarrNavigationBar.titles,
             icons: RadarrNavigationBar.icons,
           );
-          if (values.$1) _db.update(values.$2);
+          if (values.item1) _db.update(values.item2);
         },
       ),
     );
@@ -72,12 +74,12 @@ class _State extends State<ConfigurationRadarrDefaultPagesRoute>
           icon: RadarrMovieDetailsNavigationBar.icons[_db.read()],
         ),
         onTap: () async {
-          (bool, int) values = await RadarrDialogs().setDefaultPage(
+          Tuple2<bool, int> values = await RadarrDialogs().setDefaultPage(
             context,
             titles: RadarrMovieDetailsNavigationBar.titles,
             icons: RadarrMovieDetailsNavigationBar.icons,
           );
-          if (values.$1) _db.update(values.$2);
+          if (values.item1) _db.update(values.item2);
         },
       ),
     );
@@ -89,16 +91,15 @@ class _State extends State<ConfigurationRadarrDefaultPagesRoute>
       builder: (context, _) => LunaBlock(
         title: 'radarr.AddMovie'.tr(),
         body: [TextSpan(text: RadarrAddMovieNavigationBar.titles[_db.read()])],
-        trailing: LunaIconButton(
-          icon: RadarrAddMovieNavigationBar.icons[_db.read()],
-        ),
+        trailing:
+            LunaIconButton(icon: RadarrAddMovieNavigationBar.icons[_db.read()]),
         onTap: () async {
-          (bool, int) values = await RadarrDialogs().setDefaultPage(
+          Tuple2<bool, int> values = await RadarrDialogs().setDefaultPage(
             context,
             titles: RadarrAddMovieNavigationBar.titles,
             icons: RadarrAddMovieNavigationBar.icons,
           );
-          if (values.$1) _db.update(values.$2);
+          if (values.item1) _db.update(values.item2);
         },
       ),
     );
@@ -116,12 +117,12 @@ class _State extends State<ConfigurationRadarrDefaultPagesRoute>
           icon: RadarrSystemStatusNavigationBar.icons[_db.read()],
         ),
         onTap: () async {
-          (bool, int) values = await RadarrDialogs().setDefaultPage(
+          Tuple2<bool, int> values = await RadarrDialogs().setDefaultPage(
             context,
             titles: RadarrSystemStatusNavigationBar.titles,
             icons: RadarrSystemStatusNavigationBar.icons,
           );
-          if (values.$1) _db.update(values.$2);
+          if (values.item1) _db.update(values.item2);
         },
       ),
     );

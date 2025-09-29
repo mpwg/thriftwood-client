@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'audio_stream.g.dart';
 
@@ -20,65 +20,51 @@ class TautulliAudioStream {
 
   /// Codec of the audio stream.
   @JsonKey(
-    name: 'audio_codec',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'audio_codec', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? audioCodec;
 
   /// Bitrate of the audio stream.
   @JsonKey(
-    name: 'audio_bitrate',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'audio_bitrate', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? audioBitrate;
 
   /// Bitrate mode of the audio stream.
   @JsonKey(
-    name: 'audio_bitrate_mode',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'audio_bitrate_mode',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? audioBitrateMode;
 
   /// Number of channels in the audio stream.
   @JsonKey(
-    name: 'audio_channels',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'audio_channels', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? audioChannels;
 
   /// The layout of the channels in the audio stream.
   @JsonKey(
-    name: 'audio_channel_layout',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'audio_channel_layout',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? audioChannelLayout;
 
   /// Sample rate of the audio stream.
   @JsonKey(
-    name: 'audio_sample_rate',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'audio_sample_rate',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? audioSampleRate;
 
   /// Language of the audio stream.
   @JsonKey(
-    name: 'audio_language',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'audio_language', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? audioLanguage;
 
   /// Language code of the audio stream.
   @JsonKey(
-    name: 'audio_language_code',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'audio_language_code',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? audioLanguageCode;
 
   /// Profile of the audio stream.
   @JsonKey(
-    name: 'audio_profile',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'audio_profile', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? audioProfile;
 
   /// _Unknown_

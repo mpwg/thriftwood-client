@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliDialogs {
-  Future<(bool, TautulliGlobalSettingsType?)> globalSettings(
-    BuildContext context,
-  ) async {
+  Future<Tuple2<bool, TautulliGlobalSettingsType?>> globalSettings(
+      BuildContext context) async {
     bool _flag = false;
     TautulliGlobalSettingsType? _value;
 
@@ -17,7 +16,7 @@ class TautulliDialogs {
 
     await LunaDialog.dialog(
       context: context,
-      title: 'thriftwood.Settings'.tr(),
+      title: 'lunasea.Settings'.tr(),
       content: List.generate(
         TautulliGlobalSettingsType.values.length,
         (index) => LunaDialog.tile(
@@ -30,7 +29,7 @@ class TautulliDialogs {
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
-    return (_flag, _value);
+    return Tuple2(_flag, _value);
   }
 
   static Future<List<dynamic>> setDefaultPage(
@@ -65,12 +64,11 @@ class TautulliDialogs {
     return [_flag, _index];
   }
 
-  Future<(bool, String)> terminateSession(BuildContext context) async {
+  Future<Tuple2<bool, String>> terminateSession(BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
-      text: TautulliDatabase.TERMINATION_MESSAGE.read(),
-    );
+        text: TautulliDatabase.TERMINATION_MESSAGE.read());
 
     void _setValues(bool flag) {
       if (_formKey.currentState!.validate()) {
@@ -91,8 +89,7 @@ class TautulliDialogs {
       ],
       content: [
         LunaDialog.textContent(
-          text: '${"tautulli.TerminationConfirmMessage".tr()}\n',
-        ),
+            text: '${"tautulli.TerminationConfirmMessage".tr()}\n'),
         LunaDialog.textContent(text: 'tautulli.TerminationAttachMessage'.tr()),
         Form(
           key: _formKey,
@@ -107,15 +104,14 @@ class TautulliDialogs {
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
 
-    return (_flag, _textController.text);
+    return Tuple2(_flag, _textController.text);
   }
 
   static Future<List<dynamic>> setRefreshRate(BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
-      text: TautulliDatabase.REFRESH_RATE.read().toString(),
-    );
+        text: TautulliDatabase.REFRESH_RATE.read().toString());
 
     void _setValues(bool flag) {
       if (_formKey.currentState!.validate()) {
@@ -128,13 +124,15 @@ class TautulliDialogs {
       context: context,
       title: 'Refresh Rate',
       buttons: [
-        LunaDialog.button(text: 'Set', onPressed: () => _setValues(true)),
+        LunaDialog.button(
+          text: 'Set',
+          onPressed: () => _setValues(true),
+        ),
       ],
       content: [
         LunaDialog.textContent(
-          text:
-              'Set the rate at which the activity information will refresh at in seconds.',
-        ),
+            text:
+                'Set the rate at which the activity information will refresh at in seconds.'),
         Form(
           key: _formKey,
           child: LunaDialog.textFormInput(
@@ -157,13 +155,11 @@ class TautulliDialogs {
   }
 
   static Future<List<dynamic>> setStatisticsItemCount(
-    BuildContext context,
-  ) async {
+      BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
-      text: TautulliDatabase.STATISTICS_STATS_COUNT.read().toString(),
-    );
+        text: TautulliDatabase.STATISTICS_STATS_COUNT.read().toString());
 
     void _setValues(bool flag) {
       if (_formKey.currentState!.validate()) {
@@ -176,13 +172,15 @@ class TautulliDialogs {
       context: context,
       title: 'Statistics Item Count',
       buttons: [
-        LunaDialog.button(text: 'Set', onPressed: () => _setValues(true)),
+        LunaDialog.button(
+          text: 'Set',
+          onPressed: () => _setValues(true),
+        ),
       ],
       content: [
         LunaDialog.textContent(
-          text:
-              'Set the amount of items fetched for each category in the statistics.',
-        ),
+            text:
+                'Set the amount of items fetched for each category in the statistics.'),
         Form(
           key: _formKey,
           child: LunaDialog.textFormInput(
@@ -204,14 +202,12 @@ class TautulliDialogs {
     return [_flag, int.tryParse(_textController.text) ?? 3];
   }
 
-  static Future<(bool, String)> setTerminationMessage(
-    BuildContext context,
-  ) async {
+  static Future<Tuple2<bool, String>> setTerminationMessage(
+      BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
-      text: TautulliDatabase.TERMINATION_MESSAGE.read(),
-    );
+        text: TautulliDatabase.TERMINATION_MESSAGE.read());
 
     void _setValues(bool flag) {
       if (_formKey.currentState!.validate()) {
@@ -224,12 +220,14 @@ class TautulliDialogs {
       context: context,
       title: 'Termination Message',
       buttons: [
-        LunaDialog.button(text: 'Set', onPressed: () => _setValues(true)),
+        LunaDialog.button(
+          text: 'Set',
+          onPressed: () => _setValues(true),
+        ),
       ],
       content: [
         LunaDialog.textContent(
-          text: 'Set a default, prefilled message for terminating sessions.',
-        ),
+            text: 'Set a default, prefilled message for terminating sessions.'),
         Form(
           key: _formKey,
           child: LunaDialog.textFormInput(
@@ -243,6 +241,6 @@ class TautulliDialogs {
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
 
-    return (_flag, _textController.text);
+    return Tuple2(_flag, _textController.text);
   }
 }

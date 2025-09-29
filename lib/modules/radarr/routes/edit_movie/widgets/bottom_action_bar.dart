@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
-import 'package:thriftwood/router/router.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
+import 'package:lunasea/router/router.dart';
 
 class RadarrEditMovieActionBar extends StatelessWidget {
-  const RadarrEditMovieActionBar({super.key});
+  const RadarrEditMovieActionBar({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +14,11 @@ class RadarrEditMovieActionBar extends StatelessWidget {
       actions: [
         LunaButton(
           type: LunaButtonType.TEXT,
-          text: 'thriftwood.Update'.tr(),
+          text: 'lunasea.Update'.tr(),
           icon: Icons.edit_rounded,
           loadingState: context.watch<RadarrMoviesEditState>().state,
           onTap: () async => _updateOnTap(context),
-        ),
+        )
       ],
     );
   }

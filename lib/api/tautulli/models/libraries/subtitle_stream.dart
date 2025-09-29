@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'subtitle_stream.g.dart';
 
@@ -20,51 +20,42 @@ class TautulliSubtitleStream {
 
   /// Codec of the subtitle stream.
   @JsonKey(
-    name: 'subtitle_codec',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'subtitle_codec', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? subtitleCodec;
 
   /// Container of the subtitle stream.
   @JsonKey(
-    name: 'subtitle_container',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'subtitle_container',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? subtitleContainer;
 
   /// Format of the subtitle stream.
   @JsonKey(
-    name: 'subtitle_format',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'subtitle_format', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? subtitleFormat;
 
   /// Is the subtitle stream forced?
   @JsonKey(
-    name: 'subtitle_forced',
-    fromJson: TautulliUtilities.ensureBooleanFromJson,
-  )
+      name: 'subtitle_forced',
+      fromJson: TautulliUtilities.ensureBooleanFromJson)
   final bool? subtitleForced;
 
   /// Location of the subtitle stream.
   @JsonKey(
-    name: 'subtitle_location',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'subtitle_location',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? subtitleLocation;
 
   /// Language of the subtitle stream.
   @JsonKey(
-    name: 'subtitle_language',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'subtitle_language',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? subtitleLanguage;
 
   /// Language code of the subtitle stream.
   @JsonKey(
-    name: 'subtitle_language_code',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'subtitle_language_code',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? subtitleLanguageCode;
 
   /// _Unknown_

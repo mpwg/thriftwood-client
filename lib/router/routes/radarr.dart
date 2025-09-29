@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/api/radarr/models/movie/movie.dart';
-import 'package:thriftwood/modules.dart';
-import 'package:thriftwood/modules/radarr/core/state.dart';
-import 'package:thriftwood/modules/radarr/routes/add_movie/route.dart';
-import 'package:thriftwood/modules/radarr/routes/add_movie_details/route.dart';
-import 'package:thriftwood/modules/radarr/routes/edit_movie/route.dart';
-import 'package:thriftwood/modules/radarr/routes/history/route.dart';
-import 'package:thriftwood/modules/radarr/routes/manual_import/route.dart';
-import 'package:thriftwood/modules/radarr/routes/manual_import_details/route.dart';
-import 'package:thriftwood/modules/radarr/routes/movie_details/route.dart';
-import 'package:thriftwood/modules/radarr/routes/queue/route.dart';
-import 'package:thriftwood/modules/radarr/routes/radarr/route.dart';
-import 'package:thriftwood/modules/radarr/routes/releases/route.dart';
-import 'package:thriftwood/modules/radarr/routes/system_status/route.dart';
-import 'package:thriftwood/modules/radarr/routes/tags/route.dart';
-import 'package:thriftwood/router/routes.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/api/radarr/models/movie/movie.dart';
+import 'package:lunasea/modules.dart';
+import 'package:lunasea/modules/radarr/core/state.dart';
+import 'package:lunasea/modules/radarr/routes/add_movie/route.dart';
+import 'package:lunasea/modules/radarr/routes/add_movie_details/route.dart';
+import 'package:lunasea/modules/radarr/routes/edit_movie/route.dart';
+import 'package:lunasea/modules/radarr/routes/history/route.dart';
+import 'package:lunasea/modules/radarr/routes/manual_import/route.dart';
+import 'package:lunasea/modules/radarr/routes/manual_import_details/route.dart';
+import 'package:lunasea/modules/radarr/routes/movie_details/route.dart';
+import 'package:lunasea/modules/radarr/routes/queue/route.dart';
+import 'package:lunasea/modules/radarr/routes/radarr/route.dart';
+import 'package:lunasea/modules/radarr/routes/releases/route.dart';
+import 'package:lunasea/modules/radarr/routes/system_status/route.dart';
+import 'package:lunasea/modules/radarr/routes/tags/route.dart';
+import 'package:lunasea/router/routes.dart';
+import 'package:lunasea/vendor.dart';
 
 enum RadarrRoutes with LunaRoutesMixin {
   HOME('/radarr'),
@@ -50,59 +50,47 @@ enum RadarrRoutes with LunaRoutesMixin {
       case RadarrRoutes.HOME:
         return route(widget: const RadarrRoute());
       case RadarrRoutes.ADD_MOVIE:
-        return route(
-          builder: (_, state) {
-            final query = state.uri.queryParameters['query'] ?? '';
-            return AddMovieRoute(query: query);
-          },
-        );
+        return route(builder: (_, state) {
+          final query = state.uri.queryParameters['query'] ?? '';
+          return AddMovieRoute(query: query);
+        });
       case RadarrRoutes.ADD_MOVIE_DETAILS:
-        return route(
-          builder: (_, state) {
-            final movie = state.extra as RadarrMovie?;
-            final isDiscovery =
-                state.uri.queryParameters['isDiscovery'] ?? 'false';
-            return AddMovieDetailsRoute(
-              movie: movie,
-              isDiscovery: isDiscovery.toLowerCase() == 'true',
-            );
-          },
-        );
+        return route(builder: (_, state) {
+          final movie = state.extra as RadarrMovie?;
+          final isDiscovery =
+              state.uri.queryParameters['isDiscovery'] ?? 'false';
+          return AddMovieDetailsRoute(
+            movie: movie,
+            isDiscovery: isDiscovery.toLowerCase() == 'true',
+          );
+        });
       case RadarrRoutes.HISTORY:
         return route(widget: const HistoryRoute());
       case RadarrRoutes.MANUAL_IMPORT:
         return route(widget: const ManualImportRoute());
       case RadarrRoutes.MANUAL_IMPORT_DETAILS:
-        return route(
-          builder: (_, state) {
-            final path = state.uri.queryParameters['path'];
-            return ManualImportDetailsRoute(path: path);
-          },
-        );
+        return route(builder: (_, state) {
+          final path = state.uri.queryParameters['path'];
+          return ManualImportDetailsRoute(path: path);
+        });
       case RadarrRoutes.MOVIE:
-        return route(
-          builder: (_, state) {
-            final movieId =
-                int.tryParse(state.pathParameters['movie'] ?? '-1') ?? -1;
-            return MovieDetailsRoute(movieId: movieId);
-          },
-        );
+        return route(builder: (_, state) {
+          final movieId =
+              int.tryParse(state.pathParameters['movie'] ?? '-1') ?? -1;
+          return MovieDetailsRoute(movieId: movieId);
+        });
       case RadarrRoutes.MOVIE_EDIT:
-        return route(
-          builder: (_, state) {
-            final movieId =
-                int.tryParse(state.pathParameters['movie'] ?? '-1') ?? -1;
-            return MovieEditRoute(movieId: movieId);
-          },
-        );
+        return route(builder: (_, state) {
+          final movieId =
+              int.tryParse(state.pathParameters['movie'] ?? '-1') ?? -1;
+          return MovieEditRoute(movieId: movieId);
+        });
       case RadarrRoutes.MOVIE_RELEASES:
-        return route(
-          builder: (_, state) {
-            final movieId =
-                int.tryParse(state.pathParameters['movie'] ?? '-1') ?? -1;
-            return MovieReleasesRoute(movieId: movieId);
-          },
-        );
+        return route(builder: (_, state) {
+          final movieId =
+              int.tryParse(state.pathParameters['movie'] ?? '-1') ?? -1;
+          return MovieReleasesRoute(movieId: movieId);
+        });
       case RadarrRoutes.QUEUE:
         return route(widget: const QueueRoute());
       case RadarrRoutes.SYSTEM_STATUS:
@@ -126,9 +114,13 @@ enum RadarrRoutes with LunaRoutesMixin {
           RadarrRoutes.TAGS.routes,
         ];
       case RadarrRoutes.ADD_MOVIE:
-        return [RadarrRoutes.ADD_MOVIE_DETAILS.routes];
+        return [
+          RadarrRoutes.ADD_MOVIE_DETAILS.routes,
+        ];
       case RadarrRoutes.MANUAL_IMPORT:
-        return [RadarrRoutes.MANUAL_IMPORT_DETAILS.routes];
+        return [
+          RadarrRoutes.MANUAL_IMPORT_DETAILS.routes,
+        ];
       case RadarrRoutes.MOVIE:
         return [
           RadarrRoutes.MOVIE_EDIT.routes,

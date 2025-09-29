@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:thriftwood/api/radarr/types.dart';
-import 'package:thriftwood/api/radarr/utilities.dart';
+import 'package:lunasea/api/radarr/types.dart';
+import 'package:lunasea/api/radarr/utilities.dart';
 
 part 'directory.g.dart';
 
@@ -9,10 +9,9 @@ part 'directory.g.dart';
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class RadarrFileSystemDirectory {
   @JsonKey(
-    name: 'type',
-    fromJson: RadarrUtilities.fileSystemTypeFromJson,
-    toJson: RadarrUtilities.fileSystemTypeToJson,
-  )
+      name: 'type',
+      fromJson: RadarrUtilities.fileSystemTypeFromJson,
+      toJson: RadarrUtilities.fileSystemTypeToJson)
   RadarrFileSystemType? type;
 
   @JsonKey(name: 'name')
@@ -25,10 +24,9 @@ class RadarrFileSystemDirectory {
   int? size;
 
   @JsonKey(
-    name: 'lastModified',
-    fromJson: RadarrUtilities.dateTimeFromJson,
-    toJson: RadarrUtilities.dateTimeToJson,
-  )
+      name: 'lastModified',
+      fromJson: RadarrUtilities.dateTimeFromJson,
+      toJson: RadarrUtilities.dateTimeToJson)
   DateTime? lastModified;
 
   RadarrFileSystemDirectory({

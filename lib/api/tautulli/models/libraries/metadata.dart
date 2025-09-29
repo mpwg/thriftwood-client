@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'metadata.g.dart';
 
@@ -13,78 +13,60 @@ class TautulliMetadata {
   final TautulliMediaType? mediaType;
 
   @JsonKey(
-    name: 'section_id',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'section_id', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? sectionId;
 
   @JsonKey(
-    name: 'library_name',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'library_name', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? libraryName;
 
   @JsonKey(
-    name: 'rating_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'rating_key', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? ratingKey;
 
   @JsonKey(
-    name: 'parent_rating_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'parent_rating_key',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? parentRatingKey;
 
   @JsonKey(
-    name: 'grandparent_rating_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'grandparent_rating_key',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? grandparentRatingKey;
 
   @JsonKey(name: 'title', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? title;
 
   @JsonKey(
-    name: 'parent_title',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'parent_title', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? parentTitle;
 
   @JsonKey(
-    name: 'grandparent_title',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'grandparent_title',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? grandparentTitle;
 
   @JsonKey(
-    name: 'original_title',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'original_title', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? originalTitle;
 
   @JsonKey(name: 'sort_title', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? sortTitle;
 
   @JsonKey(
-    name: 'media_index',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'media_index', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? mediaIndex;
 
   @JsonKey(
-    name: 'parent_media_index',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'parent_media_index',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? parentMediaIndex;
 
   @JsonKey(name: 'studio', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? studio;
 
   @JsonKey(
-    name: 'content_rating',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'content_rating', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? contentRating;
 
   @JsonKey(name: 'summary', fromJson: TautulliUtilities.ensureStringFromJson)
@@ -97,33 +79,25 @@ class TautulliMetadata {
   final double? rating;
 
   @JsonKey(
-    name: 'rating_image',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'rating_image', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? ratingImage;
 
   @JsonKey(
-    name: 'audience_rating',
-    fromJson: TautulliUtilities.ensureDoubleFromJson,
-  )
+      name: 'audience_rating', fromJson: TautulliUtilities.ensureDoubleFromJson)
   final double? audienceRating;
 
   @JsonKey(
-    name: 'audience_rating_image',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'audience_rating_image',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? audienceRatingImage;
 
   @JsonKey(
-    name: 'user_rating',
-    fromJson: TautulliUtilities.ensureDoubleFromJson,
-  )
+      name: 'user_rating', fromJson: TautulliUtilities.ensureDoubleFromJson)
   final double? userRating;
 
   @JsonKey(
-    name: 'duration',
-    fromJson: TautulliUtilities.millisecondsDurationFromJson,
-  )
+      name: 'duration',
+      fromJson: TautulliUtilities.millisecondsDurationFromJson)
   final Duration? duration;
 
   @JsonKey(name: 'year', fromJson: TautulliUtilities.ensureIntegerFromJson)
@@ -133,15 +107,12 @@ class TautulliMetadata {
   final String? thumb;
 
   @JsonKey(
-    name: 'parent_thumb',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'parent_thumb', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? parentThumb;
 
   @JsonKey(
-    name: 'grandparent_thumb',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'grandparent_thumb',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? grandparentThumb;
 
   @JsonKey(name: 'art', fromJson: TautulliUtilities.ensureStringFromJson)
@@ -151,54 +122,43 @@ class TautulliMetadata {
   final String? banner;
 
   @JsonKey(
-    name: 'originally_available_at',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'originally_available_at',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? originallyAvailableAt;
 
   @JsonKey(
-    name: 'added_at',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'added_at',
+      fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? addedAt;
 
   @JsonKey(
-    name: 'updated_at',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'updated_at',
+      fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? updatedAt;
 
   @JsonKey(
-    name: 'last_viewed_at',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'last_viewed_at',
+      fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? lastViewedAt;
 
   @JsonKey(name: 'guid', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? guid;
 
   @JsonKey(
-    name: 'parent_guid',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'parent_guid', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? parentGuid;
 
   @JsonKey(
-    name: 'grandparent_guid',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'grandparent_guid',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? grandparentGuid;
 
   @JsonKey(
-    name: 'directors',
-    fromJson: TautulliUtilities.ensureStringListFromJson,
-  )
+      name: 'directors', fromJson: TautulliUtilities.ensureStringListFromJson)
   final List<String?>? directors;
 
   @JsonKey(
-    name: 'writers',
-    fromJson: TautulliUtilities.ensureStringListFromJson,
-  )
+      name: 'writers', fromJson: TautulliUtilities.ensureStringListFromJson)
   final List<String?>? writers;
 
   @JsonKey(name: 'actors', fromJson: TautulliUtilities.ensureStringListFromJson)
@@ -211,28 +171,23 @@ class TautulliMetadata {
   final List<String?>? labels;
 
   @JsonKey(
-    name: 'collections',
-    fromJson: TautulliUtilities.ensureStringListFromJson,
-  )
+      name: 'collections', fromJson: TautulliUtilities.ensureStringListFromJson)
   final List<String?>? collections;
 
   @JsonKey(name: 'full_title', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? fullTitle;
 
   @JsonKey(
-    name: 'children_count',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'children_count', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? childrenCount;
 
   @JsonKey(name: 'live', fromJson: TautulliUtilities.ensureBooleanFromJson)
   final bool? live;
 
   @JsonKey(
-    name: 'media_info',
-    toJson: _mediaInfoToJson,
-    fromJson: _mediaInfoFromJson,
-  )
+      name: 'media_info',
+      toJson: _mediaInfoToJson,
+      fromJson: _mediaInfoFromJson)
   final List<TautulliMediaInfo>? mediaInfo;
 
   TautulliMetadata({
@@ -294,12 +249,10 @@ class TautulliMetadata {
 
   static List<TautulliMediaInfo> _mediaInfoFromJson(List<dynamic> mediaInfo) =>
       mediaInfo
-          .map(
-            (info) =>
-                TautulliMediaInfo.fromJson((info as Map<String, dynamic>)),
-          )
+          .map((info) =>
+              TautulliMediaInfo.fromJson((info as Map<String, dynamic>)))
           .toList();
   static List<Map<String, dynamic>>? _mediaInfoToJson(
-    List<TautulliMediaInfo>? mediaInfo,
-  ) => mediaInfo?.map((info) => info.toJson()).toList();
+          List<TautulliMediaInfo>? mediaInfo) =>
+      mediaInfo?.map((info) => info.toJson()).toList();
 }

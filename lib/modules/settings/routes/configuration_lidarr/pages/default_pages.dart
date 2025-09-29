@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class ConfigurationLidarrDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationLidarrDefaultPagesRoute({super.key});
+  const ConfigurationLidarrDefaultPagesRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationLidarrDefaultPagesRoute> createState() => _State();
@@ -30,16 +32,23 @@ class _State extends State<ConfigurationLidarrDefaultPagesRoute>
   }
 
   Widget _body() {
-    return LunaListView(controller: scrollController, children: [_homePage()]);
+    return LunaListView(
+      controller: scrollController,
+      children: [
+        _homePage(),
+      ],
+    );
   }
 
   Widget _homePage() {
     const _db = LidarrDatabase.NAVIGATION_INDEX;
     return _db.listenableBuilder(
       builder: (context, _) => LunaBlock(
-        title: 'thriftwood.Home'.tr(),
+        title: 'lunasea.Home'.tr(),
         body: [TextSpan(text: LidarrNavigationBar.titles[_db.read()])],
-        trailing: LunaIconButton(icon: LidarrNavigationBar.icons[_db.read()]),
+        trailing: LunaIconButton(
+          icon: LidarrNavigationBar.icons[_db.read()],
+        ),
         onTap: () async {
           List values = await LidarrDialogs.defaultPage(context);
           if (values[0]) _db.update(values[1]);

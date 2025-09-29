@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class LidarrCatalogueHideButton extends StatefulWidget {
   final ScrollController controller;
 
-  const LidarrCatalogueHideButton({super.key, required this.controller});
+  const LidarrCatalogueHideButton({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<LidarrCatalogueHideButton> createState() => _State();

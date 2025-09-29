@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class QueueRoute extends StatefulWidget {
-  const QueueRoute({super.key});
+  const QueueRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -26,7 +28,10 @@ class _State extends State<QueueRoute> with LunaScrollControllerMixin {
   }
 
   Future<void> _onRefresh(BuildContext context) async {
-    await context.read<SonarrQueueState>().fetchQueue(context, hardCheck: true);
+    await context.read<SonarrQueueState>().fetchQueue(
+          context,
+          hardCheck: true,
+        );
     await context.read<SonarrQueueState>().queue;
   }
 
@@ -53,7 +58,9 @@ class _State extends State<QueueRoute> with LunaScrollControllerMixin {
                 snapshot.stackTrace,
               );
             }
-            return LunaMessage.error(onTap: _refreshKey.currentState!.show);
+            return LunaMessage.error(
+              onTap: _refreshKey.currentState!.show,
+            );
           }
           if (snapshot.hasData) {
             return _list(snapshot.data!);
@@ -68,7 +75,7 @@ class _State extends State<QueueRoute> with LunaScrollControllerMixin {
     if (queue.records!.isEmpty) {
       return LunaMessage(
         text: 'sonarr.EmptyQueue'.tr(),
-        buttonText: 'thriftwood.Refresh'.tr(),
+        buttonText: 'lunasea.Refresh'.tr(),
         onTap: _refreshKey.currentState!.show,
       );
     }

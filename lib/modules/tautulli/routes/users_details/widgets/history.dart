@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliUserDetailsHistory extends StatefulWidget {
   final TautulliTableUser user;
 
-  const TautulliUserDetailsHistory({super.key, required this.user});
+  const TautulliUserDetailsHistory({
+    Key? key,
+    required this.user,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -75,8 +78,9 @@ class _State extends State<TautulliUserDetailsHistory>
     return LunaListViewBuilder(
       controller: TautulliUserDetailsNavigationBar.scrollControllers[1],
       itemCount: history!.records!.length,
-      itemBuilder: (context, index) =>
-          TautulliHistoryTile(history: history.records![index]),
+      itemBuilder: (context, index) => TautulliHistoryTile(
+        history: history.records![index],
+      ),
     );
   }
 }

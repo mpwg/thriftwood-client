@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/search.dart';
-import 'package:thriftwood/router/routes/search.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/search.dart';
+import 'package:lunasea/router/routes/search.dart';
 
 class SearchSubcategoryTile extends StatelessWidget {
   final int index;
 
-  const SearchSubcategoryTile({super.key, required this.index});
+  const SearchSubcategoryTile({
+    Key? key,
+    required this.index,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,14 +18,14 @@ class SearchSubcategoryTile extends StatelessWidget {
       builder: (context, category, _) {
         NewznabSubcategoryData subcategory = category!.subcategories[index];
         return LunaBlock(
-          title: subcategory.name ?? 'thriftwood.Unknown'.tr(),
+          title: subcategory.name ?? 'lunasea.Unknown'.tr(),
           body: [
             TextSpan(
               text: [
-                category.name ?? 'thriftwood.Unknown'.tr(),
-                subcategory.name ?? 'thriftwood.Unknown'.tr(),
+                category.name ?? 'lunasea.Unknown'.tr(),
+                subcategory.name ?? 'lunasea.Unknown'.tr(),
               ].join(' > '),
-            ),
+            )
           ],
           trailing: LunaIconButton(
             icon: category.icon,

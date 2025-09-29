@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/utils/transparent_image.dart';
+import 'package:lunasea/core.dart';
 
 class LunaGridBlock extends StatelessWidget {
   static const MAX_CROSS_AXIS_EXTENT = 180.0;
@@ -33,7 +32,7 @@ class LunaGridBlock extends StatelessWidget {
   final Function? onLongPress;
 
   const LunaGridBlock({
-    super.key,
+    Key? key,
     this.disabled = false,
     required this.title,
     required this.subtitle,
@@ -47,7 +46,7 @@ class LunaGridBlock extends StatelessWidget {
     this.posterIsSquare = false,
     this.onTap,
     this.onLongPress,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +87,7 @@ class LunaGridBlock extends StatelessWidget {
   Widget _fadeInBackground(BuildContext context) {
     if (backgroundUrl == null) return const SizedBox();
 
-    final _percent = thriftwoodDatabase.THEME_IMAGE_BACKGROUND_OPACITY.read();
+    final _percent = LunaSeaDatabase.THEME_IMAGE_BACKGROUND_OPACITY.read();
     if (_percent == 0) return const SizedBox(height: 0, width: 0);
 
     double _opacity = _percent / 100;
@@ -97,7 +96,7 @@ class LunaGridBlock extends StatelessWidget {
     return Opacity(
       opacity: _opacity,
       child: FadeInImage(
-        placeholder: MemoryImage(transparentImageBytes),
+        placeholder: MemoryImage(kTransparentImage),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         fadeInDuration: const Duration(

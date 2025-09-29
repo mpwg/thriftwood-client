@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliMediaDetailsHistory extends StatefulWidget {
   final TautulliMediaType? type;
@@ -10,8 +10,8 @@ class TautulliMediaDetailsHistory extends StatefulWidget {
   const TautulliMediaDetailsHistory({
     required this.type,
     required this.ratingKey,
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -83,7 +83,10 @@ class _State extends State<TautulliMediaDetailsHistory>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LunaScaffold(scaffoldKey: _scaffoldKey, body: _body());
+    return LunaScaffold(
+      scaffoldKey: _scaffoldKey,
+      body: _body(),
+    );
   }
 
   Widget _body() {

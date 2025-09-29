@@ -1,6 +1,6 @@
-import 'package:thriftwood/api/nzbget/models/status.dart';
-import 'package:thriftwood/api/nzbget/models/version.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/api/nzbget/models/status.dart';
+import 'package:lunasea/api/nzbget/models/version.dart';
+import 'package:lunasea/vendor.dart';
 
 part 'api.g.dart';
 
@@ -14,20 +14,18 @@ String _baseUrl(String host, String user, String password) {
 }
 
 void _attachInterceptor(Dio dio) {
-  dio.interceptors.add(
-    InterceptorsWrapper(
-      onRequest: (options, handler) {
-        options.data = json.encode({
-          'jsonrpc': '2.0',
-          'method': options.queryParameters['method'],
-          'params': options.queryParameters['params'] ?? [],
-          'id': 1,
-        });
-        options.queryParameters = const {};
-        return handler.next(options);
-      },
-    ),
-  );
+  dio.interceptors.add(InterceptorsWrapper(
+    onRequest: (options, handler) {
+      options.data = json.encode({
+        'jsonrpc': '2.0',
+        'method': options.queryParameters['method'],
+        'params': options.queryParameters['params'] ?? [],
+        'id': 1,
+      });
+      options.queryParameters = const {};
+      return handler.next(options);
+    },
+  ));
 }
 
 void _setResponseTransformer(Dio dio) {
@@ -47,15 +45,13 @@ abstract class NZBGetAPI {
     required String password,
     Map<String, dynamic> headers = const {},
   }) {
-    Dio dio = Dio(
-      BaseOptions(
-        headers: headers,
-        followRedirects: true,
-        maxRedirects: 5,
-        contentType: Headers.jsonContentType,
-        responseType: ResponseType.json,
-      ),
-    );
+    Dio dio = Dio(BaseOptions(
+      headers: headers,
+      followRedirects: true,
+      maxRedirects: 5,
+      contentType: Headers.jsonContentType,
+      responseType: ResponseType.json,
+    ));
     _attachInterceptor(dio);
     _setResponseTransformer(dio);
     return _NZBGetAPI(dio, baseUrl: _baseUrl(host, username, password));
@@ -67,5 +63,7 @@ abstract class NZBGetAPI {
   });
 
   @POST('')
-  Future<NZBGetStatus> getStatus({@Query('method') String method = 'status'});
+  Future<NZBGetStatus> getStatus({
+    @Query('method') String method = 'status',
+  });
 }

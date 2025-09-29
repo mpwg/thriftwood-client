@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrMovieDetailsOverviewInformationBlock extends StatelessWidget {
   final RadarrMovie? movie;
@@ -8,11 +8,11 @@ class RadarrMovieDetailsOverviewInformationBlock extends StatelessWidget {
   final List<RadarrTag> tags;
 
   const RadarrMovieDetailsOverviewInformationBlock({
-    super.key,
+    Key? key,
     required this.movie,
     required this.qualityProfile,
     required this.tags,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +48,7 @@ class RadarrMovieDetailsOverviewInformationBlock extends StatelessWidget {
         LunaTableContent(title: 'rating', body: movie?.certification),
         LunaTableContent(title: 'genres', body: movie?.lunaGenres),
         LunaTableContent(
-          title: 'alternate titles',
-          body: movie?.lunaAlternateTitles,
-        ),
+            title: 'alternate titles', body: movie?.lunaAlternateTitles),
       ],
     );
   }

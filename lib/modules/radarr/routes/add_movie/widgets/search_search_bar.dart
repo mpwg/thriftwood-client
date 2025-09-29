@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrAddMovieSearchSearchBar extends StatefulWidget
     implements PreferredSizeWidget {
@@ -9,11 +9,11 @@ class RadarrAddMovieSearchSearchBar extends StatefulWidget
   final ScrollController scrollController;
 
   const RadarrAddMovieSearchSearchBar({
-    super.key,
+    Key? key,
     required this.query,
     required this.autofocus,
     required this.scrollController,
-  });
+  }) : super(key: key);
 
   @override
   Size get preferredSize =>

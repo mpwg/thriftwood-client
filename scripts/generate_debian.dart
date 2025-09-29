@@ -15,7 +15,7 @@ void _setVersion(String version) {
 void _copyBuild() {
   const path = 'debian/usr/share';
 
-  final directory = Directory('$path/thriftwood');
+  final directory = Directory('$path/lunasea');
   if (directory.existsSync()) directory.deleteSync(recursive: true);
 
   Process.runSync('cp', [
@@ -25,7 +25,7 @@ void _copyBuild() {
   ]);
   Process.runSync('mv', [
     '$path/bundle',
-    '$path/thriftwood',
+    '$path/lunasea',
   ]);
 }
 
@@ -62,6 +62,6 @@ void _buildDebian() {
   ]);
   Process.runSync('mv', [
     'debian.deb',
-    'output/thriftwood-linux-amd64.deb',
+    'output/lunasea-linux-amd64.deb',
   ]);
 }

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
-import 'package:thriftwood/router/router.dart';
-import 'package:thriftwood/router/routes/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
+import 'package:lunasea/router/router.dart';
+import 'package:lunasea/router/routes/radarr.dart';
 
-enum RadarrMovieSettingsType { EDIT, REFRESH, DELETE, MONITORED }
+enum RadarrMovieSettingsType {
+  EDIT,
+  REFRESH,
+  DELETE,
+  MONITORED,
+}
 
 extension RadarrMovieSettingsTypeExtension on RadarrMovieSettingsType {
   IconData icon(RadarrMovie movie) {
@@ -51,7 +56,9 @@ extension RadarrMovieSettingsTypeExtension on RadarrMovieSettingsType {
   }
 
   Future<void> _edit(BuildContext context, RadarrMovie movie) async {
-    RadarrRoutes.MOVIE_EDIT.go(params: {'movie': movie.id!.toString()});
+    RadarrRoutes.MOVIE_EDIT.go(params: {
+      'movie': movie.id!.toString(),
+    });
   }
 
   Future<void> _monitored(BuildContext context, RadarrMovie movie) =>

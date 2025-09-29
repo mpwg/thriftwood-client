@@ -1,6 +1,6 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/database/models/indexer.dart';
-import 'package:thriftwood/modules/search.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/database/models/indexer.dart';
+import 'package:lunasea/modules/search.dart';
 
 class SearchState extends LunaModuleState {
   @override

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrMoviesEditQualityProfileTile extends StatelessWidget {
   final List<RadarrQualityProfile?>? profiles;
 
-  const RadarrMoviesEditQualityProfileTile({super.key, required this.profiles});
+  const RadarrMoviesEditQualityProfileTile({
+    Key? key,
+    required this.profiles,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +19,11 @@ class RadarrMoviesEditQualityProfileTile extends StatelessWidget {
         body: [TextSpan(text: profile.name ?? LunaUI.TEXT_EMDASH)],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, RadarrQualityProfile?) values =
+          Tuple2<bool, RadarrQualityProfile?> values =
               await RadarrDialogs().editQualityProfile(context, profiles!);
-          if (values.$1)
-            context.read<RadarrMoviesEditState>().qualityProfile = values.$2!;
+          if (values.item1)
+            context.read<RadarrMoviesEditState>().qualityProfile =
+                values.item2!;
         },
       ),
     );

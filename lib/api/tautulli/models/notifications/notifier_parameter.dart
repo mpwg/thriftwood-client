@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'notifier_parameter.g.dart';
 
@@ -18,7 +18,11 @@ class TautulliNotifierParameter {
   @JsonKey(name: 'value', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? value;
 
-  TautulliNotifierParameter({this.name, this.type, this.value});
+  TautulliNotifierParameter({
+    this.name,
+    this.type,
+    this.value,
+  });
 
   /// Returns a JSON-encoded string version of this object.
   @override

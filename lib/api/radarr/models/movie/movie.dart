@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 part 'movie.g.dart';
 
@@ -26,34 +26,30 @@ class RadarrMovie {
   int? sizeOnDisk;
 
   @JsonKey(
-    name: 'status',
-    toJson: RadarrUtilities.availabilityToJson,
-    fromJson: RadarrUtilities.availabilityFromJson,
-  )
+      name: 'status',
+      toJson: RadarrUtilities.availabilityToJson,
+      fromJson: RadarrUtilities.availabilityFromJson)
   RadarrAvailability? status;
 
   @JsonKey(name: 'overview')
   String? overview;
 
   @JsonKey(
-    name: 'inCinemas',
-    toJson: RadarrUtilities.dateTimeToJson,
-    fromJson: RadarrUtilities.dateTimeFromJson,
-  )
+      name: 'inCinemas',
+      toJson: RadarrUtilities.dateTimeToJson,
+      fromJson: RadarrUtilities.dateTimeFromJson)
   DateTime? inCinemas;
 
   @JsonKey(
-    name: 'physicalRelease',
-    toJson: RadarrUtilities.dateTimeToJson,
-    fromJson: RadarrUtilities.dateTimeFromJson,
-  )
+      name: 'physicalRelease',
+      toJson: RadarrUtilities.dateTimeToJson,
+      fromJson: RadarrUtilities.dateTimeFromJson)
   DateTime? physicalRelease;
 
   @JsonKey(
-    name: 'digitalRelease',
-    toJson: RadarrUtilities.dateTimeToJson,
-    fromJson: RadarrUtilities.dateTimeFromJson,
-  )
+      name: 'digitalRelease',
+      toJson: RadarrUtilities.dateTimeToJson,
+      fromJson: RadarrUtilities.dateTimeFromJson)
   DateTime? digitalRelease;
 
   @JsonKey(name: 'images')
@@ -87,10 +83,9 @@ class RadarrMovie {
   bool? monitored;
 
   @JsonKey(
-    name: 'minimumAvailability',
-    toJson: RadarrUtilities.availabilityToJson,
-    fromJson: RadarrUtilities.availabilityFromJson,
-  )
+      name: 'minimumAvailability',
+      toJson: RadarrUtilities.availabilityToJson,
+      fromJson: RadarrUtilities.availabilityFromJson)
   RadarrAvailability? minimumAvailability;
 
   @JsonKey(name: 'isAvailable')
@@ -124,10 +119,9 @@ class RadarrMovie {
   List<int?>? tags;
 
   @JsonKey(
-    name: 'added',
-    toJson: RadarrUtilities.dateTimeToJson,
-    fromJson: RadarrUtilities.dateTimeFromJson,
-  )
+      name: 'added',
+      toJson: RadarrUtilities.dateTimeToJson,
+      fromJson: RadarrUtilities.dateTimeFromJson)
   DateTime? added;
 
   @JsonKey(name: 'ratings')

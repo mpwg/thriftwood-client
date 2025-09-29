@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 part 'added_release.g.dart';
 
@@ -65,10 +65,9 @@ class SonarrAddedRelease {
 
   /// [DateTime] object for when the release was published
   @JsonKey(
-    name: 'publishDate',
-    fromJson: SonarrUtilities.dateTimeFromJson,
-    toJson: SonarrUtilities.dateTimeToJson,
-  )
+      name: 'publishDate',
+      fromJson: SonarrUtilities.dateTimeFromJson,
+      toJson: SonarrUtilities.dateTimeToJson)
   DateTime? publishDate;
 
   /// Is the download allowed?

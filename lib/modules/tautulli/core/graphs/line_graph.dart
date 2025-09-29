@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:fl_chart/fl_chart.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/duration/timestamp.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/duration/timestamp.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliLineGraphHelper {
   TautulliLineGraphHelper._();
@@ -48,10 +48,8 @@ class TautulliLineGraphHelper {
         color: LunaColours().byGraphLayer(sIndex),
         spots: List<FlSpot>.generate(
           data.series![sIndex].data!.length,
-          (dIndex) => FlSpot(
-            dIndex.toDouble(),
-            data.series![sIndex].data![dIndex]!.toDouble(),
-          ),
+          (dIndex) => FlSpot(dIndex.toDouble(),
+              data.series![sIndex].data![dIndex]!.toDouble()),
         ),
         belowBarData: BarAreaData(
           show: true,
@@ -61,17 +59,13 @@ class TautulliLineGraphHelper {
         ),
         dotData: FlDotData(
           show: true,
-          getDotPainter:
-              (
-                FlSpot spot,
-                double xPercentage,
-                LineChartBarData bar,
-                int index,
-              ) => FlDotCirclePainter(
-                radius: 2.50,
-                strokeColor: bar.color!,
-                color: bar.color!,
-              ),
+          getDotPainter: (FlSpot spot, double xPercentage, LineChartBarData bar,
+                  int index) =>
+              FlDotCirclePainter(
+            radius: 2.50,
+            strokeColor: bar.color!,
+            color: bar.color!,
+          ),
         ),
       ),
     );
@@ -86,54 +80,54 @@ class TautulliLineGraphHelper {
       touchTooltipData: LineTouchTooltipData(
         getTooltipColor: (_) =>
             LunaTheme.isAMOLEDTheme ? Colors.black : LunaColours.primary,
+        tooltipRoundedRadius: LunaUI.BORDER_RADIUS,
         tooltipPadding: const EdgeInsets.all(8.0),
         maxContentWidth: MediaQuery.of(context).size.width / 1.25,
         fitInsideVertically: true,
         fitInsideHorizontally: true,
         getTooltipItems: (List<LineBarSpot> spots) {
-          return List<LineTooltipItem>.generate(spots.length, (index) {
-            String? name = data.series![index].name;
-            int? value = data.series![index].data![spots[index].spotIndex];
-            return LineTooltipItem(
-              [
-                '$name: ',
-                context.read<TautulliState>().graphYAxis ==
-                        TautulliGraphYAxis.PLAYS
-                    ? '${value ?? 0}'
-                    : Duration(seconds: value ?? 0).asWordsTimestamp(),
-              ].join().trim(),
-              const TextStyle(
-                color: LunaColours.grey,
-                fontSize: LunaUI.FONT_SIZE_SUBHEADER,
-              ),
-            );
-          });
+          return List<LineTooltipItem>.generate(
+            spots.length,
+            (index) {
+              String? name = data.series![index].name;
+              int? value = data.series![index].data![spots[index].spotIndex];
+              return LineTooltipItem(
+                [
+                  '$name: ',
+                  context.read<TautulliState>().graphYAxis ==
+                          TautulliGraphYAxis.PLAYS
+                      ? '${value ?? 0}'
+                      : Duration(seconds: value ?? 0).asWordsTimestamp(),
+                ].join().trim(),
+                const TextStyle(
+                  color: LunaColours.grey,
+                  fontSize: LunaUI.FONT_SIZE_SUBHEADER,
+                ),
+              );
+            },
+          );
         },
       ),
       getTouchedSpotIndicator: (bar, data) =>
           List<TouchedSpotIndicatorData>.generate(
-            data.length,
-            (index) => TouchedSpotIndicatorData(
-              FlLine(
-                strokeWidth: 3.0,
-                color: bar.color!.withOpacity(LunaUI.OPACITY_DISABLED),
-              ),
-              FlDotData(
-                show: true,
-                getDotPainter:
-                    (
-                      FlSpot spot,
-                      double xPercentage,
-                      LineChartBarData bar,
-                      int index,
-                    ) => FlDotCirclePainter(
-                      radius: 5.0,
-                      strokeColor: bar.color!,
-                      color: bar.color!,
-                    ),
-              ),
+        data.length,
+        (index) => TouchedSpotIndicatorData(
+          FlLine(
+            strokeWidth: 3.0,
+            color: bar.color!.withOpacity(LunaUI.OPACITY_DISABLED),
+          ),
+          FlDotData(
+            show: true,
+            getDotPainter: (FlSpot spot, double xPercentage,
+                    LineChartBarData bar, int index) =>
+                FlDotCirclePainter(
+              radius: 5.0,
+              strokeColor: bar.color!,
+              color: bar.color!,
             ),
           ),
+        ),
+      ),
     );
   }
 }

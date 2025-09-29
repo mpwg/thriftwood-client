@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrMovieDetailsCastCrewPage extends StatefulWidget {
   final RadarrMovie? movie;
 
-  const RadarrMovieDetailsCastCrewPage({super.key, required this.movie});
+  const RadarrMovieDetailsCastCrewPage({
+    Key? key,
+    required this.movie,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -41,10 +44,9 @@ class _State extends State<RadarrMovieDetailsCastCrewPage>
         builder: (context, AsyncSnapshot<List<RadarrMovieCredits>> snapshot) {
           if (snapshot.hasError) {
             LunaLogger().error(
-              'Unable to fetch Radarr credit/crew list: ${widget.movie!.id}',
-              snapshot.error,
-              snapshot.stackTrace,
-            );
+                'Unable to fetch Radarr credit/crew list: ${widget.movie!.id}',
+                snapshot.error,
+                snapshot.stackTrace);
             return LunaMessage.error(onTap: _refreshKey.currentState!.show);
           }
           if (snapshot.hasData) return _list(snapshot.data);
@@ -70,14 +72,10 @@ class _State extends State<RadarrMovieDetailsCastCrewPage>
     return LunaListView(
       controller: RadarrMovieDetailsNavigationBar.scrollControllers[3],
       children: [
-        ...List.generate(
-          _cast.length,
-          (index) => RadarrMovieDetailsCastCrewTile(credits: _cast[index]),
-        ),
-        ...List.generate(
-          _crew.length,
-          (index) => RadarrMovieDetailsCastCrewTile(credits: _crew[index]),
-        ),
+        ...List.generate(_cast.length,
+            (index) => RadarrMovieDetailsCastCrewTile(credits: _cast[index])),
+        ...List.generate(_crew.length,
+            (index) => RadarrMovieDetailsCastCrewTile(credits: _crew[index])),
       ],
     );
   }

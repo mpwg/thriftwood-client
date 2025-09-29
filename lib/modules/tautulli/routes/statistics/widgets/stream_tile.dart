@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class TautulliStatisticsStreamTile extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const TautulliStatisticsStreamTile({super.key, required this.data});
+  const TautulliStatisticsStreamTile({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -33,17 +36,13 @@ class _State extends State<TautulliStatisticsStreamTile> {
       ),
       int.tryParse(widget.data['started']) != null
           ? TextSpan(
-              text: thriftwoodDatabase.USE_24_HOUR_TIME.read()
+              text: LunaSeaDatabase.USE_24_HOUR_TIME.read()
                   ? DateFormat('yyyy-MM-dd HH:mm').format(
                       DateTime.fromMillisecondsSinceEpoch(
-                        int.tryParse(widget.data['started'])! * 1000,
-                      ),
-                    )
+                          int.tryParse(widget.data['started'])! * 1000))
                   : DateFormat('yyyy-MM-dd hh:mm a').format(
                       DateTime.fromMillisecondsSinceEpoch(
-                        int.tryParse(widget.data['started'])! * 1000,
-                      ),
-                    ),
+                          int.tryParse(widget.data['started'])! * 1000)),
             )
           : const TextSpan(text: LunaUI.TEXT_EMDASH),
     ];

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
-import 'package:thriftwood/router/routes/settings.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
+import 'package:lunasea/router/routes/settings.dart';
 
 class ConfigurationRadarrRoute extends StatefulWidget {
-  const ConfigurationRadarrRoute({super.key});
+  const ConfigurationRadarrRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationRadarrRoute> createState() => _State();
@@ -117,16 +119,15 @@ class _State extends State<ConfigurationRadarrRoute>
         body: [
           TextSpan(
             text: _db.read() == 1
-                ? 'thriftwood.OneItem'.tr()
-                : 'thriftwood.Items'.tr(args: [_db.read().toString()]),
+                ? 'lunasea.OneItem'.tr()
+                : 'lunasea.Items'.tr(args: [_db.read().toString()]),
           ),
         ],
         trailing: const LunaIconButton(icon: Icons.queue_play_next_rounded),
         onTap: () async {
-          (bool, int) result = await RadarrDialogs().setQueuePageSize(
-            context,
-          );
-          if (result.$1) _db.update(result.$2);
+          Tuple2<bool, int> result =
+              await RadarrDialogs().setQueuePageSize(context);
+          if (result.item1) _db.update(result.item2);
         },
       ),
     );

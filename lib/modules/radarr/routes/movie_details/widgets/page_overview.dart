@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrMovieDetailsOverviewPage extends StatefulWidget {
   final RadarrMovie? movie;
@@ -8,11 +8,11 @@ class RadarrMovieDetailsOverviewPage extends StatefulWidget {
   final List<RadarrTag> tags;
 
   const RadarrMovieDetailsOverviewPage({
-    super.key,
+    Key? key,
     required this.movie,
     required this.qualityProfile,
     required this.tags,
-  });
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();

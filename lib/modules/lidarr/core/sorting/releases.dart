@@ -1,6 +1,13 @@
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
-enum LidarrReleasesSorting { age, alphabetical, seeders, size, type, weight }
+enum LidarrReleasesSorting {
+  age,
+  alphabetical,
+  seeders,
+  size,
+  type,
+  weight,
+}
 
 extension LidarrReleasesSortingExtension on LidarrReleasesSorting {
   String get value {
@@ -42,7 +49,11 @@ extension LidarrReleasesSortingExtension on LidarrReleasesSorting {
 }
 
 class _Sorter {
-  List byType(List data, LidarrReleasesSorting type, bool ascending) {
+  List byType(
+    List data,
+    LidarrReleasesSorting type,
+    bool ascending,
+  ) {
     switch (type) {
       case LidarrReleasesSorting.age:
         return _age(data, ascending);
@@ -77,12 +88,10 @@ class _Sorter {
 
   List<LidarrReleaseData> _type(List data, bool ascending) {
     List<LidarrReleaseData> _data = List.from(data, growable: false);
-    List<LidarrReleaseData> _usenet = _data
-        .where((value) => !value.isTorrent)
-        .toList();
-    List<LidarrReleaseData> _torrent = _data
-        .where((value) => value.isTorrent)
-        .toList();
+    List<LidarrReleaseData> _usenet =
+        _data.where((value) => !value.isTorrent).toList();
+    List<LidarrReleaseData> _torrent =
+        _data.where((value) => value.isTorrent).toList();
     return ascending ? [..._usenet, ..._torrent] : [..._torrent, ..._usenet];
   }
 
@@ -96,12 +105,10 @@ class _Sorter {
 
   List<LidarrReleaseData> _seeders(List data, bool ascending) {
     List<LidarrReleaseData> _data = List.from(data, growable: false);
-    List<LidarrReleaseData> _usenet = _data
-        .where((value) => !value.isTorrent)
-        .toList();
-    List<LidarrReleaseData> _torrent = _data
-        .where((value) => value.isTorrent)
-        .toList();
+    List<LidarrReleaseData> _usenet =
+        _data.where((value) => !value.isTorrent).toList();
+    List<LidarrReleaseData> _torrent =
+        _data.where((value) => value.isTorrent).toList();
     ascending
         ? _torrent.sort((a, b) => (b.seeders ?? 0).compareTo(a.seeders ?? 0))
         : _torrent.sort((a, b) => (a.seeders ?? 0).compareTo(b.seeders ?? 0));

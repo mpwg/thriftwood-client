@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliAppBarGlobalSettingsAction extends StatelessWidget {
-  const TautulliAppBarGlobalSettingsAction({super.key});
+  const TautulliAppBarGlobalSettingsAction({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LunaIconButton(
       icon: Icons.more_vert_rounded,
       onPressed: () async {
-        (bool, TautulliGlobalSettingsType?) values =
+        Tuple2<bool, TautulliGlobalSettingsType?> values =
             await TautulliDialogs().globalSettings(context);
-        if (values.$1) values.$2!.execute(context);
+        if (values.item1) values.item2!.execute(context);
       },
     );
   }

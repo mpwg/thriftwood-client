@@ -1,4 +1,4 @@
-import 'package:thriftwood/database/table.dart';
+import 'package:lunasea/database/table.dart';
 
 enum SearchDatabase<T> with LunaTableMixin<T> {
   HIDE_XXX<bool>(false),

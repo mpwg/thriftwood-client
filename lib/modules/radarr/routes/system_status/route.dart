@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class SystemStatusRoute extends StatefulWidget {
-  const SystemStatusRoute({super.key});
+  const SystemStatusRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SystemStatusRoute> createState() => _State();

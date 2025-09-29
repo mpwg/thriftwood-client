@@ -1,7 +1,7 @@
-import 'package:thriftwood/database/box.dart';
-import 'package:thriftwood/database/tables/thriftwood.dart';
-import 'package:thriftwood/modules.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/database/box.dart';
+import 'package:lunasea/database/tables/lunasea.dart';
+import 'package:lunasea/modules.dart';
+import 'package:lunasea/vendor.dart';
 
 part 'profile.g.dart';
 
@@ -11,7 +11,7 @@ class LunaProfile extends HiveObject {
   static const String DEFAULT_PROFILE = 'default';
 
   static LunaProfile get current {
-    final enabled = thriftwoodDatabase.ENABLED_PROFILE.read();
+    final enabled = LunaSeaDatabase.ENABLED_PROFILE.read();
     return LunaBox.profiles.read(enabled) ?? LunaProfile();
   }
 

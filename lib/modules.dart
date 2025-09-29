@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
 import 'package:quick_actions/quick_actions.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/links.dart';
-import 'package:thriftwood/router/router.dart';
-import 'package:thriftwood/router/routes.dart';
-import 'package:thriftwood/router/routes/settings.dart';
-import 'package:thriftwood/modules/search.dart';
-import 'package:thriftwood/modules/settings.dart';
-import 'package:thriftwood/modules/lidarr.dart';
-import 'package:thriftwood/modules/radarr.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/modules/sabnzbd.dart';
-import 'package:thriftwood/modules/nzbget.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/modules/dashboard/core/state.dart';
-import 'package:thriftwood/api/wake_on_lan/wake_on_lan.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/links.dart';
+import 'package:lunasea/router/router.dart';
+import 'package:lunasea/router/routes.dart';
+import 'package:lunasea/router/routes/settings.dart';
+import 'package:lunasea/modules/search.dart';
+import 'package:lunasea/modules/settings.dart';
+import 'package:lunasea/modules/lidarr.dart';
+import 'package:lunasea/modules/radarr.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/modules/sabnzbd.dart';
+import 'package:lunasea/modules/nzbget.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/modules/dashboard/core/state.dart';
+import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
 
 part 'modules.g.dart';
 
@@ -147,7 +147,7 @@ extension LunaModuleMetadataExtension on LunaModule {
   String get title {
     switch (this) {
       case LunaModule.DASHBOARD:
-        return 'thriftwood.Dashboard'.tr();
+        return 'lunasea.Dashboard'.tr();
       case LunaModule.LIDARR:
         return 'Lidarr';
       case LunaModule.NZBGET:
@@ -159,7 +159,7 @@ extension LunaModuleMetadataExtension on LunaModule {
       case LunaModule.SEARCH:
         return 'search.Search'.tr();
       case LunaModule.SETTINGS:
-        return 'thriftwood.Settings'.tr();
+        return 'lunasea.Settings'.tr();
       case LunaModule.SONARR:
         return 'Sonarr';
       case LunaModule.TAUTULLI:
@@ -169,7 +169,7 @@ extension LunaModuleMetadataExtension on LunaModule {
       case LunaModule.WAKE_ON_LAN:
         return 'Wake on LAN';
       case LunaModule.EXTERNAL_MODULES:
-        return 'thriftwood.ExternalModules'.tr();
+        return 'lunasea.ExternalModules'.tr();
     }
   }
 
@@ -292,7 +292,7 @@ extension LunaModuleMetadataExtension on LunaModule {
   String get description {
     switch (this) {
       case LunaModule.DASHBOARD:
-        return 'thriftwood.Dashboard'.tr();
+        return 'lunasea.Dashboard'.tr();
       case LunaModule.LIDARR:
         return 'Manage Music';
       case LunaModule.NZBGET:
@@ -304,7 +304,7 @@ extension LunaModuleMetadataExtension on LunaModule {
       case LunaModule.SEARCH:
         return 'Search Newznab Indexers';
       case LunaModule.SETTINGS:
-        return 'Configure thriftwood';
+        return 'Configure LunaSea';
       case LunaModule.SONARR:
         return 'Manage Television Series';
       case LunaModule.TAUTULLI:
@@ -331,7 +331,7 @@ extension LunaModuleMetadataExtension on LunaModule {
       case LunaModule.SABNZBD:
         return 'SABnzbd is a multi-platform binary newsgroup downloader. The program works in the background and simplifies the downloading verifying and extracting of files from Usenet.';
       case LunaModule.SEARCH:
-        return 'thriftwood currently supports all indexers that support the newznab protocol, including NZBHydra2.';
+        return 'LunaSea currently supports all indexers that support the newznab protocol, including NZBHydra2.';
       case LunaModule.SETTINGS:
         return null;
       case LunaModule.SONARR:
@@ -343,7 +343,7 @@ extension LunaModuleMetadataExtension on LunaModule {
       case LunaModule.WAKE_ON_LAN:
         return 'Wake on LAN is an industry standard protocol for waking computers up from a very low power mode remotely by sending a specially constructed packet to the machine.';
       case LunaModule.EXTERNAL_MODULES:
-        return 'thriftwood allows you to add links to additional modules that are not currently supported allowing you to open the module\'s web GUI without having to leave thriftwood!';
+        return 'LunaSea allows you to add links to additional modules that are not currently supported allowing you to open the module\'s web GUI without having to leave LunaSea!';
     }
   }
 }
@@ -435,15 +435,15 @@ extension LunaModuleWebhookExtension on LunaModule {
   String? get webhookDocs {
     switch (this) {
       case LunaModule.LIDARR:
-        return 'https://docs.thriftwood.app/thriftwood/notifications/lidarr';
+        return 'https://docs.lunasea.app/lunasea/notifications/lidarr';
       case LunaModule.RADARR:
-        return 'https://docs.thriftwood.app/thriftwood/notifications/radarr';
+        return 'https://docs.lunasea.app/lunasea/notifications/radarr';
       case LunaModule.SONARR:
-        return 'https://docs.thriftwood.app/thriftwood/notifications/sonarr';
+        return 'https://docs.lunasea.app/lunasea/notifications/sonarr';
       case LunaModule.OVERSEERR:
-        return 'https://docs.thriftwood.app/thriftwood/notifications/overseerr';
+        return 'https://docs.lunasea.app/lunasea/notifications/overseerr';
       case LunaModule.TAUTULLI:
-        return 'https://docs.thriftwood.app/thriftwood/notifications/tautulli';
+        return 'https://docs.lunasea.app/lunasea/notifications/tautulli';
       default:
         return null;
     }
@@ -503,7 +503,7 @@ extension LunaModuleExtension on LunaModule {
   }
 
   Widget informationBanner() {
-    String key = 'thriftwood_MODULE_INFORMATION_${this.key}';
+    String key = 'LUNASEA_MODULE_INFORMATION_${this.key}';
     void markSeen() => LunaBox.alerts.update(key, false);
 
     return LunaBox.alerts.listenableBuilder(
@@ -525,7 +525,7 @@ extension LunaModuleExtension on LunaModule {
                 ),
               if (this.website != null)
                 LunaButton.text(
-                  text: 'thriftwood.Website'.tr(),
+                  text: 'lunasea.Website'.tr(),
                   icon: Icons.home_rounded,
                   onTap: this.website!.openLink,
                 ),

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/router/routes/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/router/routes/tautulli.dart';
 
 class TautulliActivityTile extends StatelessWidget {
   final TautulliSession session;
   final bool disableOnTap;
 
   const TautulliActivityTile({
-    super.key,
+    Key? key,
     required this.session,
     this.disableOnTap = false,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,11 @@ class TautulliActivityTile extends StatelessWidget {
             session.art,
             width: MediaQuery.of(context).size.width.truncate(),
           ),
-      body: [_subtitle1(), _subtitle2(), _subtitle3()],
+      body: [
+        _subtitle1(),
+        _subtitle2(),
+        _subtitle3(),
+      ],
       bottom: _bottomWidget(),
       bottomHeight: LunaLinearPercentIndicator.height,
       trailing: LunaIconButton(icon: session.lunaSessionStateIcon),
@@ -40,13 +44,14 @@ class TautulliActivityTile extends StatelessWidget {
           TextSpan(text: session.parentTitle),
           TextSpan(text: LunaUI.TEXT_BULLET.pad()),
           TextSpan(
-            text: 'tautulli.Episode'.tr(
-              args: [session.mediaIndex?.toString() ?? LunaUI.TEXT_EMDASH],
-            ),
-          ),
+              text: 'tautulli.Episode'.tr(args: [
+            session.mediaIndex?.toString() ?? LunaUI.TEXT_EMDASH
+          ])),
           const TextSpan(text: ': '),
           TextSpan(
-            style: const TextStyle(fontStyle: FontStyle.italic),
+            style: const TextStyle(
+              fontStyle: FontStyle.italic,
+            ),
             text: session.title ?? LunaUI.TEXT_EMDASH,
           ),
         ],
@@ -61,7 +66,9 @@ class TautulliActivityTile extends StatelessWidget {
           TextSpan(text: session.parentTitle),
           TextSpan(text: LunaUI.TEXT_EMDASH.pad()),
           TextSpan(
-            style: const TextStyle(fontStyle: FontStyle.italic),
+            style: const TextStyle(
+              fontStyle: FontStyle.italic,
+            ),
             text: session.title,
           ),
         ],
@@ -113,8 +120,8 @@ class TautulliActivityTile extends StatelessWidget {
   }
 
   Future<void> _enterDetails(BuildContext context) async {
-    TautulliRoutes.ACTIVITY_DETAILS.go(
-      params: {'session': session.sessionKey.toString()},
-    );
+    TautulliRoutes.ACTIVITY_DETAILS.go(params: {
+      'session': session.sessionKey.toString(),
+    });
   }
 }

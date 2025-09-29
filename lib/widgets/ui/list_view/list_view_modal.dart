@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 /// [ListView] with a [Scrollbar] that is intended to be used with a modal bottom sheet.
@@ -14,12 +14,12 @@ class LunaListViewModal extends StatelessWidget {
   final double? itemExtent;
 
   const LunaListViewModal({
-    super.key,
+    Key? key,
     required this.children,
     this.appBar,
     this.actionBar,
     this.itemExtent,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

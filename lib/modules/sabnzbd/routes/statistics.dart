@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/int/bytes.dart';
-import 'package:thriftwood/modules/sabnzbd.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/int/bytes.dart';
+import 'package:lunasea/modules/sabnzbd.dart';
 
 class StatisticsRoute extends StatefulWidget {
-  const StatisticsRoute({super.key});
+  const StatisticsRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatisticsRoute> createState() => _State();
@@ -86,13 +88,11 @@ class _State extends State<StatisticsRoute> with LunaScrollControllerMixin {
         LunaTableContent(title: 'Uptime', body: _data!.uptime),
         LunaTableContent(title: 'Version', body: _data!.version),
         LunaTableContent(
-          title: 'Temp. Space',
-          body: '${_data!.tempFreespace.toString()} GB',
-        ),
+            title: 'Temp. Space',
+            body: '${_data!.tempFreespace.toString()} GB'),
         LunaTableContent(
-          title: 'Final Space',
-          body: '${_data!.finalFreespace.toString()} GB',
-        ),
+            title: 'Final Space',
+            body: '${_data!.finalFreespace.toString()} GB'),
       ],
     );
   }
@@ -110,31 +110,21 @@ class _State extends State<StatisticsRoute> with LunaScrollControllerMixin {
 
   List<Widget> _serverStatistics() {
     return _data!.servers
-        .map(
-          (server) => [
-            LunaHeader(text: server.name),
-            LunaTableCard(
-              content: [
-                LunaTableContent(
-                  title: 'Daily',
-                  body: server.dailyUsage.asBytes(),
-                ),
-                LunaTableContent(
-                  title: 'Weekly',
-                  body: server.weeklyUsage.asBytes(),
-                ),
-                LunaTableContent(
-                  title: 'Monthly',
-                  body: server.monthlyUsage.asBytes(),
-                ),
-                LunaTableContent(
-                  title: 'Total',
-                  body: server.totalUsage.asBytes(),
-                ),
-              ],
-            ),
-          ],
-        )
+        .map((server) => [
+              LunaHeader(text: server.name),
+              LunaTableCard(
+                content: [
+                  LunaTableContent(
+                      title: 'Daily', body: server.dailyUsage.asBytes()),
+                  LunaTableContent(
+                      title: 'Weekly', body: server.weeklyUsage.asBytes()),
+                  LunaTableContent(
+                      title: 'Monthly', body: server.monthlyUsage.asBytes()),
+                  LunaTableContent(
+                      title: 'Total', body: server.totalUsage.asBytes()),
+                ],
+              ),
+            ])
         .expand((element) => element)
         .toList();
   }

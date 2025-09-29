@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'notifier_config.g.dart';
 
@@ -20,16 +20,12 @@ class TautulliNotifierConfig {
 
   /// Label of the notifier agent.
   @JsonKey(
-    name: 'agent_label',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'agent_label', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? agentLabel;
 
   /// Friendly name (description) of the notifier.
   @JsonKey(
-    name: 'friendly_name',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'friendly_name', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? friendlyName;
 
   /// Custom conditions for the notifier.
@@ -38,9 +34,8 @@ class TautulliNotifierConfig {
 
   /// Custom conditions logic when evaluating conditions.
   @JsonKey(
-    name: 'custom_conditions_logic',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'custom_conditions_logic',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? customConditionsLogic;
 
   /// Configuration for the notifier.
@@ -89,9 +84,9 @@ class TautulliNotifierConfig {
   Map<String, dynamic> toJson() => _$TautulliNotifierConfigToJson(this);
 
   static TautulliNotifierConfigActions _optionsFromJson(
-    Map<String, dynamic> json,
-  ) => TautulliNotifierConfigActions.fromJson(json);
+          Map<String, dynamic> json) =>
+      TautulliNotifierConfigActions.fromJson(json);
   static Map<String, dynamic>? _optionsToJson(
-    TautulliNotifierConfigActions? options,
-  ) => options?.toJson();
+          TautulliNotifierConfigActions? options) =>
+      options?.toJson();
 }

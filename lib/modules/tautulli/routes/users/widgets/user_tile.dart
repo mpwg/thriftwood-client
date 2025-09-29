@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/router/routes/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/router/routes/tautulli.dart';
 
 class TautulliUserTile extends StatelessWidget {
   final TautulliTableUser user;
 
-  const TautulliUserTile({super.key, required this.user});
+  const TautulliUserTile({
+    Key? key,
+    required this.user,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +29,13 @@ class TautulliUserTile extends StatelessWidget {
         TextSpan(text: user.lastSeen?.asAge() ?? 'Never'),
         TextSpan(text: user.lastPlayed ?? 'Never'),
       ],
-      bodyLeadingIcons: const [LunaIcons.WATCHED, LunaIcons.PLAY],
-      onTap: () => TautulliRoutes.USER_DETAILS.go(
-        params: {'user': user.userId!.toString()},
-      ),
+      bodyLeadingIcons: const [
+        LunaIcons.WATCHED,
+        LunaIcons.PLAY,
+      ],
+      onTap: () => TautulliRoutes.USER_DETAILS.go(params: {
+        'user': user.userId!.toString(),
+      }),
     );
   }
 }

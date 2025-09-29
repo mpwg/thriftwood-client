@@ -1,5 +1,5 @@
-import 'package:thriftwood/database/table.dart';
-import 'package:thriftwood/modules.dart';
+import 'package:lunasea/database/table.dart';
+import 'package:lunasea/modules.dart';
 
 enum BIOSDatabase<T> with LunaTableMixin<T> {
   BOOT_MODULE<LunaModule>(LunaModule.DASHBOARD),

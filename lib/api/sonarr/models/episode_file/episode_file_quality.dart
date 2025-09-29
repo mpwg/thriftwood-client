@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 part 'episode_file_quality.g.dart';
 
@@ -12,7 +12,10 @@ class SonarrEpisodeFileQuality {
   @JsonKey(name: 'revision')
   SonarrEpisodeFileQualityRevision? revision;
 
-  SonarrEpisodeFileQuality({this.quality, this.revision});
+  SonarrEpisodeFileQuality({
+    this.quality,
+    this.revision,
+  });
 
   @override
   String toString() => json.encode(this.toJson());

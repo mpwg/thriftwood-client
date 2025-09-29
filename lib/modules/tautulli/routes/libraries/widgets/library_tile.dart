@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/extensions/duration/timestamp.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/router/routes/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/extensions/duration/timestamp.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/router/routes/tautulli.dart';
 
 class TautulliLibrariesLibraryTile extends StatelessWidget {
   final TautulliTableLibrary library;
 
-  const TautulliLibrariesLibraryTile({super.key, required this.library});
+  const TautulliLibrariesLibraryTile({
+    Key? key,
+    required this.library,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +36,12 @@ class TautulliLibrariesLibraryTile extends StatelessWidget {
           text: library.lastAccessed?.asAge() ?? 'Unknown',
         ),
       ],
-      backgroundUrl: context.watch<TautulliState>().getImageURLFromPath(
-            library.thumb,
-          ),
+      backgroundUrl:
+          context.watch<TautulliState>().getImageURLFromPath(library.thumb),
       backgroundHeaders: context.watch<TautulliState>().headers,
-      onTap: () => TautulliRoutes.LIBRARIES_DETAILS.go(
-        params: {'section': library.sectionId.toString()},
-      ),
+      onTap: () => TautulliRoutes.LIBRARIES_DETAILS.go(params: {
+        'section': library.sectionId.toString(),
+      }),
     );
   }
 }

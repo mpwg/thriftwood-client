@@ -1,12 +1,12 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 extension SonarrSeriesSeasonExtension on SonarrSeriesSeason {
   String get lunaTitle {
     if (this.seasonNumber == 0) return 'sonarr.Specials'.tr();
-    return 'sonarr.SeasonNumber'.tr(
-      args: [this.seasonNumber?.toString() ?? 'thriftwood.Unknown'.tr()],
-    );
+    return 'sonarr.SeasonNumber'.tr(args: [
+      this.seasonNumber?.toString() ?? 'lunasea.Unknown'.tr(),
+    ]);
   }
 
   int get lunaPercentageComplete {

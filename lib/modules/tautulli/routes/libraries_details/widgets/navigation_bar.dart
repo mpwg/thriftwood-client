@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class TautulliLibrariesDetailsNavigationBar extends StatelessWidget {
   final PageController? pageController;
-  static List<ScrollController> scrollControllers = List.generate(
-    icons.length,
-    (_) => ScrollController(),
-  );
+  static List<ScrollController> scrollControllers =
+      List.generate(icons.length, (_) => ScrollController());
 
   static const List<IconData> icons = [
     Icons.info_outline_rounded,
     Icons.people_rounded,
   ];
 
-  static const List<String> titles = ['Information', 'User Stats'];
+  static const List<String> titles = [
+    'Information',
+    'User Stats',
+  ];
 
   const TautulliLibrariesDetailsNavigationBar({
-    super.key,
+    Key? key,
     required this.pageController,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

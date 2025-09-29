@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/scroll_controller.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/scroll_controller.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrReleasesAppBarFilterButton extends StatefulWidget {
   final ScrollController controller;
 
-  const SonarrReleasesAppBarFilterButton({super.key, required this.controller});
+  const SonarrReleasesAppBarFilterButton({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<SonarrReleasesAppBarFilterButton> createState() => _State();

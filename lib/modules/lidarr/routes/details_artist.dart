@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
-import 'package:thriftwood/modules/lidarr/sheets/links.dart';
-import 'package:thriftwood/router/router.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
+import 'package:lunasea/modules/lidarr/sheets/links.dart';
+import 'package:lunasea/router/router.dart';
 
 class ArtistDetailsRoute extends StatefulWidget {
   final LidarrCatalogueData? data;
@@ -12,8 +12,8 @@ class ArtistDetailsRoute extends StatefulWidget {
   const ArtistDetailsRoute({
     required this.data,
     required this.artistId,
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ArtistDetailsRoute> createState() => _State();
@@ -84,7 +84,10 @@ class _State extends State<ArtistDetailsRoute> {
           },
         ),
         LidarrDetailsEditButton(data: data),
-        LidarrDetailsSettingsButton(data: data, remove: _removeCallback),
+        LidarrDetailsSettingsButton(
+          data: data,
+          remove: _removeCallback,
+        ),
       ];
     }
 
@@ -104,11 +107,16 @@ class _State extends State<ArtistDetailsRoute> {
         LidarrDetailsAlbumList(artistID: data!.artistID),
       ];
 
-  Widget get _body =>
-      LunaPageView(controller: _pageController, children: _tabs);
+  Widget get _body => LunaPageView(
+        controller: _pageController,
+        children: _tabs,
+      );
 
   Future<void> _removeCallback(bool withData) async {
-    showLunaSuccessSnackBar(title: 'Artist Removed', message: data!.title);
+    showLunaSuccessSnackBar(
+      title: 'Artist Removed',
+      message: data!.title,
+    );
     LunaRouter.router.pop();
   }
 }

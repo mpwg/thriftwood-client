@@ -1,14 +1,14 @@
-import 'package:thriftwood/database/box.dart';
-import 'package:thriftwood/database/models/profile.dart';
-import 'package:thriftwood/database/table.dart';
-import 'package:thriftwood/database/tables/thriftwood.dart';
-import 'package:thriftwood/system/filesystem/filesystem.dart';
-import 'package:thriftwood/system/platform.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/database/box.dart';
+import 'package:lunasea/database/models/profile.dart';
+import 'package:lunasea/database/table.dart';
+import 'package:lunasea/database/tables/lunasea.dart';
+import 'package:lunasea/system/filesystem/filesystem.dart';
+import 'package:lunasea/system/platform.dart';
+import 'package:lunasea/vendor.dart';
 
 class LunaDatabase {
   static const String _DATABASE_LEGACY_PATH = 'database';
-  static const String _DATABASE_PATH = 'thriftwood/database';
+  static const String _DATABASE_PATH = 'LunaSea/database';
 
   String get path {
     if (LunaPlatform.isWindows || LunaPlatform.isLinux) return _DATABASE_PATH;
@@ -43,7 +43,7 @@ class LunaDatabase {
     await clear();
 
     LunaBox.profiles.update(defaultProfile, LunaProfile());
-    thriftwoodDatabase.ENABLED_PROFILE.update(defaultProfile);
+    LunaSeaDatabase.ENABLED_PROFILE.update(defaultProfile);
   }
 
   Future<void> clear() async {

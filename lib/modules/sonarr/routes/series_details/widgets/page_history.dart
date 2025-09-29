@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrSeriesDetailsHistoryPage extends StatefulWidget {
-  const SonarrSeriesDetailsHistoryPage({super.key});
+  const SonarrSeriesDetailsHistoryPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -57,7 +59,7 @@ class _State extends State<SonarrSeriesDetailsHistoryPage>
     if ((history?.length ?? 0) == 0)
       return LunaMessage(
         text: 'sonarr.NoHistoryFound'.tr(),
-        buttonText: 'thriftwood.Refresh'.tr(),
+        buttonText: 'lunasea.Refresh'.tr(),
         onTap: _refreshKey.currentState!.show,
       );
     return LunaListViewBuilder(

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
   final TautulliMetadata? metadata;
 
   const TautulliMediaDetailsMetadataHeaderTile({
-    super.key,
+    Key? key,
     required this.metadata,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +22,8 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
           ),
       bottom: const SizedBox(),
       bottomHeight: _bottomHeight,
-      posterUrl: context.watch<TautulliState>().getImageURLFromPath(
-            _posterLink,
-          ),
+      posterUrl:
+          context.watch<TautulliState>().getImageURLFromPath(_posterLink),
       posterHeaders: context.watch<TautulliState>().headers,
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
     );
@@ -103,7 +102,7 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
       case TautulliMediaType.MOVIE:
       case TautulliMediaType.ARTIST:
       case TautulliMediaType.SHOW:
-        _text = metadata!.year?.toString() ?? 'thriftwood.Unknown'.tr();
+        _text = metadata!.year?.toString() ?? 'lunasea.Unknown'.tr();
         break;
       case TautulliMediaType.ALBUM:
       case TautulliMediaType.SEASON:
@@ -121,7 +120,7 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
         break;
       case TautulliMediaType.NULL:
       default:
-        _text = 'thriftwood.Unknown'.tr();
+        _text = 'lunasea.Unknown'.tr();
         break;
     }
     return TextSpan(text: _text);
@@ -133,7 +132,7 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
       case TautulliMediaType.MOVIE:
       case TautulliMediaType.ARTIST:
       case TautulliMediaType.SHOW:
-        _text = metadata!.year?.toString() ?? 'thriftwood.Unknown'.tr();
+        _text = metadata!.year?.toString() ?? 'lunasea.Unknown'.tr();
         break;
       case TautulliMediaType.ALBUM:
       case TautulliMediaType.SEASON:
@@ -145,7 +144,7 @@ class TautulliMediaDetailsMetadataHeaderTile extends StatelessWidget {
         break;
       case TautulliMediaType.NULL:
       default:
-        _text = 'thriftwood.Unknown'.tr();
+        _text = 'lunasea.Unknown'.tr();
         break;
     }
     return TextSpan(text: _text);

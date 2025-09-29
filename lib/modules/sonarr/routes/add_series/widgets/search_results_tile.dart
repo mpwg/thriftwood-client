@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/extensions/string/links.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/router/routes/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/extensions/string/links.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/router/routes/sonarr.dart';
 
 class SonarrSeriesAddSearchResultTile extends StatefulWidget {
   static final double extent = LunaBlock.calculateItemExtent(
@@ -18,12 +18,12 @@ class SonarrSeriesAddSearchResultTile extends StatefulWidget {
   final bool isExcluded;
 
   const SonarrSeriesAddSearchResultTile({
-    super.key,
+    Key? key,
     required this.series,
     required this.exists,
     required this.isExcluded,
     this.onTapShowOverview = false,
-  });
+  }) : super(key: key);
 
   @override
   State<SonarrSeriesAddSearchResultTile> createState() => _State();
@@ -49,15 +49,13 @@ class _State extends State<SonarrSeriesAddSearchResultTile> {
   }
 
   TextSpan _subtitle1() {
-    return TextSpan(
-      children: [
-        TextSpan(text: widget.series.thriftwoodsonCount),
-        TextSpan(text: LunaUI.TEXT_BULLET.pad()),
-        TextSpan(text: widget.series.lunaYear),
-        TextSpan(text: LunaUI.TEXT_BULLET.pad()),
-        TextSpan(text: widget.series.lunaNetwork),
-      ],
-    );
+    return TextSpan(children: [
+      TextSpan(text: widget.series.lunaSeasonCount),
+      TextSpan(text: LunaUI.TEXT_BULLET.pad()),
+      TextSpan(text: widget.series.lunaYear),
+      TextSpan(text: LunaUI.TEXT_BULLET.pad()),
+      TextSpan(text: widget.series.lunaNetwork),
+    ]);
   }
 
   Widget _subtitle2() {
@@ -70,7 +68,9 @@ class _State extends State<SonarrSeriesAddSearchResultTile> {
             fontSize: LunaUI.FONT_SIZE_H3,
             color: LunaColours.grey,
           ),
-          children: [LunaTextSpan.extended(text: widget.series.lunaOverview)],
+          children: [
+            LunaTextSpan.extended(text: widget.series.lunaOverview),
+          ],
         ),
         overflow: TextOverflow.ellipsis,
         maxLines: 2,

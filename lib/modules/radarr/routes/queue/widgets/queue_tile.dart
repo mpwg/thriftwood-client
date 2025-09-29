@@ -1,16 +1,20 @@
-import 'package:thriftwood/utils/collection_utils.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/int/bytes.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/radarr.dart';
-import 'package:thriftwood/router/routes/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/int/bytes.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/radarr.dart';
+import 'package:lunasea/router/routes/radarr.dart';
 
 class RadarrQueueTile extends StatelessWidget {
   final RadarrQueueRecord record;
   final RadarrMovie? movie;
 
-  const RadarrQueueTile({super.key, required this.record, required this.movie});
+  const RadarrQueueTile({
+    Key? key,
+    required this.record,
+    required this.movie,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,10 @@ class RadarrQueueTile extends StatelessWidget {
           );
         return LunaExpandableListTile(
           title: record.title!,
-          collapsedSubtitles: [_subtitle1(), _subtitle2()],
+          collapsedSubtitles: [
+            _subtitle1(),
+            _subtitle2(),
+          ],
           expandedHighlightedNodes: _highlightedNodes(),
           expandedTableContent: _tableContent(movie),
           expandedTableButtons: _tableButtons(context),
@@ -32,9 +39,9 @@ class RadarrQueueTile extends StatelessWidget {
             icon: record.lunaStatusIcon,
             color: record.lunaStatusColor,
           ),
-          onLongPress: () => RadarrRoutes.MOVIE.go(
-            params: {'movie': record.movieId!.toString()},
-          ),
+          onLongPress: () => RadarrRoutes.MOVIE.go(params: {
+            'movie': record.movieId!.toString(),
+          }),
         );
       },
     );
@@ -64,23 +71,15 @@ class RadarrQueueTile extends StatelessWidget {
     if (movie == null) return [];
     return [
       LunaTableContent(
-        title: 'radarr.Movie'.tr(),
-        body: record.lunaMovieTitle(movie),
-      ),
+          title: 'radarr.Movie'.tr(), body: record.lunaMovieTitle(movie)),
       LunaTableContent(
-        title: 'radarr.Languages'.tr(),
-        body: record.lunaLanguage,
-      ),
+          title: 'radarr.Languages'.tr(), body: record.lunaLanguage),
       LunaTableContent(title: 'Client', body: record.lunaDownloadClient),
       LunaTableContent(title: 'Indexer', body: record.lunaIndexer),
       LunaTableContent(
-        title: 'radarr.Size'.tr(),
-        body: record.size!.toInt().asBytes(),
-      ),
+          title: 'radarr.Size'.tr(), body: record.size!.toInt().asBytes()),
       LunaTableContent(
-        title: 'Time Left',
-        body: record.timeLeft ?? LunaUI.TEXT_EMDASH,
-      ),
+          title: 'Time Left', body: record.timeLeft ?? LunaUI.TEXT_EMDASH),
     ];
   }
 
@@ -133,9 +132,9 @@ class RadarrQueueTile extends StatelessWidget {
         LunaButton.text(
           icon: Icons.download_done_rounded,
           text: 'radarr.Import'.tr(),
-          onTap: () => RadarrRoutes.MANUAL_IMPORT_DETAILS.go(
-            queryParams: {'path': record.outputPath!},
-          ),
+          onTap: () => RadarrRoutes.MANUAL_IMPORT_DETAILS.go(queryParams: {
+            'path': record.outputPath!,
+          }),
         ),
       LunaButton.text(
         icon: Icons.delete_rounded,
@@ -168,10 +167,9 @@ class RadarrQueueTile extends StatelessWidget {
                     .then((_) => context.read<RadarrState>().fetchQueue());
               }).catchError((error, stack) {
                 LunaLogger().error(
-                  'Failed to remove queue record: ${record.id}',
-                  error,
-                  stack,
-                );
+                    'Failed to remove queue record: ${record.id}',
+                    error,
+                    stack);
                 showLunaErrorSnackBar(
                   title: 'Failed to Remove',
                   error: error,

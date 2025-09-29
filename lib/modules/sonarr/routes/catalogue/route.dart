@@ -1,12 +1,14 @@
-import 'package:thriftwood/utils/collection_utils.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/router/routes/sonarr.dart';
-import 'package:thriftwood/types/list_view_option.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:lunasea/types/list_view_option.dart';
 
 class SonarrCatalogueRoute extends StatefulWidget {
-  const SonarrCatalogueRoute({super.key});
+  const SonarrCatalogueRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SonarrCatalogueRoute> createState() => _State();
@@ -63,13 +65,17 @@ class _State extends State<SonarrCatalogueRoute>
       onRefresh: _refresh,
       child: Selector<
           SonarrState,
-          (
-            Future<Map<int?, SonarrSeries>>?,
-            Future<List<SonarrQualityProfile>>?
-          )>(
-        selector: (_, state) => (state.series, state.qualityProfiles),
+          Tuple2<Future<Map<int?, SonarrSeries>>?,
+              Future<List<SonarrQualityProfile>>?>>(
+        selector: (_, state) => Tuple2(
+          state.series,
+          state.qualityProfiles,
+        ),
         builder: (context, tuple, _) => FutureBuilder(
-          future: Future.wait([tuple.$1!, tuple.$2!]),
+          future: Future.wait([
+            tuple.item1!,
+            tuple.item2!,
+          ]),
           builder: (context, AsyncSnapshot<List<Object>> snapshot) {
             if (snapshot.hasError) {
               if (snapshot.connectionState != ConnectionState.waiting) {
@@ -124,7 +130,7 @@ class _State extends State<SonarrCatalogueRoute>
     if (series.isEmpty)
       return LunaMessage(
         text: 'sonarr.NoSeriesFound'.tr(),
-        buttonText: 'thriftwood.Refresh'.tr(),
+        buttonText: 'lunasea.Refresh'.tr(),
         onTap: _refreshKey.currentState!.show,
       );
     return Selector<SonarrState, String>(
@@ -142,17 +148,15 @@ class _State extends State<SonarrCatalogueRoute>
                     LunaButton.text(
                       icon: null,
                       text: query.length > 20
-                          ? 'sonarr.SearchFor'.tr(
-                              args: [
-                                '"${query.substring(0, min(20, query.length))}${LunaUI.TEXT_ELLIPSIS}"',
-                              ],
-                            )
+                          ? 'sonarr.SearchFor'.tr(args: [
+                              '"${query.substring(0, min(20, query.length))}${LunaUI.TEXT_ELLIPSIS}"'
+                            ])
                           : 'sonarr.SearchFor'.tr(args: ['"$query"']),
                       backgroundColor: LunaColours.accent,
                       onTap: () async {
-                        SonarrRoutes.ADD_SERIES.go(
-                          queryParams: {'query': query},
-                        );
+                        SonarrRoutes.ADD_SERIES.go(queryParams: {
+                          'query': query,
+                        });
                       },
                     ),
                   ],

@@ -1,10 +1,12 @@
 import 'package:flutter/services.dart';
-import 'package:thriftwood/vendor.dart';
-import 'package:thriftwood/widgets/ui.dart';
+import 'package:lunasea/vendor.dart';
+import 'package:lunasea/widgets/ui.dart';
 
 extension StringNullableExtension on String? {
   /// Return a "UI-Safe" string by replacing null or empty (if considered unsafe) strings with a dash.
-  String uiSafe({bool isEmptySafe = false}) {
+  String uiSafe({
+    bool isEmptySafe = false,
+  }) {
     if (this == null) return LunaUI.TEXT_EMDASH;
     if (!isEmptySafe && this!.isEmpty) return LunaUI.TEXT_EMDASH;
     return this!;
@@ -15,7 +17,9 @@ extension StringExtension on String {
   /// Returns the string converted to title case.
   ///
   /// Example: "hello world" -> "Hello World"
-  String toTitleCase({String delimiter = ' '}) {
+  String toTitleCase({
+    String delimiter = ' ',
+  }) {
     if (isEmpty) return '';
 
     final split = this.split(delimiter);
@@ -32,12 +36,14 @@ extension StringExtension on String {
   }
 
   /// Set the current clipboard content to this string.
-  Future<void> copyToClipboard({bool showSnackBar = true}) async {
+  Future<void> copyToClipboard({
+    bool showSnackBar = true,
+  }) async {
     await Clipboard.setData(ClipboardData(text: this));
     if (showSnackBar) {
       showLunaSuccessSnackBar(
-        title: 'thriftwood.Copied'.tr(),
-        message: 'thriftwood.CopiedContentToTheClipboard'.tr(),
+        title: 'lunasea.Copied'.tr(),
+        message: 'lunasea.CopiedContentToTheClipboard'.tr(),
       );
     }
   }
@@ -45,14 +51,20 @@ extension StringExtension on String {
   /// Pad a string on both sides with [padding], [count] amount of times.
   ///
   /// Example "Hello World" -> " Hello World "
-  String pad({int count = 1, String padding = ' '}) {
+  String pad({
+    int count = 1,
+    String padding = ' ',
+  }) {
     return this
         .padLeft((this.length + count), padding)
         .padRight((this.length + (count * 2)), padding);
   }
 
   /// Returns the string with a bullet appended to the front.
-  String bulleted({String bullet = LunaUI.TEXT_BULLET, int padCount = 1}) {
+  String bulleted({
+    String bullet = LunaUI.TEXT_BULLET,
+    int padCount = 1,
+  }) {
     return '${bullet.pad(count: padCount)}$this';
   }
 

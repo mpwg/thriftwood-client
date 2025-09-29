@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/extensions/scroll_controller.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/extensions/scroll_controller.dart';
+import 'package:lunasea/vendor.dart';
 
-import 'package:thriftwood/widgets/ui.dart';
-import 'package:thriftwood/modules/dashboard/core/api/data/abstract.dart';
-import 'package:thriftwood/modules/dashboard/core/state.dart';
-import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/content_block.dart';
-import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
+import 'package:lunasea/widgets/ui.dart';
+import 'package:lunasea/modules/dashboard/core/api/data/abstract.dart';
+import 'package:lunasea/modules/dashboard/core/state.dart';
+import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/content_block.dart';
+import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
 
 class ScheduleView extends StatefulWidget {
   final Map<DateTime, List<CalendarData>> events;
 
-  const ScheduleView({super.key, required this.events});
+  const ScheduleView({
+    Key? key,
+    required this.events,
+  }) : super(key: key);
 
   @override
   State<ScheduleView> createState() => _State();
@@ -27,12 +30,14 @@ class _State extends State<ScheduleView> {
     if (widget.events.isEmpty) {
       return LunaListView(
         controller: controller,
-        children: [LunaMessage.inList(text: 'dashboard.NoNewContent'.tr())],
+        children: [
+          LunaMessage.inList(text: 'dashboard.NoNewContent'.tr()),
+        ],
       );
     }
 
     final schedule = _buildSchedule();
-    Future.microtask(() => controller.animateToOffset(schedule.$2));
+    Future.microtask(() => controller.animateToOffset(schedule.item2));
 
     return LunaCustomScrollView(
       controller: controller,
@@ -40,7 +45,7 @@ class _State extends State<ScheduleView> {
         const SliverPadding(
           padding: EdgeInsets.symmetric(vertical: LunaUI.MARGIN_SIZE_HALF),
         ),
-        ...schedule.$1,
+        ...schedule.item1,
         const SliverPadding(
           padding: EdgeInsets.only(bottom: LunaUI.MARGIN_SIZE_HALF),
         ),
@@ -48,7 +53,7 @@ class _State extends State<ScheduleView> {
     );
   }
 
-  (List<Widget>, double) _buildSchedule() {
+  Tuple2<List<Widget>, double> _buildSchedule() {
     double offset = 0.0;
     double offsetOfSelected = 0.0;
 
@@ -65,21 +70,23 @@ class _State extends State<ScheduleView> {
       final hasEvents = widget.events[key]?.isNotEmpty ?? false;
       if (hasEvents) {
         final built = _buildDay(key);
-        offset += built.$2;
-        days.addAll(built.$1);
+        offset += built.item2;
+        days.addAll(built.item1);
       }
     }
 
-    return (days, offsetOfSelected);
+    return Tuple2(days, offsetOfSelected);
   }
 
-  (List<Widget>, double) _buildDay(DateTime day) {
+  Tuple2<List<Widget>, double> _buildDay(DateTime day) {
     List<CalendarData> events = widget.events[day]!;
 
     final extent = LunaBlock.calculateItemExtent(3);
     final offset = 39.30 + events.length * extent;
     final slivers = [
-      SliverToBoxAdapter(child: LunaHeader(text: _formatter.format(day))),
+      SliverToBoxAdapter(
+        child: LunaHeader(text: _formatter.format(day)),
+      ),
       SliverFixedExtentList(
         delegate: SliverChildBuilderDelegate(
           (_, index) => ContentBlock(events[index]),
@@ -89,6 +96,6 @@ class _State extends State<ScheduleView> {
       ),
     ];
 
-    return (slivers, offset);
+    return Tuple2(slivers, offset);
   }
 }

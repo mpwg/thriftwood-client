@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sabnzbd.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sabnzbd.dart';
 
 class SABnzbdDialogs {
   SABnzbdDialogs._();
@@ -41,10 +41,7 @@ class SABnzbdDialogs {
   }
 
   static Future<List<dynamic>> queueSettings(
-    BuildContext context,
-    String title,
-    bool isPaused,
-  ) async {
+      BuildContext context, String title, bool isPaused) async {
     List<List<dynamic>> _options = [
       isPaused
           ? ['Resume Job', Icons.play_arrow_rounded, 'status']
@@ -82,10 +79,7 @@ class SABnzbdDialogs {
   }
 
   static Future<List<dynamic>> historySettings(
-    BuildContext context,
-    String title,
-    bool failed,
-  ) async {
+      BuildContext context, String title, bool failed) async {
     List<List<dynamic>> _options = [
       if (failed) ['Retry Job', Icons.autorenew_rounded, 'retry'],
       if (failed) ['Set Password', Icons.vpn_key_rounded, 'password'],
@@ -120,9 +114,7 @@ class SABnzbdDialogs {
   }
 
   static Future<List<dynamic>> changeCategory(
-    BuildContext context,
-    List<SABnzbdCategoryData> categories,
-  ) async {
+      BuildContext context, List<SABnzbdCategoryData> categories) async {
     bool _flag = false;
     String? _value = '';
 
@@ -177,16 +169,11 @@ class SABnzbdDialogs {
       content: List.generate(
         _options.length,
         (index) => LunaDialog.tile(
-          text: _options[index][0],
-          icon: _options[index][1],
-          iconColor: LunaColours().byListIndex(index),
-          onTap: () => _setValues(
-            true,
-            _options[index][2],
-            _options[index][3],
-            _options[index][0],
-          ),
-        ),
+            text: _options[index][0],
+            icon: _options[index][1],
+            iconColor: LunaColours().byListIndex(index),
+            onTap: () => _setValues(true, _options[index][2],
+                _options[index][3], _options[index][0])),
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
@@ -239,7 +226,10 @@ class SABnzbdDialogs {
       context: context,
       title: 'Add NZB by URL',
       buttons: [
-        LunaDialog.button(text: 'Add', onPressed: () => _setValues(true)),
+        LunaDialog.button(
+          text: 'Add',
+          onPressed: () => _setValues(true),
+        ),
       ],
       content: [
         Form(
@@ -265,9 +255,7 @@ class SABnzbdDialogs {
   }
 
   static Future<List<dynamic>> renameJob(
-    BuildContext context,
-    String originalName,
-  ) async {
+      BuildContext context, String originalName) async {
     bool _flag = false;
     final _formKey = GlobalKey<FormState>();
     final _textController = TextEditingController()..text = originalName;
@@ -283,7 +271,10 @@ class SABnzbdDialogs {
       context: context,
       title: 'Rename Job',
       buttons: [
-        LunaDialog.button(text: 'Rename', onPressed: () => _setValues(true)),
+        LunaDialog.button(
+          text: 'Rename',
+          onPressed: () => _setValues(true),
+        ),
       ],
       content: [
         Form(
@@ -318,7 +309,10 @@ class SABnzbdDialogs {
       context: context,
       title: 'Set Password',
       buttons: [
-        LunaDialog.button(text: 'Set', onPressed: () => _setValues(true)),
+        LunaDialog.button(
+          text: 'Set',
+          onPressed: () => _setValues(true),
+        ),
       ],
       content: [
         Form(
@@ -340,9 +334,7 @@ class SABnzbdDialogs {
   }
 
   static Future<List<dynamic>> speedLimit(
-    BuildContext context,
-    int currentSpeed,
-  ) async {
+      BuildContext context, int currentSpeed) async {
     List<List<dynamic>> _options = [
       ['20%', Icons.timeline_rounded, 20],
       ['40%', Icons.timeline_rounded, 40],
@@ -366,11 +358,10 @@ class SABnzbdDialogs {
       content: List.generate(
         _options.length,
         (index) => LunaDialog.tile(
-          text: _options[index][0],
-          icon: _options[index][1],
-          iconColor: LunaColours().byListIndex(index),
-          onTap: () => _setValues(true, _options[index][2]),
-        ),
+            text: _options[index][0],
+            icon: _options[index][1],
+            iconColor: LunaColours().byListIndex(index),
+            onTap: () => _setValues(true, _options[index][2])),
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
@@ -429,7 +420,10 @@ class SABnzbdDialogs {
       context: context,
       title: 'Custom Pause Duration',
       buttons: [
-        LunaDialog.button(text: 'Pause', onPressed: () => _setValues(true)),
+        LunaDialog.button(
+          text: 'Pause',
+          onPressed: () => _setValues(true),
+        ),
       ],
       content: [
         LunaDialog.richText(
@@ -437,26 +431,24 @@ class SABnzbdDialogs {
             LunaDialog.textSpanContent(text: 'Please enter how long in '),
             LunaDialog.bolded(text: 'minutes'),
             LunaDialog.textSpanContent(
-              text: ' you want to pause the queue for.',
-            ),
+                text: ' you want to pause the queue for.'),
           ],
           alignment: TextAlign.center,
         ),
         Form(
           key: _formKey,
           child: LunaDialog.textFormInput(
-            controller: _textController,
-            title: 'Pause Duration in Minutes',
-            keyboardType: TextInputType.number,
-            onSubmitted: (_) => _setValues(true),
-            validator: (value) {
-              int? _value = int.tryParse(value!);
-              if (_value == null || _value < 1) {
-                return 'Must be at least 1';
-              }
-              return null;
-            },
-          ),
+              controller: _textController,
+              title: 'Pause Duration in Minutes',
+              keyboardType: TextInputType.number,
+              onSubmitted: (_) => _setValues(true),
+              validator: (value) {
+                int? _value = int.tryParse(value!);
+                if (_value == null || _value < 1) {
+                  return 'Must be at least 1';
+                }
+                return null;
+              }),
         ),
       ],
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
@@ -502,8 +494,7 @@ class SABnzbdDialogs {
   }
 
   static Future<List<dynamic>> changeOnCompleteAction(
-    BuildContext context,
-  ) async {
+      BuildContext context) async {
     List<List<dynamic>> _options = [
       ['Shutdown SABnzbd', Icons.settings_power_rounded, 'shutdown_program'],
       ['Shutdown Machine', Icons.settings_power_rounded, 'shutdown_pc'],
@@ -569,11 +560,7 @@ class SABnzbdDialogs {
           icon: _options[index][1],
           iconColor: LunaColours().byListIndex(index),
           onTap: () => _setValues(
-            true,
-            _options[index][2],
-            _options[index][3],
-            _options[index][0],
-          ),
+              true, _options[index][2], _options[index][3], _options[index][0]),
         ),
       ),
       contentPadding: LunaDialog.listDialogContentPadding(),
@@ -597,12 +584,14 @@ class SABnzbdDialogs {
       context: context,
       title: 'Custom Speed Limit',
       buttons: [
-        LunaDialog.button(text: 'Set', onPressed: () => _setValues(true)),
+        LunaDialog.button(
+          text: 'Set',
+          onPressed: () => _setValues(true),
+        ),
       ],
       content: [
         LunaDialog.textContent(
-          text: 'Please enter a percentage between 1 and 100.',
-        ),
+            text: 'Please enter a percentage between 1 and 100.'),
         Form(
           key: _formKey,
           child: LunaDialog.textFormInput(
@@ -645,8 +634,7 @@ class SABnzbdDialogs {
       ],
       content: [
         LunaDialog.textContent(
-          text: 'Are you sure you want to delete this job?',
-        ),
+            text: 'Are you sure you want to delete this job?'),
       ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );
@@ -673,8 +661,7 @@ class SABnzbdDialogs {
       ],
       content: [
         LunaDialog.textContent(
-          text: 'Are you sure you want to delete the history for this job?',
-        ),
+            text: 'Are you sure you want to delete the history for this job?'),
       ],
       contentPadding: LunaDialog.textDialogContentPadding(),
     );

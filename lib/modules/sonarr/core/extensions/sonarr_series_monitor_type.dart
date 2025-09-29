@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 extension LunaSonarrSeriesMonitorTypeExtension on SonarrSeriesMonitorType {
   String get lunaName {
@@ -21,7 +21,7 @@ extension LunaSonarrSeriesMonitorTypeExtension on SonarrSeriesMonitorType {
       case SonarrSeriesMonitorType.NONE:
         return 'None';
       default:
-        return 'thriftwood.Unknown'.tr();
+        return 'lunasea.Unknown'.tr();
     }
   }
 }

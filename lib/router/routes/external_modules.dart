@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/modules.dart';
-import 'package:thriftwood/modules/external_modules/routes/external_modules/route.dart';
-import 'package:thriftwood/router/routes.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/modules.dart';
+import 'package:lunasea/modules/external_modules/routes/external_modules/route.dart';
+import 'package:lunasea/router/routes.dart';
+import 'package:lunasea/vendor.dart';
 
 enum ExternalModulesRoutes with LunaRoutesMixin {
   HOME('/external_modules');

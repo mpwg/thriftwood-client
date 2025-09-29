@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class LidarrMissing extends StatefulWidget {
   static const ROUTE_NAME = '/lidarr/missing';
@@ -8,10 +8,10 @@ class LidarrMissing extends StatefulWidget {
   final Function refreshAllPages;
 
   const LidarrMissing({
-    super.key,
+    Key? key,
     required this.refreshIndicatorKey,
     required this.refreshAllPages,
-  });
+  }) : super(key: key);
 
   @override
   State<LidarrMissing> createState() => _State();
@@ -45,7 +45,10 @@ class _State extends State<LidarrMissing> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LunaScaffold(scaffoldKey: _scaffoldKey, body: _body);
+    return LunaScaffold(
+      scaffoldKey: _scaffoldKey,
+      body: _body,
+    );
   }
 
   Widget get _body => LunaRefreshIndicator(

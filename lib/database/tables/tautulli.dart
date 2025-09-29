@@ -1,4 +1,4 @@
-import 'package:thriftwood/database/table.dart';
+import 'package:lunasea/database/table.dart';
 
 enum TautulliDatabase<T> with LunaTableMixin<T> {
   NAVIGATION_INDEX<int>(0),

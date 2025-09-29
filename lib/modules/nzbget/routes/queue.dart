@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/nzbget.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/nzbget.dart';
 
 class NZBGetQueue extends StatefulWidget {
   static const ROUTE_NAME = '/nzbget/queue';
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
 
-  const NZBGetQueue({super.key, required this.refreshIndicatorKey});
+  const NZBGetQueue({
+    Key? key,
+    required this.refreshIndicatorKey,
+  }) : super(key: key);
 
   @override
   State<NZBGetQueue> createState() => _State();
@@ -37,8 +40,7 @@ class _State extends State<NZBGetQueue>
       floatingActionButton: context.watch<NZBGetState>().error
           ? null
           : NZBGetQueueFAB(
-              scrollController: NZBGetNavigationBar.scrollControllers[0],
-            ),
+              scrollController: NZBGetNavigationBar.scrollControllers[0]),
     );
   }
 
@@ -148,18 +150,10 @@ class _State extends State<NZBGetQueue>
           });
         await NZBGetAPI.from(LunaProfile.current)
             .moveQueue(data.id, (nIndex - oIndex))
-            .then(
-              (_) => showLunaSuccessSnackBar(
-                title: 'Moved Job in Queue',
-                message: data.name,
-              ),
-            )
-            .catchError(
-              (error) => showLunaErrorSnackBar(
-                title: 'Failed to Move Job',
-                error: error,
-              ),
-            );
+            .then((_) => showLunaSuccessSnackBar(
+                title: 'Moved Job in Queue', message: data.name))
+            .catchError((error) => showLunaErrorSnackBar(
+                title: 'Failed to Move Job', error: error));
       },
       itemCount: _queue!.length,
       itemBuilder: (context, index) => NZBGetQueueTile(

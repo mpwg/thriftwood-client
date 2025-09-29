@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class LidarrDetailsOverview extends StatefulWidget {
   final LidarrCatalogueData data;
 
-  const LidarrDetailsOverview({super.key, required this.data});
+  const LidarrDetailsOverview({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
 
   @override
   State<LidarrDetailsOverview> createState() => _State();
@@ -33,12 +36,30 @@ class _State extends State<LidarrDetailsOverview>
         ),
         LunaTableCard(
           content: [
-            LunaTableContent(title: 'Path', body: widget.data.path),
-            LunaTableContent(title: 'Quality', body: widget.data.quality),
-            LunaTableContent(title: 'Metadata', body: widget.data.metadata),
-            LunaTableContent(title: 'Albums', body: widget.data.albums),
-            LunaTableContent(title: 'Tracks', body: widget.data.tracks),
-            LunaTableContent(title: 'Genres', body: widget.data.genre),
+            LunaTableContent(
+              title: 'Path',
+              body: widget.data.path,
+            ),
+            LunaTableContent(
+              title: 'Quality',
+              body: widget.data.quality,
+            ),
+            LunaTableContent(
+              title: 'Metadata',
+              body: widget.data.metadata,
+            ),
+            LunaTableContent(
+              title: 'Albums',
+              body: widget.data.albums,
+            ),
+            LunaTableContent(
+              title: 'Tracks',
+              body: widget.data.tracks,
+            ),
+            LunaTableContent(
+              title: 'Genres',
+              body: widget.data.genre,
+            ),
           ],
         ),
       ],

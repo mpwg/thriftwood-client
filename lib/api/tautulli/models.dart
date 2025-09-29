@@ -1,5 +1,5 @@
 /// Library containing all model definitions for Tautulli data.
-library;
+library tautulli_models;
 
 // Activity
 export 'models/activity/activity.dart';

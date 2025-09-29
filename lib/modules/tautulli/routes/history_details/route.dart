@@ -1,7 +1,7 @@
-import 'package:thriftwood/utils/collection_utils.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class HistoryDetailsRoute extends StatefulWidget {
   final int ratingKey;
@@ -9,11 +9,11 @@ class HistoryDetailsRoute extends StatefulWidget {
   final int? referenceId;
 
   const HistoryDetailsRoute({
-    super.key,
+    Key? key,
     required this.ratingKey,
     this.sessionKey,
     this.referenceId,
-  });
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -52,15 +52,13 @@ class _State extends State<HistoryDetailsRoute>
       scrollControllers: [scrollController],
       actions: [
         TautulliHistoryDetailsUser(
-          ratingKey: widget.ratingKey,
-          sessionKey: widget.sessionKey,
-          referenceId: widget.referenceId,
-        ),
+            ratingKey: widget.ratingKey,
+            sessionKey: widget.sessionKey,
+            referenceId: widget.referenceId),
         TautulliHistoryDetailsMetadata(
-          ratingKey: widget.ratingKey,
-          sessionKey: widget.sessionKey,
-          referenceId: widget.referenceId,
-        ),
+            ratingKey: widget.ratingKey,
+            sessionKey: widget.sessionKey,
+            referenceId: widget.referenceId),
       ],
     );
   }
@@ -104,6 +102,9 @@ class _State extends State<HistoryDetailsRoute>
   }
 
   Widget _unknown() {
-    return LunaMessage.goBack(context: context, text: 'History Not Found');
+    return LunaMessage.goBack(
+      context: context,
+      text: 'History Not Found',
+    );
   }
 }

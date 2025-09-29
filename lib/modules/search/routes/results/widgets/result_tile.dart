@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/int/bytes.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/search.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/int/bytes.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/search.dart';
 
 class SearchResultTile extends StatelessWidget {
   final NewznabResultData data;
 
-  const SearchResultTile({super.key, required this.data});
+  const SearchResultTile({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LunaExpandableListTile(
       title: data.title,
-      collapsedSubtitles: [_subtitle1(), _subtitle2()],
+      collapsedSubtitles: [
+        _subtitle1(),
+        _subtitle2(),
+      ],
       expandedTableContent: _tableContent(),
       collapsedTrailing: _trailing(context),
       expandedTableButtons: _tableButtons(context),
@@ -21,13 +27,11 @@ class SearchResultTile extends StatelessWidget {
   }
 
   TextSpan _subtitle1() {
-    return TextSpan(
-      children: [
-        TextSpan(text: data.size.asBytes()),
-        TextSpan(text: LunaUI.TEXT_BULLET.pad()),
-        TextSpan(text: data.category),
-      ],
-    );
+    return TextSpan(children: [
+      TextSpan(text: data.size.asBytes()),
+      TextSpan(text: LunaUI.TEXT_BULLET.pad()),
+      TextSpan(text: data.category),
+    ]);
   }
 
   TextSpan _subtitle2() {
@@ -43,16 +47,14 @@ class SearchResultTile extends StatelessWidget {
         LunaTableContent(title: '', body: ''),
       if (SearchDatabase.SHOW_LINKS.read())
         LunaTableContent(
-          title: 'search.Comments'.tr(),
-          body: data.linkComments,
-          bodyIsUrl: true,
-        ),
+            title: 'search.Comments'.tr(),
+            body: data.linkComments,
+            bodyIsUrl: true),
       if (SearchDatabase.SHOW_LINKS.read())
         LunaTableContent(
-          title: 'search.Download'.tr(),
-          body: data.linkDownload,
-          bodyIsUrl: true,
-        ),
+            title: 'search.Download'.tr(),
+            body: data.linkDownload,
+            bodyIsUrl: true),
     ];
   }
 
@@ -74,8 +76,8 @@ class SearchResultTile extends StatelessWidget {
   }
 
   Future<void> _sendToClient(BuildContext context) async {
-    (bool, SearchDownloadType?) result =
+    Tuple2<bool, SearchDownloadType?> result =
         await SearchDialogs().downloadResult(context);
-    if (result.$1) result.$2!.execute(context, data);
+    if (result.item1) result.item2!.execute(context, data);
   }
 }

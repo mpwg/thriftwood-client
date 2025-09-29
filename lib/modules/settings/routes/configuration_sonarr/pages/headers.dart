@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/modules.dart';
-import 'package:thriftwood/modules/settings.dart';
+import 'package:lunasea/modules.dart';
+import 'package:lunasea/modules/settings.dart';
 
 class ConfigurationSonarrConnectionDetailsHeadersRoute extends StatelessWidget {
-  const ConfigurationSonarrConnectionDetailsHeadersRoute({super.key});
+  const ConfigurationSonarrConnectionDetailsHeadersRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

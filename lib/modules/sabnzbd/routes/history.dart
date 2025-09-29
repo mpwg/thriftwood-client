@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sabnzbd.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sabnzbd.dart';
 
 class SABnzbdHistory extends StatefulWidget {
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
 
-  const SABnzbdHistory({super.key, required this.refreshIndicatorKey});
+  const SABnzbdHistory({
+    Key? key,
+    required this.refreshIndicatorKey,
+  }) : super(key: key);
 
   @override
   State<SABnzbdHistory> createState() => _State();
@@ -43,8 +46,7 @@ class _State extends State<SABnzbdHistory>
   Widget _appBar() {
     return LunaAppBar.empty(
       child: SABnzbdHistorySearchBar(
-        scrollController: SABnzbdNavigationBar.scrollControllers[1],
-      ),
+          scrollController: SABnzbdNavigationBar.scrollControllers[1]),
       height: LunaTextInputBar.defaultAppBarHeight,
     );
   }
@@ -62,8 +64,7 @@ class _State extends State<SABnzbdHistory>
               {
                 if (snapshot.hasError || snapshot.data == null) {
                   return LunaMessage.error(
-                    onTap: widget.refreshIndicatorKey.currentState!.show,
-                  );
+                      onTap: widget.refreshIndicatorKey.currentState!.show);
                 }
                 _results = snapshot.data;
                 return _list;
@@ -87,12 +88,14 @@ class _State extends State<SABnzbdHistory>
         onTap: loadCallback,
       );
     }
-    return Selector<SABnzbdState, (String, bool)>(
-      selector: (_, model) =>
-          (model.historySearchFilter, model.historyHideFailed),
+    return Selector<SABnzbdState, Tuple2<String, bool>>(
+      selector: (_, model) => Tuple2(
+        model.historySearchFilter,
+        model.historyHideFailed,
+      ),
       builder: (context, data, _) {
-        List<SABnzbdHistoryData> _filtered = _filter(data.$1);
-        _filtered = data.$2 ? _hide(_filtered) : _filtered;
+        List<SABnzbdHistoryData> _filtered = _filter(data.item1);
+        _filtered = data.item2 ? _hide(_filtered) : _filtered;
         return _listBody(_filtered);
       },
     );
@@ -102,22 +105,24 @@ class _State extends State<SABnzbdHistory>
     if (filtered.isEmpty)
       return LunaListView(
         controller: SABnzbdNavigationBar.scrollControllers[1],
-        children: [LunaMessage.inList(text: 'No History Found')],
+        children: [
+          LunaMessage.inList(text: 'No History Found'),
+        ],
       );
     return LunaListViewBuilder(
       controller: SABnzbdNavigationBar.scrollControllers[1],
       itemCount: filtered.length,
-      itemBuilder: (context, index) =>
-          SABnzbdHistoryTile(data: filtered[index], refresh: loadCallback),
+      itemBuilder: (context, index) => SABnzbdHistoryTile(
+        data: filtered[index],
+        refresh: loadCallback,
+      ),
     );
   }
 
   List<SABnzbdHistoryData> _filter(String filter) => _results!
-      .where(
-        (entry) => filter.isEmpty
-            ? true
-            : entry.name.toLowerCase().contains(filter.toLowerCase()),
-      )
+      .where((entry) => filter.isEmpty
+          ? true
+          : entry.name.toLowerCase().contains(filter.toLowerCase()))
       .toList();
 
   List<SABnzbdHistoryData> _hide(List<SABnzbdHistoryData> data) {

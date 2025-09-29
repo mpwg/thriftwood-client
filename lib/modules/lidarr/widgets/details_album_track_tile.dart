@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/int/duration.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/int/duration.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class LidarrDetailsTrackTile extends StatefulWidget {
   final LidarrTrackData data;
   final bool monitored;
 
   const LidarrDetailsTrackTile({
-    super.key,
+    Key? key,
     required this.data,
     required this.monitored,
-  });
+  }) : super(key: key);
 
   @override
   State<LidarrDetailsTrackTile> createState() => _State();

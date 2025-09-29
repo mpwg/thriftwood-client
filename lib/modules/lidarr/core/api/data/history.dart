@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 abstract class LidarrHistoryData {
   String title;
@@ -66,7 +66,9 @@ class LidarrHistoryDataGeneric extends LidarrHistoryData {
   @override
   List<TextSpan> get subtitle {
     return [
-      TextSpan(text: '$timestampString\n'),
+      TextSpan(
+        text: '$timestampString\n',
+      ),
       TextSpan(
         text: eventType,
         style: const TextStyle(
@@ -92,14 +94,16 @@ class LidarrHistoryDataGrabbed extends LidarrHistoryData {
   @override
   List<TextSpan> get subtitle {
     return [
-      TextSpan(text: '$timestampString\n'),
+      TextSpan(
+        text: '$timestampString\n',
+      ),
       TextSpan(
         text: '${LidarrConstants.EVENT_TYPE_MESSAGES[eventType]} $indexer',
         style: const TextStyle(
           color: LunaColours.orange,
           fontWeight: LunaUI.FONT_WEIGHT_BOLD,
         ),
-      ),
+      )
     ];
   }
 }
@@ -125,7 +129,7 @@ class LidarrHistoryDataTrackFileImported extends LidarrHistoryData {
           color: LunaColours.accent,
           fontWeight: LunaUI.FONT_WEIGHT_BOLD,
         ),
-      ),
+      )
     ];
   }
 }
@@ -151,7 +155,7 @@ class LidarrHistoryDataDownloadImported extends LidarrHistoryData {
           color: LunaColours.accent,
           fontWeight: LunaUI.FONT_WEIGHT_BOLD,
         ),
-      ),
+      )
     ];
   }
 }
@@ -174,7 +178,7 @@ class LidarrHistoryDataAlbumImportIncomplete extends LidarrHistoryData {
           color: LunaColours.orange,
           fontWeight: LunaUI.FONT_WEIGHT_BOLD,
         ),
-      ),
+      )
     ];
   }
 }
@@ -201,7 +205,7 @@ class LidarrHistoryDataTrackFileDeleted extends LidarrHistoryData {
           color: LunaColours.red,
           fontWeight: LunaUI.FONT_WEIGHT_BOLD,
         ),
-      ),
+      )
     ];
   }
 }
@@ -224,7 +228,7 @@ class LidarrHistoryDataTrackFileRenamed extends LidarrHistoryData {
           color: LunaColours.blue,
           fontWeight: LunaUI.FONT_WEIGHT_BOLD,
         ),
-      ),
+      )
     ];
   }
 }
@@ -247,7 +251,7 @@ class LidarrHistoryDataTrackFileRetagged extends LidarrHistoryData {
           color: LunaColours.blue,
           fontWeight: LunaUI.FONT_WEIGHT_BOLD,
         ),
-      ),
+      )
     ];
   }
 }

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/database/models/indexer.dart';
-import 'package:thriftwood/modules/settings.dart';
-import 'package:thriftwood/widgets/pages/invalid_route.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/database/models/indexer.dart';
+import 'package:lunasea/modules/settings.dart';
+import 'package:lunasea/widgets/pages/invalid_route.dart';
 
 class ConfigurationSearchEditIndexerHeadersRoute extends StatefulWidget {
   final int id;
 
-  const ConfigurationSearchEditIndexerHeadersRoute(
-      {super.key, required this.id});
+  const ConfigurationSearchEditIndexerHeadersRoute({
+    Key? key,
+    required this.id,
+  }) : super(key: key);
 
   @override
   State<ConfigurationSearchEditIndexerHeadersRoute> createState() => _State();
@@ -49,11 +51,8 @@ class _State extends State<ConfigurationSearchEditIndexerHeadersRoute>
         LunaButton.text(
           text: 'settings.AddHeader'.tr(),
           icon: Icons.add_rounded,
-          onTap: () async => HeaderUtility().addHeader(
-            context,
-            headers: _indexer!.headers,
-            indexer: _indexer,
-          ),
+          onTap: () async => HeaderUtility().addHeader(context,
+              headers: _indexer!.headers, indexer: _indexer),
         ),
       ],
     );

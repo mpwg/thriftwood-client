@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:thriftwood/system/logger.dart';
-import 'package:thriftwood/widgets/pages/error_route.dart';
-import 'package:thriftwood/router/routes.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/system/logger.dart';
+import 'package:lunasea/widgets/pages/error_route.dart';
+import 'package:lunasea/router/routes.dart';
+import 'package:lunasea/vendor.dart';
 
 class LunaRouter {
   static late GoRouter router;

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class ConfigurationTautulliDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationTautulliDefaultPagesRoute({super.key});
+  const ConfigurationTautulliDefaultPagesRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationTautulliDefaultPagesRoute> createState() => _State();
@@ -46,7 +48,7 @@ class _State extends State<ConfigurationTautulliDefaultPagesRoute>
     const _db = TautulliDatabase.NAVIGATION_INDEX;
     return _db.listenableBuilder(
       builder: (context, _) => LunaBlock(
-        title: 'thriftwood.Home'.tr(),
+        title: 'lunasea.Home'.tr(),
         body: [TextSpan(text: TautulliNavigationBar.titles[_db.read()])],
         trailing: LunaIconButton(icon: TautulliNavigationBar.icons[_db.read()]),
         onTap: () async {
@@ -67,9 +69,8 @@ class _State extends State<ConfigurationTautulliDefaultPagesRoute>
       builder: (context, _) => LunaBlock(
         title: 'tautulli.Graphs'.tr(),
         body: [TextSpan(text: TautulliGraphsNavigationBar.titles[_db.read()])],
-        trailing: LunaIconButton(
-          icon: TautulliGraphsNavigationBar.icons[_db.read()],
-        ),
+        trailing:
+            LunaIconButton(icon: TautulliGraphsNavigationBar.icons[_db.read()]),
         onTap: () async {
           List values = await TautulliDialogs.setDefaultPage(
             context,
@@ -89,12 +90,10 @@ class _State extends State<ConfigurationTautulliDefaultPagesRoute>
         title: 'tautulli.LibraryDetails'.tr(),
         body: [
           TextSpan(
-            text: TautulliLibrariesDetailsNavigationBar.titles[_db.read()],
-          ),
+              text: TautulliLibrariesDetailsNavigationBar.titles[_db.read()])
         ],
         trailing: LunaIconButton(
-          icon: TautulliLibrariesDetailsNavigationBar.icons[_db.read()],
-        ),
+            icon: TautulliLibrariesDetailsNavigationBar.icons[_db.read()]),
         onTap: () async {
           List values = await TautulliDialogs.setDefaultPage(
             context,
@@ -116,8 +115,7 @@ class _State extends State<ConfigurationTautulliDefaultPagesRoute>
           TextSpan(text: TautulliMediaDetailsNavigationBar.titles[_db.read()]),
         ],
         trailing: LunaIconButton(
-          icon: TautulliMediaDetailsNavigationBar.icons[_db.read()],
-        ),
+            icon: TautulliMediaDetailsNavigationBar.icons[_db.read()]),
         onTap: () async {
           List values = await TautulliDialogs.setDefaultPage(
             context,
@@ -139,8 +137,7 @@ class _State extends State<ConfigurationTautulliDefaultPagesRoute>
           TextSpan(text: TautulliUserDetailsNavigationBar.titles[_db.read()]),
         ],
         trailing: LunaIconButton(
-          icon: TautulliUserDetailsNavigationBar.icons[_db.read()],
-        ),
+            icon: TautulliUserDetailsNavigationBar.icons[_db.read()]),
         onTap: () async {
           List values = await TautulliDialogs.setDefaultPage(
             context,

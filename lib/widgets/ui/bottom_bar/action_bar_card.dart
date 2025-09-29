@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LunaActionBarCard extends StatelessWidget {
   final String title;
@@ -14,7 +14,7 @@ class LunaActionBarCard extends StatelessWidget {
   final void Function(bool?)? checkboxOnChanged;
 
   const LunaActionBarCard({
-    super.key,
+    Key? key,
     required this.title,
     this.subtitle,
     this.onTap,
@@ -24,7 +24,7 @@ class LunaActionBarCard extends StatelessWidget {
     this.icon = LunaIcons.ARROW_RIGHT,
     this.checkboxState,
     this.checkboxOnChanged,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,13 @@ class LunaActionBarCard extends StatelessWidget {
                   Container(
                     width: 30.0,
                     alignment: Alignment.centerRight,
-                    child: SizedBox(width: 20.0, child: Icon(icon, size: 20.0)),
+                    child: SizedBox(
+                      width: 20.0,
+                      child: Icon(
+                        icon,
+                        size: 20.0,
+                      ),
+                    ),
                   ),
               ],
             ),

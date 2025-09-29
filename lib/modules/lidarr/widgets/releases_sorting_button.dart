@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/scroll_controller.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/scroll_controller.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class LidarrReleasesSortButton extends StatefulWidget {
   final ScrollController controller;
 
-  const LidarrReleasesSortButton({super.key, required this.controller});
+  const LidarrReleasesSortButton({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<LidarrReleasesSortButton> createState() => _State();
@@ -42,7 +45,9 @@ class _State extends State<LidarrReleasesSortButton> {
                   children: [
                     Text(
                       LidarrReleasesSorting.values[index].readable,
-                      style: const TextStyle(fontSize: LunaUI.FONT_SIZE_H3),
+                      style: const TextStyle(
+                        fontSize: LunaUI.FONT_SIZE_H3,
+                      ),
                     ),
                     if (model.sortReleasesType ==
                         LidarrReleasesSorting.values[index])
@@ -59,9 +64,8 @@ class _State extends State<LidarrReleasesSortButton> {
             ),
           ),
         ),
-        margin: LunaTextInputBar.appBarMargin.subtract(
-          const EdgeInsets.only(left: 12.0),
-        ) as EdgeInsets,
+        margin: LunaTextInputBar.appBarMargin
+            .subtract(const EdgeInsets.only(left: 12.0)) as EdgeInsets,
         color: Theme.of(context).canvasColor,
       );
 }

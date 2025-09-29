@@ -2,11 +2,11 @@
 /// a Python based monitoring and tracking tool for Plex Media Server.
 ///
 /// This library gives access to [tautulli_commands], [tautulli_models], and [tautulli_types], and is needed as the only entrypoint.
-library;
+library tautulli;
 
 // Imports
 import 'package:dio/dio.dart';
-import 'package:thriftwood/api/tautulli/commands.dart';
+import 'package:lunasea/api/tautulli/commands.dart';
 
 /// The core class to handle all connections to Tautulli.
 /// Gives you easy access to all implemented command handlers, initialized and ready to call.
@@ -48,7 +48,9 @@ class TautulliAPI {
     Dio _dio = Dio(
       BaseOptions(
         baseUrl: host.endsWith('/') ? '${host}api/v2' : '$host/api/v2',
-        queryParameters: {'apikey': apiKey},
+        queryParameters: {
+          'apikey': apiKey,
+        },
         contentType: Headers.jsonContentType,
         responseType: ResponseType.json,
         headers: headers,
@@ -90,7 +92,9 @@ class TautulliAPI {
   ///     ),
   /// );
   /// ```
-  factory TautulliAPI.from({required Dio client}) {
+  factory TautulliAPI.from({
+    required Dio client,
+  }) {
     return TautulliAPI._internal(
       httpClient: client,
       activity: TautulliCommandHandlerActivity(client),

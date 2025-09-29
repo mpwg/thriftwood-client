@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/api/wake_on_lan/wake_on_lan.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
 
 class LunaDrawer extends StatelessWidget {
   final String page;
 
-  const LunaDrawer({super.key, required this.page});
+  const LunaDrawer({
+    Key? key,
+    required this.page,
+  }) : super(key: key);
 
   static List<LunaModule> moduleAlphabeticalList() {
     return LunaModule.active
@@ -14,7 +17,7 @@ class LunaDrawer extends StatelessWidget {
 
   static List<LunaModule> moduleOrderedList() {
     try {
-      const db = thriftwoodDatabase.DRAWER_MANUAL_ORDER;
+      const db = LunaSeaDatabase.DRAWER_MANUAL_ORDER;
       final modules = List.from(db.read());
       final missing = LunaModule.active;
 
@@ -31,12 +34,12 @@ class LunaDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return thriftwoodDatabase.ENABLED_PROFILE.listenableBuilder(
+    return LunaSeaDatabase.ENABLED_PROFILE.listenableBuilder(
       builder: (context, _) => LunaBox.indexers.listenableBuilder(
         builder: (context, _) => Drawer(
           elevation: LunaUI.ELEVATION,
           backgroundColor: Theme.of(context).primaryColor,
-          child: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.listenableBuilder(
+          child: LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE.listenableBuilder(
             builder: (context, _) => Column(
               children: [
                 LunaDrawerHeader(page: page),
@@ -45,7 +48,7 @@ class LunaDrawer extends StatelessWidget {
                     controller: PrimaryScrollController.of(context),
                     children: _moduleList(
                       context,
-                      thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.read()
+                      LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE.read()
                           ? moduleAlphabeticalList()
                           : moduleOrderedList(),
                     ),
@@ -62,7 +65,12 @@ class LunaDrawer extends StatelessWidget {
   }
 
   List<Widget> _sharedHeader(BuildContext context) {
-    return [_buildEntry(context: context, module: LunaModule.DASHBOARD)];
+    return [
+      _buildEntry(
+        context: context,
+        module: LunaModule.DASHBOARD,
+      ),
+    ];
   }
 
   List<Widget> _moduleList(BuildContext context, List<LunaModule> modules) {

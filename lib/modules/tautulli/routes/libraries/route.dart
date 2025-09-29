@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class LibrariesRoute extends StatefulWidget {
-  const LibrariesRoute({super.key});
+  const LibrariesRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<LibrariesRoute> createState() => _State();

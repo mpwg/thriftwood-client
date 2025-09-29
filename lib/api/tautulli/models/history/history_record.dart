@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'history_record.g.dart';
 
@@ -9,9 +9,7 @@ part 'history_record.g.dart';
 class TautulliHistoryRecord {
   /// Reference ID. If it is null, that means the session is currently active.
   @JsonKey(
-    name: 'reference_id',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'reference_id', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? referenceId;
 
   /// Row ID. If it is null, that means the session is currently active.
@@ -24,37 +22,28 @@ class TautulliHistoryRecord {
 
   /// Date of the history record.
   @JsonKey(
-    name: 'date',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'date', fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? date;
 
   /// Start date of the history record session.
   @JsonKey(
-    name: 'started',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'started', fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? started;
 
   /// End date of the history record session.
   @JsonKey(
-    name: 'stopped',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'stopped', fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? stopped;
 
   /// Duration of the session (in seconds).
   @JsonKey(
-    name: 'duration',
-    fromJson: TautulliUtilities.secondsDurationFromJson,
-  )
+      name: 'duration', fromJson: TautulliUtilities.secondsDurationFromJson)
   final Duration? duration;
 
   /// The duration that the session has been or was paused for
   @JsonKey(
-    name: 'paused_counter',
-    fromJson: TautulliUtilities.secondsDurationFromJson,
-  )
+      name: 'paused_counter',
+      fromJson: TautulliUtilities.secondsDurationFromJson)
   final Duration? pausedCounter;
 
   /// The ID of the user who streamed the content.
@@ -67,9 +56,7 @@ class TautulliHistoryRecord {
 
   /// Friendly name of the user who streamed the content.
   @JsonKey(
-    name: 'friendly_name',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'friendly_name', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? friendlyName;
 
   /// Platform of the streaming device.
@@ -94,31 +81,26 @@ class TautulliHistoryRecord {
 
   /// The type of media that was streamed.
   @JsonKey(
-    name: 'media_type',
-    toJson: TautulliUtilities.mediaTypeToJson,
-    fromJson: TautulliUtilities.mediaTypeFromJson,
-  )
+      name: 'media_type',
+      toJson: TautulliUtilities.mediaTypeToJson,
+      fromJson: TautulliUtilities.mediaTypeFromJson)
   final TautulliMediaType? mediaType;
 
   /// The content's unique ID from Plex.
   @JsonKey(
-    name: 'rating_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'rating_key', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? ratingKey;
 
   /// The content's parent's unique ID from Plex.
   @JsonKey(
-    name: 'parent_rating_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'parent_rating_key',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? parentRatingKey;
 
   /// The content's grandparent's unique ID from Plex.
   @JsonKey(
-    name: 'grandparent_rating_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'grandparent_rating_key',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? grandparentRatingKey;
 
   /// The full title of the content.
@@ -131,23 +113,18 @@ class TautulliHistoryRecord {
 
   /// Title of the parent of the content.
   @JsonKey(
-    name: 'parent_title',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'parent_title', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? parentTitle;
 
   /// Title of the grandparent of the content.
   @JsonKey(
-    name: 'grandparent_title',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'grandparent_title',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? grandparentTitle;
 
   /// The original title of the content.
   @JsonKey(
-    name: 'original_title',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'original_title', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? originalTitle;
 
   /// The year the content was released.
@@ -156,16 +133,13 @@ class TautulliHistoryRecord {
 
   /// The media index of the content.
   @JsonKey(
-    name: 'media_index',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'media_index', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? mediaIndex;
 
   /// The content's parent's media index.
   @JsonKey(
-    name: 'parent_media_index',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'parent_media_index',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? parentMediaIndex;
 
   /// Thumbnail path for the content.
@@ -177,9 +151,8 @@ class TautulliHistoryRecord {
   /// Because of the custom formatting options, the DateTime is returned as a string.
   /// You can use the miscellaneous call `getDateFormats()` to pull the date and time formatting strings.
   @JsonKey(
-    name: 'originally_available_at',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'originally_available_at',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? originallyAvailableAt;
 
   /// The globally unique identifier for the content.
@@ -188,54 +161,44 @@ class TautulliHistoryRecord {
 
   /// What decision was made on how to handle the content.
   @JsonKey(
-    name: 'transcode_decision',
-    toJson: TautulliUtilities.transcodeDecisionToJson,
-    fromJson: TautulliUtilities.transcodeDecisionFromJson,
-  )
+      name: 'transcode_decision',
+      toJson: TautulliUtilities.transcodeDecisionToJson,
+      fromJson: TautulliUtilities.transcodeDecisionFromJson)
   final TautulliTranscodeDecision? transcodeDecision;
 
   /// How much of the content has been played.
   @JsonKey(
-    name: 'percent_complete',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'percent_complete',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? percentComplete;
 
   /// The watch status of the history record.
   @JsonKey(
-    name: 'watched_status',
-    toJson: TautulliUtilities.watchedStatusToJson,
-    fromJson: TautulliUtilities.watchedStatusFromJson,
-  )
+      name: 'watched_status',
+      toJson: TautulliUtilities.watchedStatusToJson,
+      fromJson: TautulliUtilities.watchedStatusFromJson)
   final TautulliWatchedStatus? watchedStatus;
 
   /// How many groups this session is in.
   @JsonKey(
-    name: 'group_count',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'group_count', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? groupCount;
 
   /// List of all the groups this session is in.
   @JsonKey(
-    name: 'group_ids',
-    fromJson: TautulliUtilities.stringToListStringFromJson,
-  )
+      name: 'group_ids', fromJson: TautulliUtilities.stringToListStringFromJson)
   final List<String>? groupIds;
 
   /// Current state of the session if it is still active.
   @JsonKey(
-    name: 'state',
-    toJson: TautulliUtilities.sessionStateToJson,
-    fromJson: TautulliUtilities.sessionStateFromJson,
-  )
+      name: 'state',
+      toJson: TautulliUtilities.sessionStateToJson,
+      fromJson: TautulliUtilities.sessionStateFromJson)
   final TautulliSessionState? state;
 
   /// Session's key/identifier if it is still active.
   @JsonKey(
-    name: 'session_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'session_key', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? sessionKey;
 
   TautulliHistoryRecord({

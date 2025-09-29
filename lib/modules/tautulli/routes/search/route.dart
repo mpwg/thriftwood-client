@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class SearchRoute extends StatefulWidget {
-  const SearchRoute({super.key});
+  const SearchRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SearchRoute> createState() => _State();

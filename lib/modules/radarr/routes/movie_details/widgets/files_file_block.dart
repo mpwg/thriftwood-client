@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrMovieDetailsFilesFileBlock extends StatefulWidget {
   final RadarrMovieFile file;
 
-  const RadarrMovieDetailsFilesFileBlock({super.key, required this.file});
+  const RadarrMovieDetailsFilesFileBlock({
+    Key? key,
+    required this.file,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -35,11 +38,26 @@ class _State extends State<RadarrMovieDetailsFilesFileBlock> {
               widget.file.mediaInfo?.audioChannels.toString(),
           ].join(LunaUI.TEXT_BULLET.pad()),
         ),
-        LunaTableContent(title: 'size', body: widget.file.lunaSize),
-        LunaTableContent(title: 'languages', body: widget.file.lunaLanguage),
-        LunaTableContent(title: 'quality', body: widget.file.lunaQuality),
-        LunaTableContent(title: 'formats', body: widget.file.lunaCustomFormats),
-        LunaTableContent(title: 'added on', body: widget.file.lunaDateAdded),
+        LunaTableContent(
+          title: 'size',
+          body: widget.file.lunaSize,
+        ),
+        LunaTableContent(
+          title: 'languages',
+          body: widget.file.lunaLanguage,
+        ),
+        LunaTableContent(
+          title: 'quality',
+          body: widget.file.lunaQuality,
+        ),
+        LunaTableContent(
+          title: 'formats',
+          body: widget.file.lunaCustomFormats,
+        ),
+        LunaTableContent(
+          title: 'added on',
+          body: widget.file.lunaDateAdded,
+        ),
       ],
       buttons: [
         if (widget.file.mediaInfo != null)
@@ -64,10 +82,8 @@ class _State extends State<RadarrMovieDetailsFilesFileBlock> {
     setState(() => _deleteFileState = LunaLoadingState.ACTIVE);
     bool result = await RadarrDialogs().deleteMovieFile(context);
     if (result) {
-      bool execute = await RadarrAPIHelper().deleteMovieFile(
-        context: context,
-        movieFile: widget.file,
-      );
+      bool execute = await RadarrAPIHelper()
+          .deleteMovieFile(context: context, movieFile: widget.file);
       if (execute) context.read<RadarrMovieDetailsState>().fetchFiles(context);
     }
     setState(() => _deleteFileState = LunaLoadingState.INACTIVE);

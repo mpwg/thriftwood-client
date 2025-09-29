@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrAddMovieState extends ChangeNotifier {
   RadarrAddMovieState(BuildContext context, String query) {
@@ -20,9 +20,8 @@ class RadarrAddMovieState extends ChangeNotifier {
   Future<List<RadarrMovie>>? get lookup => _lookup;
   void fetchLookup(BuildContext context) {
     if ((context.read<RadarrState>().enabled)) {
-      _lookup = context.read<RadarrState>().api!.movieLookup.get(
-        term: _searchQuery,
-      );
+      _lookup =
+          context.read<RadarrState>().api!.movieLookup.get(term: _searchQuery);
     }
     notifyListeners();
   }
@@ -41,9 +40,8 @@ class RadarrAddMovieState extends ChangeNotifier {
   void fetchDiscovery(BuildContext context) {
     if ((context.read<RadarrState>().enabled)) {
       _discovery = context.read<RadarrState>().api!.importList.getMovies(
-        includeRecommendations: RadarrDatabase.ADD_DISCOVER_USE_SUGGESTIONS
-            .read(),
-      );
+          includeRecommendations:
+              RadarrDatabase.ADD_DISCOVER_USE_SUGGESTIONS.read());
     }
     notifyListeners();
   }

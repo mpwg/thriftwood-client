@@ -1,7 +1,7 @@
 /// Library containing all utility functions for Radarr data.
-library;
+library radarr_utilities;
 
-import 'package:thriftwood/api/radarr/types.dart';
+import 'package:lunasea/api/radarr/types.dart';
 
 /// [RadarrUtilities] gives access to static, functional operations. These are mainly used for the (de)serialization of received JSON data.
 ///
@@ -93,8 +93,7 @@ class RadarrUtilities {
 
   /// Converts a string to a [RadarrTrackedDownloadState] object.
   static RadarrTrackedDownloadState? trackedDownloadStateFromJson(
-    String? type,
-  ) =>
+          String? type) =>
       RadarrTrackedDownloadState.DOWNLOADING.from(type);
 
   /// Converts a [RadarrTrackedDownloadState] object back to its string representation.
@@ -103,13 +102,11 @@ class RadarrUtilities {
 
   /// Converts a string to a [RadarrTrackedDownloadStatus] object.
   static RadarrTrackedDownloadStatus? trackedDownloadStatusFromJson(
-    String? type,
-  ) =>
+          String? type) =>
       RadarrTrackedDownloadStatus.OK.from(type);
 
   /// Converts a [RadarrTrackedDownloadStatus] object back to its string representation.
   static String? trackedDownloadStatusToJson(
-    RadarrTrackedDownloadStatus? type,
-  ) =>
+          RadarrTrackedDownloadStatus? type) =>
       type?.key;
 }

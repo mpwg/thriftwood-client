@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/links.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/links.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrReleasesTile extends StatefulWidget {
   final SonarrRelease release;
 
-  const SonarrReleasesTile({required this.release, super.key});
+  const SonarrReleasesTile({
+    required this.release,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -20,7 +23,10 @@ class _State extends State<SonarrReleasesTile> {
   Widget build(BuildContext context) {
     return LunaExpandableListTile(
       title: widget.release.title!,
-      collapsedSubtitles: [_subtitle1(), _subtitle2()],
+      collapsedSubtitles: [
+        _subtitle1(),
+        _subtitle2(),
+      ],
       collapsedTrailing: _trailing(),
       expandedHighlightedNodes: _highlightedNodes(),
       expandedTableContent: _tableContent(),
@@ -60,19 +66,20 @@ class _State extends State<SonarrReleasesTile> {
   }
 
   TextSpan _subtitle2() {
-    String? _preferredWordScore = widget.release.lunaPreferredWordScore(
-      nullOnEmpty: true,
-    );
+    String? _preferredWordScore =
+        widget.release.lunaPreferredWordScore(nullOnEmpty: true);
     return TextSpan(
       children: [
-        TextSpan(
-          text: _preferredWordScore,
-          style: const TextStyle(
-            color: LunaColours.purple,
-            fontWeight: LunaUI.FONT_WEIGHT_BOLD,
+        if (_preferredWordScore != null)
+          TextSpan(
+            text: _preferredWordScore,
+            style: const TextStyle(
+              color: LunaColours.purple,
+              fontWeight: LunaUI.FONT_WEIGHT_BOLD,
+            ),
           ),
-        ),
-        TextSpan(text: LunaUI.TEXT_BULLET.pad()),
+        if (_preferredWordScore != null)
+          TextSpan(text: LunaUI.TEXT_BULLET.pad()),
         TextSpan(text: widget.release.lunaQuality),
         if (widget.release.language != null)
           TextSpan(text: LunaUI.TEXT_BULLET.pad()),
@@ -102,7 +109,10 @@ class _State extends State<SonarrReleasesTile> {
 
   List<LunaTableContent> _tableContent() {
     return [
-      LunaTableContent(title: 'sonarr.Age'.tr(), body: widget.release.lunaAge),
+      LunaTableContent(
+        title: 'sonarr.Age'.tr(),
+        body: widget.release.lunaAge,
+      ),
       LunaTableContent(
         title: 'sonarr.Indexer'.tr(),
         body: widget.release.lunaIndexer,
@@ -166,12 +176,13 @@ class _State extends State<SonarrReleasesTile> {
 
     setDownloadState(LunaLoadingState.ACTIVE);
     SonarrAPIController()
-        .downloadRelease(context: context, release: widget.release)
+        .downloadRelease(
+          context: context,
+          release: widget.release,
+        )
         .whenComplete(() async => setDownloadState(LunaLoadingState.INACTIVE));
   }
 
-  Future<void> _showWarnings() async => await LunaDialogs().showRejections(
-        context,
-        widget.release.rejections ?? [],
-      );
+  Future<void> _showWarnings() async => await LunaDialogs()
+      .showRejections(context, widget.release.rejections ?? []);
 }

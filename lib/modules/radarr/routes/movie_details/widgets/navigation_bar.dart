@@ -1,33 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
-import 'package:thriftwood/router/routes/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
+import 'package:lunasea/router/routes/radarr.dart';
 
 class RadarrMovieDetailsNavigationBar extends StatefulWidget {
   static const List<IconData> icons = [
     Icons.subject_rounded,
     Icons.insert_drive_file_outlined,
     Icons.history_rounded,
-    Icons.person_rounded,
+    Icons.person_rounded
   ];
   static const List<String> titles = [
     'Overview',
     'Files',
     'History',
-    'Cast & Crew',
+    'Cast & Crew'
   ];
-  static List<ScrollController> scrollControllers = List.generate(
-    icons.length,
-    (_) => ScrollController(),
-  );
+  static List<ScrollController> scrollControllers =
+      List.generate(icons.length, (_) => ScrollController());
   final PageController? pageController;
   final RadarrMovie? movie;
 
   const RadarrMovieDetailsNavigationBar({
-    super.key,
+    Key? key,
     required this.pageController,
     required this.movie,
-  });
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -64,10 +62,9 @@ class _State extends State<RadarrMovieDetailsNavigationBar> {
     setState(() => _automaticLoadingState = LunaLoadingState.ACTIVE);
     RadarrAPIHelper()
         .automaticSearch(
-      context: context,
-      movieId: widget.movie!.id!,
-      title: widget.movie!.title!,
-    )
+            context: context,
+            movieId: widget.movie!.id!,
+            title: widget.movie!.title!)
         .then((value) {
       if (mounted)
         setState(() {
@@ -78,8 +75,8 @@ class _State extends State<RadarrMovieDetailsNavigationBar> {
   }
 
   Future<void> _manual() async {
-    RadarrRoutes.MOVIE_RELEASES.go(
-      params: {'movie': widget.movie!.id!.toString()},
-    );
+    RadarrRoutes.MOVIE_RELEASES.go(params: {
+      'movie': widget.movie!.id!.toString(),
+    });
   }
 }

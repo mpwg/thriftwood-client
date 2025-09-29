@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/modules.dart';
-import 'package:thriftwood/router/router.dart';
-import 'package:thriftwood/router/routes/dashboard.dart';
-import 'package:thriftwood/vendor.dart';
-import 'package:thriftwood/widgets/ui.dart';
+import 'package:lunasea/modules.dart';
+import 'package:lunasea/router/router.dart';
+import 'package:lunasea/router/routes/dashboard.dart';
+import 'package:lunasea/vendor.dart';
+import 'package:lunasea/widgets/ui.dart';
 
 class LunaMessage extends StatelessWidget {
   final String text;
@@ -13,13 +13,13 @@ class LunaMessage extends StatelessWidget {
   final bool useSafeArea;
 
   const LunaMessage({
-    super.key,
+    Key? key,
     required this.text,
     this.textColor = Colors.white,
     this.buttonText,
     this.onTap,
     this.useSafeArea = true,
-  });
+  }) : super(key: key);
 
   /// Return a message that is meant to be shown within a [ListView].
   factory LunaMessage.inList({
@@ -27,7 +27,11 @@ class LunaMessage extends StatelessWidget {
     required String text,
     bool useSafeArea = false,
   }) {
-    return LunaMessage(key: key, text: text, useSafeArea: useSafeArea);
+    return LunaMessage(
+      key: key,
+      text: text,
+      useSafeArea: useSafeArea,
+    );
   }
 
   /// Returns a centered message with a simple message, with a button to pop out of the route.
@@ -40,7 +44,7 @@ class LunaMessage extends StatelessWidget {
     return LunaMessage(
       key: key,
       text: text,
-      buttonText: 'thriftwood.GoBack'.tr(),
+      buttonText: 'lunasea.GoBack'.tr(),
       onTap: () {
         if (LunaRouter.router.canPop()) {
           LunaRouter.router.pop();
@@ -60,8 +64,8 @@ class LunaMessage extends StatelessWidget {
   }) {
     return LunaMessage(
       key: key,
-      text: 'thriftwood.AnErrorHasOccurred'.tr(),
-      buttonText: 'thriftwood.TryAgain'.tr(),
+      text: 'lunasea.AnErrorHasOccurred'.tr(),
+      buttonText: 'lunasea.TryAgain'.tr(),
       onTap: onTap,
       useSafeArea: useSafeArea,
     );
@@ -76,8 +80,8 @@ class LunaMessage extends StatelessWidget {
   }) {
     return LunaMessage(
       key: key,
-      text: 'thriftwood.ModuleIsNotEnabled'.tr(args: [module]),
-      buttonText: 'thriftwood.ReturnToDashboard'.tr(),
+      text: 'lunasea.ModuleIsNotEnabled'.tr(args: [module]),
+      buttonText: 'lunasea.ReturnToDashboard'.tr(),
       onTap: LunaModule.DASHBOARD.launch,
       useSafeArea: useSafeArea,
     );
@@ -112,9 +116,7 @@ class LunaMessage extends StatelessWidget {
                       ),
                     ),
                     margin: const EdgeInsets.symmetric(
-                      vertical: 24.0,
-                      horizontal: 12.0,
-                    ),
+                        vertical: 24.0, horizontal: 12.0),
                   ),
                 ),
               ],

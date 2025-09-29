@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:thriftwood/database/box.dart';
-import 'package:thriftwood/database/tables/dashboard.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_day.dart';
-import 'package:thriftwood/modules/dashboard/core/api/data/abstract.dart';
-import 'package:thriftwood/modules/dashboard/core/api/data/lidarr.dart';
-import 'package:thriftwood/modules/dashboard/core/api/data/radarr.dart';
-import 'package:thriftwood/modules/dashboard/core/api/data/sonarr.dart';
-import 'package:thriftwood/modules/dashboard/core/state.dart';
-import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/content_block.dart';
-import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
-import 'package:thriftwood/vendor.dart';
-import 'package:thriftwood/widgets/ui.dart';
+import 'package:lunasea/database/box.dart';
+import 'package:lunasea/database/tables/dashboard.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_day.dart';
+import 'package:lunasea/modules/dashboard/core/api/data/abstract.dart';
+import 'package:lunasea/modules/dashboard/core/api/data/lidarr.dart';
+import 'package:lunasea/modules/dashboard/core/api/data/radarr.dart';
+import 'package:lunasea/modules/dashboard/core/api/data/sonarr.dart';
+import 'package:lunasea/modules/dashboard/core/state.dart';
+import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/content_block.dart';
+import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
+import 'package:lunasea/vendor.dart';
+import 'package:lunasea/widgets/ui.dart';
 
 class CalendarView extends StatefulWidget {
   final Map<DateTime, List<CalendarData>> events;
 
-  const CalendarView({super.key, required this.events});
+  const CalendarView({
+    Key? key,
+    required this.events,
+  }) : super(key: key);
 
   @override
   State<CalendarView> createState() => _State();
@@ -47,7 +50,13 @@ class _State extends State<CalendarView> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      child: Column(children: [_calendar(), LunaDivider(), _calendarList()]),
+      child: Column(
+        children: [
+          _calendar(),
+          LunaDivider(),
+          _calendarList(),
+        ],
+      ),
       padding: EdgeInsets.only(top: LunaUI.MARGIN_H_DEFAULT_V_HALF.top),
     );
   }
@@ -84,13 +93,16 @@ class _State extends State<CalendarView> {
       child: Container(
         width: _calendarBulletSize,
         height: _calendarBulletSize,
-        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+        ),
       ),
     );
   }
 
   Widget _calendar() {
-    return LunaBox.thriftwood.listenableBuilder(
+    return LunaBox.lunasea.listenableBuilder(
       selectItems: [
         DashboardDatabase.CALENDAR_STARTING_DAY,
         DashboardDatabase.CALENDAR_STARTING_SIZE,
@@ -118,16 +130,15 @@ class _State extends State<CalendarView> {
                 //events: widget.events,
                 headerVisible: true,
                 headerStyle: const HeaderStyle(
-                  titleCentered: true,
-                  leftChevronVisible: false,
-                  rightChevronVisible: false,
-                  formatButtonVisible: false,
-                  headerPadding: LunaUI.MARGIN_DEFAULT_VERTICAL,
-                  titleTextStyle: TextStyle(
-                    fontSize: LunaUI.FONT_SIZE_H2,
-                    fontWeight: LunaUI.FONT_WEIGHT_BOLD,
-                  ),
-                ),
+                    titleCentered: true,
+                    leftChevronVisible: false,
+                    rightChevronVisible: false,
+                    formatButtonVisible: false,
+                    headerPadding: LunaUI.MARGIN_DEFAULT_VERTICAL,
+                    titleTextStyle: TextStyle(
+                      fontSize: LunaUI.FONT_SIZE_H2,
+                      fontWeight: LunaUI.FONT_WEIGHT_BOLD,
+                    )),
                 startingDayOfWeek:
                     DashboardDatabase.CALENDAR_STARTING_DAY.read().data,
                 selectedDayPredicate: (date) {
@@ -139,15 +150,13 @@ class _State extends State<CalendarView> {
                   isTodayHighlighted: true,
                   outsideDaysVisible: false,
                   selectedDecoration: BoxDecoration(
-                    color: LunaColours.accent.withOpacity(
-                      LunaUI.OPACITY_SPLASH,
-                    ),
+                    color:
+                        LunaColours.accent.withOpacity(LunaUI.OPACITY_SPLASH),
                     shape: BoxShape.circle,
                   ),
                   todayDecoration: BoxDecoration(
-                    color: LunaColours.primary.withOpacity(
-                      LunaUI.OPACITY_DISABLED,
-                    ),
+                    color: LunaColours.primary
+                        .withOpacity(LunaUI.OPACITY_DISABLED),
                     shape: BoxShape.circle,
                   ),
                   weekendTextStyle: dayStyle,
@@ -226,10 +235,11 @@ class _State extends State<CalendarView> {
       return Expanded(
         child: LunaListView(
           controller: HomeNavigationBar.scrollControllers[1],
-          children: [LunaMessage.inList(text: 'dashboard.NoNewContent'.tr())],
-          padding: MediaQuery.of(
-            context,
-          ).padding.copyWith(top: 0.0, bottom: 8.0),
+          children: [
+            LunaMessage.inList(text: 'dashboard.NoNewContent'.tr()),
+          ],
+          padding:
+              MediaQuery.of(context).padding.copyWith(top: 0.0, bottom: 8.0),
         ),
       );
     }

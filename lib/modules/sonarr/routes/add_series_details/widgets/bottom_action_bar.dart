@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/router/router.dart';
-import 'package:thriftwood/router/routes/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/router/router.dart';
+import 'package:lunasea/router/routes/sonarr.dart';
 
 class SonarrAddSeriesDetailsActionBar extends StatelessWidget {
-  const SonarrAddSeriesDetailsActionBar({super.key});
+  const SonarrAddSeriesDetailsActionBar({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LunaBottomActionBar(
       actions: [
         LunaActionBarCard(
-          title: 'thriftwood.Options'.tr(),
+          title: 'lunasea.Options'.tr(),
           subtitle: 'sonarr.StartSearchFor'.tr(),
           onTap: () async => SonarrDialogs().addSeriesOptions(context),
         ),
         LunaButton(
           type: LunaButtonType.TEXT,
-          text: 'thriftwood.Add'.tr(),
+          text: 'lunasea.Add'.tr(),
           icon: Icons.add_rounded,
           onTap: () async => _onTap(context),
           loadingState: context.watch<SonarrSeriesAddDetailsState>().state,
@@ -50,7 +52,9 @@ class SonarrAddSeriesDetailsActionBar extends StatelessWidget {
         context.read<SonarrSeriesAddDetailsState>().series.id = series!.id;
 
         LunaRouter.router.pop();
-        SonarrRoutes.SERIES.go(params: {'series': series.id!.toString()});
+        SonarrRoutes.SERIES.go(params: {
+          'series': series.id!.toString(),
+        });
       }).catchError((error, stack) {
         context.read<SonarrSeriesAddDetailsState>().state =
             LunaLoadingState.ERROR;

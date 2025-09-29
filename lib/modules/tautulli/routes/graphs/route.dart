@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class GraphsRoute extends StatefulWidget {
-  const GraphsRoute({super.key});
+  const GraphsRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<GraphsRoute> createState() => _State();
@@ -17,8 +19,7 @@ class _State extends State<GraphsRoute> {
   void initState() {
     super.initState();
     _pageController = LunaPageController(
-      initialPage: TautulliDatabase.NAVIGATION_INDEX_GRAPHS.read(),
-    );
+        initialPage: TautulliDatabase.NAVIGATION_INDEX_GRAPHS.read());
   }
 
   @override
@@ -36,7 +37,9 @@ class _State extends State<GraphsRoute> {
       pageController: _pageController,
       scrollControllers: TautulliGraphsNavigationBar.scrollControllers,
       title: 'Graphs',
-      actions: const [TautulliGraphsTypeButton()],
+      actions: const [
+        TautulliGraphsTypeButton(),
+      ],
     );
   }
 

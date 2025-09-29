@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/sabnzbd.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/sabnzbd.dart';
 
 class SABnzbdAppBarStats extends StatelessWidget {
-  const SABnzbdAppBarStats({super.key});
+  const SABnzbdAppBarStats({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) =>
-      Selector<SABnzbdState, (bool, String, String, String, int)>(
-        selector: (_, model) => (
+      Selector<SABnzbdState, Tuple5<bool, String, String, String, int>>(
+        selector: (_, model) => Tuple5(
           model.paused, //item1
           model.currentSpeed, //item2
           model.queueTimeLeft, //item3
@@ -18,7 +20,7 @@ class SABnzbdAppBarStats extends StatelessWidget {
           model.speedLimit, //item5
         ),
         builder: (context, data, widget) => GestureDetector(
-          onTap: () async => _onTap(context, data.$5),
+          onTap: () async => _onTap(context, data.item5),
           child: Center(
             child: RichText(
               text: TextSpan(
@@ -28,7 +30,7 @@ class SABnzbdAppBarStats extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                    text: _status(data.$1, data.$2),
+                    text: _status(data.item1, data.item2),
                     style: const TextStyle(
                       fontWeight: LunaUI.FONT_WEIGHT_BOLD,
                       fontSize: LunaUI.FONT_SIZE_HEADER,
@@ -36,9 +38,9 @@ class SABnzbdAppBarStats extends StatelessWidget {
                     ),
                   ),
                   const TextSpan(text: '\n'),
-                  TextSpan(text: data.$3 == '0:00:00' ? '―' : data.$3),
+                  TextSpan(text: data.item3 == '0:00:00' ? '―' : data.item3),
                   TextSpan(text: LunaUI.TEXT_BULLET.pad()),
-                  TextSpan(text: data.$4 == '0.0 B' ? '―' : data.$4),
+                  TextSpan(text: data.item4 == '0.0 B' ? '―' : data.item4)
                 ],
               ),
               overflow: TextOverflow.fade,
@@ -67,35 +69,27 @@ class SABnzbdAppBarStats extends StatelessWidget {
             if (values[0])
               SABnzbdAPI.from(LunaProfile.current)
                   .setSpeedLimit(values[1])
-                  .then(
-                    (_) => showLunaSuccessSnackBar(
-                      title: 'Speed Limit Set',
-                      message: 'Set to ${values[1]}%',
-                    ),
-                  )
-                  .catchError(
-                    (error) => showLunaErrorSnackBar(
-                      title: 'Failed to Set Speed Limit',
-                      error: error,
-                    ),
-                  );
+                  .then((_) => showLunaSuccessSnackBar(
+                        title: 'Speed Limit Set',
+                        message: 'Set to ${values[1]}%',
+                      ))
+                  .catchError((error) => showLunaErrorSnackBar(
+                        title: 'Failed to Set Speed Limit',
+                        error: error,
+                      ));
             break;
           }
         default:
           SABnzbdAPI.from(LunaProfile.current)
               .setSpeedLimit(values[1])
-              .then(
-                (_) => showLunaSuccessSnackBar(
-                  title: 'Speed Limit Set',
-                  message: 'Set to ${values[1]}%',
-                ),
-              )
-              .catchError(
-                (error) => showLunaErrorSnackBar(
-                  title: 'Failed to Set Speed Limit',
-                  error: error,
-                ),
-              );
+              .then((_) => showLunaSuccessSnackBar(
+                    title: 'Speed Limit Set',
+                    message: 'Set to ${values[1]}%',
+                  ))
+              .catchError((error) => showLunaErrorSnackBar(
+                    title: 'Failed to Set Speed Limit',
+                    error: error,
+                  ));
       }
   }
 }

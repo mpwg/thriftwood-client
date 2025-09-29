@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliCheckForUpdatesTautulliTile extends StatelessWidget {
   final TautulliUpdateCheck update;
 
-  const TautulliCheckForUpdatesTautulliTile({super.key, required this.update});
+  const TautulliCheckForUpdatesTautulliTile({
+    Key? key,
+    required this.update,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +60,7 @@ class TautulliCheckForUpdatesTautulliTile extends StatelessWidget {
                     0,
                     min(7, update.currentVersion!.length),
                   ) ??
-                  'thriftwood.Unknown'.tr(),
+                  'lunasea.Unknown'.tr(),
             ),
           ],
         ),
@@ -71,13 +74,12 @@ class TautulliCheckForUpdatesTautulliTile extends StatelessWidget {
                     0,
                     min(7, update.latestVersion!.length),
                   ) ??
-                  'thriftwood.Unknown'.tr(),
+                  'lunasea.Unknown'.tr(),
             ),
           ],
         ),
       TextSpan(
-        text: 'Install Type: ${update.installType ?? LunaUI.TEXT_EMDASH}',
-      ),
+          text: 'Install Type: ${update.installType ?? LunaUI.TEXT_EMDASH}'),
     ];
   }
 }

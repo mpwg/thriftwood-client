@@ -1,12 +1,15 @@
-import 'package:thriftwood/utils/collection_utils.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrAppBarMovieSettingsAction extends StatelessWidget {
   final int movieId;
 
-  const RadarrAppBarMovieSettingsAction({super.key, required this.movieId});
+  const RadarrAppBarMovieSettingsAction({
+    Key? key,
+    required this.movieId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +27,9 @@ class RadarrAppBarMovieSettingsAction extends StatelessWidget {
                 icon: Icons.more_vert_rounded,
                 iconSize: LunaUI.ICON_SIZE,
                 onPressed: () async {
-                  (bool, RadarrMovieSettingsType?) values =
+                  Tuple2<bool, RadarrMovieSettingsType?> values =
                       await RadarrDialogs().movieSettings(context, movie);
-                  if (values.$1) values.$2!.execute(context, movie);
+                  if (values.item1) values.item2!.execute(context, movie);
                 },
               );
           }

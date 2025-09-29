@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/database/tables/dashboard.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/database/tables/dashboard.dart';
+import 'package:lunasea/vendor.dart';
 
-import 'package:thriftwood/modules.dart';
-import 'package:thriftwood/widgets/ui.dart';
-import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_day.dart';
-import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_size.dart';
-import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_type.dart';
-import 'package:thriftwood/modules/dashboard/core/dialogs.dart';
-import 'package:thriftwood/modules/settings/core/dialogs.dart';
+import 'package:lunasea/modules.dart';
+import 'package:lunasea/widgets/ui.dart';
+import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_day.dart';
+import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_size.dart';
+import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_type.dart';
+import 'package:lunasea/modules/dashboard/core/dialogs.dart';
+import 'package:lunasea/modules/settings/core/dialogs.dart';
 
 class ConfigurationDashboardCalendarRoute extends StatefulWidget {
-  const ConfigurationDashboardCalendarRoute({super.key});
+  const ConfigurationDashboardCalendarRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationDashboardCalendarRoute> createState() => _State();
@@ -69,10 +71,9 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
         ],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, int) result = await DashboardDialogs().setPastDays(
-            context,
-          );
-          if (result.$1) _db.update(result.$2);
+          Tuple2<bool, int> result =
+              await DashboardDialogs().setPastDays(context);
+          if (result.item1) _db.update(result.item2);
         },
       ),
     );
@@ -92,10 +93,9 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
         ],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, int) result = await DashboardDialogs().setFutureDays(
-            context,
-          );
-          if (result.$1) _db.update(result.$2);
+          Tuple2<bool, int> result =
+              await DashboardDialogs().setFutureDays(context);
+          if (result.item1) _db.update(result.item2);
         },
       ),
     );
@@ -111,9 +111,12 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
             text: 'settings.ShowCalendarEntries'.tr(
               args: [LunaModule.LIDARR.title],
             ),
-          ),
+          )
         ],
-        trailing: LunaSwitch(value: _db.read(), onChanged: _db.update),
+        trailing: LunaSwitch(
+          value: _db.read(),
+          onChanged: _db.update,
+        ),
       ),
     );
   }
@@ -128,9 +131,12 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
             text: 'settings.ShowCalendarEntries'.tr(
               args: [LunaModule.RADARR.title],
             ),
-          ),
+          )
         ],
-        trailing: LunaSwitch(value: _db.read(), onChanged: _db.update),
+        trailing: LunaSwitch(
+          value: _db.read(),
+          onChanged: _db.update,
+        ),
       ),
     );
   }
@@ -145,9 +151,12 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
             text: 'settings.ShowCalendarEntries'.tr(
               args: [LunaModule.SONARR.title],
             ),
-          ),
+          )
         ],
-        trailing: LunaSwitch(value: _db.read(), onChanged: _db.update),
+        trailing: LunaSwitch(
+          value: _db.read(),
+          onChanged: _db.update,
+        ),
       ),
     );
   }
@@ -157,12 +166,14 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
     return _db.listenableBuilder(
       builder: (context, _) => LunaBlock(
         title: 'settings.StartingView'.tr(),
-        body: [TextSpan(text: _db.read().name)],
+        body: [
+          TextSpan(text: _db.read().name),
+        ],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, CalendarStartingType?) _values =
+          Tuple2<bool, CalendarStartingType?> _values =
               await SettingsDialogs().editCalendarStartingView(context);
-          if (_values.$1) _db.update(_values.$2!);
+          if (_values.item1) _db.update(_values.item2!);
         },
       ),
     );
@@ -173,12 +184,14 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
     return _db.listenableBuilder(
       builder: (context, _) => LunaBlock(
         title: 'settings.StartingDay'.tr(),
-        body: [TextSpan(text: _db.read().name)],
+        body: [
+          TextSpan(text: _db.read().name),
+        ],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, CalendarStartingDay?) results =
+          Tuple2<bool, CalendarStartingDay?> results =
               await SettingsDialogs().editCalendarStartingDay(context);
-          if (results.$1) _db.update(results.$2!);
+          if (results.item1) _db.update(results.item2!);
         },
       ),
     );
@@ -189,12 +202,14 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
     return _db.listenableBuilder(
       builder: (context, _) => LunaBlock(
         title: 'settings.StartingSize'.tr(),
-        body: [TextSpan(text: _db.read().name)],
+        body: [
+          TextSpan(text: _db.read().name),
+        ],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, CalendarStartingSize?) _values =
+          Tuple2<bool, CalendarStartingSize?> _values =
               await SettingsDialogs().editCalendarStartingSize(context);
-          if (_values.$1) _db.update(_values.$2!);
+          if (_values.item1) _db.update(_values.item2!);
         },
       ),
     );

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrSystemStatusAboutPage extends StatefulWidget {
   final ScrollController scrollController;
 
-  const RadarrSystemStatusAboutPage(
-      {super.key, required this.scrollController});
+  const RadarrSystemStatusAboutPage({
+    Key? key,
+    required this.scrollController,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -24,7 +26,10 @@ class _State extends State<RadarrSystemStatusAboutPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LunaScaffold(scaffoldKey: _scaffoldKey, body: _body());
+    return LunaScaffold(
+      scaffoldKey: _scaffoldKey,
+      body: _body(),
+    );
   }
 
   Widget _body() {
@@ -37,11 +42,8 @@ class _State extends State<RadarrSystemStatusAboutPage>
         future: context.watch<RadarrSystemStatusState>().status,
         builder: (context, AsyncSnapshot<RadarrSystemStatus> snapshot) {
           if (snapshot.hasError) {
-            LunaLogger().error(
-              'Unable to fetch Radarr system status',
-              snapshot.error,
-              snapshot.stackTrace,
-            );
+            LunaLogger().error('Unable to fetch Radarr system status',
+                snapshot.error, snapshot.stackTrace);
             return LunaMessage.error(onTap: _refreshKey.currentState!.show);
           }
           if (snapshot.hasData) return _list(snapshot.data!);
@@ -66,13 +68,9 @@ class _State extends State<RadarrSystemStatusAboutPage>
             LunaTableContent(title: '.NET Core', body: status.lunaNetCore),
             LunaTableContent(title: 'Migration', body: status.lunaDBMigration),
             LunaTableContent(
-              title: 'AppData',
-              body: status.lunaAppDataDirectory,
-            ),
+                title: 'AppData', body: status.lunaAppDataDirectory),
             LunaTableContent(
-              title: 'Startup',
-              body: status.lunaStartupDirectory,
-            ),
+                title: 'Startup', body: status.lunaStartupDirectory),
             LunaTableContent(title: 'mode', body: status.lunaMode),
             LunaTableContent(title: 'uptime', body: status.lunaUptime),
           ],

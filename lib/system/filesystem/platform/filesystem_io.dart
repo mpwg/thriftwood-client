@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:thriftwood/database/database.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/database/database.dart';
+import 'package:lunasea/vendor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'package:thriftwood/widgets/ui.dart';
-import 'package:thriftwood/system/logger.dart';
-import 'package:thriftwood/system/platform.dart';
-import 'package:thriftwood/system/filesystem/file.dart';
-import 'package:thriftwood/system/filesystem/filesystem.dart';
+import 'package:lunasea/widgets/ui.dart';
+import 'package:lunasea/system/logger.dart';
+import 'package:lunasea/system/platform.dart';
+import 'package:lunasea/system/filesystem/file.dart';
+import 'package:lunasea/system/filesystem/filesystem.dart';
 
 bool isPlatformSupported() {
   return LunaPlatform.isMobile || LunaPlatform.isDesktop;
@@ -70,7 +70,7 @@ class _Desktop extends _Shared {
           );
         } else {
           showLunaErrorSnackBar(
-            title: 'thriftwood.InvalidFileTypeSelected'.tr(),
+            title: 'lunasea.InvalidFileTypeSelected'.tr(),
             message: extensions.map((s) => '.$s').join(', '),
           );
         }
@@ -98,9 +98,10 @@ class _Mobile extends _Shared {
       Rect? rect;
       if (box != null) rect = box.localToGlobal(Offset.zero) & box.size;
 
-      ShareResult result = await Share.shareXFiles([
-        XFile(path),
-      ], sharePositionOrigin: rect);
+      ShareResult result = await Share.shareXFiles(
+        [XFile(path)],
+        sharePositionOrigin: rect,
+      );
       switch (result.status) {
         case ShareResultStatus.success:
           return true;
@@ -129,7 +130,7 @@ class _Mobile extends _Shared {
           );
         } else {
           showLunaErrorSnackBar(
-            title: 'thriftwood.InvalidFileTypeSelected'.tr(),
+            title: 'lunasea.InvalidFileTypeSelected'.tr(),
             message: extensions.map((s) => '.$s').join(', '),
           );
         }

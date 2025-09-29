@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/search.dart';
-import 'package:thriftwood/widgets/sheets/download_client/button.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/search.dart';
+import 'package:lunasea/widgets/sheets/download_client/button.dart';
 
 class SearchIndexerRoute extends StatefulWidget {
-  const SearchIndexerRoute({super.key});
+  const SearchIndexerRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -13,12 +15,8 @@ class SearchIndexerRoute extends StatefulWidget {
 class _State extends State<SearchIndexerRoute> with LunaScrollControllerMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshKey = GlobalKey<RefreshIndicatorState>();
-  late final PagingController<int, NewznabResultData> _pagingController =
-      PagingController(
-    fetchPage: _fetchPage,
-    getNextPageKey: (state) =>
-        state.lastPageIsEmpty ? null : state.nextIntPageKey,
-  );
+  final PagingController<int, NewznabResultData> _pagingController =
+      PagingController(firstPageKey: 0);
   bool _firstSearched = false;
 
   @override
@@ -42,25 +40,27 @@ class _State extends State<SearchIndexerRoute> with LunaScrollControllerMixin {
     if (mounted) setState(() => _firstSearched = true);
   }
 
-  Future<List<NewznabResultData>> _fetchPage(int pageKey) async {
-    try {
-      SearchState state = context.read<SearchState>();
-      NewznabCategoryData? category = state.activeCategory;
-      NewznabSubcategoryData? subcategory = state.activeSubcategory;
-      final data = await state.api.getResults(
-        categoryId: subcategory?.id ?? category?.id,
-        query: state.searchQuery,
-        offset: pageKey,
-      );
-      return data;
-    } catch (error, stack) {
+  Future<void> _fetchPage(int pageKey) async {
+    SearchState state = context.read<SearchState>();
+    NewznabCategoryData? category = state.activeCategory;
+    NewznabSubcategoryData? subcategory = state.activeSubcategory;
+    await state.api
+        .getResults(
+      categoryId: subcategory?.id ?? category?.id,
+      query: state.searchQuery,
+      offset: pageKey,
+    )
+        .then((data) {
+      if (data.isEmpty) return _pagingController.appendLastPage([]);
+      return _pagingController.appendPage(data, pageKey + 1);
+    }).catchError((error, stack) {
       LunaLogger().error(
         'Unable to fetch search results page: $pageKey',
         error,
         stack,
       );
-      rethrow;
-    }
+      _pagingController.error = error;
+    });
   }
 
   Widget _appBar() {
@@ -70,7 +70,7 @@ class _State extends State<SearchIndexerRoute> with LunaScrollControllerMixin {
         context.read<SearchState>().activeSubcategory;
     if (category != null) title = category.name!;
     if (category != null && subcategory != null) {
-      title = '$title > ${subcategory.name ?? 'thriftwood.Unknown'.tr()}';
+      title = '$title > ${subcategory.name ?? 'lunasea.Unknown'.tr()}';
     }
     return LunaAppBar(
       title: title,
@@ -79,7 +79,9 @@ class _State extends State<SearchIndexerRoute> with LunaScrollControllerMixin {
         submitCallback: _searchCallback,
         scrollController: scrollController,
       ),
-      actions: const [DownloadClientButton()],
+      actions: const [
+        DownloadClientButton(),
+      ],
     );
   }
 
@@ -89,6 +91,7 @@ class _State extends State<SearchIndexerRoute> with LunaScrollControllerMixin {
         refreshKey: _refreshKey,
         pagingController: _pagingController,
         scrollController: scrollController,
+        listener: _fetchPage,
         noItemsFoundMessage: 'search.NoResultsFound'.tr(),
         itemBuilder: (context, result, index) => SearchResultTile(data: result),
       );

@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-/// Simple dart script to concatenate all module's localization files into a single file for loading into thriftwood.
+/// Simple dart script to concatenate all module's localization files into a single file for loading into LunaSea.
 ///
 /// This script is designed to be run from the root of the project.
 void main() {

@@ -1,4 +1,4 @@
-import 'package:thriftwood/system/logger.dart';
+import 'package:lunasea/system/logger.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 extension StringAsLinksExtension on String {
@@ -23,7 +23,11 @@ extension StringAsLinksExtension on String {
       if (await _launchUniversal(this)) return;
       await _launchDefault(this);
     } catch (error, stack) {
-      LunaLogger().error('Unable to open URL', error, stack);
+      LunaLogger().error(
+        'Unable to open URL',
+        error,
+        stack,
+      );
     }
   }
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/nzbget.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/nzbget.dart';
 
 class StatisticsRoute extends StatefulWidget {
-  const StatisticsRoute({super.key});
+  const StatisticsRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatisticsRoute> createState() => _State();
@@ -32,9 +34,9 @@ class _State extends State<StatisticsRoute> with LunaScrollControllerMixin {
 
   Future<bool> _fetch() async {
     final _api = NZBGetAPI.from(LunaProfile.current);
-    return _fetchStatistics(
-      _api,
-    ).then((_) => _fetchLogs(_api)).then((_) => true);
+    return _fetchStatistics(_api)
+        .then((_) => _fetchLogs(_api))
+        .then((_) => true);
   }
 
   Future<void> _fetchStatistics(NZBGetAPI api) async {
@@ -91,7 +93,10 @@ class _State extends State<StatisticsRoute> with LunaScrollControllerMixin {
           const LunaHeader(text: 'Status'),
           _statusBlock(),
           const LunaHeader(text: 'Logs'),
-          for (var entry in _logs) NZBGetLogTile(data: entry),
+          for (var entry in _logs)
+            NZBGetLogTile(
+              data: entry,
+            ),
         ],
       );
 
@@ -99,27 +104,18 @@ class _State extends State<StatisticsRoute> with LunaScrollControllerMixin {
     return LunaTableCard(
       content: [
         LunaTableContent(
-          title: 'Server',
-          body: _statistics.serverPaused ? 'Paused' : 'Active',
-        ),
+            title: 'Server',
+            body: _statistics.serverPaused ? 'Paused' : 'Active'),
         LunaTableContent(
-          title: 'Post',
-          body: _statistics.postPaused ? 'Paused' : 'Active',
-        ),
+            title: 'Post', body: _statistics.postPaused ? 'Paused' : 'Active'),
         LunaTableContent(
-          title: 'Scan',
-          body: _statistics.scanPaused ? 'Paused' : 'Active',
-        ),
+            title: 'Scan', body: _statistics.scanPaused ? 'Paused' : 'Active'),
         LunaTableContent(title: '', body: ''),
         LunaTableContent(title: 'Uptime', body: _statistics.uptimeString),
         LunaTableContent(
-          title: 'Speed Limit',
-          body: _statistics.speedLimitString,
-        ),
+            title: 'Speed Limit', body: _statistics.speedLimitString),
         LunaTableContent(
-          title: 'Free Space',
-          body: _statistics.freeSpaceString,
-        ),
+            title: 'Free Space', body: _statistics.freeSpaceString),
         LunaTableContent(title: 'Download', body: _statistics.downloadedString),
       ],
     );

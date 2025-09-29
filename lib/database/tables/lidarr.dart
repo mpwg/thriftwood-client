@@ -1,8 +1,8 @@
-import 'package:thriftwood/database/table.dart';
-import 'package:thriftwood/modules/lidarr/core/api/data/metadata.dart';
-import 'package:thriftwood/modules/lidarr/core/api/data/qualityprofile.dart';
-import 'package:thriftwood/modules/lidarr/core/api/data/rootfolder.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/database/table.dart';
+import 'package:lunasea/modules/lidarr/core/api/data/metadata.dart';
+import 'package:lunasea/modules/lidarr/core/api/data/qualityprofile.dart';
+import 'package:lunasea/modules/lidarr/core/api/data/rootfolder.dart';
+import 'package:lunasea/vendor.dart';
 
 enum LidarrDatabase<T> with LunaTableMixin<T> {
   NAVIGATION_INDEX<int>(0),

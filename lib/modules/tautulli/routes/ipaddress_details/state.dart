@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliIPAddressDetailsState extends ChangeNotifier {
   final String? ipAddress;
@@ -34,9 +34,11 @@ class TautulliIPAddressDetailsState extends ChangeNotifier {
   Future<TautulliWHOISInfo>? get whois => _whois;
   void fetchWHOIS(BuildContext context) {
     if (context.read<TautulliState>().enabled) {
-      _whois = context.read<TautulliState>().api!.miscellaneous.getWHOISLookup(
-        ipAddress: ipAddress!,
-      );
+      _whois = context
+          .read<TautulliState>()
+          .api!
+          .miscellaneous
+          .getWHOISLookup(ipAddress: ipAddress!);
     }
     notifyListeners();
   }

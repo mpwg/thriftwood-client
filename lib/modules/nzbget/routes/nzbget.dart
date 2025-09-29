@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/database/tables/nzbget.dart';
-import 'package:thriftwood/extensions/string/links.dart';
-import 'package:thriftwood/modules/nzbget.dart';
-import 'package:thriftwood/router/routes/nzbget.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/database/tables/nzbget.dart';
+import 'package:lunasea/extensions/string/links.dart';
+import 'package:lunasea/modules/nzbget.dart';
+import 'package:lunasea/router/routes/nzbget.dart';
 
-import 'package:thriftwood/system/filesystem/file.dart';
-import 'package:thriftwood/system/filesystem/filesystem.dart';
+import 'package:lunasea/system/filesystem/file.dart';
+import 'package:lunasea/system/filesystem/filesystem.dart';
 
 class NZBGetRoute extends StatefulWidget {
   final bool showDrawer;
 
-  const NZBGetRoute({super.key, this.showDrawer = true});
+  const NZBGetRoute({
+    Key? key,
+    this.showDrawer = true,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -31,9 +34,8 @@ class _State extends State<NZBGetRoute> {
   @override
   void initState() {
     super.initState();
-    _pageController = LunaPageController(
-      initialPage: NZBGetDatabase.NAVIGATION_INDEX.read(),
-    );
+    _pageController =
+        LunaPageController(initialPage: NZBGetDatabase.NAVIGATION_INDEX.read());
   }
 
   @override
@@ -100,8 +102,12 @@ class _State extends State<NZBGetRoute> {
     return LunaPageView(
       controller: _pageController,
       children: [
-        NZBGetQueue(refreshIndicatorKey: _refreshKeys[0]),
-        NZBGetHistory(refreshIndicatorKey: _refreshKeys[1]),
+        NZBGetQueue(
+          refreshIndicatorKey: _refreshKeys[0],
+        ),
+        NZBGetHistory(
+          refreshIndicatorKey: _refreshKeys[1],
+        ),
       ],
     );
   }
@@ -148,23 +154,17 @@ class _State extends State<NZBGetRoute> {
     if (values[0])
       await _api
           .uploadURL(values[1])
-          .then(
-            (_) => showLunaSuccessSnackBar(
-              title: 'Uploaded NZB (URL)',
-              message: values[1],
-            ),
-          )
-          .catchError(
-            (error) => showLunaErrorSnackBar(
-              title: 'Failed to Upload NZB',
-              error: error,
-            ),
-          );
+          .then((_) => showLunaSuccessSnackBar(
+              title: 'Uploaded NZB (URL)', message: values[1]))
+          .catchError((error) => showLunaErrorSnackBar(
+              title: 'Failed to Upload NZB', error: error));
   }
 
   Future<void> _addByFile() async {
     try {
-      LunaFile? _file = await LunaFileSystem().read(context, ['nzb']);
+      LunaFile? _file = await LunaFileSystem().read(context, [
+        'nzb',
+      ]);
       if (_file != null) {
         if (_file.data.isNotEmpty) {
           await _api.uploadFile(_file.data, _file.name).then((value) {
@@ -183,7 +183,10 @@ class _State extends State<NZBGetRoute> {
       }
     } catch (error, stack) {
       LunaLogger().error('Failed to add NZB by file', error, stack);
-      showLunaErrorSnackBar(title: 'Failed to Upload NZB', error: error);
+      showLunaErrorSnackBar(
+        title: 'Failed to Upload NZB',
+        error: error,
+      );
     }
   }
 
@@ -193,9 +196,7 @@ class _State extends State<NZBGetRoute> {
       await _api.sortQueue(values[1]).then((_) {
         _refreshKeys[0]?.currentState?.show();
         showLunaSuccessSnackBar(
-          title: 'Sorted Queue',
-          message: (values[1] as NZBGetSort?).name,
-        );
+            title: 'Sorted Queue', message: (values[1] as NZBGetSort?).name);
       }).catchError((error) {
         showLunaErrorSnackBar(title: 'Failed to Sort Queue', error: error);
       });

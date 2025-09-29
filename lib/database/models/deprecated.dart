@@ -1,4 +1,4 @@
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/vendor.dart';
 
 part 'deprecated.g.dart';
 

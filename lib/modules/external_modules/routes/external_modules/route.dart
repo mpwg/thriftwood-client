@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/external_modules/routes/external_modules/widgets/module_tile.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/external_modules/routes/external_modules/widgets/module_tile.dart';
 
 class ExternalModulesRoute extends StatefulWidget {
-  const ExternalModulesRoute({super.key});
+  const ExternalModulesRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ExternalModulesRoute> createState() => _State();
@@ -52,11 +54,9 @@ class _State extends State<ExternalModulesRoute>
     final list = LunaBox.externalModules.data
         .map((module) => ExternalModulesModuleTile(module: module))
         .toList();
-    list.sort(
-      (a, b) => a.module!.displayName.toLowerCase().compareTo(
-            b.module!.displayName.toLowerCase(),
-          ),
-    );
+    list.sort((a, b) => a.module!.displayName
+        .toLowerCase()
+        .compareTo(b.module!.displayName.toLowerCase()));
 
     return list;
   }

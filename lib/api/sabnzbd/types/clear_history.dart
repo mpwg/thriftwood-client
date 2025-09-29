@@ -1,6 +1,6 @@
-import 'package:thriftwood/types/enum/readable.dart';
-import 'package:thriftwood/types/enum/serializable.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/types/enum/readable.dart';
+import 'package:lunasea/types/enum/serializable.dart';
+import 'package:lunasea/vendor.dart';
 
 enum SABnzbdClearHistory with EnumSerializable, EnumReadable {
   ALL('all'),

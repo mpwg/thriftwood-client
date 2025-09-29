@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/extensions/double/time.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/extensions/double/time.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 extension SonarrEventTypeLunaExtension on SonarrEventType {
   Color lunaColour() {
@@ -70,20 +70,19 @@ extension SonarrEventTypeLunaExtension on SonarrEventType {
         return 'sonarr.EpisodeFileDeleted'.tr();
       case SonarrEventType.DOWNLOAD_FOLDER_IMPORTED:
         return 'sonarr.EpisodeImported'.tr(
-          args: [record.quality?.quality?.name ?? 'thriftwood.Unknown'.tr()],
+          args: [record.quality?.quality?.name ?? 'lunasea.Unknown'.tr()],
         );
       case SonarrEventType.DOWNLOAD_FAILED:
         return 'sonarr.DownloadFailed'.tr();
       case SonarrEventType.GRABBED:
         return 'sonarr.GrabbedFrom'.tr(
-          args: [record.data!['indexer'] ?? 'thriftwood.Unknown'.tr()],
+          args: [record.data!['indexer'] ?? 'lunasea.Unknown'.tr()],
         );
       case SonarrEventType.DOWNLOAD_IGNORED:
         return 'sonarr.DownloadIgnored'.tr();
       case SonarrEventType.SERIES_FOLDER_IMPORTED:
         return 'sonarr.SeriesFolderImported'.tr();
     }
-    return null;
   }
 
   List<LunaTableContent> lunaTableContent({
@@ -166,7 +165,10 @@ extension SonarrEventTypeLunaExtension on SonarrEventType {
   ) {
     return [
       if (showSourceTitle)
-        LunaTableContent(title: 'sonarr.Name'.tr(), body: history.sourceTitle),
+        LunaTableContent(
+          title: 'sonarr.Name'.tr(),
+          body: history.sourceTitle,
+        ),
       LunaTableContent(
         title: 'sonarr.Message'.tr(),
         body: history.data!['message'],
@@ -187,7 +189,7 @@ extension SonarrEventTypeLunaExtension on SonarrEventType {
         case 'Manual':
           return 'sonarr.DeleteReasonManual'.tr();
         default:
-          return 'thriftwood.Unknown'.tr();
+          return 'lunasea.Unknown'.tr();
       }
     }
 
@@ -272,11 +274,9 @@ extension SonarrEventTypeLunaExtension on SonarrEventType {
         body: double.tryParse(history.data!['ageHours'])?.asTimeAgo(),
       ),
       LunaTableContent(
-        title: 'sonarr.PublishedDate'.tr(),
-        body: DateTime.tryParse(
-          history.data!['publishedDate'],
-        )?.asDateTime(delimiter: '\n'),
-      ),
+          title: 'sonarr.PublishedDate'.tr(),
+          body: DateTime.tryParse(history.data!['publishedDate'])
+              ?.asDateTime(delimiter: '\n')),
     ];
   }
 
@@ -286,7 +286,10 @@ extension SonarrEventTypeLunaExtension on SonarrEventType {
   ) {
     return [
       if (showSourceTitle)
-        LunaTableContent(title: 'sonarr.Name'.tr(), body: history.sourceTitle),
+        LunaTableContent(
+          title: 'sonarr.Name'.tr(),
+          body: history.sourceTitle,
+        ),
     ];
   }
 }

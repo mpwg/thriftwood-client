@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 @Deprecated("Use LunaBlock instead")
 class LunaListTile extends Card {
   LunaListTile({
-    super.key,
+    Key? key,
     required BuildContext context,
     required Widget title,
     required double height,
@@ -16,8 +16,9 @@ class LunaListTile extends Card {
     Function? onTap,
     Function? onLongPress,
     bool drawBorder = true,
-    EdgeInsets super.margin = LunaUI.MARGIN_H_DEFAULT_V_HALF,
+    EdgeInsets margin = LunaUI.MARGIN_H_DEFAULT_V_HALF,
   }) : super(
+          key: key,
           child: Container(
             height: height,
             child: InkWell(
@@ -36,7 +37,9 @@ class LunaListTile extends Card {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           SizedBox(
-                              child: title, height: LunaBlock.TITLE_HEIGHT),
+                            child: title,
+                            height: LunaBlock.TITLE_HEIGHT,
+                          ),
                           if (subtitle != null) subtitle,
                         ],
                       ),
@@ -68,6 +71,7 @@ class LunaListTile extends Card {
             ),
             decoration: decoration,
           ),
+          margin: margin,
           elevation: LunaUI.ELEVATION,
           shape: drawBorder ? LunaUI.shapeBorder : LunaShapeBorder(),
           color: color ?? Theme.of(context).primaryColor,

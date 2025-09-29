@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliLibrariesDetailsInformationDetails extends StatelessWidget {
   final TautulliTableLibrary library;
 
   const TautulliLibrariesDetailsInformationDetails({
-    super.key,
+    Key? key,
     required this.library,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,19 +18,17 @@ class TautulliLibrariesDetailsInformationDetails extends StatelessWidget {
         LunaTableContent(title: 'name', body: library.sectionName),
         if (library.count != null)
           LunaTableContent(
-            title: _count(library.count),
-            body: '${library.count} ${_count(library.count)}',
-          ),
+              title: _count(library.count),
+              body: '${library.count} ${_count(library.count)}'),
         if (library.parentCount != null)
           LunaTableContent(
-            title: _parentCount(library.parentCount),
-            body: '${library.parentCount} ${_parentCount(library.parentCount)}',
-          ),
+              title: _parentCount(library.parentCount),
+              body:
+                  '${library.parentCount} ${_parentCount(library.parentCount)}'),
         if (library.childCount != null)
           LunaTableContent(
-            title: _childCount(library.childCount),
-            body: '${library.childCount} ${_childCount(library.childCount)}',
-          ),
+              title: _childCount(library.childCount),
+              body: '${library.childCount} ${_childCount(library.childCount)}'),
         LunaTableContent(
           title: 'last played',
           body: [

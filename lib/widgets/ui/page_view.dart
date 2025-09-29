@@ -5,10 +5,10 @@ class LunaPageView extends StatelessWidget {
   final List<Widget> children;
 
   const LunaPageView({
-    super.key,
+    Key? key,
     this.controller,
     required this.children,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

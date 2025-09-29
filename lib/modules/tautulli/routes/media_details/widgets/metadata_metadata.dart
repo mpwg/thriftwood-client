@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/extensions/duration/timestamp.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/extensions/duration/timestamp.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliMediaDetailsMetadataMetadata extends StatelessWidget {
   final TautulliMetadata? metadata;
 
-  const TautulliMediaDetailsMetadataMetadata(
-      {super.key, required this.metadata});
+  const TautulliMediaDetailsMetadataMetadata({
+    Key? key,
+    required this.metadata,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +40,13 @@ class TautulliMediaDetailsMetadataMetadata extends StatelessWidget {
           ),
         if (metadata!.rating != null)
           LunaTableContent(
-            title: 'rating',
-            body: '${(((metadata?.rating ?? 0) * 10).truncate())}%',
-          ),
+              title: 'rating',
+              body: '${(((metadata?.rating ?? 0) * 10).truncate())}%'),
         if (metadata!.studio != null && metadata!.studio!.isNotEmpty)
-          LunaTableContent(title: 'studio', body: metadata!.studio),
+          LunaTableContent(
+            title: 'studio',
+            body: metadata!.studio,
+          ),
         if (metadata?.genres?.isNotEmpty ?? false)
           LunaTableContent(
             title: 'genres',

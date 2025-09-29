@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class InvalidRoutePage extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -7,14 +7,19 @@ class InvalidRoutePage extends StatelessWidget {
   final String? message;
   final Exception? exception;
 
-  InvalidRoutePage({super.key, this.title, this.message, this.exception});
+  InvalidRoutePage({
+    Key? key,
+    this.title,
+    this.message,
+    this.exception,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LunaScaffold(
       scaffoldKey: _scaffoldKey,
       appBar: LunaAppBar(
-        title: title ?? 'thriftwood',
+        title: title ?? 'LunaSea',
         scrollControllers: const [],
       ),
       body: LunaMessage.goBack(

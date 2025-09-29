@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
-import 'package:thriftwood/widgets/pages/invalid_route.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
+import 'package:lunasea/widgets/pages/invalid_route.dart';
 
 class ManualImportDetailsRoute extends StatefulWidget {
   final String? path;
 
-  const ManualImportDetailsRoute({super.key, required this.path});
+  const ManualImportDetailsRoute({
+    Key? key,
+    required this.path,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -32,8 +35,10 @@ class _State extends State<ManualImportDetailsRoute>
       );
     }
     return ChangeNotifierProvider(
-      create: (BuildContext context) =>
-          RadarrManualImportDetailsState(context, path: widget.path!),
+      create: (BuildContext context) => RadarrManualImportDetailsState(
+        context,
+        path: widget.path!,
+      ),
       builder: (context, _) {
         return LunaScaffold(
           scaffoldKey: _scaffoldKey,
@@ -54,13 +59,14 @@ class _State extends State<ManualImportDetailsRoute>
 
   Widget _body(BuildContext context) {
     return FutureBuilder(
-      future: Future.wait([
-        context.select(
-          (RadarrManualImportDetailsState state) => state.manualImport!,
-        ),
-        context.select((RadarrState state) => state.qualityProfiles!),
-        context.select((RadarrState state) => state.languages!),
-      ]),
+      future: Future.wait(
+        [
+          context.select(
+              (RadarrManualImportDetailsState state) => state.manualImport!),
+          context.select((RadarrState state) => state.qualityProfiles!),
+          context.select((RadarrState state) => state.languages!),
+        ],
+      ),
       builder: (context, AsyncSnapshot<List<Object>> snapshot) {
         if (snapshot.hasError) {
           if (snapshot.connectionState != ConnectionState.waiting) {
@@ -95,7 +101,7 @@ class _State extends State<ManualImportDetailsRoute>
     if (manualImport.isEmpty) {
       return LunaMessage(
         text: 'radarr.NoFilesFound'.tr(),
-        buttonText: 'thriftwood.Refresh'.tr(),
+        buttonText: 'lunasea.Refresh'.tr(),
         onTap: () => context
             .read<RadarrManualImportDetailsState>()
             .fetchManualImport(context),

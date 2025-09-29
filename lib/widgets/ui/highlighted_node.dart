@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LunaHighlightedNode extends StatelessWidget {
   final Color backgroundColor;
@@ -7,11 +7,11 @@ class LunaHighlightedNode extends StatelessWidget {
   final String text;
 
   const LunaHighlightedNode({
-    super.key,
+    Key? key,
     required this.text,
     this.backgroundColor = LunaColours.accent,
     this.textColor = Colors.white,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

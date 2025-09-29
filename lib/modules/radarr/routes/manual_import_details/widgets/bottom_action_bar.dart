@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
-  const RadarrManualImportDetailsBottomActionBar({super.key});
+  const RadarrManualImportDetailsBottomActionBar({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +34,10 @@ class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
   }
 
   Future<void> _importModeOnTap(BuildContext context) async {
-    (bool, RadarrImportMode?) result =
+    Tuple2<bool, RadarrImportMode?> result =
         await RadarrDialogs().setManualImportMode(context);
-    if (result.$1)
-      RadarrDatabase.MANUAL_IMPORT_DEFAULT_MODE.update(result.$2!.value);
+    if (result.item1)
+      RadarrDatabase.MANUAL_IMPORT_DEFAULT_MODE.update(result.item2!.value);
   }
 
   Future<void> _importOnTap(BuildContext context) async {
@@ -45,30 +47,27 @@ class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
       List<RadarrManualImport> _imports =
           await context.read<RadarrManualImportDetailsState>().manualImport!;
       _imports = _imports
-          .where(
-            (import) => context
-                .read<RadarrManualImportDetailsState>()
-                .selectedFiles
-                .contains(import.id),
-          )
+          .where((import) => context
+              .read<RadarrManualImportDetailsState>()
+              .selectedFiles
+              .contains(import.id))
           .toList();
       if (_imports.isEmpty) {
         showLunaInfoSnackBar(
-          title: 'Nothing Selected',
-          message: 'Please select at least one file to import',
-        );
+            title: 'Nothing Selected',
+            message: 'Please select at least one file to import');
         return;
       }
       bool _allValid = true;
       List<RadarrManualImportFile> _files = [];
       _imports.forEach((import) {
         if (_allValid) {
-          (RadarrManualImportFile?, String?) _file =
+          Tuple2<RadarrManualImportFile?, String?> _file =
               RadarrAPIHelper().buildManualImportFile(import: import);
-          if (_file.$1 != null) {
-            _files.add(_file.$1!);
+          if (_file.item1 != null) {
+            _files.add(_file.item1!);
           } else {
-            showLunaInfoSnackBar(title: 'Invalid Inputs', message: _file.$2);
+            showLunaInfoSnackBar(title: 'Invalid Inputs', message: _file.item2);
             _allValid = false;
           }
         }
@@ -80,22 +79,16 @@ class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
             .triggerManualImport(
               context: context,
               files: _files,
-              importMode: RadarrImportMode.COPY.from(
-                (RadarrDatabase.MANUAL_IMPORT_DEFAULT_MODE.read()),
-              )!,
+              importMode: RadarrImportMode.COPY
+                  .from((RadarrDatabase.MANUAL_IMPORT_DEFAULT_MODE.read()))!,
             )
-            .then(
-              (result) => result
-                  ? Navigator.of(context).pop()
-                  : context
-                      .read<RadarrManualImportDetailsState>()
-                      .loadingState = LunaLoadingState.INACTIVE,
-            )
-            .catchError(
-              (_) => context
-                  .read<RadarrManualImportDetailsState>()
-                  .loadingState = LunaLoadingState.ERROR,
-            );
+            .then((result) => result
+                ? Navigator.of(context).pop()
+                : context.read<RadarrManualImportDetailsState>().loadingState =
+                    LunaLoadingState.INACTIVE)
+            .catchError((_) => context
+                .read<RadarrManualImportDetailsState>()
+                .loadingState = LunaLoadingState.ERROR);
       }
     }
   }

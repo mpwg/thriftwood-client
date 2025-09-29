@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/database/models/external_module.dart';
-import 'package:thriftwood/router/routes/settings.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/database/models/external_module.dart';
+import 'package:lunasea/router/routes/settings.dart';
 
 class ConfigurationExternalModulesRoute extends StatefulWidget {
-  const ConfigurationExternalModulesRoute({super.key});
+  const ConfigurationExternalModulesRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationExternalModulesRoute> createState() => _State();
@@ -63,10 +65,8 @@ class _State extends State<ConfigurationExternalModulesRoute>
 
   List<Widget> get _modules {
     final modules = LunaBox.externalModules.data.toList();
-    modules.sort(
-      (a, b) =>
-          a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()),
-    );
+    modules.sort((a, b) =>
+        a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
     List<LunaBlock> list = List.generate(
       modules.length,
       (index) => _moduleTile(modules[index], modules[index].key) as LunaBlock,
@@ -80,9 +80,9 @@ class _State extends State<ConfigurationExternalModulesRoute>
       body: [TextSpan(text: module.host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_EDIT.go(
-          params: {'id': index.toString()},
-        );
+        SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_EDIT.go(params: {
+          'id': index.toString(),
+        });
       },
     );
   }

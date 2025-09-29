@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/links.dart';
-import 'package:thriftwood/modules/lidarr.dart';
-import 'package:thriftwood/router/routes/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/links.dart';
+import 'package:lunasea/modules/lidarr.dart';
+import 'package:lunasea/router/routes/lidarr.dart';
 
 class LidarrAddSearchResultTile extends StatelessWidget {
   final bool alreadyAdded;
   final LidarrSearchData data;
 
   const LidarrAddSearchResultTile({
-    super.key,
+    Key? key,
     required this.alreadyAdded,
     required this.data,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => LunaBlock(
         title: data.title,
         disabled: alreadyAdded,
-        body: [LunaTextSpan.extended(text: data.overview!.trim())],
+        body: [
+          LunaTextSpan.extended(text: data.overview!.trim()),
+        ],
         customBodyMaxLines: 3,
         trailing: alreadyAdded ? null : const LunaIconButton.arrow(),
         posterIsSquare: true,

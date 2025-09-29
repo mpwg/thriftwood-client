@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrAppBarSeriesSettingsAction extends StatelessWidget {
   final int seriesId;
 
-  const SonarrAppBarSeriesSettingsAction({super.key, required this.seriesId});
+  const SonarrAppBarSeriesSettingsAction({
+    Key? key,
+    required this.seriesId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +23,9 @@ class SonarrAppBarSeriesSettingsAction extends StatelessWidget {
               return LunaIconButton(
                 icon: Icons.more_vert_rounded,
                 onPressed: () async {
-                  (bool, SonarrSeriesSettingsType?) values =
+                  Tuple2<bool, SonarrSeriesSettingsType?> values =
                       await SonarrDialogs().seriesSettings(context, series);
-                  if (values.$1) values.$2!.execute(context, series);
+                  if (values.item1) values.item2!.execute(context, series);
                 },
               );
           }

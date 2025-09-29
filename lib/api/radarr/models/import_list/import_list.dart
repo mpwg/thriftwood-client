@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:thriftwood/api/radarr/types.dart';
-import 'package:thriftwood/api/radarr/utilities.dart';
+import 'package:lunasea/api/radarr/types.dart';
+import 'package:lunasea/api/radarr/utilities.dart';
 
 part 'import_list.g.dart';
 
@@ -27,10 +27,9 @@ class RadarrImportList {
   bool? searchOnAdd;
 
   @JsonKey(
-    name: 'minimumAvailability',
-    toJson: RadarrUtilities.availabilityToJson,
-    fromJson: RadarrUtilities.availabilityFromJson,
-  )
+      name: 'minimumAvailability',
+      toJson: RadarrUtilities.availabilityToJson,
+      fromJson: RadarrUtilities.availabilityFromJson)
   RadarrAvailability? minimumAvailability;
 
   @JsonKey(name: 'listType')

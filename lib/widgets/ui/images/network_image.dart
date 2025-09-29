@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/utils/transparent_image.dart';
+import 'package:lunasea/core.dart';
 
 class LunaNetworkImage extends ClipRRect {
   LunaNetworkImage({
-    super.key,
+    Key? key,
     required BuildContext context,
     required double height,
     required double width,
@@ -12,6 +11,7 @@ class LunaNetworkImage extends ClipRRect {
     IconData? placeholderIcon,
     Map? headers,
   }) : super(
+          key: key,
           child: SizedBox(
             child: Stack(
               alignment: Alignment.center,
@@ -44,14 +44,16 @@ class LunaNetworkImage extends ClipRRect {
                       milliseconds: LunaUI.ANIMATION_SPEED_IMAGES,
                     ),
                     fadeOutDuration: const Duration(milliseconds: 1),
-                    placeholder: MemoryImage(transparentImageBytes),
+                    placeholder: MemoryImage(kTransparentImage),
                     fit: BoxFit.cover,
                     image: LunaNetworkImageProvider(
                       url: url!,
                       headers: headers?.cast<String, String>(),
                     ).imageProvider,
-                    imageErrorBuilder: (context, error, stack) =>
-                        SizedBox(height: height, width: width),
+                    imageErrorBuilder: (context, error, stack) => SizedBox(
+                      height: height,
+                      width: width,
+                    ),
                   ),
               ],
             ),

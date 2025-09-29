@@ -9,7 +9,7 @@ environment_config:
       env_var: BUILD
     commit:
       type: String
-      default: main
+      default: master
       env_var: COMMIT
     flavor:
       type: String

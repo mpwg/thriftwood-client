@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrSeriesEditLanguageProfileTile extends StatelessWidget {
   final List<SonarrLanguageProfile?> profiles;
 
-  const SonarrSeriesEditLanguageProfileTile(
-      {super.key, required this.profiles});
+  const SonarrSeriesEditLanguageProfileTile({
+    Key? key,
+    required this.profiles,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +26,9 @@ class SonarrSeriesEditLanguageProfileTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    (bool, SonarrLanguageProfile?) result =
+    Tuple2<bool, SonarrLanguageProfile?> result =
         await SonarrDialogs().editLanguageProfiles(context, profiles);
-    if (result.$1)
-      context.read<SonarrSeriesEditState>().languageProfile = result.$2!;
+    if (result.item1)
+      context.read<SonarrSeriesEditState>().languageProfile = result.item2!;
   }
 }

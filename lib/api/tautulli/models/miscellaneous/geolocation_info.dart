@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'geolocation_info.g.dart';
 
@@ -24,9 +24,7 @@ class TautulliGeolocationInfo {
 
   /// Postal code.
   @JsonKey(
-    name: 'postal_code',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'postal_code', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? postalCode;
 
   /// Timezone.

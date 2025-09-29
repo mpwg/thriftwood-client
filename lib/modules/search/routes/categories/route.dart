@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/search.dart';
-import 'package:thriftwood/router/routes/search.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/search.dart';
+import 'package:lunasea/router/routes/search.dart';
 
 class CategoriesRoute extends StatefulWidget {
-  const CategoriesRoute({super.key});
+  const CategoriesRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<CategoriesRoute> createState() => _State();
@@ -36,7 +38,10 @@ class _State extends State<CategoriesRoute>
       title: context.read<SearchState>().indexer.displayName,
       scrollControllers: [scrollController],
       actions: <Widget>[
-        LunaIconButton(icon: Icons.search_rounded, onPressed: _enterSearch),
+        LunaIconButton(
+          icon: Icons.search_rounded,
+          onPressed: _enterSearch,
+        ),
       ],
     );
   }
@@ -76,8 +81,10 @@ class _State extends State<CategoriesRoute>
     return LunaListViewBuilder(
       controller: scrollController,
       itemCount: filtered.length,
-      itemBuilder: (context, index) =>
-          SearchCategoryTile(category: filtered[index], index: index),
+      itemBuilder: (context, index) => SearchCategoryTile(
+        category: filtered[index],
+        index: index,
+      ),
     );
   }
 

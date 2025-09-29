@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 part 'filter_movies.g.dart';
 
@@ -78,7 +78,10 @@ extension RadarrMoviesFilterExtension on RadarrMoviesFilter {
 }
 
 class _Filterer {
-  List<RadarrMovie> byType(List<RadarrMovie> movies, RadarrMoviesFilter type) {
+  List<RadarrMovie> byType(
+    List<RadarrMovie> movies,
+    RadarrMoviesFilter type,
+  ) {
     switch (type) {
       case RadarrMoviesFilter.ALL:
         return movies;
@@ -104,10 +107,8 @@ class _Filterer {
   List<RadarrMovie> _wanted(List<RadarrMovie> movies) =>
       movies.where((movie) => !movie.hasFile! && movie.monitored!).toList();
   List<RadarrMovie> _cutoffUnmet(List<RadarrMovie> movies) => movies
-      .where(
-        (movie) =>
-            (movie.hasFile! && movie.movieFile!.qualityCutoffNotMet!) &&
-            movie.monitored!,
-      )
+      .where((movie) =>
+          (movie.hasFile! && movie.movieFile!.qualityCutoffNotMet!) &&
+          movie.monitored!)
       .toList();
 }

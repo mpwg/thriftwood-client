@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class SonarrNavigationBar extends StatelessWidget {
   final PageController? pageController;
@@ -22,7 +22,10 @@ class SonarrNavigationBar extends StatelessWidget {
         'sonarr.More'.tr(),
       ];
 
-  const SonarrNavigationBar({super.key, required this.pageController});
+  const SonarrNavigationBar({
+    Key? key,
+    required this.pageController,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

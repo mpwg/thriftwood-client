@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/vendor.dart';
 
 part 'calendar_starting_type.g.dart';
 

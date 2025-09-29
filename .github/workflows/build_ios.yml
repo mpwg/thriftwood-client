@@ -31,12 +31,12 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Setup Environment
-        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@main
+        uses: JagandeepBrar/lunasea/.github/actions/prepare_for_build@master
         with:
           platform: ios
           match-ssh-private-key: ${{ secrets.MATCH_SSH_PRIVATE_KEY }}
 
-      - name: Build thriftwood
+      - name: Build LunaSea
         working-directory: ${{ github.workspace }}/ios
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}

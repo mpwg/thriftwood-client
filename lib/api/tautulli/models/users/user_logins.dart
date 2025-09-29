@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'user_logins.g.dart';
 
@@ -10,16 +10,13 @@ part 'user_logins.g.dart';
 class TautulliUserLogins {
   /// Number of filtered records returned.
   @JsonKey(
-    name: 'recordsFiltered',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'recordsFiltered',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? recordsFiltered;
 
   /// Total amount of records.
   @JsonKey(
-    name: 'recordsTotal',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'recordsTotal', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? recordsTotal;
 
   /// _Unknown_
@@ -50,13 +47,10 @@ class TautulliUserLogins {
 
   static List<TautulliUserLoginRecord> _loginsFromJson(List<dynamic> logins) =>
       logins
-          .map(
-            (login) => TautulliUserLoginRecord.fromJson(
-              (login as Map<String, dynamic>),
-            ),
-          )
+          .map((login) =>
+              TautulliUserLoginRecord.fromJson((login as Map<String, dynamic>)))
           .toList();
   static List<Map<String, dynamic>>? _loginsToJson(
-    List<TautulliUserLoginRecord>? logins,
-  ) => logins?.map((login) => login.toJson()).toList();
+          List<TautulliUserLoginRecord>? logins) =>
+      logins?.map((login) => login.toJson()).toList();
 }

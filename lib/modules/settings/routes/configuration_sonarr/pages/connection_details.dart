@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/settings.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/router/routes/settings.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/settings.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/router/routes/settings.dart';
 
 class ConfigurationSonarrConnectionDetailsRoute extends StatefulWidget {
-  const ConfigurationSonarrConnectionDetailsRoute({super.key});
+  const ConfigurationSonarrConnectionDetailsRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationSonarrConnectionDetailsRoute> createState() => _State();
@@ -33,14 +35,22 @@ class _State extends State<ConfigurationSonarrConnectionDetailsRoute>
   }
 
   Widget _bottomActionBar() {
-    return LunaBottomActionBar(actions: [_testConnection()]);
+    return LunaBottomActionBar(
+      actions: [
+        _testConnection(),
+      ],
+    );
   }
 
   Widget _body() {
     return LunaBox.profiles.listenableBuilder(
       builder: (context, _) => LunaListView(
         controller: scrollController,
-        children: [_host(), _apiKey(), _customHeaders()],
+        children: [
+          _host(),
+          _apiKey(),
+          _customHeaders(),
+        ],
       ),
     );
   }
@@ -49,15 +59,15 @@ class _State extends State<ConfigurationSonarrConnectionDetailsRoute>
     String host = LunaProfile.current.sonarrHost;
     return LunaBlock(
       title: 'settings.Host'.tr(),
-      body: [TextSpan(text: host.isEmpty ? 'thriftwood.NotSet'.tr() : host)],
+      body: [TextSpan(text: host.isEmpty ? 'lunasea.NotSet'.tr() : host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        (bool, String) _values = await SettingsDialogs().editHost(
+        Tuple2<bool, String> _values = await SettingsDialogs().editHost(
           context,
           prefill: host,
         );
-        if (_values.$1) {
-          LunaProfile.current.sonarrHost = _values.$2;
+        if (_values.item1) {
+          LunaProfile.current.sonarrHost = _values.item2;
           LunaProfile.current.save();
           context.read<SonarrState>().reset();
         }
@@ -72,19 +82,19 @@ class _State extends State<ConfigurationSonarrConnectionDetailsRoute>
       body: [
         TextSpan(
           text: apiKey.isEmpty
-              ? 'thriftwood.NotSet'.tr()
+              ? 'lunasea.NotSet'.tr()
               : LunaUI.TEXT_OBFUSCATED_PASSWORD,
         ),
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        (bool, String) _values = await LunaDialogs().editText(
+        Tuple2<bool, String> _values = await LunaDialogs().editText(
           context,
           'settings.ApiKey'.tr(),
           prefill: apiKey,
         );
-        if (_values.$1) {
-          LunaProfile.current.sonarrKey = _values.$2;
+        if (_values.item1) {
+          LunaProfile.current.sonarrKey = _values.item2;
           LunaProfile.current.save();
           context.read<SonarrState>().reset();
         }
@@ -101,34 +111,37 @@ class _State extends State<ConfigurationSonarrConnectionDetailsRoute>
         if (_profile.sonarrHost.isEmpty) {
           showLunaErrorSnackBar(
             title: 'settings.HostRequired'.tr(),
-            message: 'settings.HostRequiredMessage'.tr(
-              args: [LunaModule.SONARR.title],
-            ),
+            message: 'settings.HostRequiredMessage'
+                .tr(args: [LunaModule.SONARR.title]),
           );
           return;
         }
         if (_profile.sonarrKey.isEmpty) {
           showLunaErrorSnackBar(
             title: 'settings.ApiKeyRequired'.tr(),
-            message: 'settings.ApiKeyRequiredMessage'.tr(
-              args: [LunaModule.SONARR.title],
-            ),
+            message: 'settings.ApiKeyRequiredMessage'
+                .tr(args: [LunaModule.SONARR.title]),
           );
           return;
         }
         SonarrAPI(
           host: _profile.sonarrHost,
           apiKey: _profile.sonarrKey,
-          headers: Map<String, dynamic>.from(_profile.sonarrHeaders),
+          headers: Map<String, dynamic>.from(
+            _profile.sonarrHeaders,
+          ),
         ).system.getStatus().then((_) {
           showLunaSuccessSnackBar(
             title: 'settings.ConnectedSuccessfully'.tr(),
-            message: 'settings.ConnectedSuccessfullyMessage'.tr(
-              args: [LunaModule.SONARR.title],
-            ),
+            message: 'settings.ConnectedSuccessfullyMessage'
+                .tr(args: [LunaModule.SONARR.title]),
           );
         }).catchError((error, trace) {
-          LunaLogger().error('Connection Test Failed', error, trace);
+          LunaLogger().error(
+            'Connection Test Failed',
+            error,
+            trace,
+          );
           showLunaErrorSnackBar(
             title: 'settings.ConnectionTestFailed'.tr(),
             error: error,

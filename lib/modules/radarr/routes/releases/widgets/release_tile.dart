@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/links.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/links.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrReleasesTile extends StatefulWidget {
   final RadarrRelease release;
 
-  const RadarrReleasesTile({required this.release, super.key});
+  const RadarrReleasesTile({
+    required this.release,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -20,7 +23,10 @@ class _State extends State<RadarrReleasesTile> {
   Widget build(BuildContext context) {
     return LunaExpandableListTile(
       title: widget.release.title!,
-      collapsedSubtitles: [_subtitle1(), _subtitle2()],
+      collapsedSubtitles: [
+        _subtitle1(),
+        _subtitle2(),
+      ],
       collapsedTrailing: _trailing(),
       expandedHighlightedNodes: _highlightedNodes(),
       expandedTableContent: _tableContent(),
@@ -78,12 +84,9 @@ class _State extends State<RadarrReleasesTile> {
           text: widget.release.lunaCustomFormatScore()!,
           backgroundColor: LunaColours.purple,
         ),
-      ...widget.release.customFormats!.map<LunaHighlightedNode>(
-        (custom) => LunaHighlightedNode(
-          text: custom.name!,
-          backgroundColor: LunaColours.blueGrey,
-        ),
-      ),
+      ...widget.release.customFormats!.map<LunaHighlightedNode>((custom) =>
+          LunaHighlightedNode(
+              text: custom.name!, backgroundColor: LunaColours.blueGrey)),
     ];
   }
 
@@ -93,12 +96,12 @@ class _State extends State<RadarrReleasesTile> {
       LunaTableContent(title: 'indexer', body: widget.release.lunaIndexer),
       LunaTableContent(title: 'size', body: widget.release.lunaSize),
       LunaTableContent(
-        title: 'language',
-        body: widget.release.languages
-                ?.map<String>((language) => language.name ?? LunaUI.TEXT_EMDASH)
-                .join('\n') ??
-            LunaUI.TEXT_EMDASH,
-      ),
+          title: 'language',
+          body: widget.release.languages
+                  ?.map<String>(
+                      (language) => language.name ?? LunaUI.TEXT_EMDASH)
+                  .join('\n') ??
+              LunaUI.TEXT_EMDASH),
       LunaTableContent(title: 'quality', body: widget.release.lunaQuality),
       if (widget.release.seeders != null)
         LunaTableContent(title: 'seeders', body: '${widget.release.seeders}'),
@@ -139,15 +142,11 @@ class _State extends State<RadarrReleasesTile> {
         .pushRelease(context: context, release: widget.release)
         .then((value) {
       if (mounted)
-        setState(
-          () => _downloadState =
-              value ? LunaLoadingState.INACTIVE : LunaLoadingState.ERROR,
-        );
+        setState(() => _downloadState =
+            value ? LunaLoadingState.INACTIVE : LunaLoadingState.ERROR);
     });
   }
 
-  Future<void> _showWarnings() async => await LunaDialogs().showRejections(
-        context,
-        widget.release.rejections ?? [],
-      );
+  Future<void> _showWarnings() async => await LunaDialogs()
+      .showRejections(context, widget.release.rejections ?? []);
 }

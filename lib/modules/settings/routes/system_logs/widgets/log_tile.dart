@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/database/models/log.dart';
-import 'package:thriftwood/extensions/datetime.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/database/models/log.dart';
+import 'package:lunasea/extensions/datetime.dart';
 
 class SettingsSystemLogTile extends StatelessWidget {
   final LunaLog log;
 
-  const SettingsSystemLogTile({super.key, required this.log});
+  const SettingsSystemLogTile({
+    Key? key,
+    required this.log,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String dateTime = DateTime.fromMillisecondsSinceEpoch(
-      log.timestamp,
-    ).asDateTime();
+    String dateTime =
+        DateTime.fromMillisecondsSinceEpoch(log.timestamp).asDateTime();
     return LunaExpandableListTile(
       title: log.message,
       collapsedSubtitles: [

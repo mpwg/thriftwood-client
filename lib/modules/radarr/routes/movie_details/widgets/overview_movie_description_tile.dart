@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrMovieDetailsOverviewDescriptionTile extends StatelessWidget {
   final RadarrMovie? movie;
 
   const RadarrMovieDetailsOverviewDescriptionTile({
-    super.key,
+    Key? key,
     required this.movie,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

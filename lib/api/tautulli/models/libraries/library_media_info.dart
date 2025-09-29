@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'library_media_info.g.dart';
 
@@ -10,30 +10,25 @@ part 'library_media_info.g.dart';
 class TautulliLibraryMediaInfo {
   /// Number of filtered records returned.
   @JsonKey(
-    name: 'recordsFiltered',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'recordsFiltered',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? recordsFiltered;
 
   /// Total amount of records.
   @JsonKey(
-    name: 'recordsTotal',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'recordsTotal', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? recordsTotal;
 
   /// Total file size of the filtered returned results.
   @JsonKey(
-    name: 'filtered_file_size',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'filtered_file_size',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? filteredFileSize;
 
   /// Total file size of the returned results.
   @JsonKey(
-    name: 'total_file_size',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'total_file_size',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? totalFileSize;
 
   /// _Unknown_
@@ -67,16 +62,13 @@ class TautulliLibraryMediaInfo {
   static List<TautulliLibraryMediaInfoRecord> _infoFromJson(dynamic mediaInfo) {
     if (mediaInfo is List)
       return mediaInfo
-          .map(
-            (info) => TautulliLibraryMediaInfoRecord.fromJson(
-              (info as Map<String, dynamic>),
-            ),
-          )
+          .map((info) => TautulliLibraryMediaInfoRecord.fromJson(
+              (info as Map<String, dynamic>)))
           .toList();
     return [];
   }
 
   static List<Map<String, dynamic>>? _infoToJson(
-    List<TautulliLibraryMediaInfoRecord>? mediaInfo,
-  ) => mediaInfo?.map((info) => info.toJson()).toList();
+          List<TautulliLibraryMediaInfoRecord>? mediaInfo) =>
+      mediaInfo?.map((info) => info.toJson()).toList();
 }

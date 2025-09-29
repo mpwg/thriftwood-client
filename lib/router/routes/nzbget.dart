@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/modules.dart';
-import 'package:thriftwood/modules/nzbget/routes/nzbget.dart';
-import 'package:thriftwood/modules/nzbget/routes/statistics.dart';
-import 'package:thriftwood/router/routes.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/modules.dart';
+import 'package:lunasea/modules/nzbget/routes/nzbget.dart';
+import 'package:lunasea/modules/nzbget/routes/statistics.dart';
+import 'package:lunasea/router/routes.dart';
+import 'package:lunasea/vendor.dart';
 
 enum NZBGetRoutes with LunaRoutesMixin {
   HOME('/nzbget'),
@@ -34,7 +34,9 @@ enum NZBGetRoutes with LunaRoutesMixin {
   List<GoRoute> get subroutes {
     switch (this) {
       case NZBGetRoutes.HOME:
-        return [NZBGetRoutes.STATISTICS.routes];
+        return [
+          NZBGetRoutes.STATISTICS.routes,
+        ];
       default:
         return const [];
     }

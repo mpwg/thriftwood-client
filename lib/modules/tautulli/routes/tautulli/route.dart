@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliRoute extends StatefulWidget {
-  const TautulliRoute({super.key});
+  const TautulliRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<TautulliRoute> createState() => _State();
@@ -16,9 +18,8 @@ class _State extends State<TautulliRoute> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(
-      initialPage: TautulliDatabase.NAVIGATION_INDEX.read(),
-    );
+    _pageController =
+        PageController(initialPage: TautulliDatabase.NAVIGATION_INDEX.read());
   }
 
   @override
@@ -49,7 +50,9 @@ class _State extends State<TautulliRoute> {
     });
     List<Widget>? actions;
     if (context.watch<TautulliState>().enabled)
-      actions = [const TautulliAppBarGlobalSettingsAction()];
+      actions = [
+        const TautulliAppBarGlobalSettingsAction(),
+      ];
     return LunaAppBar.dropdown(
       title: LunaModule.TAUTULLI.title,
       useDrawer: true,
@@ -66,9 +69,7 @@ class _State extends State<TautulliRoute> {
       builder: (context, enabled, _) {
         if (!enabled!)
           return LunaMessage.moduleNotEnabled(
-            context: context,
-            module: 'Tautulli',
-          );
+              context: context, module: 'Tautulli');
         return LunaPageView(
           controller: _pageController,
           children: const [

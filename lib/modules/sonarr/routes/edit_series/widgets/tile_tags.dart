@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrSeriesEditTagsTile extends StatelessWidget {
-  const SonarrSeriesEditTagsTile({super.key});
+  const SonarrSeriesEditTagsTile({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,13 +14,13 @@ class SonarrSeriesEditTagsTile extends StatelessWidget {
       body: [
         TextSpan(
           text: (context.watch<SonarrSeriesEditState>().tags?.isEmpty ?? true)
-              ? 'thriftwood.NotSet'.tr()
+              ? 'lunasea.NotSet'.tr()
               : context
                   .watch<SonarrSeriesEditState>()
                   .tags
                   ?.map((e) => e.label)
                   .join(', '),
-        ),
+        )
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async => await SonarrDialogs().setEditTags(context),

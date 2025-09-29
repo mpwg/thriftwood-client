@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LunaIconButton extends StatelessWidget {
   final IconData? icon;
@@ -15,7 +15,7 @@ class LunaIconButton extends StatelessWidget {
   final MouseCursor? mouseCursor;
 
   const LunaIconButton.arrow({
-    super.key,
+    Key? key,
     this.text,
     this.textSize = LunaUI.FONT_SIZE_H5,
     this.icon = LunaIcons.ARROW_RIGHT,
@@ -26,10 +26,10 @@ class LunaIconButton extends StatelessWidget {
     this.onLongPress,
     this.loadingState,
     this.mouseCursor,
-  });
+  }) : super(key: key);
 
   const LunaIconButton.appBar({
-    super.key,
+    Key? key,
     this.text,
     this.textSize = LunaUI.FONT_SIZE_H5,
     this.icon,
@@ -40,10 +40,10 @@ class LunaIconButton extends StatelessWidget {
     this.onLongPress,
     this.loadingState,
     this.mouseCursor,
-  });
+  }) : super(key: key);
 
   const LunaIconButton({
-    super.key,
+    Key? key,
     this.text,
     this.textSize = LunaUI.FONT_SIZE_H5,
     this.icon,
@@ -54,7 +54,7 @@ class LunaIconButton extends StatelessWidget {
     this.onLongPress,
     this.loadingState,
     this.mouseCursor,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +104,15 @@ class LunaIconButton extends StatelessWidget {
   Widget _icon() {
     assert((text != null || icon != null), 'both text and icon cannot be null');
     if (loadingState == LunaLoadingState.ERROR) {
-      return Icon(Icons.error_rounded, color: color);
+      return Icon(
+        Icons.error_rounded,
+        color: color,
+      );
     } else if (icon != null) {
-      return Icon(icon, color: color);
+      return Icon(
+        icon,
+        color: color,
+      );
     } else {
       return Text(
         text!,

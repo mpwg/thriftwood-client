@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrSeriesEditSeriesTypeTile extends StatelessWidget {
-  const SonarrSeriesEditSeriesTypeTile({super.key});
+  const SonarrSeriesEditSeriesTypeTile({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,13 +14,12 @@ class SonarrSeriesEditSeriesTypeTile extends StatelessWidget {
       title: 'sonarr.SeriesType'.tr(),
       body: [
         TextSpan(
-          text: context
-                  .watch<SonarrSeriesEditState>()
-                  .seriesType
-                  ?.value
-                  ?.toTitleCase() ??
-              LunaUI.TEXT_EMDASH,
-        ),
+            text: context
+                    .watch<SonarrSeriesEditState>()
+                    .seriesType
+                    ?.value
+                    ?.toTitleCase() ??
+                LunaUI.TEXT_EMDASH),
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async => _onTap(context),
@@ -26,9 +27,9 @@ class SonarrSeriesEditSeriesTypeTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    (bool, SonarrSeriesType?) result =
+    Tuple2<bool, SonarrSeriesType?> result =
         await SonarrDialogs().editSeriesType(context);
-    if (result.$1)
-      context.read<SonarrSeriesEditState>().seriesType = result.$2!;
+    if (result.item1)
+      context.read<SonarrSeriesEditState>().seriesType = result.item2!;
   }
 }

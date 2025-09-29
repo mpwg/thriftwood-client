@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/string.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/string.dart';
 
 class SABnzbdQueueData {
   String name;
@@ -35,8 +35,8 @@ class SABnzbdQueueData {
     String time = isPaused
         ? 'Paused'
         : timeLeft == '0:00:00'
-        ? '―'
-        : timeLeft;
+            ? '―'
+            : timeLeft;
     String size = '${sizeTotal - sizeLeft}/$sizeTotal MB';
     String paddedBullet = LunaUI.TEXT_BULLET.pad();
     return '$time$paddedBullet$size$paddedBullet$percentageDone%$paddedBullet$formattedCategory';

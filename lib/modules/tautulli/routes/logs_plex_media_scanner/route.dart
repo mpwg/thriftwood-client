@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class LogsPlexMediaScannerRoute extends StatefulWidget {
-  const LogsPlexMediaScannerRoute({super.key});
+  const LogsPlexMediaScannerRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -41,9 +43,8 @@ class _State extends State<LogsPlexMediaScannerRoute>
       onRefresh: () async =>
           context.read<TautulliLogsPlexMediaScannerState>().fetchLogs(context),
       child: FutureBuilder(
-        future: context.select(
-          (TautulliLogsPlexMediaScannerState state) => state.logs,
-        ),
+        future: context
+            .select((TautulliLogsPlexMediaScannerState state) => state.logs),
         builder: (context, AsyncSnapshot<List<TautulliPlexLog>> snapshot) {
           if (snapshot.hasError) {
             if (snapshot.connectionState != ConnectionState.waiting)

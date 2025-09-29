@@ -1,6 +1,6 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 extension LunaRadarrExtraFileExtension on RadarrExtraFile {
   String get lunaRelativePath {

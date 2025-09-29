@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class AddArtistRoute extends StatefulWidget {
-  const AddArtistRoute({super.key});
+  const AddArtistRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<AddArtistRoute> createState() => _State();

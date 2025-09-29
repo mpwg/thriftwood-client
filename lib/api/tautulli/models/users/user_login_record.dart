@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'user_login_record.g.dart';
 
@@ -8,9 +8,8 @@ part 'user_login_record.g.dart';
 class TautulliUserLoginRecord {
   /// Timestamp of the login.
   @JsonKey(
-    name: 'timestamp',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'timestamp',
+      fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? timestamp;
 
   /// The user's ID.
@@ -19,10 +18,9 @@ class TautulliUserLoginRecord {
 
   /// What group the user is apart of.
   @JsonKey(
-    name: 'user_group',
-    toJson: TautulliUtilities.userGroupToJson,
-    fromJson: TautulliUtilities.userGroupFromJson,
-  )
+      name: 'user_group',
+      toJson: TautulliUtilities.userGroupToJson,
+      fromJson: TautulliUtilities.userGroupFromJson)
   final TautulliUserGroup? userGroup;
 
   /// Originating IP address of the login record.
@@ -51,9 +49,7 @@ class TautulliUserLoginRecord {
 
   /// Friendly name of the user.
   @JsonKey(
-    name: 'friendly_name',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'friendly_name', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? friendlyName;
 
   TautulliUserLoginRecord({

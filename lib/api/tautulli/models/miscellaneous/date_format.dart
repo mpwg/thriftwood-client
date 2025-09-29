@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'date_format.g.dart';
 
@@ -8,19 +8,18 @@ part 'date_format.g.dart';
 class TautulliDateFormat {
   /// Date format.
   @JsonKey(
-    name: 'date_format',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'date_format', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? dateFormat;
 
   /// Time format.
   @JsonKey(
-    name: 'time_format',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'time_format', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? timeFormat;
 
-  TautulliDateFormat({this.dateFormat, this.timeFormat});
+  TautulliDateFormat({
+    this.dateFormat,
+    this.timeFormat,
+  });
 
   /// Returns a JSON-encoded string version of this object.
   @override

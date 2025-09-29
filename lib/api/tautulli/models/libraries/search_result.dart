@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'search_result.g.dart';
 
@@ -8,55 +8,45 @@ part 'search_result.g.dart';
 class TautulliSearchResult {
   /// Type of media content.
   @JsonKey(
-    name: 'media_type',
-    toJson: TautulliUtilities.mediaTypeToJson,
-    fromJson: TautulliUtilities.mediaTypeFromJson,
-  )
+      name: 'media_type',
+      toJson: TautulliUtilities.mediaTypeToJson,
+      fromJson: TautulliUtilities.mediaTypeFromJson)
   final TautulliMediaType? mediaType;
 
   /// Subtype of media content.
   ///
   /// *Only applicable to collection results.*
   @JsonKey(
-    name: 'sub_media_type',
-    toJson: TautulliUtilities.mediaTypeToJson,
-    fromJson: TautulliUtilities.mediaTypeFromJson,
-  )
+      name: 'sub_media_type',
+      toJson: TautulliUtilities.mediaTypeToJson,
+      fromJson: TautulliUtilities.mediaTypeFromJson)
   final TautulliMediaType? subMediaType;
 
   /// Total amount of returned results.
   @JsonKey(
-    name: 'section_id',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'section_id', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? sectionId;
 
   /// Name of the Plex library that the content belongs to.
   @JsonKey(
-    name: 'library_name',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'library_name', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? libraryName;
 
   /// The content's unique ID from Plex.
   @JsonKey(
-    name: 'rating_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'rating_key', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? ratingKey;
 
   /// The content's parent's unique ID from Plex.
   @JsonKey(
-    name: 'parent_rating_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'parent_rating_key',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? parentRatingKey;
 
   /// The content's grandparent's unique ID from Plex.
   @JsonKey(
-    name: 'grandparent_rating_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'grandparent_rating_key',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? grandparentRatingKey;
 
   /// Title of the content.
@@ -65,23 +55,18 @@ class TautulliSearchResult {
 
   /// Title of the parent of the content.
   @JsonKey(
-    name: 'parent_title',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'parent_title', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? parentTitle;
 
   /// Title of the grandparent of the content.
   @JsonKey(
-    name: 'grandparent_title',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'grandparent_title',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? grandparentTitle;
 
   /// The original title of the content.
   @JsonKey(
-    name: 'original_title',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'original_title', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? originalTitle;
 
   /// The sort title of the content (if different from the title).
@@ -90,16 +75,13 @@ class TautulliSearchResult {
 
   /// The index of the content with respect to its parent (for example, track number in an album).
   @JsonKey(
-    name: 'media_index',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'media_index', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? mediaIndex;
 
   /// The index of the parent of the content.
   @JsonKey(
-    name: 'parent_media_index',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'parent_media_index',
+      fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? parentMediaIndex;
 
   /// The studio that made the content.
@@ -108,9 +90,7 @@ class TautulliSearchResult {
 
   /// The content rating for the content.
   @JsonKey(
-    name: 'content_rating',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'content_rating', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? contentRating;
 
   /// The summary of the content.
@@ -127,37 +107,29 @@ class TautulliSearchResult {
 
   /// Link to an image for the critic rating.
   @JsonKey(
-    name: 'rating_image',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'rating_image', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? ratingImage;
 
   /// The audience rating of the content.
   @JsonKey(
-    name: 'audience_rating',
-    fromJson: TautulliUtilities.ensureDoubleFromJson,
-  )
+      name: 'audience_rating', fromJson: TautulliUtilities.ensureDoubleFromJson)
   final double? audienceRating;
 
   /// Link to an image for the audience rating.
   @JsonKey(
-    name: 'audience_rating_image',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'audience_rating_image',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? audienceRatingImage;
 
   /// The user rating of the content.
   @JsonKey(
-    name: 'user_rating',
-    fromJson: TautulliUtilities.ensureDoubleFromJson,
-  )
+      name: 'user_rating', fromJson: TautulliUtilities.ensureDoubleFromJson)
   final double? userRating;
 
   /// Duration of the content.
   @JsonKey(
-    name: 'duration',
-    fromJson: TautulliUtilities.millisecondsDurationFromJson,
-  )
+      name: 'duration',
+      fromJson: TautulliUtilities.millisecondsDurationFromJson)
   final Duration? duration;
 
   /// Year the content was released.
@@ -182,16 +154,13 @@ class TautulliSearchResult {
 
   /// Thumbnail path for the content's parent.
   @JsonKey(
-    name: 'parent_thumb',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'parent_thumb', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? parentThumb;
 
   /// Thumbnail path for the content's grandparent.
   @JsonKey(
-    name: 'grandparent_thumb',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'grandparent_thumb',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? grandparentThumb;
 
   /// Artwork path for the content.
@@ -207,31 +176,27 @@ class TautulliSearchResult {
   /// Because of the custom formatting options, the DateTime is returned as a string.
   /// You can use the miscellaneous call `getDateFormats()` to pull the date and time formatting strings.
   @JsonKey(
-    name: 'originally_available_at',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'originally_available_at',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? originallyAvailableAt;
 
   /// The date on which the content was added to Plex.
   /// This is typically read/stored as the file creation date within Plex.
   @JsonKey(
-    name: 'added_at',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'added_at',
+      fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? addedAt;
 
   /// The date on which the content was last updated on Plex.
   @JsonKey(
-    name: 'updated_at',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'updated_at',
+      fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? updatedAt;
 
   /// The date on which the content was last viewed on Plex.
   @JsonKey(
-    name: 'last_viewed_at',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'last_viewed_at',
+      fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? lastViewedAt;
 
   /// The globally unique identifier for the content.
@@ -240,30 +205,23 @@ class TautulliSearchResult {
 
   /// The globally unique identifier for the content's parent.
   @JsonKey(
-    name: 'parent_guid',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'parent_guid', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? parentGuid;
 
   /// The globally unique identifier for the content's grandparent.
   @JsonKey(
-    name: 'grandparent_guid',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'grandparent_guid',
+      fromJson: TautulliUtilities.ensureStringFromJson)
   final String? grandparentGuid;
 
   /// List of director's names who directed the content.
   @JsonKey(
-    name: 'directors',
-    fromJson: TautulliUtilities.ensureStringListFromJson,
-  )
+      name: 'directors', fromJson: TautulliUtilities.ensureStringListFromJson)
   final List<String?>? directors;
 
   /// List of writer's names who wrote the content.
   @JsonKey(
-    name: 'writers',
-    fromJson: TautulliUtilities.ensureStringListFromJson,
-  )
+      name: 'writers', fromJson: TautulliUtilities.ensureStringListFromJson)
   final List<String?>? writers;
 
   /// List of actors's names who acted in the content.
@@ -280,9 +238,7 @@ class TautulliSearchResult {
 
   /// List of collections the content is apart of on Plex.
   @JsonKey(
-    name: 'collections',
-    fromJson: TautulliUtilities.ensureStringListFromJson,
-  )
+      name: 'collections', fromJson: TautulliUtilities.ensureStringListFromJson)
   final List<String?>? collections;
 
   /// The full title of the content.
@@ -291,9 +247,7 @@ class TautulliSearchResult {
 
   /// The amount of children this content has.
   @JsonKey(
-    name: 'children_count',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'children_count', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? childrenCount;
 
   /// Is this session live content?
@@ -301,10 +255,9 @@ class TautulliSearchResult {
   final bool? live;
 
   @JsonKey(
-    name: 'media_info',
-    toJson: _mediaInfoToJson,
-    fromJson: _mediaInfoFromJson,
-  )
+      name: 'media_info',
+      toJson: _mediaInfoToJson,
+      fromJson: _mediaInfoFromJson)
   final List<TautulliMediaInfo>? mediaInfo;
 
   TautulliSearchResult({
@@ -372,12 +325,10 @@ class TautulliSearchResult {
 
   static List<TautulliMediaInfo> _mediaInfoFromJson(List<dynamic> mediaInfo) =>
       mediaInfo
-          .map(
-            (info) =>
-                TautulliMediaInfo.fromJson((info as Map<String, dynamic>)),
-          )
+          .map((info) =>
+              TautulliMediaInfo.fromJson((info as Map<String, dynamic>)))
           .toList();
   static List<Map<String, dynamic>>? _mediaInfoToJson(
-    List<TautulliMediaInfo>? mediaInfo,
-  ) => mediaInfo?.map((info) => info.toJson()).toList();
+          List<TautulliMediaInfo>? mediaInfo) =>
+      mediaInfo?.map((info) => info.toJson()).toList();
 }

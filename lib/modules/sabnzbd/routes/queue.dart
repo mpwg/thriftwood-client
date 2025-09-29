@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sabnzbd.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sabnzbd.dart';
 
 class SABnzbdQueue extends StatefulWidget {
   static const ROUTE_NAME = '/sabnzbd/queue';
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
 
-  const SABnzbdQueue({super.key, required this.refreshIndicatorKey});
+  const SABnzbdQueue({
+    Key? key,
+    required this.refreshIndicatorKey,
+  }) : super(key: key);
 
   @override
   State<SABnzbdQueue> createState() => _State();
@@ -37,8 +40,7 @@ class _State extends State<SABnzbdQueue>
       floatingActionButton: context.watch<SABnzbdState>().error
           ? null
           : SABnzbdQueueFAB(
-              scrollController: SABnzbdNavigationBar.scrollControllers[0],
-            ),
+              scrollController: SABnzbdNavigationBar.scrollControllers[0]),
     );
   }
 

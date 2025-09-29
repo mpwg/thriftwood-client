@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrReleasesSearchBar extends StatefulWidget
     implements PreferredSizeWidget {
   final ScrollController scrollController;
 
-  const RadarrReleasesSearchBar({super.key, required this.scrollController});
+  const RadarrReleasesSearchBar({
+    Key? key,
+    required this.scrollController,
+  }) : super(key: key);
 
   @override
   Size get preferredSize =>

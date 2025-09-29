@@ -1,15 +1,15 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliGraphsPlayCountByTopPlatformsGraph extends StatelessWidget {
-  const TautulliGraphsPlayCountByTopPlatformsGraph({super.key});
+  const TautulliGraphsPlayCountByTopPlatformsGraph({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  Widget build(
-    BuildContext context,
-  ) =>
+  Widget build(BuildContext context) =>
       Selector<TautulliState, Future<TautulliGraphData>?>(
         selector: (_, state) => state.playCountByTopPlatformsGraph,
         builder: (context, future, _) => FutureBuilder(
@@ -18,10 +18,9 @@ class TautulliGraphsPlayCountByTopPlatformsGraph extends StatelessWidget {
             if (snapshot.hasError) {
               if (snapshot.connectionState != ConnectionState.waiting) {
                 LunaLogger().error(
-                  'Unable to fetch Tautulli graph data: getPlaysByTopTenPlatforms',
-                  snapshot.error,
-                  snapshot.stackTrace,
-                );
+                    'Unable to fetch Tautulli graph data: getPlaysByTopTenPlatforms',
+                    snapshot.error,
+                    snapshot.stackTrace);
               }
               return TautulliGraphHelper().errorContainer(context);
             }
@@ -47,10 +46,8 @@ class TautulliGraphsPlayCountByTopPlatformsGraph extends StatelessWidget {
                   titlesData: TautulliGraphHelper().titlesData(data),
                   borderData: TautulliGraphHelper().borderData(),
                   barGroups: TautulliBarGraphHelper.barGroups(context, data),
-                  barTouchData: TautulliBarGraphHelper.barTouchData(
-                    context,
-                    data,
-                  ),
+                  barTouchData:
+                      TautulliBarGraphHelper.barTouchData(context, data),
                 ),
               ),
               padding: LunaUI.MARGIN_DEFAULT,

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/extensions/duration/timestamp.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/extensions/duration/timestamp.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliHistoryDetailsInformation extends StatelessWidget {
   final TautulliHistoryRecord history;
   final ScrollController scrollController;
 
   const TautulliHistoryDetailsInformation({
-    super.key,
+    Key? key,
     required this.history,
     required this.scrollController,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,20 +46,16 @@ class TautulliHistoryDetailsInformation extends StatelessWidget {
       content: [
         LunaTableContent(title: 'state', body: history.lsState),
         LunaTableContent(
-          title: 'date',
-          body: DateFormat('yyyy-MM-dd').format(history.date!),
-        ),
+            title: 'date',
+            body: DateFormat('yyyy-MM-dd').format(history.date!)),
         LunaTableContent(title: 'started', body: history.date!.asTimeOnly()),
         LunaTableContent(
-          title: 'stopped',
-          body: history.state == null
-              ? history.stopped!.asTimeOnly()
-              : LunaUI.TEXT_EMDASH,
-        ),
+            title: 'stopped',
+            body: history.state == null
+                ? history.stopped!.asTimeOnly()
+                : LunaUI.TEXT_EMDASH),
         LunaTableContent(
-          title: 'paused',
-          body: history.pausedCounter!.asWordsTimestamp(),
-        ),
+            title: 'paused', body: history.pausedCounter!.asWordsTimestamp()),
       ],
     );
   }

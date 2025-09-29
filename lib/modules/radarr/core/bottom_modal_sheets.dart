@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrBottomModalSheets {
   Future<void> configureManualImport(BuildContext context) async {
@@ -28,11 +28,11 @@ class RadarrBottomModalSheets {
               ],
               trailing: const LunaIconButton.arrow(),
               onTap: () async {
-                (bool, RadarrMovie?) result = await selectMovie(context);
-                if (result.$1)
+                Tuple2<bool, RadarrMovie?> result = await selectMovie(context);
+                if (result.item1)
                   context
                       .read<RadarrManualImportDetailsTileState>()
-                      .fetchUpdates(context, result.$2!.id);
+                      .fetchUpdates(context, result.item2!.id);
               },
             ),
             LunaBlock(
@@ -62,10 +62,8 @@ class RadarrBottomModalSheets {
               onTap: () async {
                 List<RadarrLanguage> languages =
                     await context.read<RadarrState>().languages!;
-                await RadarrDialogs().setManualImportLanguages(
-                  context,
-                  languages,
-                );
+                await RadarrDialogs()
+                    .setManualImportLanguages(context, languages);
               },
             ),
           ],
@@ -95,15 +93,13 @@ class RadarrBottomModalSheets {
               onTap: () async {
                 List<RadarrQualityDefinition> profiles =
                     await context.read<RadarrState>().qualityDefinitions!;
-                (bool, RadarrQualityDefinition?) result =
-                    await RadarrDialogs().selectQualityDefinition(
-                  context,
-                  profiles,
-                );
-                if (result.$1)
+                Tuple2<bool, RadarrQualityDefinition?> result =
+                    await RadarrDialogs()
+                        .selectQualityDefinition(context, profiles);
+                if (result.item1)
                   context
                       .read<RadarrManualImportDetailsTileState>()
-                      .updateQuality(result.$2!.quality!);
+                      .updateQuality(result.item2!.quality!);
               },
             ),
             LunaBlock(
@@ -154,7 +150,7 @@ class RadarrBottomModalSheets {
     );
   }
 
-  Future<(bool, RadarrMovie?)> selectMovie(BuildContext context) async {
+  Future<Tuple2<bool, RadarrMovie?>> selectMovie(BuildContext context) async {
     bool result = false;
     RadarrMovie? movie;
     context
@@ -163,10 +159,8 @@ class RadarrBottomModalSheets {
 
     List<RadarrMovie> _sortAndFilter(List<RadarrMovie> movies, String query) {
       List<RadarrMovie> _filtered = movies
-        ..sort(
-          (a, b) =>
-              a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()),
-        );
+        ..sort((a, b) =>
+            a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()));
       _filtered = _filtered
           .where((movie) => movie.title!.toLowerCase().contains(query))
           .toList();
@@ -186,7 +180,7 @@ class RadarrBottomModalSheets {
                   snapshot.error,
                   snapshot.stackTrace,
                 );
-              return LunaMessage(text: 'thriftwood.AnErrorHasOccurred'.tr());
+              return LunaMessage(text: 'lunasea.AnErrorHasOccurred'.tr());
             }
             if (snapshot.hasData) {
               if ((snapshot.data?.length ?? 0) == 0)
@@ -215,7 +209,9 @@ class RadarrBottomModalSheets {
                     body: [
                       TextSpan(
                         text: overview,
-                        style: const TextStyle(fontStyle: FontStyle.italic),
+                        style: const TextStyle(
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ],
                     onTap: () {
@@ -240,6 +236,6 @@ class RadarrBottomModalSheets {
         ),
       ),
     );
-    return (result, movie);
+    return Tuple2(result, movie);
   }
 }

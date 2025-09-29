@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LidarrDescriptionBlock extends StatefulWidget {
   final String? description;
@@ -10,14 +10,14 @@ class LidarrDescriptionBlock extends StatefulWidget {
   final Function? onLongPress;
 
   const LidarrDescriptionBlock({
-    super.key,
+    Key? key,
     required this.description,
     required this.title,
     required this.uri,
     required this.headers,
     this.squareImage = false,
     this.onLongPress,
-  });
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();

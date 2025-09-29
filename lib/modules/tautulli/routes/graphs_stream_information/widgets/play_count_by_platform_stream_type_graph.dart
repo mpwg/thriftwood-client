@@ -1,15 +1,15 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliGraphsPlayCountByPlatformStreamTypeGraph extends StatelessWidget {
-  const TautulliGraphsPlayCountByPlatformStreamTypeGraph({super.key});
+  const TautulliGraphsPlayCountByPlatformStreamTypeGraph({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  Widget build(
-    BuildContext context,
-  ) =>
+  Widget build(BuildContext context) =>
       Selector<TautulliState, Future<TautulliGraphData>?>(
         selector: (_, state) => state.playCountByPlatformStreamTypeGraph,
         builder: (context, future, _) => FutureBuilder(
@@ -18,10 +18,9 @@ class TautulliGraphsPlayCountByPlatformStreamTypeGraph extends StatelessWidget {
             if (snapshot.hasError) {
               if (snapshot.connectionState != ConnectionState.waiting) {
                 LunaLogger().error(
-                  'Unable to fetch Tautulli graph data: getStreamTypeByTopTenPlatforms',
-                  snapshot.error,
-                  snapshot.stackTrace,
-                );
+                    'Unable to fetch Tautulli graph data: getStreamTypeByTopTenPlatforms',
+                    snapshot.error,
+                    snapshot.stackTrace);
               }
               return TautulliGraphHelper().errorContainer(context);
             }
@@ -47,10 +46,8 @@ class TautulliGraphsPlayCountByPlatformStreamTypeGraph extends StatelessWidget {
                   titlesData: TautulliGraphHelper().titlesData(data),
                   borderData: TautulliGraphHelper().borderData(),
                   barGroups: TautulliBarGraphHelper.barGroups(context, data),
-                  barTouchData: TautulliBarGraphHelper.barTouchData(
-                    context,
-                    data,
-                  ),
+                  barTouchData:
+                      TautulliBarGraphHelper.barTouchData(context, data),
                 ),
               ),
               padding: LunaUI.MARGIN_DEFAULT,

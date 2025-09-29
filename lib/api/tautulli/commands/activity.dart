@@ -9,13 +9,13 @@ class TautulliCommandHandlerActivity {
   /// Create an activity command handler using an initialized [Dio] client.
   TautulliCommandHandlerActivity(this._client);
 
-  /// Handler for [delete_temp_sessions](https://github.com/Tautulli/Tautulli/blob/main/API.md#delete_temp_sessions).
+  /// Handler for [delete_temp_sessions](https://github.com/Tautulli/Tautulli/blob/master/API.md#delete_temp_sessions).
   ///
   /// Flush out all of the temporary sessions in the database.
   Future<void> deleteTempSessions() async =>
       _commandDeleteTempSessions(_client);
 
-  /// Handler for [get_activity](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_activity).
+  /// Handler for [get_activity](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_activity).
   ///
   /// Get the current activity on the Plex Media Server.
   ///
@@ -29,7 +29,7 @@ class TautulliCommandHandlerActivity {
       _commandGetActivity(_client,
           sessionKey: sessionKey, sessionId: sessionId);
 
-  /// Handler for [terminate_session](https://github.com/Tautulli/Tautulli/blob/main/API.md#terminate_session).
+  /// Handler for [terminate_session](https://github.com/Tautulli/Tautulli/blob/master/API.md#terminate_session).
   ///
   /// Stop a streaming session.
   ///

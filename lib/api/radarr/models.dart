@@ -1,5 +1,5 @@
 /// Library containing all model definitions for Radarr data.
-library;
+library radarr_models;
 
 /// Commands
 export 'models/command/command.dart';

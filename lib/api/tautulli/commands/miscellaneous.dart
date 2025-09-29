@@ -9,31 +9,31 @@ class TautulliCommandHandlerMiscellaneous {
   /// Create a miscellaneous command handler using an initialized [Dio] client.
   TautulliCommandHandlerMiscellaneous(this._client);
 
-  /// Handler for [arnold](https://github.com/Tautulli/Tautulli/blob/main/API.md#arnold).
+  /// Handler for [arnold](https://github.com/Tautulli/Tautulli/blob/master/API.md#arnold).
   ///
   /// Get to the chopper!
   Future<String?> arnold() async => _commandArnold(_client);
 
-  /// Handler for [docs](https://github.com/Tautulli/Tautulli/blob/main/API.md#docs).
+  /// Handler for [docs](https://github.com/Tautulli/Tautulli/blob/master/API.md#docs).
   ///
   /// Return the API docs as a dict (map) where commands are keys, docstring are value.
   Future<Map<String, dynamic>?> docs() async => _commandDocs(_client);
 
-  /// Handler for [docs_md](https://github.com/Tautulli/Tautulli/blob/main/API.md#docs_md).
+  /// Handler for [docs_md](https://github.com/Tautulli/Tautulli/blob/master/API.md#docs_md).
   ///
   /// Return the API docs formatted with markdown.
   ///
   /// Returns a Uint8List which contains the markdown file's binary data.
   Future<Uint8List?> docsMd() async => _commandDocsMd(_client);
 
-  /// Handler for [download_config](https://github.com/Tautulli/Tautulli/blob/main/API.md#download_config).
+  /// Handler for [download_config](https://github.com/Tautulli/Tautulli/blob/master/API.md#download_config).
   ///
   /// Download the Tautulli configuration file.
   ///
   /// Returns a Uint8List which contains the configuration file's binary data.
   Future<Uint8List?> downloadConfig() async => _commandDownloadConfig(_client);
 
-  /// Handler for [download_database](https://github.com/Tautulli/Tautulli/blob/main/API.md#download_database).
+  /// Handler for [download_database](https://github.com/Tautulli/Tautulli/blob/master/API.md#download_database).
   ///
   /// Download the Tautulli database file.
   ///
@@ -41,14 +41,14 @@ class TautulliCommandHandlerMiscellaneous {
   Future<Uint8List?> downloadDatabase() async =>
       _commandDownloadDatabase(_client);
 
-  /// Handler for [download_log](https://github.com/Tautulli/Tautulli/blob/main/API.md#download_log).
+  /// Handler for [download_log](https://github.com/Tautulli/Tautulli/blob/master/API.md#download_log).
   ///
   /// Download the Tautulli log file.
   ///
   /// Returns a Uint8List which contains the log file's binary data.
   Future<Uint8List?> downloadLog() async => _commandDownloadLog(_client);
 
-  /// Handler for [download_plex_log](https://github.com/Tautulli/Tautulli/blob/main/API.md#download_plex_log).
+  /// Handler for [download_plex_log](https://github.com/Tautulli/Tautulli/blob/master/API.md#download_plex_log).
   ///
   /// Download the Plex log file.
   ///
@@ -56,13 +56,13 @@ class TautulliCommandHandlerMiscellaneous {
   Future<Uint8List?> downloadPlexLog() async =>
       _commandDownloadPlexLog(_client);
 
-  /// Handler for [get_date_formats](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_date_formats).
+  /// Handler for [get_date_formats](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_date_formats).
   ///
   /// Get the date and time formats used by Tautulli.
   Future<TautulliDateFormat> getDateFormats() async =>
       _commandGetDateFormats(_client);
 
-  /// Handler for [get_geoip_lookup](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_geoip_lookup).
+  /// Handler for [get_geoip_lookup](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_geoip_lookup).
   ///
   /// Get the geolocation info for an IP address.
   ///
@@ -73,7 +73,7 @@ class TautulliCommandHandlerMiscellaneous {
   }) async =>
       _commandGetGeoIPLookup(_client, ipAddress: ipAddress);
 
-  /// Handler for [get_logs](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_logs).
+  /// Handler for [get_logs](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_logs).
   ///
   /// Get the Tautulli logs.
   ///
@@ -102,7 +102,7 @@ class TautulliCommandHandlerMiscellaneous {
         end: end,
       );
 
-  /// Handler for [get_plex_log](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_plex_log).
+  /// Handler for [get_plex_log](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_plex_log).
   ///
   /// Get the Plex Media Server/Plex Media Scanner logs.
   ///
@@ -115,13 +115,13 @@ class TautulliCommandHandlerMiscellaneous {
   }) async =>
       _commandGetPlexLog(_client, window: window, logType: logType);
 
-  /// Handler for [get_server_friendly_name](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_server_friendly_name).
+  /// Handler for [get_server_friendly_name](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_server_friendly_name).
   ///
   /// Get the name of the Plex Media Server.
   Future<String?> getServerFriendlyName() async =>
       _commandGetServerFriendlyName(_client);
 
-  /// Handler for [get_server_id](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_server_id).
+  /// Handler for [get_server_id](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_server_id).
   ///
   /// Get the Plex Media Server identifier.
   ///
@@ -141,19 +141,19 @@ class TautulliCommandHandlerMiscellaneous {
       _commandGetServerID(_client,
           hostname: hostname, port: port, ssl: ssl, remote: remote);
 
-  /// Handler for [get_server_identity](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_server_identity).
+  /// Handler for [get_server_identity](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_server_identity).
   ///
   /// Get info about the local server.
   Future<TautulliServerIdentity> getServerIdentity() async =>
       _commandGetServerIdentity(_client);
 
-  /// Handler for [get_server_list](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_server_list).
+  /// Handler for [get_server_list](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_server_list).
   ///
   /// Get all your servers that are published to Plex.tv.
   Future<List<TautulliServer>> getServerList() async =>
       _commandGetServerList(_client);
 
-  /// Handler for [get_server_pref](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_server_pref).
+  /// Handler for [get_server_pref](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_server_pref).
   ///
   /// Get a specified Plex Media Server instance preference.
   ///
@@ -164,13 +164,13 @@ class TautulliCommandHandlerMiscellaneous {
   }) async =>
       _commandGetServerPref(_client, preference: preference);
 
-  /// Handler for [get_servers_info](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_servers_info).
+  /// Handler for [get_servers_info](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_servers_info).
   ///
   /// Get info about the Plex Media Server(s).
   Future<List<TautulliServerInfo>> getServersInfo() async =>
       _commandGetServersInfo(_client);
 
-  /// Handler for [get_whois_lookup](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_whois_lookup).
+  /// Handler for [get_whois_lookup](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_whois_lookup).
   ///
   /// Get the connection info for an IP address.
   ///
@@ -181,7 +181,7 @@ class TautulliCommandHandlerMiscellaneous {
   }) async =>
       _commandGetWHOISLookup(_client, ipAddress: ipAddress);
 
-  /// Handler for [pms_image_proxy](https://github.com/Tautulli/Tautulli/blob/main/API.md#pms_image_proxy).
+  /// Handler for [pms_image_proxy](https://github.com/Tautulli/Tautulli/blob/master/API.md#pms_image_proxy).
   ///
   /// Gets an image from the PMS and saves it to the image cache directory. Returns a Uint8List of the image buffer.
   ///
@@ -224,7 +224,7 @@ class TautulliCommandHandlerMiscellaneous {
         refresh: refresh,
       );
 
-  /// Handler for [sql](https://github.com/Tautulli/Tautulli/blob/main/API.md#sql).
+  /// Handler for [sql](https://github.com/Tautulli/Tautulli/blob/master/API.md#sql).
   ///
   /// Query the Tautulli database with raw SQL.
   ///

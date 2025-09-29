@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrManualImportPathBar extends StatefulWidget
     implements PreferredSizeWidget {
   final ScrollController scrollController;
 
-  const RadarrManualImportPathBar({super.key, required this.scrollController});
+  const RadarrManualImportPathBar({
+    Key? key,
+    required this.scrollController,
+  }) : super(key: key);
 
   @override
   Size get preferredSize =>
@@ -35,10 +38,9 @@ class _State extends State<RadarrManualImportPathBar> {
               onChanged: (value) {
                 context.read<RadarrManualImportState>().currentPath = value;
                 if (value.endsWith('/') || value.isEmpty) {
-                  context.read<RadarrManualImportState>().fetchDirectories(
-                        context,
-                        value,
-                      );
+                  context
+                      .read<RadarrManualImportState>()
+                      .fetchDirectories(context, value);
                 }
               },
               margin: EdgeInsets.zero,

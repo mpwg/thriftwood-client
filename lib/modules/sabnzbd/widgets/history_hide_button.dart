@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sabnzbd.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sabnzbd.dart';
 
 class SABnzbdHistoryHideButton extends StatefulWidget {
   final ScrollController controller;
 
-  const SABnzbdHistoryHideButton({super.key, required this.controller});
+  const SABnzbdHistoryHideButton({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<SABnzbdHistoryHideButton> createState() => _State();

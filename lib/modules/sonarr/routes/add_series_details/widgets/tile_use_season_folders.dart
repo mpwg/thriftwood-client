@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrSeriesAddDetailsUseSeasonFoldersTile extends StatelessWidget {
-  const SonarrSeriesAddDetailsUseSeasonFoldersTile({super.key});
+  const SonarrSeriesAddDetailsUseSeasonFoldersTile({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

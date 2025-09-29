@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrTagsTagTile extends StatefulWidget {
   final RadarrTag tag;
 
-  const RadarrTagsTagTile({super.key, required this.tag});
+  const RadarrTagsTagTile({
+    Key? key,
+    required this.tag,
+  }) : super(key: key);
 
   @override
   State<RadarrTagsTagTile> createState() => _State();
@@ -70,9 +73,9 @@ class _State extends State<RadarrTagsTagTile> with LunaLoadCallbackMixin {
     } else {
       bool result = await RadarrDialogs().deleteTag(context);
       if (result)
-        RadarrAPIHelper().deleteTag(context: context, tag: widget.tag).then((
-          value,
-        ) {
+        RadarrAPIHelper()
+            .deleteTag(context: context, tag: widget.tag)
+            .then((value) {
           if (value) context.read<RadarrState>().fetchTags();
         });
     }

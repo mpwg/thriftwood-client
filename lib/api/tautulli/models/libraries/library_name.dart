@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'library_name.g.dart';
 
@@ -8,24 +8,19 @@ part 'library_name.g.dart';
 class TautulliLibraryName {
   /// The library's section ID.
   @JsonKey(
-    name: 'section_id',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'section_id', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? sectionId;
 
   /// THe name of the library section in Plex.
   @JsonKey(
-    name: 'section_name',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'section_name', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? sectionName;
 
   /// The type of content stored in this library.
   @JsonKey(
-    name: 'section_type',
-    toJson: TautulliUtilities.sectionTypeToJson,
-    fromJson: TautulliUtilities.sectionTypeFromJson,
-  )
+      name: 'section_type',
+      toJson: TautulliUtilities.sectionTypeToJson,
+      fromJson: TautulliUtilities.sectionTypeFromJson)
   final TautulliSectionType? sectionType;
 
   /// The metadata agent being used for the library.

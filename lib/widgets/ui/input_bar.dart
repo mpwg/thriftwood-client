@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/scroll_controller.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/scroll_controller.dart';
 
 class LunaTextInputBar extends StatefulWidget {
   static const double defaultHeight = 50.0;
@@ -30,7 +30,7 @@ class LunaTextInputBar extends StatefulWidget {
   final EdgeInsets margin;
 
   const LunaTextInputBar({
-    super.key,
+    Key? key,
     required this.controller,
     this.scrollController,
     this.onChanged,
@@ -46,7 +46,7 @@ class LunaTextInputBar extends StatefulWidget {
     this.autofocus = false,
     this.obscureText = false,
     this.isFormField = false,
-  });
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -85,11 +85,13 @@ class _State extends State<LunaTextInputBar> {
         color: Theme.of(context).canvasColor,
       );
 
-  TextStyle get _sharedTextStyle =>
-      const TextStyle(color: LunaColours.white, fontSize: LunaUI.FONT_SIZE_H3);
+  TextStyle get _sharedTextStyle => const TextStyle(
+        color: LunaColours.white,
+        fontSize: LunaUI.FONT_SIZE_H3,
+      );
 
   InputDecoration get _sharedInputDecoration => InputDecoration(
-        labelText: widget.labelText ?? 'thriftwood.SearchTextBar'.tr(),
+        labelText: widget.labelText ?? 'lunasea.SearchTextBar'.tr(),
         labelStyle: const TextStyle(
           color: LunaColours.grey,
           decoration: TextDecoration.none,
@@ -119,7 +121,10 @@ class _State extends State<LunaTextInputBar> {
           duration: const Duration(milliseconds: LunaUI.ANIMATION_SPEED),
         ),
         icon: Padding(
-          child: Icon(widget.labelIcon, color: LunaColours.accent),
+          child: Icon(
+            widget.labelIcon,
+            color: LunaColours.accent,
+          ),
           padding: const EdgeInsets.only(left: 16.0),
         ),
         border: InputBorder.none,

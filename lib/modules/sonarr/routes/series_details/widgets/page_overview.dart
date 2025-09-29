@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrSeriesDetailsOverviewPage extends StatefulWidget {
   final SonarrSeries series;
@@ -9,12 +9,12 @@ class SonarrSeriesDetailsOverviewPage extends StatefulWidget {
   final List<SonarrTag> tags;
 
   const SonarrSeriesDetailsOverviewPage({
-    super.key,
+    Key? key,
     required this.series,
     required this.qualityProfile,
     required this.languageProfile,
     required this.tags,
-  });
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -44,7 +44,7 @@ class _State extends State<SonarrSeriesDetailsOverviewPage>
               qualityProfile: widget.qualityProfile,
               languageProfile: widget.languageProfile,
               tags: widget.tags,
-            ),
+            )
           ],
         ),
       ),

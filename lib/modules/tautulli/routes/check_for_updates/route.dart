@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class CheckForUpdatesRoute extends StatefulWidget {
-  const CheckForUpdatesRoute({super.key});
+  const CheckForUpdatesRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -56,10 +58,8 @@ class _State extends State<CheckForUpdatesRoute>
             return LunaMessage.error(onTap: _refreshKey.currentState!.show);
           }
           if (snapshot.hasData)
-            return _list(
-              snapshot.data![0] as TautulliPMSUpdate,
-              snapshot.data![1] as TautulliUpdateCheck,
-            );
+            return _list(snapshot.data![0] as TautulliPMSUpdate,
+                snapshot.data![1] as TautulliUpdateCheck);
           return const LunaLoader();
         },
       ),

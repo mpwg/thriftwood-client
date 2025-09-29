@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class AddMovieRoute extends StatefulWidget {
   final String query;
 
-  const AddMovieRoute({super.key, required this.query});
+  const AddMovieRoute({
+    Key? key,
+    required this.query,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -49,7 +52,10 @@ class _State extends State<AddMovieRoute> {
 
   Widget _body() {
     return ChangeNotifierProvider(
-      create: (context) => RadarrAddMovieState(context, widget.query),
+      create: (context) => RadarrAddMovieState(
+        context,
+        widget.query,
+      ),
       builder: (context, _) => LunaPageView(
         controller: _pageController,
         children: [

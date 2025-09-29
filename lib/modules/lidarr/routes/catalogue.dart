@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class LidarrCatalogue extends StatefulWidget {
   static const ROUTE_NAME = '/lidarr/catalogue';
@@ -8,10 +8,10 @@ class LidarrCatalogue extends StatefulWidget {
   final Function refreshAllPages;
 
   const LidarrCatalogue({
-    super.key,
+    Key? key,
     required this.refreshIndicatorKey,
     required this.refreshAllPages,
-  });
+  }) : super(key: key);
 
   @override
   State<LidarrCatalogue> createState() => _State();
@@ -73,8 +73,8 @@ class _State extends State<LidarrCatalogue>
               {
                 if (snapshot.hasError || snapshot.data == null) {
                   return LunaMessage.error(
-                    onTap: () => widget.refreshIndicatorKey.currentState?.show,
-                  );
+                      onTap: () =>
+                          widget.refreshIndicatorKey.currentState?.show);
                 }
                 _results = snapshot.data;
                 return _list();
@@ -99,14 +99,14 @@ class _State extends State<LidarrCatalogue>
       );
     return Consumer<LidarrState>(
       builder: (context, state, _) {
-        List<LidarrCatalogueData>? filtered = _filterAndSort(
-          _results,
-          state.searchCatalogueFilter,
-        );
+        List<LidarrCatalogueData>? filtered =
+            _filterAndSort(_results, state.searchCatalogueFilter);
         if ((filtered?.length ?? 0) == 0)
           return LunaListView(
             controller: LidarrNavigationBar.scrollControllers[0],
-            children: [LunaMessage.inList(text: 'No Artists Found')],
+            children: [
+              LunaMessage.inList(text: 'No Artists Found'),
+            ],
           );
         return LunaListViewBuilder(
           controller: LidarrNavigationBar.scrollControllers[0],
@@ -124,9 +124,7 @@ class _State extends State<LidarrCatalogue>
   }
 
   List<LidarrCatalogueData>? _filterAndSort(
-    List<LidarrCatalogueData>? artists,
-    String query,
-  ) {
+      List<LidarrCatalogueData>? artists, String query) {
     if ((artists?.length ?? 0) == 0) return artists;
     LidarrCatalogueSorting sorting =
         context.read<LidarrState>().sortCatalogueType;

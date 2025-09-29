@@ -1,5 +1,5 @@
-import 'package:thriftwood/vendor.dart';
-import 'package:thriftwood/widgets/ui.dart';
+import 'package:lunasea/vendor.dart';
+import 'package:lunasea/widgets/ui.dart';
 
 extension DurationAsTimestampExtension on Duration? {
   String asNumberTimestamp() {
@@ -13,39 +13,42 @@ extension DurationAsTimestampExtension on Duration? {
     return '$hours:$minutes:$seconds';
   }
 
-  String asWordsTimestamp({int multiplier = 1, int divisor = 1}) {
-    if (this == null) return 'thriftwood.Unknown'.tr();
-    if (this!.inSeconds <= 5) return 'thriftwood.Minutes'.tr(args: ['0']);
+  String asWordsTimestamp({
+    int multiplier = 1,
+    int divisor = 1,
+  }) {
+    if (this == null) return 'lunasea.Unknown'.tr();
+    if (this!.inSeconds <= 5) return 'lunasea.Minutes'.tr(args: ['0']);
 
     final List<String> words = [];
 
     final days = this!.inDays;
     if (days > 0) {
       if (days == 1) {
-        words.add('thriftwood.OneDay'.tr());
+        words.add('lunasea.OneDay'.tr());
       } else {
-        words.add('thriftwood.Days'.tr(args: [days.toString()]));
+        words.add('lunasea.Days'.tr(args: [days.toString()]));
       }
     }
 
     final hours = this!.inHours % 24;
     if (hours > 0) {
       if (hours == 1) {
-        words.add('thriftwood.OneHour'.tr());
+        words.add('lunasea.OneHour'.tr());
       } else {
-        words.add('thriftwood.Hours'.tr(args: [hours.toString()]));
+        words.add('lunasea.Hours'.tr(args: [hours.toString()]));
       }
     }
 
     final minutes = this!.inMinutes % 60;
     if (minutes > 0) {
       if (minutes == 1) {
-        words.add('thriftwood.OneMinute'.tr());
+        words.add('lunasea.OneMinute'.tr());
       } else {
-        words.add('thriftwood.Minutes'.tr(args: [minutes.toString()]));
+        words.add('lunasea.Minutes'.tr(args: [minutes.toString()]));
       }
     }
 
-    return words.isEmpty ? 'thriftwood.UnderAMinute'.tr() : words.join(' ');
+    return words.isEmpty ? 'lunasea.UnderAMinute'.tr() : words.join(' ');
   }
 }

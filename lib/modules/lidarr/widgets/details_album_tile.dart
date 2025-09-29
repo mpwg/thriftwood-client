@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
-import 'package:thriftwood/router/routes/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
+import 'package:lunasea/router/routes/lidarr.dart';
 
 class LidarrDetailsAlbumTile extends StatefulWidget {
   final LidarrAlbumData data;
@@ -9,11 +9,11 @@ class LidarrDetailsAlbumTile extends StatefulWidget {
   final Function refreshState;
 
   const LidarrDetailsAlbumTile({
-    super.key,
+    Key? key,
     required this.data,
     required this.artistId,
     required this.refreshState,
-  });
+  }) : super(key: key);
 
   @override
   State<LidarrDetailsAlbumTile> createState() => _State();
@@ -58,9 +58,8 @@ class _State extends State<LidarrDetailsAlbumTile> {
         setState(() => widget.data.monitored = !widget.data.monitored);
       widget.refreshState();
       showLunaSuccessSnackBar(
-        title: widget.data.monitored ? 'Monitoring' : 'No Longer Monitoring',
-        message: widget.data.title,
-      );
+          title: widget.data.monitored ? 'Monitoring' : 'No Longer Monitoring',
+          message: widget.data.title);
     }).catchError((error) {
       showLunaErrorSnackBar(
         title: widget.data.monitored
@@ -72,12 +71,11 @@ class _State extends State<LidarrDetailsAlbumTile> {
   }
 
   Future<void> _enterAlbum() async {
-    LidarrRoutes.ARTIST_ALBUM.go(
-      params: {
-        'album': widget.data.albumID.toString(),
-        'artist': widget.artistId.toString(),
-      },
-      queryParams: {'monitored': widget.data.monitored.toString()},
-    );
+    LidarrRoutes.ARTIST_ALBUM.go(params: {
+      'album': widget.data.albumID.toString(),
+      'artist': widget.artistId.toString(),
+    }, queryParams: {
+      'monitored': widget.data.monitored.toString(),
+    });
   }
 }

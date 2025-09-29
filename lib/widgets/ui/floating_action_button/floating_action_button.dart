@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LunaFloatingActionButton extends StatelessWidget {
   final Color color;
@@ -10,14 +10,14 @@ class LunaFloatingActionButton extends StatelessWidget {
   final Object? heroTag;
 
   const LunaFloatingActionButton({
-    super.key,
+    Key? key,
     required this.icon,
     this.label,
     required this.onPressed,
     this.backgroundColor = LunaColours.accent,
     this.color = Colors.white,
     this.heroTag,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

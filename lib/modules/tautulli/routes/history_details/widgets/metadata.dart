@@ -1,8 +1,8 @@
-import 'package:thriftwood/utils/collection_utils.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/router/routes/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/router/routes/tautulli.dart';
 
 class TautulliHistoryDetailsMetadata extends StatelessWidget {
   final int ratingKey;
@@ -10,11 +10,11 @@ class TautulliHistoryDetailsMetadata extends StatelessWidget {
   final int? referenceId;
 
   const TautulliHistoryDetailsMetadata({
-    super.key,
+    Key? key,
     required this.ratingKey,
     this.sessionKey,
     this.referenceId,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => FutureBuilder(
@@ -39,11 +39,9 @@ class TautulliHistoryDetailsMetadata extends StatelessWidget {
       );
 
   void _onPressed(BuildContext context, TautulliHistoryRecord record) {
-    TautulliRoutes.MEDIA_DETAILS.go(
-      params: {
-        'rating_key': record.ratingKey.toString(),
-        'media_type': record.mediaType!.value,
-      },
-    );
+    TautulliRoutes.MEDIA_DETAILS.go(params: {
+      'rating_key': record.ratingKey.toString(),
+      'media_type': record.mediaType!.value,
+    });
   }
 }

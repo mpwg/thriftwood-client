@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/settings.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/settings.dart';
 
 class ConfigurationWakeOnLANRoute extends StatefulWidget {
-  const ConfigurationWakeOnLANRoute({super.key});
+  const ConfigurationWakeOnLANRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationWakeOnLANRoute> createState() => _State();
@@ -62,17 +64,19 @@ class _State extends State<ConfigurationWakeOnLANRoute>
       title: 'settings.BroadcastAddress'.tr(),
       body: [
         TextSpan(
-          text: broadcastAddress == ''
-              ? 'thriftwood.NotSet'.tr()
-              : broadcastAddress,
+          text:
+              broadcastAddress == '' ? 'lunasea.NotSet'.tr() : broadcastAddress,
         ),
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        (bool, String) _values = await SettingsDialogs()
-            .editBroadcastAddress(context, broadcastAddress);
-        if (_values.$1) {
-          LunaProfile.current.wakeOnLANBroadcastAddress = _values.$2;
+        Tuple2<bool, String> _values =
+            await SettingsDialogs().editBroadcastAddress(
+          context,
+          broadcastAddress,
+        );
+        if (_values.item1) {
+          LunaProfile.current.wakeOnLANBroadcastAddress = _values.item2;
           LunaProfile.current.save();
         }
       },
@@ -84,18 +88,16 @@ class _State extends State<ConfigurationWakeOnLANRoute>
     return LunaBlock(
       title: 'settings.MACAddress'.tr(),
       body: [
-        TextSpan(
-          text: macAddress == '' ? 'thriftwood.NotSet'.tr() : macAddress,
-        ),
+        TextSpan(text: macAddress == '' ? 'lunasea.NotSet'.tr() : macAddress),
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        (bool, String) _values = await SettingsDialogs().editMACAddress(
+        Tuple2<bool, String> _values = await SettingsDialogs().editMACAddress(
           context,
           macAddress,
         );
-        if (_values.$1) {
-          LunaProfile.current.wakeOnLANMACAddress = _values.$2;
+        if (_values.item1) {
+          LunaProfile.current.wakeOnLANMACAddress = _values.item2;
           LunaProfile.current.save();
         }
       },

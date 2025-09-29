@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class SyncedItemsRoute extends StatefulWidget {
-  const SyncedItemsRoute({super.key});
+  const SyncedItemsRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SyncedItemsRoute> createState() => _State();

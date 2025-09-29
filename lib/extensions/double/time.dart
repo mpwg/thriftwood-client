@@ -1,4 +1,4 @@
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 extension DoubleAsTimeExtension on double? {
   String asTimeAgo() {
@@ -9,17 +9,17 @@ extension DoubleAsTimeExtension on double? {
     double days = (this! / 24);
 
     if (minutes <= 2) {
-      return 'thriftwood.JustNow'.tr();
+      return 'lunasea.JustNow'.tr();
     }
 
     if (minutes <= 120) {
-      return 'thriftwood.MinutesAgo'.tr(args: [minutes.round().toString()]);
+      return 'lunasea.MinutesAgo'.tr(args: [minutes.round().toString()]);
     }
 
     if (hours <= 48) {
-      return 'thriftwood.HoursAgo'.tr(args: [hours.toStringAsFixed(1)]);
+      return 'lunasea.HoursAgo'.tr(args: [hours.toStringAsFixed(1)]);
     }
 
-    return 'thriftwood.DaysAgo'.tr(args: [days.round().toString()]);
+    return 'lunasea.DaysAgo'.tr(args: [days.round().toString()]);
   }
 }

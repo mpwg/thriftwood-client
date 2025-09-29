@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:thriftwood/system/platform.dart';
+import 'package:lunasea/system/platform.dart';
 import 'package:window_manager/window_manager.dart';
 
 // ignore: always_use_package_imports
@@ -26,16 +26,16 @@ class IO implements LunaWindowManager {
     await windowManager.ensureInitialized();
     windowManager.waitUntilReadyToShow().then((_) async {
       await setWindowSize();
-      await setWindowTitle('thriftwood');
+      await setWindowTitle('LunaSea');
       windowManager.show();
     });
   }
 
   @override
   Future<void> setWindowTitle(String title) async {
-    return windowManager.waitUntilReadyToShow().then(
-      (_) async => await windowManager.setTitle(title),
-    );
+    return windowManager
+        .waitUntilReadyToShow()
+        .then((_) async => await windowManager.setTitle(title));
   }
 
   Future<void> setWindowSize() async {

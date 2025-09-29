@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
-import 'package:thriftwood/router/routes/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
+import 'package:lunasea/router/routes/lidarr.dart';
 
 class LidarrDetailsEditButton extends StatefulWidget {
   final LidarrCatalogueData? data;
 
-  const LidarrDetailsEditButton({super.key, required this.data});
+  const LidarrDetailsEditButton({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
 
   @override
   State<LidarrDetailsEditButton> createState() => _State();
@@ -24,7 +27,9 @@ class _State extends State<LidarrDetailsEditButton> {
   Future<void> _enterEditArtist(BuildContext context) async {
     LidarrRoutes.ARTIST_EDIT.go(
       extra: widget.data,
-      params: {'artist': widget.data!.artistID.toString()},
+      params: {
+        'artist': widget.data!.artistID.toString(),
+      },
     );
   }
 }

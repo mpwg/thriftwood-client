@@ -1,5 +1,5 @@
 /// Library containing all model definitions for Sonarr data.
-library;
+library sonarr_models;
 
 /// Calendar
 export 'models/calendar/calendar.dart';

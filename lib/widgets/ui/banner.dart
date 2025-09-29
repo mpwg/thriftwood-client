@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LunaBanner extends StatelessWidget {
   // An arbitrarily large number of max lines
@@ -15,7 +15,7 @@ class LunaBanner extends StatelessWidget {
   final List<LunaButton>? buttons;
 
   const LunaBanner({
-    super.key,
+    Key? key,
     this.dismissCallback,
     required this.headerText,
     this.bodyText,
@@ -25,16 +25,15 @@ class LunaBanner extends StatelessWidget {
     this.headerColor = Colors.white,
     this.bodyColor = LunaColours.grey,
     this.buttons,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LunaCard(
       context: context,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: LunaUI.MARGIN_H_DEFAULT_V_HALF.top,
-        ),
+        padding:
+            EdgeInsets.symmetric(vertical: LunaUI.MARGIN_H_DEFAULT_V_HALF.top),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -44,10 +43,13 @@ class LunaBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    child: Icon(icon, size: 20.0, color: iconColor),
-                    padding: EdgeInsets.only(
-                      right: LunaUI.MARGIN_DEFAULT.right - 2.0,
+                    child: Icon(
+                      icon,
+                      size: 20.0,
+                      color: iconColor,
                     ),
+                    padding: EdgeInsets.only(
+                        right: LunaUI.MARGIN_DEFAULT.right - 2.0),
                   ),
                   Expanded(
                     child: LunaText.title(
@@ -83,8 +85,7 @@ class LunaBanner extends StatelessWidget {
             if (buttons?.isNotEmpty ?? false)
               LunaButtonContainer(
                 padding: EdgeInsets.symmetric(
-                  horizontal: LunaUI.MARGIN_H_DEFAULT_V_HALF.left / 2,
-                ),
+                    horizontal: LunaUI.MARGIN_H_DEFAULT_V_HALF.left / 2),
                 children: buttons!,
               ),
           ],

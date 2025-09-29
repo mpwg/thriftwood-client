@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 enum SettingsBanners {
   NOTIFICATIONS_MODULE_SUPPORT,

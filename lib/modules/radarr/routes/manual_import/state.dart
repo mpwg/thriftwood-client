@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrManualImportState extends ChangeNotifier {
   RadarrManualImportState(BuildContext context) {
@@ -18,9 +18,8 @@ class RadarrManualImportState extends ChangeNotifier {
   TextEditingController currentPathTextController = TextEditingController();
   void updateTextControllerText() {
     currentPathTextController.text = _currentPath;
-    currentPathTextController.selection = TextSelection.fromPosition(
-      TextPosition(offset: _currentPath.length),
-    );
+    currentPathTextController.selection =
+        TextSelection.fromPosition(TextPosition(offset: _currentPath.length));
   }
 
   Future<RadarrFileSystem>? _directories;

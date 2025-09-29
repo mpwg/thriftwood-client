@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliGraphsPlayByPeriodRoute extends StatefulWidget {
-  const TautulliGraphsPlayByPeriodRoute({super.key});
+  const TautulliGraphsPlayByPeriodRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<TautulliGraphsPlayByPeriodRoute> createState() => _State();
@@ -33,7 +35,10 @@ class _State extends State<TautulliGraphsPlayByPeriodRoute>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LunaScaffold(scaffoldKey: _scaffoldKey, body: _body());
+    return LunaScaffold(
+      scaffoldKey: _scaffoldKey,
+      body: _body(),
+    );
   }
 
   Widget _body() {
@@ -49,7 +54,7 @@ class _State extends State<TautulliGraphsPlayByPeriodRoute>
             subtitle: [
               'Last ${TautulliDatabase.GRAPHS_LINECHART_DAYS.read()} Days',
               '\n\n',
-              'The total play count or duration of television, movies, and music played per day.',
+              'The total play count or duration of television, movies, and music played per day.'
             ].join(),
           ),
           const TautulliGraphsDailyPlayCountGraph(),

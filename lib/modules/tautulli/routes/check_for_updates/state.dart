@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliCheckForUpdatesState extends ChangeNotifier {
   TautulliCheckForUpdatesState(BuildContext context) {
@@ -20,11 +20,8 @@ class TautulliCheckForUpdatesState extends ChangeNotifier {
   Future<TautulliPMSUpdate>? get plexMediaServer => _plexMediaServer;
   void fetchPlexMediaServer(BuildContext context) {
     if (context.read<TautulliState>().enabled) {
-      _plexMediaServer = context
-          .read<TautulliState>()
-          .api!
-          .system
-          .getPMSUpdate();
+      _plexMediaServer =
+          context.read<TautulliState>().api!.system.getPMSUpdate();
     }
     notifyListeners();
   }

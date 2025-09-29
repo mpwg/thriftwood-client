@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class MediaDetailsRoute extends StatefulWidget {
   final int ratingKey;
   final TautulliMediaType mediaType;
 
   const MediaDetailsRoute({
-    super.key,
+    Key? key,
     required this.ratingKey,
     required this.mediaType,
-  });
+  }) : super(key: key);
 
   @override
   State<MediaDetailsRoute> createState() => _State();
@@ -24,8 +24,7 @@ class _State extends State<MediaDetailsRoute> {
   void initState() {
     super.initState();
     _pageController = LunaPageController(
-      initialPage: TautulliDatabase.NAVIGATION_INDEX_MEDIA_DETAILS.read(),
-    );
+        initialPage: TautulliDatabase.NAVIGATION_INDEX_MEDIA_DETAILS.read());
   }
 
   @override

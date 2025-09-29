@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class LunaLinearPercentIndicator extends StatelessWidget {
@@ -11,11 +11,11 @@ class LunaLinearPercentIndicator extends StatelessWidget {
   final Color? backgroundColor;
 
   const LunaLinearPercentIndicator({
-    super.key,
+    Key? key,
     this.percent,
     this.progressColor = LunaColours.accent,
     this.backgroundColor,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

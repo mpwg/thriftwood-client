@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/settings.dart';
-import 'package:thriftwood/utils/profile_tools.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/settings.dart';
+import 'package:lunasea/utils/profile_tools.dart';
 
 class ProfilesRoute extends StatefulWidget {
-  const ProfilesRoute({super.key});
+  const ProfilesRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ProfilesRoute> createState() => _State();
@@ -53,8 +55,8 @@ class _State extends State<ProfilesRoute> with LunaScrollControllerMixin {
         final profiles = LunaProfile.list;
 
         final selected = await dialogs.addProfile(context, profiles);
-        if (selected.$1) {
-          LunaProfileTools().create(selected.$2);
+        if (selected.item1) {
+          LunaProfileTools().create(selected.item2);
         }
       },
     );
@@ -71,10 +73,10 @@ class _State extends State<ProfilesRoute> with LunaScrollControllerMixin {
         final profiles = LunaProfile.list;
 
         final selected = await dialogs.renameProfile(context, profiles);
-        if (selected.$1) {
+        if (selected.item1) {
           final name = await dialogs.renameProfileSelected(context, profiles);
-          if (name.$1) {
-            LunaProfileTools().rename(selected.$2, name.$2);
+          if (name.item1) {
+            LunaProfileTools().rename(selected.item2, name.item2);
           }
         }
       },
@@ -83,34 +85,33 @@ class _State extends State<ProfilesRoute> with LunaScrollControllerMixin {
 
   Widget _deleteProfile() {
     return LunaBlock(
-      title: 'settings.DeleteProfile'.tr(),
-      body: [TextSpan(text: 'settings.DeleteProfileDescription'.tr())],
-      trailing: const LunaIconButton(icon: LunaIcons.DELETE),
-      onTap: () async {
-        final dialogs = SettingsDialogs();
-        final enabledProfile = thriftwoodDatabase.ENABLED_PROFILE.read();
-        final context = LunaState.context;
-        final profiles = LunaProfile.list;
-        profiles.removeWhere((p) => p == enabledProfile);
+        title: 'settings.DeleteProfile'.tr(),
+        body: [TextSpan(text: 'settings.DeleteProfileDescription'.tr())],
+        trailing: const LunaIconButton(icon: LunaIcons.DELETE),
+        onTap: () async {
+          final dialogs = SettingsDialogs();
+          final enabledProfile = LunaSeaDatabase.ENABLED_PROFILE.read();
+          final context = LunaState.context;
+          final profiles = LunaProfile.list;
+          profiles.removeWhere((p) => p == enabledProfile);
 
-        if (profiles.isEmpty) {
-          showLunaInfoSnackBar(
-            title: 'settings.NoProfilesFound'.tr(),
-            message: 'settings.NoAdditionalProfilesAdded'.tr(),
-          );
-          return;
-        }
+          if (profiles.isEmpty) {
+            showLunaInfoSnackBar(
+              title: 'settings.NoProfilesFound'.tr(),
+              message: 'settings.NoAdditionalProfilesAdded'.tr(),
+            );
+            return;
+          }
 
-        final selected = await dialogs.deleteProfile(context, profiles);
-        if (selected.$1) {
-          LunaProfileTools().remove(selected.$2);
-        }
-      },
-    );
+          final selected = await dialogs.deleteProfile(context, profiles);
+          if (selected.item1) {
+            LunaProfileTools().remove(selected.item2);
+          }
+        });
   }
 
   Widget _enabledProfile() {
-    const db = thriftwoodDatabase.ENABLED_PROFILE;
+    const db = LunaSeaDatabase.ENABLED_PROFILE;
     return db.listenableBuilder(
       builder: (context, _) => LunaBlock(
         title: 'settings.EnabledProfile'.tr(),
@@ -118,7 +119,7 @@ class _State extends State<ProfilesRoute> with LunaScrollControllerMixin {
         trailing: const LunaIconButton(icon: LunaIcons.USER),
         onTap: () async {
           final dialogs = SettingsDialogs();
-          final enabledProfile = thriftwoodDatabase.ENABLED_PROFILE.read();
+          final enabledProfile = LunaSeaDatabase.ENABLED_PROFILE.read();
           final context = LunaState.context;
           final profiles = LunaProfile.list;
           profiles.removeWhere((p) => p == enabledProfile);
@@ -132,8 +133,8 @@ class _State extends State<ProfilesRoute> with LunaScrollControllerMixin {
           }
 
           final selected = await dialogs.enabledProfile(context, profiles);
-          if (selected.$1) {
-            LunaProfileTools().changeTo(selected.$2);
+          if (selected.item1) {
+            LunaProfileTools().changeTo(selected.item2);
           }
         },
       ),

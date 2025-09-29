@@ -9,7 +9,7 @@ class TautulliCommandHandlerLibraries {
   /// Create a library command handler using an initialized [Dio] client.
   TautulliCommandHandlerLibraries(this._client);
 
-  /// Handler for [delete_all_library_history](https://github.com/Tautulli/Tautulli/blob/main/API.md#delete_all_library_history).
+  /// Handler for [delete_all_library_history](https://github.com/Tautulli/Tautulli/blob/master/API.md#delete_all_library_history).
   ///
   /// Delete all Tautulli history for a specific library.
   ///
@@ -27,7 +27,7 @@ class TautulliCommandHandlerLibraries {
       _commandDeleteAllLibraryHistory(_client,
           sectionId: sectionId, serverId: serverId, rowIds: rowIds);
 
-  /// Handler for [delete_library](https://github.com/Tautulli/Tautulli/blob/main/API.md#delete_library).
+  /// Handler for [delete_library](https://github.com/Tautulli/Tautulli/blob/master/API.md#delete_library).
   ///
   /// Delete a library section from Tautulli. Also erases all history for the library.
   ///
@@ -45,13 +45,13 @@ class TautulliCommandHandlerLibraries {
       _commandDeleteLibrary(_client,
           sectionId: sectionId, serverId: serverId, rowIds: rowIds);
 
-  /// Handler for [delete_recently_added](https://github.com/Tautulli/Tautulli/blob/main/API.md#delete_recently_added).
+  /// Handler for [delete_recently_added](https://github.com/Tautulli/Tautulli/blob/master/API.md#delete_recently_added).
   ///
   /// Flush out all of the recently added items in the database.
   Future<void> deleteRecentlyAdded() async =>
       _commandDeleteRecentlyAdded(_client);
 
-  /// Handler for [edit_library](https://github.com/Tautulli/Tautulli/blob/main/API.md#edit_library).
+  /// Handler for [edit_library](https://github.com/Tautulli/Tautulli/blob/master/API.md#edit_library).
   ///
   /// Update a library section on Tautulli.
   ///
@@ -74,7 +74,7 @@ class TautulliCommandHandlerLibraries {
           customArt: customArt,
           keepHistory: keepHistory);
 
-  /// Handler for [get_libraries_table](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_libraries_table).
+  /// Handler for [get_libraries_table](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_libraries_table).
   ///
   /// Get the data on the Tautulli libraries table.
   ///
@@ -103,13 +103,13 @@ class TautulliCommandHandlerLibraries {
         search: search,
       );
 
-  /// Handler for [get_libraries](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_libraries).
+  /// Handler for [get_libraries](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_libraries).
   ///
   /// Get a list of all libraries on your server.
   Future<List<TautulliLibrary>> getLibraries() async =>
       _commandGetLibraries(_client);
 
-  /// Handler for [get_library](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_library).
+  /// Handler for [get_library](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_library).
   ///
   /// Get a library's details.
   ///
@@ -120,7 +120,7 @@ class TautulliCommandHandlerLibraries {
   }) async =>
       _commandGetLibrary(_client, sectionId: sectionId);
 
-  /// Handler for [get_library_media_info](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_library_media_info).
+  /// Handler for [get_library_media_info](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_library_media_info).
   ///
   /// Get the data on the Tautulli media info tables.
   ///
@@ -160,13 +160,13 @@ class TautulliCommandHandlerLibraries {
         refresh: refresh,
       );
 
-  /// Handler for [get_library_names](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_library_names).
+  /// Handler for [get_library_names](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_library_names).
   ///
   /// Get a list of library sections and IDs on the Plex Media Server.
   Future<List<TautulliLibraryName>> getLibraryNames() async =>
       _commandGetLibraryNames(_client);
 
-  /// Handler for [get_library_user_stats](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_library_user_stats).
+  /// Handler for [get_library_user_stats](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_library_user_stats).
   ///
   /// Get a library's user statistics.
   ///
@@ -182,7 +182,7 @@ class TautulliCommandHandlerLibraries {
       _commandGetLibraryUserStats(_client,
           sectionId: sectionId, grouping: grouping);
 
-  /// Handler for [get_library_watch_time_stats](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_library_watch_time_stats).
+  /// Handler for [get_library_watch_time_stats](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_library_watch_time_stats).
   ///
   /// Get a library's watch time statistics.
   ///
@@ -200,7 +200,7 @@ class TautulliCommandHandlerLibraries {
       _commandGetLibraryWatchTimeStats(_client,
           sectionId: sectionId, grouping: grouping, queryDays: queryDays);
 
-  /// Handler for [get_metadata](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_metadata).
+  /// Handler for [get_metadata](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_metadata).
   ///
   /// Get the metadata for a media item.
   ///
@@ -211,7 +211,7 @@ class TautulliCommandHandlerLibraries {
   }) async =>
       _commandGetMetadata(_client, ratingKey: ratingKey);
 
-  /// Handler for [get_new_rating_keys](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_new_rating_keys).
+  /// Handler for [get_new_rating_keys](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_new_rating_keys).
   ///
   /// Get a list of new rating keys for the Plex Media Server of all of the item's parent/children.
   ///
@@ -227,7 +227,7 @@ class TautulliCommandHandlerLibraries {
       _commandGetNewRatingKeys(_client,
           ratingKey: ratingKey, mediaType: mediaType);
 
-  /// Handler for [get_old_rating_keys](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_old_rating_keys).
+  /// Handler for [get_old_rating_keys](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_old_rating_keys).
   ///
   /// Get a list of new rating keys for the Plex Media Server of all of the item's parent/children.
   ///
@@ -243,7 +243,7 @@ class TautulliCommandHandlerLibraries {
       _commandGetOldRatingKeys(_client,
           ratingKey: ratingKey, mediaType: mediaType);
 
-  /// Handler for [get_recently_added](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_recently_added).
+  /// Handler for [get_recently_added](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_recently_added).
   ///
   /// Get all items that were recently added to Plex.
   ///
@@ -266,7 +266,7 @@ class TautulliCommandHandlerLibraries {
           mediaType: mediaType,
           sectionId: sectionId);
 
-  /// Handler for [get_synced_items](https://github.com/Tautulli/Tautulli/blob/main/API.md#get_synced_items).
+  /// Handler for [get_synced_items](https://github.com/Tautulli/Tautulli/blob/master/API.md#get_synced_items).
   ///
   /// Get a list of synced items on the Plex Media Server.
   ///
@@ -279,13 +279,13 @@ class TautulliCommandHandlerLibraries {
   }) async =>
       _commandGetSyncedItems(_client, machineId: machineId, userId: userId);
 
-  /// Handler for [refresh_libraries_list](https://github.com/Tautulli/Tautulli/blob/main/API.md#refresh_libraries_list).
+  /// Handler for [refresh_libraries_list](https://github.com/Tautulli/Tautulli/blob/master/API.md#refresh_libraries_list).
   ///
   /// Refresh the Tautulli libraries list.
   Future<void> refreshLibrariesList() async =>
       _commandRefreshLibrariesList(_client);
 
-  /// Handler for [search](https://github.com/Tautulli/Tautulli/blob/main/API.md#search).
+  /// Handler for [search](https://github.com/Tautulli/Tautulli/blob/master/API.md#search).
   ///
   /// Get search results from the Plex Media Server.
   ///
@@ -300,7 +300,7 @@ class TautulliCommandHandlerLibraries {
   }) async =>
       _commandSearch(_client, query: query, limit: limit);
 
-  /// Handler for [update_metadata_details](https://github.com/Tautulli/Tautulli/blob/main/API.md#update_metadata_details).
+  /// Handler for [update_metadata_details](https://github.com/Tautulli/Tautulli/blob/master/API.md#update_metadata_details).
   ///
   /// Update the metadata in the Tautulli database by matching rating keys. Also updates all parents or children of the media item if it is a show/season/episode or artist/album/track.
   ///
@@ -318,7 +318,7 @@ class TautulliCommandHandlerLibraries {
           newRatingKey: newRatingKey,
           mediaType: mediaType);
 
-  /// Handler for [undelete_library](https://github.com/Tautulli/Tautulli/blob/main/API.md#undelete_library).
+  /// Handler for [undelete_library](https://github.com/Tautulli/Tautulli/blob/master/API.md#undelete_library).
   ///
   /// Restore a deleted library section to Tautulli.
   ///

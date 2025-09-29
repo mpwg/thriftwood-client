@@ -1,4 +1,4 @@
-export 'package:thriftwood/database/tables/search.dart';
+export 'package:lunasea/database/tables/search.dart';
 export 'core/api.dart';
 export 'core/dialogs.dart';
 export 'core/models.dart';

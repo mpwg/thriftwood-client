@@ -1,10 +1,12 @@
-import 'package:thriftwood/utils/collection_utils.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class QueueRoute extends StatefulWidget {
-  const QueueRoute({super.key});
+  const QueueRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -67,7 +69,10 @@ class _State extends State<QueueRoute>
             return LunaMessage.error(onTap: _refreshKey.currentState!.show);
           }
           if (snapshot.hasData) {
-            return _list(snapshot.data![0], snapshot.data![1]);
+            return _list(
+              snapshot.data![0],
+              snapshot.data![1],
+            );
           }
           return const LunaLoader();
         },
@@ -79,7 +84,7 @@ class _State extends State<QueueRoute>
     if ((queue.records?.length ?? 0) == 0) {
       return LunaMessage(
         text: 'Empty Queue',
-        buttonText: 'thriftwood.Refresh'.tr(),
+        buttonText: 'lunasea.Refresh'.tr(),
         onTap: _refreshKey.currentState?.show,
       );
     }
@@ -90,7 +95,10 @@ class _State extends State<QueueRoute>
         RadarrMovie? movie = movies.firstWhereOrNull(
           (movie) => movie.id == queue.records![index].movieId,
         );
-        return RadarrQueueTile(record: queue.records![index], movie: movie);
+        return RadarrQueueTile(
+          record: queue.records![index],
+          movie: movie,
+        );
       },
     );
   }

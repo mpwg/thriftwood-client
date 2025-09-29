@@ -1,13 +1,16 @@
-import 'package:thriftwood/utils/collection_utils.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/widgets/pages/invalid_route.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/widgets/pages/invalid_route.dart';
 
 class UserDetailsRoute extends StatefulWidget {
   final int? userId;
 
-  const UserDetailsRoute({super.key, required this.userId});
+  const UserDetailsRoute({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -42,7 +45,10 @@ class _State extends State<UserDetailsRoute> with LunaLoadCallbackMixin {
   @override
   Widget build(BuildContext context) {
     if (widget.userId == null) {
-      return InvalidRoutePage(title: 'User Details', message: 'User Not Found');
+      return InvalidRoutePage(
+        title: 'User Details',
+        message: 'User Not Found',
+      );
     }
 
     return LunaScaffold(
@@ -83,7 +89,9 @@ class _State extends State<UserDetailsRoute> with LunaLoadCallbackMixin {
               TautulliTableUser? user = _findUser(snapshot.data!);
               if (user == null)
                 return LunaMessage.goBack(
-                    context: context, text: 'User Not Found');
+                  context: context,
+                  text: 'User Not Found',
+                );
               return _page(user);
             }
             return const LunaLoader();

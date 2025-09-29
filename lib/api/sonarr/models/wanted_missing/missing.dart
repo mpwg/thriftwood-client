@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 part 'missing.g.dart';
 
@@ -17,10 +17,9 @@ class SonarrMissing {
 
   /// Key used to sort the results
   @JsonKey(
-    name: 'sortKey',
-    toJson: SonarrUtilities.wantedMissingSortKeyToJson,
-    fromJson: SonarrUtilities.wantedMissingSortKeyFromJson,
-  )
+      name: 'sortKey',
+      toJson: SonarrUtilities.wantedMissingSortKeyToJson,
+      fromJson: SonarrUtilities.wantedMissingSortKeyFromJson)
   SonarrWantedMissingSortKey? sortKey;
 
   /// Direction that the results were sorted

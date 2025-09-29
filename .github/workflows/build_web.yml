@@ -16,11 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Environment
-        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@main
+        uses: JagandeepBrar/lunasea/.github/actions/prepare_for_build@master
         with:
           platform: web
 
-      - name: Build thriftwood
+      - name: Build LunaSea
         run: npm run build:web
 
       - name: Upload Artifact
@@ -34,19 +34,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Environment
-        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@main
+        uses: JagandeepBrar/lunasea/.github/actions/prepare_for_build@master
         with:
           platform: web
 
-      - name: Build thriftwood
+      - name: Build LunaSea
         run: npm run build:web
 
       - name: Create Archive
-        uses: thedoctor0/zip-release@0.7.6
+        uses: thedoctor0/zip-release@0.6.2
         with:
           type: zip
           directory: ${{ github.workspace }}/build/web
-          filename: ../../output/thriftwood-web-canvaskit.zip
+          filename: ../../output/lunasea-web-canvaskit.zip
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -59,13 +59,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Environment
-        uses: mpwg/thriftwood-client/.github/actions/prepare_for_build@main
+        uses: JagandeepBrar/lunasea/.github/actions/prepare_for_build@master
         with:
           platform: web
 
       - name: Determine Tags
         id: tags
-        uses: actions/github-script@v8
+        uses: actions/github-script@v6
         env:
           BUILD_FLAVOR: ${{ inputs.build-flavor }}
           BUILD_TITLE: ${{ inputs.build-title }}
@@ -76,17 +76,17 @@ jobs:
             tags.push(process.env.BUILD_FLAVOR);
             tags.push(process.env.BUILD_TITLE);
             if (process.env.BUILD_FLAVOR === 'stable') tags.push('latest');
-            return tags.map((tag) => `ghcr.io/mpwg/thriftwood-client:${tag}`).join(',');
+            return tags.map((tag) => `ghcr.io/jagandeepbrar/lunasea:${tag}`).join(',');
 
       - name: Setup GitHub Package Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Build & Push thriftwood
-        uses: docker/build-push-action@v6
+      - name: Build & Push LunaSea
+        uses: docker/build-push-action@v4
         with:
           context: .
           platforms: linux/amd64,linux/arm64

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class RadarrNavigationBar extends StatelessWidget {
   final PageController? pageController;
@@ -22,7 +22,10 @@ class RadarrNavigationBar extends StatelessWidget {
         'radarr.More'.tr(),
       ];
 
-  const RadarrNavigationBar({super.key, required this.pageController});
+  const RadarrNavigationBar({
+    Key? key,
+    required this.pageController,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

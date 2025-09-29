@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrMissingRoute extends StatefulWidget {
-  const SonarrMissingRoute({super.key});
+  const SonarrMissingRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SonarrMissingRoute> createState() => _State();
@@ -41,10 +43,10 @@ class _State extends State<SonarrMissingRoute>
       key: _refreshKey,
       onRefresh: loadCallback,
       child: Selector<SonarrState,
-          (Future<Map<int, SonarrSeries>>?, Future<SonarrMissing>?)>(
-        selector: (_, state) => (state.series, state.missing),
+          Tuple2<Future<Map<int, SonarrSeries>>?, Future<SonarrMissing>?>>(
+        selector: (_, state) => Tuple2(state.series, state.missing),
         builder: (context, tuple, _) => FutureBuilder(
-          future: Future.wait([tuple.$1!, tuple.$2!]),
+          future: Future.wait([tuple.item1!, tuple.item2!]),
           builder: (context, AsyncSnapshot<List<Object>> snapshot) {
             if (snapshot.hasError) {
               if (snapshot.connectionState != ConnectionState.waiting) {
@@ -54,9 +56,7 @@ class _State extends State<SonarrMissingRoute>
                   snapshot.stackTrace,
                 );
               }
-              return LunaMessage.error(
-                onTap: _refreshKey.currentState!.show,
-              );
+              return LunaMessage.error(onTap: _refreshKey.currentState!.show);
             }
             if (snapshot.hasData)
               return _episodes(
@@ -74,7 +74,7 @@ class _State extends State<SonarrMissingRoute>
     if ((missing.records?.length ?? 0) == 0)
       return LunaMessage(
         text: 'sonarr.NoEpisodesFound'.tr(),
-        buttonText: 'thriftwood.Refresh'.tr(),
+        buttonText: 'lunasea.Refresh'.tr(),
         onTap: _refreshKey.currentState?.show,
       );
     return LunaListViewBuilder(

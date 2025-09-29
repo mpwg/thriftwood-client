@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrRoute extends StatefulWidget {
-  const SonarrRoute({super.key});
+  const SonarrRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SonarrRoute> createState() => _State();
@@ -45,12 +47,15 @@ class _State extends State<SonarrRoute> {
   }
 
   PreferredSizeWidget _appBar() {
-    List<String> profiles = LunaBox.profiles.keys.fold([], (value, element) {
-      if (LunaBox.profiles.read(element)?.sonarrEnabled ?? false) {
-        value.add(element);
-      }
-      return value;
-    });
+    List<String> profiles = LunaBox.profiles.keys.fold(
+      [],
+      (value, element) {
+        if (LunaBox.profiles.read(element)?.sonarrEnabled ?? false) {
+          value.add(element);
+        }
+        return value;
+      },
+    );
     List<Widget>? actions;
     if (context.watch<SonarrState>().enabled) {
       actions = [

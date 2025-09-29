@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class LidarrAddSearchBar extends StatefulWidget implements PreferredSizeWidget {
   final ScrollController scrollController;
   final Function callback;
 
   const LidarrAddSearchBar({
-    super.key,
+    Key? key,
     required this.scrollController,
     required this.callback,
-  });
+  }) : super(key: key);
 
   @override
   Size get preferredSize =>

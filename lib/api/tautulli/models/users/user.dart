@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'user.g.dart';
 
@@ -22,9 +22,7 @@ class TautulliUser {
 
   /// Friendly name of the user.
   @JsonKey(
-    name: 'friendly_name',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'friendly_name', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? friendlyName;
 
   /// Thumbnail link of the user.
@@ -49,23 +47,17 @@ class TautulliUser {
 
   /// Is the user a home user?
   @JsonKey(
-    name: 'is_home_user',
-    fromJson: TautulliUtilities.ensureBooleanFromJson,
-  )
+      name: 'is_home_user', fromJson: TautulliUtilities.ensureBooleanFromJson)
   final bool? isHomeUser;
 
   /// Is the user allowed to sync content?
   @JsonKey(
-    name: 'is_allow_sync',
-    fromJson: TautulliUtilities.ensureBooleanFromJson,
-  )
+      name: 'is_allow_sync', fromJson: TautulliUtilities.ensureBooleanFromJson)
   final bool? isAllowSync;
 
   /// Is the user restricted?
   @JsonKey(
-    name: 'is_restricted',
-    fromJson: TautulliUtilities.ensureBooleanFromJson,
-  )
+      name: 'is_restricted', fromJson: TautulliUtilities.ensureBooleanFromJson)
   final bool? isRestricted;
 
   /// Does the user have notifications enabled?
@@ -74,30 +66,23 @@ class TautulliUser {
 
   /// Is history being tracked for the user?
   @JsonKey(
-    name: 'keep_history',
-    fromJson: TautulliUtilities.ensureBooleanFromJson,
-  )
+      name: 'keep_history', fromJson: TautulliUtilities.ensureBooleanFromJson)
   final bool? keepHistory;
 
   /// Is the user allowed guest access to Tautulli?
   @JsonKey(
-    name: 'allow_guest',
-    fromJson: TautulliUtilities.ensureBooleanFromJson,
-  )
+      name: 'allow_guest', fromJson: TautulliUtilities.ensureBooleanFromJson)
   final bool? allowGuest;
 
   /// User's server token.
   @JsonKey(
-    name: 'server_token',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'server_token', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? serverToken;
 
   /// List of libraries that are shared with the user.
   @JsonKey(
-    name: 'shared_libraries',
-    fromJson: TautulliUtilities.ensureStringListFromJson,
-  )
+      name: 'shared_libraries',
+      fromJson: TautulliUtilities.ensureStringListFromJson)
   final List<String?>? sharedLibraries;
 
   /// Filters applied to all libraries for this user.
@@ -106,9 +91,7 @@ class TautulliUser {
 
   /// Filters applied to movie libraries for this user.
   @JsonKey(
-    name: 'filter_movies',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'filter_movies', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? filterMovies;
 
   /// Filters applied to television libraries for this user.
@@ -117,16 +100,12 @@ class TautulliUser {
 
   /// Filters applied to music libraries for this user.
   @JsonKey(
-    name: 'filter_music',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'filter_music', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? filterMusic;
 
   /// Filters applied to photos libraries for this user.
   @JsonKey(
-    name: 'filter_photos',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'filter_photos', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? filterPhotos;
 
   TautulliUser({

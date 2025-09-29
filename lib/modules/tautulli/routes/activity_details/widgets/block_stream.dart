@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliActivityDetailsStreamBlock extends StatelessWidget {
   final TautulliSession session;
 
-  const TautulliActivityDetailsStreamBlock({super.key, required this.session});
+  const TautulliActivityDetailsStreamBlock({
+    Key? key,
+    required this.session,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

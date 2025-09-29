@@ -1,4 +1,4 @@
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LidarrMissingData {
   String title;

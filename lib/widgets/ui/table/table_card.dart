@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LunaTableCard extends StatelessWidget {
   final String? title;
   final List<LunaTableContent>? content;
   final List<LunaButton>? buttons;
 
-  const LunaTableCard({super.key, this.content, this.buttons, this.title});
+  const LunaTableCard({
+    Key? key,
+    this.content,
+    this.buttons,
+    this.title,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +46,7 @@ class LunaTableCard extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: LunaUI.DEFAULT_MARGIN_SIZE,
-          ),
+              horizontal: LunaUI.DEFAULT_MARGIN_SIZE),
           child: LunaText.title(text: title!),
         ),
       ],
@@ -51,14 +55,12 @@ class LunaTableCard extends StatelessWidget {
 
   List<Widget> _content() {
     return content!
-        .map(
-          (child) => Padding(
-            child: child,
-            padding: const EdgeInsets.symmetric(
-              horizontal: LunaUI.DEFAULT_MARGIN_SIZE / 2,
-            ),
-          ),
-        )
+        .map((child) => Padding(
+              child: child,
+              padding: const EdgeInsets.symmetric(
+                horizontal: LunaUI.DEFAULT_MARGIN_SIZE / 2,
+              ),
+            ))
         .toList();
   }
 

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/links.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/utils/links.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/links.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/utils/links.dart';
 
 class TautulliMediaDetailsOpenPlexButton extends StatelessWidget {
   final TautulliMediaType mediaType;
   final int ratingKey;
 
   const TautulliMediaDetailsOpenPlexButton({
-    super.key,
+    Key? key,
     required this.mediaType,
     required this.ratingKey,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,10 @@ class TautulliMediaDetailsOpenPlexButton extends StatelessWidget {
   }
 
   bool _isValidMediaType() {
-    const invalidTypes = [TautulliMediaType.TRACK, TautulliMediaType.PHOTO];
+    const invalidTypes = [
+      TautulliMediaType.TRACK,
+      TautulliMediaType.PHOTO,
+    ];
     return !invalidTypes.contains(mediaType);
   }
 

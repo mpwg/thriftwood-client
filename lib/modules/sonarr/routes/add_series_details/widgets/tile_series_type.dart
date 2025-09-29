@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrSeriesAddDetailsSeriesTypeTile extends StatelessWidget {
-  const SonarrSeriesAddDetailsSeriesTypeTile({super.key});
+  const SonarrSeriesAddDetailsSeriesTypeTile({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +28,12 @@ class SonarrSeriesAddDetailsSeriesTypeTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    (bool, SonarrSeriesType?) result =
+    Tuple2<bool, SonarrSeriesType?> result =
         await SonarrDialogs().editSeriesType(context);
-    if (result.$1) {
-      context.read<SonarrSeriesAddDetailsState>().seriesType = result.$2!;
-      SonarrDatabase.ADD_SERIES_DEFAULT_SERIES_TYPE.update(
-        result.$2!.value!,
-      );
+    if (result.item1) {
+      context.read<SonarrSeriesAddDetailsState>().seriesType = result.item2!;
+      SonarrDatabase.ADD_SERIES_DEFAULT_SERIES_TYPE
+          .update(result.item2!.value!);
     }
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/router/routes/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/router/routes/sonarr.dart';
 
 class SonarrMoreRoute extends StatefulWidget {
-  const SonarrMoreRoute({super.key});
+  const SonarrMoreRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SonarrMoreRoute> createState() => _State();
@@ -29,7 +31,7 @@ class _State extends State<SonarrMoreRoute> with AutomaticKeepAliveClientMixin {
   // ignore: unused_element
   Future<void> _showComingSoonMessage() async {
     showLunaInfoSnackBar(
-      title: 'thriftwood.ComingSoon'.tr(),
+      title: 'lunasea.ComingSoon'.tr(),
       message: 'This feature is still being developed!',
     );
   }

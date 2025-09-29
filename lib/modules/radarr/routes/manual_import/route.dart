@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class ManualImportRoute extends StatefulWidget {
-  const ManualImportRoute({super.key});
+  const ManualImportRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ManualImportRoute> createState() => _State();
@@ -40,8 +42,7 @@ class _State extends State<ManualImportRoute> with LunaScrollControllerMixin {
     return FutureBuilder(
       future:
           context.select<RadarrManualImportState, Future<RadarrFileSystem>?>(
-        (state) => state.directories,
-      ),
+              (state) => state.directories),
       builder: (context, AsyncSnapshot<RadarrFileSystem> snapshot) {
         if (snapshot.hasError) {
           if (snapshot.connectionState != ConnectionState.waiting) {
@@ -51,14 +52,12 @@ class _State extends State<ManualImportRoute> with LunaScrollControllerMixin {
               snapshot.stackTrace,
             );
           }
-          return LunaMessage.error(
-            onTap: () {
-              context.read<RadarrManualImportState>().fetchDirectories(
-                    context,
-                    context.read<RadarrManualImportState>().currentPath,
-                  );
-            },
-          );
+          return LunaMessage.error(onTap: () {
+            context.read<RadarrManualImportState>().fetchDirectories(
+                  context,
+                  context.read<RadarrManualImportState>().currentPath,
+                );
+          });
         }
         if (snapshot.hasData) return _list(context, snapshot.data);
         return const LunaLoader();
@@ -69,15 +68,15 @@ class _State extends State<ManualImportRoute> with LunaScrollControllerMixin {
   Widget _list(BuildContext context, RadarrFileSystem? fileSystem) {
     if ((fileSystem?.directories?.length ?? 0) == 0 &&
         (fileSystem!.parent == null || fileSystem.parent!.isEmpty)) {
-      return LunaMessage(text: 'radarr.NoSubdirectoriesFound'.tr());
+      return LunaMessage(
+        text: 'radarr.NoSubdirectoriesFound'.tr(),
+      );
     }
     return Selector<RadarrManualImportState, String?>(
       selector: (_, state) => state.currentPath,
       builder: (context, path, _) {
-        List<RadarrFileSystemDirectory> directories = _filterDirectories(
-          path,
-          fileSystem,
-        );
+        List<RadarrFileSystemDirectory> directories =
+            _filterDirectories(path, fileSystem);
         return LunaListView(
           key: ObjectKey(fileSystem!.directories),
           controller: scrollController,
@@ -86,8 +85,7 @@ class _State extends State<ManualImportRoute> with LunaScrollControllerMixin {
             ...List.generate(
               directories.length,
               (index) => RadarrManualImportDirectoryTile(
-                directory: directories[index],
-              ),
+                  directory: directories[index]),
             ),
           ],
         );

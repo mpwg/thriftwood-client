@@ -1,4 +1,4 @@
-import 'package:thriftwood/types/enum/serializable.dart';
+import 'package:lunasea/types/enum/serializable.dart';
 
 enum SABnzbdAction with EnumSerializable {
   FALSE('0'),

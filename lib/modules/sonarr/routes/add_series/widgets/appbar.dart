@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 // ignore: non_constant_identifier_names
 Widget SonarrSeriesAddAppBar({
@@ -24,11 +24,11 @@ class _SearchBar extends StatefulWidget implements PreferredSizeWidget {
   final ScrollController scrollController;
 
   const _SearchBar({
-    super.key,
+    Key? key,
     required this.query,
     required this.autofocus,
     required this.scrollController,
-  });
+  }) : super(key: key);
 
   @override
   Size get preferredSize =>

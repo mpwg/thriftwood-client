@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:thriftwood/api/radarr/types.dart';
-import 'package:thriftwood/api/radarr/utilities.dart';
-import 'package:thriftwood/api/radarr/models.dart';
+import 'package:lunasea/api/radarr/types.dart';
+import 'package:lunasea/api/radarr/utilities.dart';
+import 'package:lunasea/api/radarr/models.dart';
 
 part 'history_record.g.dart';
 
@@ -28,20 +28,18 @@ class RadarrHistoryRecord {
   bool? qualityCutoffNotMet;
 
   @JsonKey(
-    name: 'date',
-    toJson: RadarrUtilities.dateTimeToJson,
-    fromJson: RadarrUtilities.dateTimeFromJson,
-  )
+      name: 'date',
+      toJson: RadarrUtilities.dateTimeToJson,
+      fromJson: RadarrUtilities.dateTimeFromJson)
   DateTime? date;
 
   @JsonKey(name: 'downloadId')
   String? downloadId;
 
   @JsonKey(
-    name: 'eventType',
-    toJson: RadarrUtilities.eventTypeToJson,
-    fromJson: RadarrUtilities.eventTypeFromJson,
-  )
+      name: 'eventType',
+      toJson: RadarrUtilities.eventTypeToJson,
+      fromJson: RadarrUtilities.eventTypeFromJson)
   RadarrEventType? eventType;
 
   @JsonKey(name: 'data')

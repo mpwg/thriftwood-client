@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/duration/timestamp.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/duration/timestamp.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliStatisticsPlatformTile extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const TautulliStatisticsPlatformTile({super.key, required this.data});
+  const TautulliStatisticsPlatformTile({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -41,9 +44,8 @@ class _State extends State<TautulliStatisticsPlatformTile> {
       ),
       widget.data['total_duration'] != null
           ? TextSpan(
-              text: Duration(
-                seconds: widget.data['total_duration'],
-              ).asWordsTimestamp(),
+              text: Duration(seconds: widget.data['total_duration'])
+                  .asWordsTimestamp(),
               style: TextStyle(
                 color: context.watch<TautulliState>().statisticsType ==
                         TautulliStatsType.DURATION

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 /// Create a [LunaBottomActionBar] that contains button actions.
 ///
@@ -17,8 +17,8 @@ class LunaBottomActionBar extends StatelessWidget {
     this.actionsPerRow = 2,
     this.useSafeArea = true,
     this.backgroundColor,
-    super.key,
-  }) {
+    Key? key,
+  }) : super(key: key) {
     assert(actions?.isNotEmpty ?? false);
   }
 

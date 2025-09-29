@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/utils/transparent_image.dart';
+import 'package:lunasea/core.dart';
 
 class LunaBlock extends StatelessWidget {
   static const TITLE_HEIGHT = LunaUI.FONT_SIZE_H2 + 4.0;
@@ -43,7 +42,7 @@ class LunaBlock extends StatelessWidget {
   final Map? backgroundHeaders;
 
   const LunaBlock({
-    super.key,
+    Key? key,
     this.skeletonEnabled = false,
     this.skeletonPoster = true,
     this.skeletonSubtitles = 2,
@@ -67,7 +66,7 @@ class LunaBlock extends StatelessWidget {
     this.onLongPress,
     this.leading,
     this.trailing,
-  });
+  }) : super(key: key);
 
   static double calculateItemExtent(
     int subtitleLines, {
@@ -145,7 +144,10 @@ class LunaBlock extends StatelessWidget {
             Opacity(
               opacity: disabled! ? LunaUI.OPACITY_DISABLED : 1.0,
               child: Row(
-                children: [_poster(context, _height), _tile(context, _height)],
+                children: [
+                  _poster(context, _height),
+                  _tile(context, _height),
+                ],
               ),
             ),
           ],
@@ -164,7 +166,7 @@ class LunaBlock extends StatelessWidget {
   Widget _fadeInBackground(BuildContext context, double _height) {
     if (backgroundUrl == null) return const SizedBox();
 
-    final _percent = thriftwoodDatabase.THEME_IMAGE_BACKGROUND_OPACITY.read();
+    final _percent = LunaSeaDatabase.THEME_IMAGE_BACKGROUND_OPACITY.read();
     if (_percent == 0) return const SizedBox(height: 0, width: 0);
 
     double _opacity = _percent / 100;
@@ -173,7 +175,7 @@ class LunaBlock extends StatelessWidget {
     return Opacity(
       opacity: _opacity,
       child: FadeInImage(
-        placeholder: MemoryImage(transparentImageBytes),
+        placeholder: MemoryImage(kTransparentImage),
         height: _height,
         width: MediaQuery.of(context).size.width,
         fadeInDuration: const Duration(
@@ -184,8 +186,10 @@ class LunaBlock extends StatelessWidget {
           url: backgroundUrl!,
           headers: backgroundHeaders?.cast<String, String>(),
         ).imageProvider,
-        imageErrorBuilder: (context, error, stack) =>
-            SizedBox(height: _height, width: MediaQuery.of(context).size.width),
+        imageErrorBuilder: (context, error, stack) => SizedBox(
+          height: _height,
+          width: MediaQuery.of(context).size.width,
+        ),
       ),
     );
   }
@@ -371,7 +375,10 @@ class LunaBlock extends StatelessWidget {
     }
 
     if (bottom != null) {
-      _children.add(SizedBox(height: bottomHeight, child: bottom));
+      _children.add(SizedBox(
+        height: bottomHeight,
+        child: bottom,
+      ));
     }
 
     return _children.isEmpty ? null : _wrapper(_children);

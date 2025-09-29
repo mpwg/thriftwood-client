@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 part 'monitor_status.g.dart';
 
 @HiveType(typeId: 14, adapterName: 'SonarrMonitorStatusAdapter')
@@ -110,8 +110,8 @@ extension SonarrMonitorStatusExtension on SonarrMonitorStatus {
   }
 
   void _all(List<SonarrSeriesSeason> data) => data.forEach((season) {
-    if (season.seasonNumber != 0) season.monitored = true;
-  });
+        if (season.seasonNumber != 0) season.monitored = true;
+      });
 
   void _missing(List<SonarrSeriesSeason> data) => _all(data);
 

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:thriftwood/api/radarr/utilities.dart';
-import 'package:thriftwood/api/radarr/models.dart';
-import 'package:thriftwood/api/radarr/types.dart';
+import 'package:lunasea/api/radarr/utilities.dart';
+import 'package:lunasea/api/radarr/models.dart';
+import 'package:lunasea/api/radarr/types.dart';
 
 part 'queue.g.dart';
 
@@ -15,17 +15,15 @@ class RadarrQueue {
   int? pageSize;
 
   @JsonKey(
-    name: 'sortKey',
-    toJson: RadarrUtilities.queueSortKeyToJson,
-    fromJson: RadarrUtilities.queueSortKeyFromJson,
-  )
+      name: 'sortKey',
+      toJson: RadarrUtilities.queueSortKeyToJson,
+      fromJson: RadarrUtilities.queueSortKeyFromJson)
   RadarrQueueSortKey? sortKey;
 
   @JsonKey(
-    name: 'sortDirection',
-    toJson: RadarrUtilities.sortDirectionToJson,
-    fromJson: RadarrUtilities.sortDirectionFromJson,
-  )
+      name: 'sortDirection',
+      toJson: RadarrUtilities.sortDirectionToJson,
+      fromJson: RadarrUtilities.sortDirectionFromJson)
   RadarrSortDirection? sortDirection;
 
   @JsonKey(name: 'totalRecords')

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LunaListViewBuilder extends StatelessWidget {
   final int itemCount;
@@ -10,14 +10,14 @@ class LunaListViewBuilder extends StatelessWidget {
   final ScrollController controller;
 
   const LunaListViewBuilder({
-    super.key,
+    Key? key,
     required this.itemCount,
     required this.itemBuilder,
     this.itemExtent,
     required this.controller,
     this.padding,
     this.physics = const AlwaysScrollableScrollPhysics(),
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

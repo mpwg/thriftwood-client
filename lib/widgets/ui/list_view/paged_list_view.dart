@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LunaPagedListView<T> extends StatefulWidget {
   final GlobalKey<RefreshIndicatorState> refreshKey;
   final PagingController<int, T> pagingController;
   final ScrollController scrollController;
+  final void Function(int) listener;
   final Widget Function(BuildContext, T, int) itemBuilder;
   final double? itemExtent;
   final EdgeInsetsGeometry? padding;
@@ -12,16 +13,17 @@ class LunaPagedListView<T> extends StatefulWidget {
   final Function? onRefresh;
 
   const LunaPagedListView({
-    super.key,
+    Key? key,
     required this.refreshKey,
     required this.pagingController,
+    required this.listener,
     required this.itemBuilder,
     required this.noItemsFoundMessage,
     required this.scrollController,
     this.onRefresh,
     this.itemExtent,
     this.padding,
-  });
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State<T>();
@@ -31,8 +33,8 @@ class _State<T> extends State<LunaPagedListView<T>> {
   @override
   void initState() {
     super.initState();
-    // The new API handles page requests through the constructor's fetchPage parameter
-    // No need for addPageRequestListener
+    widget.pagingController
+        .addPageRequestListener((pageKey) => widget.listener(pageKey));
   }
 
   @override
@@ -48,16 +50,15 @@ class _State<T> extends State<LunaPagedListView<T>> {
         controller: widget.scrollController,
         interactive: true,
         child: PagedListView<int, T>(
-          state: widget.pagingController.value,
-          fetchNextPage: () => widget.pagingController.fetchNextPage(),
+          pagingController: widget.pagingController,
           scrollController: widget.scrollController,
           itemExtent: widget.itemExtent,
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           builderDelegate: PagedChildBuilderDelegate<T>(
             itemBuilder: widget.itemBuilder,
             firstPageErrorIndicatorBuilder: (context) => LunaMessage.error(
-              onTap: () => Future.sync(() => widget.pagingController.refresh()),
-            ),
+                onTap: () =>
+                    Future.sync(() => widget.pagingController.refresh())),
             firstPageProgressIndicatorBuilder: (context) => const LunaLoader(),
             newPageProgressIndicatorBuilder: (context) => Padding(
               child: Container(
@@ -77,7 +78,7 @@ class _State<T> extends State<LunaPagedListView<T>> {
             ),
             noItemsFoundIndicatorBuilder: (context) => LunaMessage(
               text: widget.noItemsFoundMessage,
-              buttonText: 'thriftwood.Refresh'.tr(),
+              buttonText: 'lunasea.Refresh'.tr(),
               onTap: () => Future.sync(() => widget.pagingController.refresh()),
             ),
           ),
@@ -86,8 +87,7 @@ class _State<T> extends State<LunaPagedListView<T>> {
                   .padding
                   .copyWith(bottom: LunaUI.MARGIN_H_DEFAULT_V_HALF.bottom)
                   .add(
-                    EdgeInsets.only(top: LunaUI.MARGIN_H_DEFAULT_V_HALF.top),
-                  ),
+                      EdgeInsets.only(top: LunaUI.MARGIN_H_DEFAULT_V_HALF.top)),
           physics: const AlwaysScrollableScrollPhysics(),
         ),
       ),

@@ -2,11 +2,11 @@
 import 'dart:html';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:thriftwood/system/filesystem/file.dart';
-import 'package:thriftwood/system/filesystem/filesystem.dart';
-import 'package:thriftwood/system/logger.dart';
-import 'package:thriftwood/vendor.dart';
-import 'package:thriftwood/widgets/ui.dart';
+import 'package:lunasea/system/filesystem/file.dart';
+import 'package:lunasea/system/filesystem/filesystem.dart';
+import 'package:lunasea/system/logger.dart';
+import 'package:lunasea/vendor.dart';
+import 'package:lunasea/widgets/ui.dart';
 
 bool isPlatformSupported() => true;
 LunaFileSystem getFileSystem() {
@@ -46,7 +46,7 @@ class _Web implements LunaFileSystem {
           );
         } else {
           showLunaErrorSnackBar(
-            title: 'thriftwood.InvalidFileTypeSelected'.tr(),
+            title: 'lunasea.InvalidFileTypeSelected'.tr(),
             message: extensions.map((s) => '.$s').join(', '),
           );
         }

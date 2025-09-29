@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class ConfigurationSonarrDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationSonarrDefaultPagesRoute({super.key});
+  const ConfigurationSonarrDefaultPagesRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationSonarrDefaultPagesRoute> createState() => _State();
@@ -32,7 +34,11 @@ class _State extends State<ConfigurationSonarrDefaultPagesRoute>
   Widget _body() {
     return LunaListView(
       controller: scrollController,
-      children: [_homePage(), _seriesDetailsPage(), _seasonDetailsPage()],
+      children: [
+        _homePage(),
+        _seriesDetailsPage(),
+        _seasonDetailsPage(),
+      ],
     );
   }
 
@@ -41,7 +47,7 @@ class _State extends State<ConfigurationSonarrDefaultPagesRoute>
     return _db.listenableBuilder(
       builder: (context, _) {
         return LunaBlock(
-          title: 'thriftwood.Home'.tr(),
+          title: 'lunasea.Home'.tr(),
           body: [TextSpan(text: SonarrNavigationBar.titles[_db.read()])],
           trailing: LunaIconButton(icon: SonarrNavigationBar.icons[_db.read()]),
           onTap: () async {
@@ -64,11 +70,10 @@ class _State extends State<ConfigurationSonarrDefaultPagesRoute>
         return LunaBlock(
           title: 'sonarr.SeriesDetails'.tr(),
           body: [
-            TextSpan(text: SonarrSeriesDetailsNavigationBar.titles[_db.read()]),
+            TextSpan(text: SonarrSeriesDetailsNavigationBar.titles[_db.read()])
           ],
           trailing: LunaIconButton(
-            icon: SonarrSeriesDetailsNavigationBar.icons[_db.read()],
-          ),
+              icon: SonarrSeriesDetailsNavigationBar.icons[_db.read()]),
           onTap: () async {
             List values = await SonarrDialogs.setDefaultPage(
               context,
@@ -89,11 +94,10 @@ class _State extends State<ConfigurationSonarrDefaultPagesRoute>
         return LunaBlock(
           title: 'sonarr.SeasonDetails'.tr(),
           body: [
-            TextSpan(text: SonarrSeasonDetailsNavigationBar.titles[_db.read()]),
+            TextSpan(text: SonarrSeasonDetailsNavigationBar.titles[_db.read()])
           ],
           trailing: LunaIconButton(
-            icon: SonarrSeasonDetailsNavigationBar.icons[_db.read()],
-          ),
+              icon: SonarrSeasonDetailsNavigationBar.icons[_db.read()]),
           onTap: () async {
             List values = await SonarrDialogs.setDefaultPage(
               context,

@@ -1,10 +1,12 @@
-import 'package:thriftwood/utils/collection_utils.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrAddMovieDiscoverPage extends StatefulWidget {
-  const RadarrAddMovieDiscoverPage({super.key});
+  const RadarrAddMovieDiscoverPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -28,7 +30,10 @@ class _State extends State<RadarrAddMovieDiscoverPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LunaScaffold(scaffoldKey: _scaffoldKey, body: _body());
+    return LunaScaffold(
+      scaffoldKey: _scaffoldKey,
+      body: _body(),
+    );
   }
 
   Widget _body() {
@@ -39,10 +44,10 @@ class _State extends State<RadarrAddMovieDiscoverPage>
       child: Selector<RadarrState, Future<List<RadarrMovie>>?>(
         selector: (_, state) => state.movies,
         builder: (context, movies, _) => Selector<RadarrAddMovieState,
-            (Future<List<RadarrMovie>>?, Future<List<RadarrExclusion>>?)>(
-          selector: (_, state) => (state.discovery, state.exclusions),
+            Tuple2<Future<List<RadarrMovie>>?, Future<List<RadarrExclusion>>?>>(
+          selector: (_, state) => Tuple2(state.discovery, state.exclusions),
           builder: (context, tuple, _) => FutureBuilder(
-            future: Future.wait([movies!, tuple.$1!, tuple.$2!]),
+            future: Future.wait([movies!, tuple.item1!, tuple.item2!]),
             builder: (context, AsyncSnapshot<List<Object>> snapshot) {
               if (snapshot.hasError) {
                 if (snapshot.connectionState != ConnectionState.waiting)
@@ -51,16 +56,13 @@ class _State extends State<RadarrAddMovieDiscoverPage>
                     snapshot.error,
                     snapshot.stackTrace,
                   );
-                return LunaMessage.error(
-                  onTap: _refreshKey.currentState!.show,
-                );
+                return LunaMessage.error(onTap: _refreshKey.currentState!.show);
               }
               if (snapshot.hasData)
                 return _list(
-                  snapshot.data![0] as List<RadarrMovie>,
-                  snapshot.data![1] as List<RadarrMovie>,
-                  snapshot.data![2] as List<RadarrExclusion>,
-                );
+                    snapshot.data![0] as List<RadarrMovie>,
+                    snapshot.data![1] as List<RadarrMovie>,
+                    snapshot.data![2] as List<RadarrExclusion>);
               return const LunaLoader();
             },
           ),
@@ -69,16 +71,13 @@ class _State extends State<RadarrAddMovieDiscoverPage>
     );
   }
 
-  Widget _list(
-    List<RadarrMovie> movies,
-    List<RadarrMovie> discovery,
-    List<RadarrExclusion> exclusions,
-  ) {
+  Widget _list(List<RadarrMovie> movies, List<RadarrMovie> discovery,
+      List<RadarrExclusion> exclusions) {
     List<RadarrMovie> _filtered = _filterAndSort(movies, discovery, exclusions);
     if (_filtered.isEmpty)
       return LunaMessage(
         text: 'radarr.NoMoviesFound'.tr(),
-        buttonText: 'thriftwood.Refresh'.tr(),
+        buttonText: 'lunasea.Refresh'.tr(),
         onTap: _refreshKey.currentState!.show,
       );
     return LunaListViewBuilder(
@@ -99,30 +98,24 @@ class _State extends State<RadarrAddMovieDiscoverPage>
     // Filter out the excluded movies
     if (exclusions.isNotEmpty)
       _filtered = _filtered
-          .where(
-            (discover) =>
-                exclusions.firstWhereOrNull(
-                  (exclusion) => exclusion.tmdbId == discover.tmdbId,
-                ) ==
-                null,
-          )
+          .where((discover) =>
+              exclusions.firstWhereOrNull(
+                (exclusion) => exclusion.tmdbId == discover.tmdbId,
+              ) ==
+              null)
           .toList();
     // Filter out the already added movies
     if (movies.isNotEmpty)
       _filtered = _filtered
-          .where(
-            (discover) =>
-                movies.firstWhereOrNull(
-                  (movie) => movie.tmdbId == discover.tmdbId,
-                ) ==
-                null,
-          )
+          .where((discover) =>
+              movies.firstWhereOrNull(
+                (movie) => movie.tmdbId == discover.tmdbId,
+              ) ==
+              null)
           .toList();
     // Sort by the sort name
-    _filtered.sort(
-      (a, b) =>
-          a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()),
-    );
+    _filtered.sort((a, b) =>
+        a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase()));
     return _filtered;
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/router/routes/settings.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/router/routes/settings.dart';
 
 class ConfigurationSonarrRoute extends StatefulWidget {
-  const ConfigurationSonarrRoute({super.key});
+  const ConfigurationSonarrRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationSonarrRoute> createState() => _State();
@@ -69,7 +71,7 @@ class _State extends State<ConfigurationSonarrRoute>
           text: 'settings.ConnectionDetailsDescription'.tr(
             args: [LunaModule.SONARR.title],
           ),
-        ),
+        )
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: SettingsRoutes.CONFIGURATION_SONARR_CONNECTION_DETAILS.go,
@@ -88,7 +90,9 @@ class _State extends State<ConfigurationSonarrRoute>
   Widget _defaultOptionsPage() {
     return LunaBlock(
       title: 'settings.DefaultOptions'.tr(),
-      body: [TextSpan(text: 'settings.DefaultOptionsDescription'.tr())],
+      body: [
+        TextSpan(text: 'settings.DefaultOptionsDescription'.tr()),
+      ],
       trailing: const LunaIconButton.arrow(),
       onTap: SettingsRoutes.CONFIGURATION_SONARR_DEFAULT_OPTIONS.go,
     );
@@ -102,16 +106,15 @@ class _State extends State<ConfigurationSonarrRoute>
         body: [
           TextSpan(
             text: _db.read() == 1
-                ? 'thriftwood.OneItem'.tr()
-                : 'thriftwood.Items'.tr(args: [_db.read().toString()]),
+                ? 'lunasea.OneItem'.tr()
+                : 'lunasea.Items'.tr(args: [_db.read().toString()]),
           ),
         ],
         trailing: const LunaIconButton(icon: Icons.queue_play_next_rounded),
         onTap: () async {
-          (bool, int) result = await SonarrDialogs().setQueuePageSize(
-            context,
-          );
-          if (result.$1) _db.update(result.$2);
+          Tuple2<bool, int> result =
+              await SonarrDialogs().setQueuePageSize(context);
+          if (result.item1) _db.update(result.item2);
         },
       ),
     );

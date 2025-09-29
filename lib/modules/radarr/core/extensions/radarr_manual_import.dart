@@ -1,6 +1,6 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/int/bytes.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/int/bytes.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 extension LunaRadarrManualImportExtension on RadarrManualImport {
   String? get lunaLanguage {
@@ -21,6 +21,9 @@ extension LunaRadarrManualImportExtension on RadarrManualImport {
     if (this.movie == null) return LunaUI.TEXT_EMDASH;
     String title = this.movie!.title ?? LunaUI.TEXT_EMDASH;
     int? year = (this.movie!.year ?? 0) == 0 ? null : this.movie!.year;
-    return [title, '($year)'].join(' ');
+    return [
+      title,
+      if (year != null) '($year)',
+    ].join(' ');
   }
 }

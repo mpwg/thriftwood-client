@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/scroll_controller.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/scroll_controller.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrCatalogueSearchBarSortButton extends StatefulWidget {
   final ScrollController controller;
 
-  const RadarrCatalogueSearchBarSortButton(
-      {super.key, required this.controller});
+  const RadarrCatalogueSearchBarSortButton({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<RadarrCatalogueSearchBarSortButton> createState() => _State();

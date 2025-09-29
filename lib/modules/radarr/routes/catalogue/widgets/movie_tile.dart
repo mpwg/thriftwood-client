@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/radarr.dart';
-import 'package:thriftwood/router/routes/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/radarr.dart';
+import 'package:lunasea/router/routes/radarr.dart';
 
-enum _RadarrCatalogueTileType { TILE, GRID }
+enum _RadarrCatalogueTileType {
+  TILE,
+  GRID,
+}
 
 class RadarrCatalogueTile extends StatefulWidget {
   static final itemExtent = LunaBlock.calculateItemExtent(2, hasBottom: true);
@@ -14,18 +17,18 @@ class RadarrCatalogueTile extends StatefulWidget {
   final _RadarrCatalogueTileType type;
 
   const RadarrCatalogueTile({
-    super.key,
+    Key? key,
     required this.movie,
     required this.profile,
     this.type = _RadarrCatalogueTileType.TILE,
-  });
+  }) : super(key: key);
 
   const RadarrCatalogueTile.grid({
-    super.key,
+    Key? key,
     required this.movie,
     required this.profile,
     this.type = _RadarrCatalogueTileType.GRID,
-  });
+  }) : super(key: key);
 
   @override
   State<RadarrCatalogueTile> createState() => _State();
@@ -59,7 +62,10 @@ class _State extends State<RadarrCatalogueTile> {
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
       disabled: !widget.movie.monitored!,
       title: widget.movie.title,
-      body: [_subtitle1(), _subtitle2()],
+      body: [
+        _subtitle1(),
+        _subtitle2(),
+      ],
       posterIsSquare: false,
       bottom: _subtitle3(),
       onTap: _onTap,
@@ -91,7 +97,10 @@ class _State extends State<RadarrCatalogueTile> {
         color: LunaColours.accent,
         fontWeight: LunaUI.FONT_WEIGHT_BOLD,
       );
-    return TextSpan(text: text, style: style);
+    return TextSpan(
+      text: text,
+      style: style,
+    );
   }
 
   TextSpan _subtitle1() {
@@ -100,14 +109,10 @@ class _State extends State<RadarrCatalogueTile> {
         _buildChildTextSpan(widget.movie.lunaYear, RadarrMoviesSorting.YEAR),
         TextSpan(text: LunaUI.TEXT_BULLET.pad()),
         _buildChildTextSpan(
-          widget.movie.lunaRuntime,
-          RadarrMoviesSorting.RUNTIME,
-        ),
+            widget.movie.lunaRuntime, RadarrMoviesSorting.RUNTIME),
         TextSpan(text: LunaUI.TEXT_BULLET.pad()),
         _buildChildTextSpan(
-          widget.movie.lunaStudio,
-          RadarrMoviesSorting.STUDIO,
-        ),
+            widget.movie.lunaStudio, RadarrMoviesSorting.STUDIO),
       ],
     );
   }
@@ -115,15 +120,11 @@ class _State extends State<RadarrCatalogueTile> {
   TextSpan _subtitle2() {
     return TextSpan(
       children: [
-        _buildChildTextSpan(
-          widget.profile?.name ?? LunaUI.TEXT_EMDASH,
-          RadarrMoviesSorting.QUALITY_PROFILE,
-        ),
+        _buildChildTextSpan(widget.profile?.name ?? LunaUI.TEXT_EMDASH,
+            RadarrMoviesSorting.QUALITY_PROFILE),
         TextSpan(text: LunaUI.TEXT_BULLET.pad()),
-        _buildChildTextSpan(
-          widget.movie.lunaMinimumAvailability,
-          RadarrMoviesSorting.MIN_AVAILABILITY,
-        ),
+        _buildChildTextSpan(widget.movie.lunaMinimumAvailability,
+            RadarrMoviesSorting.MIN_AVAILABILITY),
         TextSpan(text: LunaUI.TEXT_BULLET.pad()),
         if (context.read<RadarrState>().moviesSortType !=
                 RadarrMoviesSorting.IN_CINEMAS &&
@@ -137,16 +138,12 @@ class _State extends State<RadarrCatalogueTile> {
           ),
         if (context.read<RadarrState>().moviesSortType ==
             RadarrMoviesSorting.PHYSICAL_RELEASE)
-          _buildChildTextSpan(
-            widget.movie.lunaPhysicalReleaseDate(),
-            RadarrMoviesSorting.PHYSICAL_RELEASE,
-          ),
+          _buildChildTextSpan(widget.movie.lunaPhysicalReleaseDate(),
+              RadarrMoviesSorting.PHYSICAL_RELEASE),
         if (context.read<RadarrState>().moviesSortType ==
             RadarrMoviesSorting.DIGITAL_RELEASE)
-          _buildChildTextSpan(
-            widget.movie.lunaDigitalReleaseDate(),
-            RadarrMoviesSorting.DIGITAL_RELEASE,
-          ),
+          _buildChildTextSpan(widget.movie.lunaDigitalReleaseDate(),
+              RadarrMoviesSorting.DIGITAL_RELEASE),
         if (context.read<RadarrState>().moviesSortType ==
             RadarrMoviesSorting.IN_CINEMAS)
           _buildChildTextSpan(
@@ -207,12 +204,14 @@ class _State extends State<RadarrCatalogueTile> {
   }
 
   Future<void> _onTap() async {
-    RadarrRoutes.MOVIE.go(params: {'movie': widget.movie.id!.toString()});
+    RadarrRoutes.MOVIE.go(params: {
+      'movie': widget.movie.id!.toString(),
+    });
   }
 
   Future<void> _onLongPress() async {
-    (bool, RadarrMovieSettingsType?) values =
+    Tuple2<bool, RadarrMovieSettingsType?> values =
         await RadarrDialogs().movieSettings(context, widget.movie);
-    if (values.$1) values.$2!.execute(context, widget.movie);
+    if (values.item1) values.item2!.execute(context, widget.movie);
   }
 }

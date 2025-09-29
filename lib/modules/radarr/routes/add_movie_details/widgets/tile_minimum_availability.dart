@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrAddMovieDetailsMinimumAvailabilityTile extends StatelessWidget {
-  const RadarrAddMovieDetailsMinimumAvailabilityTile({super.key});
+  const RadarrAddMovieDetailsMinimumAvailabilityTile({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +17,11 @@ class RadarrAddMovieDetailsMinimumAvailabilityTile extends StatelessWidget {
           body: [TextSpan(text: availability.readable)],
           trailing: const LunaIconButton.arrow(),
           onTap: () async {
-            (bool, RadarrAvailability?) values =
+            Tuple2<bool, RadarrAvailability?> values =
                 await RadarrDialogs().editMinimumAvailability(context);
-            if (values.$1)
+            if (values.item1)
               context.read<RadarrAddMovieDetailsState>().availability =
-                  values.$2!;
+                  values.item2!;
           },
         );
       },

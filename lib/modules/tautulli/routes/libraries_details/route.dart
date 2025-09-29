@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/widgets/pages/invalid_route.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/widgets/pages/invalid_route.dart';
 
 class LibrariesDetailsRoute extends StatefulWidget {
   final int? sectionId;
 
-  const LibrariesDetailsRoute({super.key, required this.sectionId});
+  const LibrariesDetailsRoute({
+    Key? key,
+    required this.sectionId,
+  }) : super(key: key);
 
   @override
   State<LibrariesDetailsRoute> createState() => _State();

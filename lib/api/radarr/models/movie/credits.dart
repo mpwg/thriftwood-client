@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:thriftwood/api/radarr/types.dart';
-import 'package:thriftwood/api/radarr/utilities.dart';
-import 'package:thriftwood/api/radarr/models.dart';
+import 'package:lunasea/api/radarr/types.dart';
+import 'package:lunasea/api/radarr/utilities.dart';
+import 'package:lunasea/api/radarr/models.dart';
 
 part 'credits.g.dart';
 
@@ -37,10 +37,9 @@ class RadarrMovieCredits {
   int? order;
 
   @JsonKey(
-    name: 'type',
-    toJson: RadarrUtilities.creditTypeToJson,
-    fromJson: RadarrUtilities.creditTypeFromJson,
-  )
+      name: 'type',
+      toJson: RadarrUtilities.creditTypeToJson,
+      fromJson: RadarrUtilities.creditTypeFromJson)
   RadarrCreditType? type;
 
   @JsonKey(name: 'id')

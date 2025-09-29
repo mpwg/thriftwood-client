@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/utils/collection_utils.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/extensions/int/bytes.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/router/routes/sonarr.dart';
+import 'package:collection/collection.dart' show IterableExtension;
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/extensions/int/bytes.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/router/routes/sonarr.dart';
 
 class SonarrSeriesDetailsSeasonTile extends StatefulWidget {
   final SonarrSeriesSeason season;
   final int? seriesId;
 
   const SonarrSeriesDetailsSeasonTile({
-    super.key,
+    Key? key,
     required this.season,
     required this.seriesId,
-  });
+  }) : super(key: key);
 
   @override
   State<SonarrSeriesDetailsSeasonTile> createState() => _State();
@@ -32,7 +32,11 @@ class _State extends State<SonarrSeriesDetailsSeasonTile> {
       posterHeaders: context.read<SonarrState>().headers,
       title: widget.season.lunaTitle,
       disabled: !widget.season.monitored!,
-      body: [_subtitle1(), _subtitle2(), _subtitle3()],
+      body: [
+        _subtitle1(),
+        _subtitle2(),
+        _subtitle3(),
+      ],
       trailing: _trailing(),
       onTap: _onTap,
       onLongPress: _onLongPress,
@@ -46,19 +50,17 @@ class _State extends State<SonarrSeriesDetailsSeasonTile> {
   }
 
   Future<void> _onTap() async {
-    SonarrRoutes.SERIES_SEASON.go(
-      params: {
-        'series': (widget.seriesId ?? -1).toString(),
-        'season': (widget.season.seasonNumber ?? -1).toString(),
-      },
-    );
+    SonarrRoutes.SERIES_SEASON.go(params: {
+      'series': (widget.seriesId ?? -1).toString(),
+      'season': (widget.season.seasonNumber ?? -1).toString(),
+    });
   }
 
   Future<void> _onLongPress() async {
-    (bool, SonarrSeasonSettingsType?) result = await SonarrDialogs()
+    Tuple2<bool, SonarrSeasonSettingsType?> result = await SonarrDialogs()
         .seasonSettings(context, widget.season.seasonNumber);
-    if (result.$1)
-      result.$2!.execute(
+    if (result.item1)
+      result.item2!.execute(
         context,
         widget.seriesId,
         widget.season.seasonNumber,

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sabnzbd.dart';
-import 'package:thriftwood/router/routes/settings.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sabnzbd.dart';
+import 'package:lunasea/router/routes/settings.dart';
 
 class ConfigurationSABnzbdRoute extends StatefulWidget {
-  const ConfigurationSABnzbdRoute({super.key});
+  const ConfigurationSABnzbdRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationSABnzbdRoute> createState() => _State();
@@ -68,7 +70,7 @@ class _State extends State<ConfigurationSABnzbdRoute>
           text: 'settings.ConnectionDetailsDescription'.tr(
             args: [LunaModule.SABNZBD.title],
           ),
-        ),
+        )
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: SettingsRoutes.CONFIGURATION_SABNZBD_CONNECTION_DETAILS.go,

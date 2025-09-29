@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrTagsTagTile extends StatefulWidget {
   final SonarrTag tag;
 
-  const SonarrTagsTagTile({super.key, required this.tag});
+  const SonarrTagsTagTile({
+    Key? key,
+    required this.tag,
+  }) : super(key: key);
 
   @override
   State<SonarrTagsTagTile> createState() => _State();

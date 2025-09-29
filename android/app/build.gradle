@@ -29,17 +29,16 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "app.thriftwood.thriftwood"
+    namespace = "app.lunasea.lunasea"
     compileSdkVersion 35
-    compileSdk = 36
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = '1.8'
     }
 
     sourceSets {
@@ -47,7 +46,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "app.thriftwood.thriftwood"
+        applicationId "app.lunasea.lunasea"
         minSdkVersion 24
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
@@ -72,7 +71,6 @@ android {
         signingConfig signingConfigs.release
       }
     }
-    buildToolsVersion '36.0.0'
 }
 
 flutter {

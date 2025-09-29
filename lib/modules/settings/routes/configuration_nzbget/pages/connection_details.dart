@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/nzbget.dart';
-import 'package:thriftwood/modules/settings.dart';
-import 'package:thriftwood/router/routes/settings.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/nzbget.dart';
+import 'package:lunasea/modules/settings.dart';
+import 'package:lunasea/router/routes/settings.dart';
 
 class ConfigurationNZBGetConnectionDetailsRoute extends StatefulWidget {
-  const ConfigurationNZBGetConnectionDetailsRoute({super.key});
+  const ConfigurationNZBGetConnectionDetailsRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationNZBGetConnectionDetailsRoute> createState() => _State();
@@ -33,14 +35,23 @@ class _State extends State<ConfigurationNZBGetConnectionDetailsRoute>
   }
 
   Widget _bottomActionBar() {
-    return LunaBottomActionBar(actions: [_testConnection()]);
+    return LunaBottomActionBar(
+      actions: [
+        _testConnection(),
+      ],
+    );
   }
 
   Widget _body() {
     return LunaBox.profiles.listenableBuilder(
       builder: (context, _) => LunaListView(
         controller: scrollController,
-        children: [_host(), _username(), _password(), _customHeaders()],
+        children: [
+          _host(),
+          _username(),
+          _password(),
+          _customHeaders(),
+        ],
       ),
     );
   }
@@ -49,15 +60,15 @@ class _State extends State<ConfigurationNZBGetConnectionDetailsRoute>
     String host = LunaProfile.current.nzbgetHost;
     return LunaBlock(
       title: 'settings.Host'.tr(),
-      body: [TextSpan(text: host.isEmpty ? 'thriftwood.NotSet'.tr() : host)],
+      body: [TextSpan(text: host.isEmpty ? 'lunasea.NotSet'.tr() : host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        (bool, String) _values = await SettingsDialogs().editHost(
+        Tuple2<bool, String> _values = await SettingsDialogs().editHost(
           context,
           prefill: host,
         );
-        if (_values.$1) {
-          LunaProfile.current.nzbgetHost = _values.$2;
+        if (_values.item1) {
+          LunaProfile.current.nzbgetHost = _values.item2;
           LunaProfile.current.save();
           context.read<NZBGetState>().reset();
         }
@@ -70,17 +81,17 @@ class _State extends State<ConfigurationNZBGetConnectionDetailsRoute>
     return LunaBlock(
       title: 'settings.Username'.tr(),
       body: [
-        TextSpan(text: username.isEmpty ? 'thriftwood.NotSet'.tr() : username),
+        TextSpan(text: username.isEmpty ? 'lunasea.NotSet'.tr() : username),
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        (bool, String) _values = await LunaDialogs().editText(
+        Tuple2<bool, String> _values = await LunaDialogs().editText(
           context,
           'settings.Username'.tr(),
           prefill: username,
         );
-        if (_values.$1) {
-          LunaProfile.current.nzbgetUser = _values.$2;
+        if (_values.item1) {
+          LunaProfile.current.nzbgetUser = _values.item2;
           LunaProfile.current.save();
           context.read<NZBGetState>().reset();
         }
@@ -95,13 +106,13 @@ class _State extends State<ConfigurationNZBGetConnectionDetailsRoute>
       body: [
         TextSpan(
           text: password.isEmpty
-              ? 'thriftwood.NotSet'.tr()
+              ? 'lunasea.NotSet'.tr()
               : LunaUI.TEXT_OBFUSCATED_PASSWORD,
         ),
       ],
       trailing: const LunaIconButton.arrow(),
       onTap: () async {
-        (bool, String) _values = await LunaDialogs().editText(
+        Tuple2<bool, String> _values = await LunaDialogs().editText(
           context,
           'settings.Password'.tr(),
           prefill: password,
@@ -111,8 +122,8 @@ class _State extends State<ConfigurationNZBGetConnectionDetailsRoute>
             ),
           ],
         );
-        if (_values.$1) {
-          LunaProfile.current.nzbgetPass = _values.$2;
+        if (_values.item1) {
+          LunaProfile.current.nzbgetPass = _values.item2;
           LunaProfile.current.save();
           context.read<NZBGetState>().reset();
         }
@@ -129,22 +140,18 @@ class _State extends State<ConfigurationNZBGetConnectionDetailsRoute>
         if (_profile.nzbgetHost.isEmpty) {
           showLunaErrorSnackBar(
             title: 'settings.HostRequired'.tr(),
-            message: 'settings.HostRequiredMessage'.tr(
-              args: [LunaModule.NZBGET.title],
-            ),
+            message: 'settings.HostRequiredMessage'
+                .tr(args: [LunaModule.NZBGET.title]),
           );
           return;
         }
         NZBGetAPI.from(LunaProfile.current)
             .testConnection()
-            .then(
-              (_) => showLunaSuccessSnackBar(
-                title: 'settings.ConnectedSuccessfully'.tr(),
-                message: 'settings.ConnectedSuccessfullyMessage'.tr(
-                  args: [LunaModule.NZBGET.title],
-                ),
-              ),
-            )
+            .then((_) => showLunaSuccessSnackBar(
+                  title: 'settings.ConnectedSuccessfully'.tr(),
+                  message: 'settings.ConnectedSuccessfullyMessage'
+                      .tr(args: [LunaModule.NZBGET.title]),
+                ))
             .catchError((error, trace) {
           LunaLogger().error('Connection Test Failed', error, trace);
           showLunaErrorSnackBar(

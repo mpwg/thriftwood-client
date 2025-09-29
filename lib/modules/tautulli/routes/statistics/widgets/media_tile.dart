@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/extensions/duration/timestamp.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/router/routes/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/extensions/duration/timestamp.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/router/routes/tautulli.dart';
 
 class TautulliStatisticsMediaTile extends StatefulWidget {
   final Map<String, dynamic> data;
   final TautulliMediaType mediaType;
 
   const TautulliStatisticsMediaTile({
-    super.key,
+    Key? key,
     required this.data,
     required this.mediaType,
-  });
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -23,17 +23,16 @@ class _State extends State<TautulliStatisticsMediaTile> {
   @override
   Widget build(BuildContext context) {
     return LunaBlock(
-      title: widget.data['title'] ?? 'thriftwood.Unknown'.tr(),
+      title: widget.data['title'] ?? 'lunasea.Unknown'.tr(),
       body: _body(),
       onTap: _onTap,
-      posterUrl: context.read<TautulliState>().getImageURLFromPath(
-            widget.data['thumb'],
-          ),
+      posterUrl: context
+          .read<TautulliState>()
+          .getImageURLFromPath(widget.data['thumb']),
       posterHeaders: context.watch<TautulliState>().headers,
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
-      backgroundUrl: context.read<TautulliState>().getImageURLFromPath(
-            widget.data['art'],
-          ),
+      backgroundUrl:
+          context.read<TautulliState>().getImageURLFromPath(widget.data['art']),
       backgroundHeaders: context.watch<TautulliState>().headers,
     );
   }
@@ -56,9 +55,8 @@ class _State extends State<TautulliStatisticsMediaTile> {
       ),
       widget.data['total_duration'] != null
           ? TextSpan(
-              text: Duration(
-                seconds: widget.data['total_duration'],
-              ).asWordsTimestamp(),
+              text: Duration(seconds: widget.data['total_duration'])
+                  .asWordsTimestamp(),
               style: TextStyle(
                 color: context.watch<TautulliState>().statisticsType ==
                         TautulliStatsType.DURATION
@@ -76,16 +74,14 @@ class _State extends State<TautulliStatisticsMediaTile> {
               text:
                   'Last Played ${DateTime.fromMillisecondsSinceEpoch(widget.data['last_play'] * 1000).asAge()}',
             )
-          : const TextSpan(text: LunaUI.TEXT_EMDASH),
+          : const TextSpan(text: LunaUI.TEXT_EMDASH)
     ];
   }
 
   void _onTap() {
-    TautulliRoutes.MEDIA_DETAILS.go(
-      params: {
-        'rating_key': widget.data['rating_key'].toString(),
-        'media_type': widget.mediaType.value,
-      },
-    );
+    TautulliRoutes.MEDIA_DETAILS.go(params: {
+      'rating_key': widget.data['rating_key'].toString(),
+      'media_type': widget.mediaType.value,
+    });
   }
 }

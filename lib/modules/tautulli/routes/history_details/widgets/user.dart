@@ -1,8 +1,8 @@
-import 'package:thriftwood/utils/collection_utils.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/router/routes/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/router/routes/tautulli.dart';
 
 class TautulliHistoryDetailsUser extends StatelessWidget {
   final int ratingKey;
@@ -10,11 +10,11 @@ class TautulliHistoryDetailsUser extends StatelessWidget {
   final int? referenceId;
 
   const TautulliHistoryDetailsUser({
-    super.key,
+    Key? key,
     required this.ratingKey,
     this.sessionKey,
     this.referenceId,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => FutureBuilder(
@@ -39,6 +39,8 @@ class TautulliHistoryDetailsUser extends StatelessWidget {
       );
 
   void _onPressed(BuildContext context, int userId) {
-    TautulliRoutes.USER_DETAILS.go(params: {'user': userId.toString()});
+    TautulliRoutes.USER_DETAILS.go(params: {
+      'user': userId.toString(),
+    });
   }
 }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/database/tables/dashboard.dart';
+import 'package:lunasea/database/tables/dashboard.dart';
 
-import 'package:thriftwood/widgets/ui.dart';
-import 'package:thriftwood/vendor.dart';
-import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
+import 'package:lunasea/widgets/ui.dart';
+import 'package:lunasea/vendor.dart';
+import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
 
 class DashboardDialogs {
-  Future<(bool, int)> defaultPage(BuildContext context) async {
+  Future<Tuple2<bool, int>> defaultPage(BuildContext context) async {
     bool _flag = false;
     int _index = 0;
 
@@ -18,7 +18,7 @@ class DashboardDialogs {
 
     await LunaDialog.dialog(
       context: context,
-      title: 'thriftwood.Page'.tr(),
+      title: 'lunasea.Page'.tr(),
       content: List.generate(
         HomeNavigationBar.titles.length,
         (index) => LunaDialog.tile(
@@ -31,10 +31,10 @@ class DashboardDialogs {
       contentPadding: LunaDialog.listDialogContentPadding(),
     );
 
-    return (_flag, _index);
+    return Tuple2(_flag, _index);
   }
 
-  Future<(bool, int)> setPastDays(BuildContext context) async {
+  Future<Tuple2<bool, int>> setPastDays(BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
@@ -53,12 +53,14 @@ class DashboardDialogs {
       title: 'dashboard.PastDays'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Set'.tr(),
+          text: 'lunasea.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
       content: [
-        LunaDialog.textContent(text: 'dashboard.PastDaysDescription'.tr()),
+        LunaDialog.textContent(
+          text: 'dashboard.PastDaysDescription'.tr(),
+        ),
         Form(
           key: _formKey,
           child: LunaDialog.textFormInput(
@@ -77,10 +79,10 @@ class DashboardDialogs {
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
 
-    return (_flag, int.tryParse(_textController.text) ?? 14);
+    return Tuple2(_flag, int.tryParse(_textController.text) ?? 14);
   }
 
-  Future<(bool, int)> setFutureDays(BuildContext context) async {
+  Future<Tuple2<bool, int>> setFutureDays(BuildContext context) async {
     bool _flag = false;
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController _textController = TextEditingController(
@@ -99,12 +101,14 @@ class DashboardDialogs {
       title: 'dashboard.FutureDays'.tr(),
       buttons: [
         LunaDialog.button(
-          text: 'thriftwood.Set'.tr(),
+          text: 'lunasea.Set'.tr(),
           onPressed: () => _setValues(true),
         ),
       ],
       content: [
-        LunaDialog.textContent(text: 'dashboard.FutureDaysDescription'.tr()),
+        LunaDialog.textContent(
+          text: 'dashboard.FutureDaysDescription'.tr(),
+        ),
         Form(
           key: _formKey,
           child: LunaDialog.textFormInput(
@@ -123,6 +127,6 @@ class DashboardDialogs {
       contentPadding: LunaDialog.inputTextDialogContentPadding(),
     );
 
-    return (_flag, int.tryParse(_textController.text) ?? 14);
+    return Tuple2(_flag, int.tryParse(_textController.text) ?? 14);
   }
 }

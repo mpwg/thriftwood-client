@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/radarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/radarr.dart';
 
 class RadarrAddMovieDetailsQualityProfileTile extends StatelessWidget {
-  const RadarrAddMovieDetailsQualityProfileTile({super.key});
+  const RadarrAddMovieDetailsQualityProfileTile({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +18,11 @@ class RadarrAddMovieDetailsQualityProfileTile extends StatelessWidget {
         onTap: () async {
           List<RadarrQualityProfile> qualityProfiles =
               await context.read<RadarrState>().qualityProfiles!;
-          (bool, RadarrQualityProfile?) values = await RadarrDialogs()
+          Tuple2<bool, RadarrQualityProfile?> values = await RadarrDialogs()
               .editQualityProfile(context, qualityProfiles);
-          if (values.$1)
+          if (values.item1)
             context.read<RadarrAddMovieDetailsState>().qualityProfile =
-                values.$2!;
+                values.item2!;
         },
       ),
     );

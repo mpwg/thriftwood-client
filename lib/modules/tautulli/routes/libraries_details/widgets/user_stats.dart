@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliLibrariesDetailsUserStats extends StatefulWidget {
   final int sectionId;
 
-  const TautulliLibrariesDetailsUserStats({super.key, required this.sectionId});
+  const TautulliLibrariesDetailsUserStats({
+    Key? key,
+    required this.sectionId,
+  }) : super(key: key);
 
   @override
   State<TautulliLibrariesDetailsUserStats> createState() => _State();
@@ -29,7 +32,10 @@ class _State extends State<TautulliLibrariesDetailsUserStats>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LunaScaffold(scaffoldKey: _scaffoldKey, body: _body());
+    return LunaScaffold(
+      scaffoldKey: _scaffoldKey,
+      body: _body(),
+    );
   }
 
   Widget _body() {

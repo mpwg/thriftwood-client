@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/scroll_controller.dart';
-import 'package:thriftwood/modules/sonarr.dart';
-import 'package:thriftwood/types/list_view_option.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/scroll_controller.dart';
+import 'package:lunasea/modules/sonarr.dart';
+import 'package:lunasea/types/list_view_option.dart';
 
 class SonarrSeriesSearchBarViewButton extends StatefulWidget {
   final ScrollController controller;
 
-  const SonarrSeriesSearchBarViewButton({super.key, required this.controller});
+  const SonarrSeriesSearchBarViewButton({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<SonarrSeriesSearchBarViewButton> createState() => _State();
@@ -20,7 +23,7 @@ class _State extends State<SonarrSeriesSearchBarViewButton> {
       context: context,
       child: Consumer<SonarrState>(
         builder: (context, state, _) => LunaPopupMenuButton<LunaListViewOption>(
-          tooltip: 'thriftwood.View'.tr(),
+          tooltip: 'lunasea.View'.tr(),
           icon: LunaIcons.VIEW,
           onSelected: (result) {
             state.seriesViewType = result;

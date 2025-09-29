@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class LunaGridViewBuilder extends StatelessWidget {
   final int itemCount;
@@ -11,7 +11,7 @@ class LunaGridViewBuilder extends StatelessWidget {
   final SliverGridDelegate sliverGridDelegate;
 
   const LunaGridViewBuilder({
-    super.key,
+    Key? key,
     required this.itemCount,
     required this.itemBuilder,
     required this.sliverGridDelegate,
@@ -19,7 +19,7 @@ class LunaGridViewBuilder extends StatelessWidget {
     required this.controller,
     this.padding,
     this.physics = const AlwaysScrollableScrollPhysics(),
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

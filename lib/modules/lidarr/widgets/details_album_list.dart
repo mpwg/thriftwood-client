@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class LidarrDetailsAlbumList extends StatefulWidget {
   final int artistID;
 
-  const LidarrDetailsAlbumList({super.key, required this.artistID});
+  const LidarrDetailsAlbumList({
+    Key? key,
+    required this.artistID,
+  }) : super(key: key);
 
   @override
   State<LidarrDetailsAlbumList> createState() => _State();

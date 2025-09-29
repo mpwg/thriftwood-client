@@ -1,8 +1,8 @@
-import 'package:thriftwood/database/table.dart';
-import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_day.dart';
-import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_size.dart';
-import 'package:thriftwood/modules/dashboard/core/adapters/calendar_starting_type.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/database/table.dart';
+import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_day.dart';
+import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_size.dart';
+import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_type.dart';
+import 'package:lunasea/vendor.dart';
 
 enum DashboardDatabase<T> with LunaTableMixin<T> {
   NAVIGATION_INDEX<int>(0),

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/database/models/indexer.dart';
-import 'package:thriftwood/modules/search/core.dart';
-import 'package:thriftwood/router/routes/settings.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/database/models/indexer.dart';
+import 'package:lunasea/modules/search/core.dart';
+import 'package:lunasea/router/routes/settings.dart';
 
 class ConfigurationSearchRoute extends StatefulWidget {
-  const ConfigurationSearchRoute({super.key});
+  const ConfigurationSearchRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ConfigurationSearchRoute> createState() => _State();
@@ -66,10 +68,8 @@ class _State extends State<ConfigurationSearchRoute>
 
   List<Widget> get _indexers {
     List<LunaIndexer> indexers = LunaBox.indexers.data.toList();
-    indexers.sort(
-      (a, b) =>
-          a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()),
-    );
+    indexers.sort((a, b) =>
+        a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
     List<LunaBlock> list = List.generate(
       indexers.length,
       (index) =>
@@ -84,13 +84,19 @@ class _State extends State<ConfigurationSearchRoute>
       body: [TextSpan(text: indexer.host)],
       trailing: const LunaIconButton.arrow(),
       onTap: () => SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER.go(
-        params: {'id': index.toString()},
+        params: {
+          'id': index.toString(),
+        },
       ),
     );
   }
 
   List<Widget> _customization() {
-    return [LunaDivider(), _hideAdultCategories(), _showLinks()];
+    return [
+      LunaDivider(),
+      _hideAdultCategories(),
+      _showLinks(),
+    ];
   }
 
   Widget _hideAdultCategories() {
@@ -99,7 +105,10 @@ class _State extends State<ConfigurationSearchRoute>
       builder: (context, _) => LunaBlock(
         title: 'search.HideAdultCategories'.tr(),
         body: [TextSpan(text: 'search.HideAdultCategoriesDescription'.tr())],
-        trailing: LunaSwitch(value: _db.read(), onChanged: _db.update),
+        trailing: LunaSwitch(
+          value: _db.read(),
+          onChanged: _db.update,
+        ),
       ),
     );
   }
@@ -110,7 +119,10 @@ class _State extends State<ConfigurationSearchRoute>
       builder: (context, _) => LunaBlock(
         title: 'search.ShowLinks'.tr(),
         body: [TextSpan(text: 'search.ShowLinksDescription'.tr())],
-        trailing: LunaSwitch(value: _db.read(), onChanged: _db.update),
+        trailing: LunaSwitch(
+          value: _db.read(),
+          onChanged: _db.update,
+        ),
       ),
     );
   }

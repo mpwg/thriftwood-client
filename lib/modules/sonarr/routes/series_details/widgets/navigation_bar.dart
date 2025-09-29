@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
+import 'package:lunasea/core.dart';
 
 class SonarrSeriesDetailsNavigationBar extends StatelessWidget {
-  static List<ScrollController> scrollControllers = List.generate(
-    icons.length,
-    (_) => ScrollController(),
-  );
+  static List<ScrollController> scrollControllers =
+      List.generate(icons.length, (_) => ScrollController());
 
   static const List<IconData> icons = [
     Icons.subject_rounded,
@@ -22,9 +20,9 @@ class SonarrSeriesDetailsNavigationBar extends StatelessWidget {
   final PageController? pageController;
 
   const SonarrSeriesDetailsNavigationBar({
-    super.key,
+    Key? key,
     required this.pageController,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

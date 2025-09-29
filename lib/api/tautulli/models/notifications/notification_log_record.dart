@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'notification_log_record.g.dart';
 
@@ -12,23 +12,18 @@ class TautulliNotificationLogRecord {
 
   /// Timestamp for when the notification was sent.
   @JsonKey(
-    name: 'timestamp',
-    fromJson: TautulliUtilities.millisecondsDateTimeFromJson,
-  )
+      name: 'timestamp',
+      fromJson: TautulliUtilities.millisecondsDateTimeFromJson)
   final DateTime? timestamp;
 
   /// Session key (if applicable).
   @JsonKey(
-    name: 'session_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'session_key', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? sessionKey;
 
   /// Content rating key (if applicable).
   @JsonKey(
-    name: 'rating_key',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'rating_key', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? ratingKey;
 
   /// User's ID (if applicable).
@@ -41,9 +36,7 @@ class TautulliNotificationLogRecord {
 
   /// Notifier ID for the notifier that triggered the notification.
   @JsonKey(
-    name: 'notifier_id',
-    fromJson: TautulliUtilities.ensureIntegerFromJson,
-  )
+      name: 'notifier_id', fromJson: TautulliUtilities.ensureIntegerFromJson)
   final int? notifierId;
 
   /// Agent ID for the notifier.
@@ -56,16 +49,12 @@ class TautulliNotificationLogRecord {
 
   /// Notification action that triggered the notification.
   @JsonKey(
-    name: 'notify_action',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'notify_action', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? notifyAction;
 
   /// Subject text of the notification.
   @JsonKey(
-    name: 'subject_text',
-    fromJson: TautulliUtilities.ensureStringFromJson,
-  )
+      name: 'subject_text', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? subjectText;
 
   /// Body text of the notification.

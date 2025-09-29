@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 part 'log.g.dart';
 
@@ -22,7 +22,12 @@ class TautulliLog {
   @JsonKey(name: 'thread', fromJson: TautulliUtilities.ensureStringFromJson)
   final String? thread;
 
-  TautulliLog({this.timestamp, this.level, this.message, this.thread});
+  TautulliLog({
+    this.timestamp,
+    this.level,
+    this.message,
+    this.thread,
+  });
 
   /// Returns a JSON-encoded string version of this object.
   @override

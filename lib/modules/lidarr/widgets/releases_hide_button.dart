@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
 
 class LidarrReleasesHideButton extends StatefulWidget {
   final ScrollController controller;
 
-  const LidarrReleasesHideButton({super.key, required this.controller});
+  const LidarrReleasesHideButton({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<LidarrReleasesHideButton> createState() => _State();
@@ -26,9 +29,8 @@ class _State extends State<LidarrReleasesHideButton> {
         ),
         height: LunaTextInputBar.defaultHeight,
         width: LunaTextInputBar.defaultHeight,
-        margin: LunaTextInputBar.appBarMargin.subtract(
-          const EdgeInsets.only(left: 12.0),
-        ) as EdgeInsets,
+        margin: LunaTextInputBar.appBarMargin
+            .subtract(const EdgeInsets.only(left: 12.0)) as EdgeInsets,
         color: Theme.of(context).canvasColor,
       );
 }

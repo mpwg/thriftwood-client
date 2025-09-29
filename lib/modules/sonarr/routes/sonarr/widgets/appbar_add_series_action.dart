@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/router/routes/sonarr.dart';
-import 'package:thriftwood/widgets/ui.dart';
+import 'package:lunasea/router/routes/sonarr.dart';
+import 'package:lunasea/widgets/ui.dart';
 
 class SonarrAppBarAddSeriesAction extends StatelessWidget {
-  const SonarrAppBarAddSeriesAction({super.key});
+  const SonarrAppBarAddSeriesAction({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

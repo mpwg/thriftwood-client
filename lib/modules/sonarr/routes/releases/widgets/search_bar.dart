@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/sonarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/sonarr.dart';
 
 class SonarrReleasesSearchBar extends StatefulWidget
     implements PreferredSizeWidget {
   final ScrollController scrollController;
 
-  const SonarrReleasesSearchBar({super.key, required this.scrollController});
+  const SonarrReleasesSearchBar({
+    Key? key,
+    required this.scrollController,
+  }) : super(key: key);
 
   @override
   Size get preferredSize =>

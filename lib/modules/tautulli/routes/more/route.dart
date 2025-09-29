@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
-import 'package:thriftwood/router/routes/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
+import 'package:lunasea/router/routes/tautulli.dart';
 
 class TautulliMoreRoute extends StatefulWidget {
-  const TautulliMoreRoute({super.key});
+  const TautulliMoreRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<TautulliMoreRoute> createState() => _State();

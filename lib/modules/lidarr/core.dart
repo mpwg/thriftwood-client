@@ -1,4 +1,4 @@
-export 'package:thriftwood/database/tables/lidarr.dart';
+export 'package:lunasea/database/tables/lidarr.dart';
 export 'core/api.dart';
 export 'core/constants.dart';
 export 'core/dialogs.dart';

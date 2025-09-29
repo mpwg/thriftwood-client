@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 
-import 'package:thriftwood/database/box.dart';
-import 'package:thriftwood/database/models/deprecated.dart';
-import 'package:thriftwood/database/tables/bios.dart';
-import 'package:thriftwood/database/tables/dashboard.dart';
-import 'package:thriftwood/database/tables/lidarr.dart';
-import 'package:thriftwood/database/tables/thriftwood.dart';
-import 'package:thriftwood/database/tables/nzbget.dart';
-import 'package:thriftwood/database/tables/radarr.dart';
-import 'package:thriftwood/database/tables/sabnzbd.dart';
-import 'package:thriftwood/database/tables/search.dart';
-import 'package:thriftwood/database/tables/sonarr.dart';
-import 'package:thriftwood/database/tables/tautulli.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/database/box.dart';
+import 'package:lunasea/database/models/deprecated.dart';
+import 'package:lunasea/database/tables/bios.dart';
+import 'package:lunasea/database/tables/dashboard.dart';
+import 'package:lunasea/database/tables/lidarr.dart';
+import 'package:lunasea/database/tables/lunasea.dart';
+import 'package:lunasea/database/tables/nzbget.dart';
+import 'package:lunasea/database/tables/radarr.dart';
+import 'package:lunasea/database/tables/sabnzbd.dart';
+import 'package:lunasea/database/tables/search.dart';
+import 'package:lunasea/database/tables/sonarr.dart';
+import 'package:lunasea/database/tables/tautulli.dart';
+import 'package:lunasea/vendor.dart';
 
 enum LunaTable<T extends LunaTableMixin> {
   bios<BIOSDatabase>('bios', items: BIOSDatabase.values),
   dashboard<DashboardDatabase>('home', items: DashboardDatabase.values),
   lidarr<LidarrDatabase>('lidarr', items: LidarrDatabase.values),
-  thriftwood<thriftwoodDatabase>('thriftwood', items: thriftwoodDatabase.values),
+  lunasea<LunaSeaDatabase>('lunasea', items: LunaSeaDatabase.values),
   nzbget<NZBGetDatabase>('nzbget', items: NZBGetDatabase.values),
   radarr<RadarrDatabase>('radarr', items: RadarrDatabase.values),
   sabnzbd<SABnzbdDatabase>('sabnzbd', items: SABnzbdDatabase.values),
@@ -70,7 +70,7 @@ mixin LunaTableMixin<T> on Enum {
   T get fallback;
   LunaTable get table;
 
-  LunaBox get box => LunaBox.thriftwood;
+  LunaBox get box => LunaBox.lunasea;
   String get key => '${table.key.toUpperCase()}_$name';
 
   T read() => box.read(key, fallback: fallback);

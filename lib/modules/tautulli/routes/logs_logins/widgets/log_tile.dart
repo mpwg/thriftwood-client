@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliLogsLoginsLogTile extends StatelessWidget {
   final TautulliUserLoginRecord login;
 
-  const TautulliLogsLoginsLogTile({super.key, required this.login});
+  const TautulliLogsLoginsLogTile({
+    Key? key,
+    required this.login,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

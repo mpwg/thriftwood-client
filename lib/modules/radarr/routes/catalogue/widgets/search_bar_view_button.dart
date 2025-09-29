@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/scroll_controller.dart';
-import 'package:thriftwood/modules/radarr.dart';
-import 'package:thriftwood/types/list_view_option.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/scroll_controller.dart';
+import 'package:lunasea/modules/radarr.dart';
+import 'package:lunasea/types/list_view_option.dart';
 
 class RadarrCatalogueSearchBarViewButton extends StatefulWidget {
   final ScrollController controller;
 
-  const RadarrCatalogueSearchBarViewButton(
-      {super.key, required this.controller});
+  const RadarrCatalogueSearchBarViewButton({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<RadarrCatalogueSearchBarViewButton> createState() => _State();
@@ -21,7 +23,7 @@ class _State extends State<RadarrCatalogueSearchBarViewButton> {
       context: context,
       child: Consumer<RadarrState>(
         builder: (context, state, _) => LunaPopupMenuButton<LunaListViewOption>(
-          tooltip: 'thriftwood.View'.tr(),
+          tooltip: 'lunasea.View'.tr(),
           icon: LunaIcons.VIEW,
           onSelected: (result) {
             state.moviesViewType = result;

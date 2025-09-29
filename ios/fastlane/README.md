@@ -21,7 +21,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios keychain_create
 ```
 
-Create the thriftwood Keychain
+Create the LunaSea Keychain
 
 ### ios keychain_delete
 
@@ -29,7 +29,7 @@ Create the thriftwood Keychain
 [bundle exec] fastlane ios keychain_delete
 ```
 
-Delete the thriftwood Keychain
+Delete the LunaSea Keychain
 
 ### ios keychain_setup
 

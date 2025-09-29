@@ -4,11 +4,11 @@
 /// **Only v3 and newer releases of Radarr are supported with this library.**
 ///
 /// This library gives access to [radarr_commands], and is needed as the only entrypoint.
-library;
+library radarr;
 
 // Imports
 import 'package:dio/dio.dart';
-import 'package:thriftwood/api/radarr/commands.dart';
+import 'package:lunasea/api/radarr/commands.dart';
 
 /// The core class to handle all connections to Radarr.
 /// Gives you easy access to all implemented command handlers, initialized and ready to call.
@@ -62,7 +62,9 @@ class RadarrAPI {
     Dio _dio = Dio(
       BaseOptions(
         baseUrl: host.endsWith('/') ? '${host}api/v3/' : '$host/api/v3/',
-        queryParameters: {'apikey': apiKey},
+        queryParameters: {
+          'apikey': apiKey,
+        },
         headers: headers,
         followRedirects: followRedirects,
         maxRedirects: maxRedirects,
@@ -112,7 +114,9 @@ class RadarrAPI {
   ///     ),
   /// );
   /// ```
-  factory RadarrAPI.from({required Dio client}) {
+  factory RadarrAPI.from({
+    required Dio client,
+  }) {
     return RadarrAPI._internal(
       httpClient: client,
       command: RadarrCommandHandlerCommand(client),

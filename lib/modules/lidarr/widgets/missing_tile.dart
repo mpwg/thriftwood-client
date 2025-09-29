@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/lidarr.dart';
-import 'package:thriftwood/router/routes/lidarr.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/lidarr.dart';
+import 'package:lunasea/router/routes/lidarr.dart';
 
 class LidarrMissingTile extends StatefulWidget {
   static final double extent = LunaBlock.calculateItemExtent(2);
@@ -11,11 +11,11 @@ class LidarrMissingTile extends StatefulWidget {
   final Function refresh;
 
   const LidarrMissingTile({
-    super.key,
+    Key? key,
     required this.entry,
     required this.scaffoldKey,
     required this.refresh,
-  });
+  }) : super(key: key);
 
   @override
   State<LidarrMissingTile> createState() => _State();
@@ -62,40 +62,33 @@ class _State extends State<LidarrMissingTile> {
     final _api = LidarrAPI.from(LunaProfile.current);
     await _api
         .searchAlbums([widget.entry.albumID])
-        .then(
-          (_) => showLunaSuccessSnackBar(
-            title: 'Searching...',
-            message: widget.entry.title,
-          ),
-        )
-        .catchError(
-          (error) =>
-              showLunaErrorSnackBar(title: 'Failed to Search', error: error),
-        );
+        .then((_) => showLunaSuccessSnackBar(
+            title: 'Searching...', message: widget.entry.title))
+        .catchError((error) =>
+            showLunaErrorSnackBar(title: 'Failed to Search', error: error));
   }
 
   Future<void> _interactiveSearch() async {
-    LidarrRoutes.ARTIST_ALBUM_RELEASES.go(
-      params: {
-        'artist': widget.entry.artistID.toString(),
-        'album': widget.entry.albumID.toString(),
-      },
-    );
+    LidarrRoutes.ARTIST_ALBUM_RELEASES.go(params: {
+      'artist': widget.entry.artistID.toString(),
+      'album': widget.entry.albumID.toString(),
+    });
   }
 
   Future<void> _enterArtist() async {
     LidarrRoutes.ARTIST.go(
-      params: {'artist': widget.entry.artistID.toString()},
+      params: {
+        'artist': widget.entry.artistID.toString(),
+      },
     );
   }
 
   Future<void> _enterAlbum() async {
-    LidarrRoutes.ARTIST_ALBUM.go(
-      params: {
-        'album': widget.entry.albumID.toString(),
-        'artist': widget.entry.artistID.toString(),
-      },
-      queryParams: {'monitored': widget.entry.monitored.toString()},
-    );
+    LidarrRoutes.ARTIST_ALBUM.go(params: {
+      'album': widget.entry.albumID.toString(),
+      'artist': widget.entry.artistID.toString(),
+    }, queryParams: {
+      'monitored': widget.entry.monitored.toString(),
+    });
   }
 }

@@ -1,10 +1,10 @@
-import 'package:thriftwood/types/list_view_option.dart';
-import 'package:thriftwood/database/table.dart';
-import 'package:thriftwood/modules/radarr/core/types/filter_movies.dart';
-import 'package:thriftwood/modules/radarr/core/types/filter_releases.dart';
-import 'package:thriftwood/modules/radarr/core/types/sorting_movies.dart';
-import 'package:thriftwood/modules/radarr/core/types/sorting_releases.dart';
-import 'package:thriftwood/vendor.dart';
+import 'package:lunasea/types/list_view_option.dart';
+import 'package:lunasea/database/table.dart';
+import 'package:lunasea/modules/radarr/core/types/filter_movies.dart';
+import 'package:lunasea/modules/radarr/core/types/filter_releases.dart';
+import 'package:lunasea/modules/radarr/core/types/sorting_movies.dart';
+import 'package:lunasea/modules/radarr/core/types/sorting_releases.dart';
+import 'package:lunasea/vendor.dart';
 
 enum RadarrDatabase<T> with LunaTableMixin<T> {
   NAVIGATION_INDEX<int>(0),

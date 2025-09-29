@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class RecentlyAddedRoute extends StatefulWidget {
-  const RecentlyAddedRoute({super.key});
+  const RecentlyAddedRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<RecentlyAddedRoute> createState() => _State();
@@ -59,9 +61,7 @@ class _State extends State<RecentlyAddedRoute> with LunaScrollControllerMixin {
                   snapshot.error,
                   snapshot.stackTrace,
                 );
-              return LunaMessage.error(
-                onTap: _refreshKey.currentState!.show,
-              );
+              return LunaMessage.error(onTap: _refreshKey.currentState!.show);
             }
             if (snapshot.hasData) return _list(snapshot.data);
             return const LunaLoader();

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/modules.dart';
-import 'package:thriftwood/modules/settings.dart';
+import 'package:lunasea/modules.dart';
+import 'package:lunasea/modules/settings.dart';
 
 class ConfigurationNZBGetConnectionDetailsHeadersRoute extends StatelessWidget {
-  const ConfigurationNZBGetConnectionDetailsHeadersRoute({super.key});
+  const ConfigurationNZBGetConnectionDetailsHeadersRoute({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:thriftwood/modules/dashboard/core/state.dart';
-import 'package:thriftwood/modules/lidarr/core/state.dart';
-import 'package:thriftwood/modules/radarr/core/state.dart';
-import 'package:thriftwood/modules/search/core/state.dart';
-import 'package:thriftwood/modules/settings/core/state.dart';
-import 'package:thriftwood/modules/sonarr/core/state.dart';
-import 'package:thriftwood/modules/sabnzbd/core/state.dart';
-import 'package:thriftwood/modules/nzbget/core/state.dart';
-import 'package:thriftwood/modules/tautulli/core/state.dart';
-import 'package:thriftwood/modules.dart';
-import 'package:thriftwood/router/router.dart';
+import 'package:lunasea/modules/dashboard/core/state.dart';
+import 'package:lunasea/modules/lidarr/core/state.dart';
+import 'package:lunasea/modules/radarr/core/state.dart';
+import 'package:lunasea/modules/search/core/state.dart';
+import 'package:lunasea/modules/settings/core/state.dart';
+import 'package:lunasea/modules/sonarr/core/state.dart';
+import 'package:lunasea/modules/sabnzbd/core/state.dart';
+import 'package:lunasea/modules/nzbget/core/state.dart';
+import 'package:lunasea/modules/tautulli/core/state.dart';
+import 'package:lunasea/modules.dart';
+import 'package:lunasea/router/router.dart';
 
 class LunaState {
   LunaState._();

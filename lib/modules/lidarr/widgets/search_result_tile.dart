@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/double/time.dart';
-import 'package:thriftwood/extensions/int/bytes.dart';
-import 'package:thriftwood/extensions/string/links.dart';
-import 'package:thriftwood/extensions/string/string.dart';
-import 'package:thriftwood/modules/lidarr.dart';
-import 'package:thriftwood/router/router.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/double/time.dart';
+import 'package:lunasea/extensions/int/bytes.dart';
+import 'package:lunasea/extensions/string/links.dart';
+import 'package:lunasea/extensions/string/string.dart';
+import 'package:lunasea/modules/lidarr.dart';
+import 'package:lunasea/router/router.dart';
 
 class LidarrReleasesTile extends StatefulWidget {
   final LidarrReleaseData release;
 
-  const LidarrReleasesTile({super.key, required this.release});
+  const LidarrReleasesTile({
+    Key? key,
+    required this.release,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -23,7 +26,10 @@ class _State extends State<LidarrReleasesTile> {
   Widget build(BuildContext context) {
     return LunaExpandableListTile(
       title: widget.release.title,
-      collapsedSubtitles: [_subtitle1(), _subtitle2()],
+      collapsedSubtitles: [
+        _subtitle1(),
+        _subtitle2(),
+      ],
       collapsedTrailing: _trailing(),
       expandedHighlightedNodes: _highlightedNodes(),
       expandedTableContent: _tableContent(),
@@ -32,29 +38,27 @@ class _State extends State<LidarrReleasesTile> {
   }
 
   TextSpan _subtitle1() {
-    return TextSpan(
-      children: [
+    return TextSpan(children: [
+      TextSpan(
+        style: TextStyle(
+          color: lunaProtocolColor,
+          fontWeight: LunaUI.FONT_WEIGHT_BOLD,
+        ),
+        text: widget.release.protocol.toTitleCase(),
+      ),
+      if (widget.release.isTorrent)
         TextSpan(
+          text: ' (${widget.release.seeders}/${widget.release.leechers})',
           style: TextStyle(
             color: lunaProtocolColor,
             fontWeight: LunaUI.FONT_WEIGHT_BOLD,
           ),
-          text: widget.release.protocol.toTitleCase(),
         ),
-        if (widget.release.isTorrent)
-          TextSpan(
-            text: ' (${widget.release.seeders}/${widget.release.leechers})',
-            style: TextStyle(
-              color: lunaProtocolColor,
-              fontWeight: LunaUI.FONT_WEIGHT_BOLD,
-            ),
-          ),
-        TextSpan(text: LunaUI.TEXT_BULLET.pad()),
-        TextSpan(text: widget.release.indexer),
-        TextSpan(text: LunaUI.TEXT_BULLET.pad()),
-        TextSpan(text: widget.release.ageHours.asTimeAgo()),
-      ],
-    );
+      TextSpan(text: LunaUI.TEXT_BULLET.pad()),
+      TextSpan(text: widget.release.indexer),
+      TextSpan(text: LunaUI.TEXT_BULLET.pad()),
+      TextSpan(text: widget.release.ageHours.asTimeAgo()),
+    ]);
   }
 
   TextSpan _subtitle2() {
@@ -92,9 +96,7 @@ class _State extends State<LidarrReleasesTile> {
   List<LunaTableContent> _tableContent() {
     return [
       LunaTableContent(
-        title: 'source',
-        body: widget.release.protocol.toTitleCase(),
-      ),
+          title: 'source', body: widget.release.protocol.toTitleCase()),
       LunaTableContent(title: 'age', body: widget.release.ageHours.asTimeAgo()),
       LunaTableContent(title: 'indexer', body: widget.release.indexer),
       LunaTableContent(title: 'size', body: widget.release.size.asBytes()),

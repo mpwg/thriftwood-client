@@ -1,5 +1,5 @@
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliState extends LunaModuleState {
   TautulliState() {
@@ -108,9 +108,9 @@ class TautulliState extends LunaModuleState {
 
   /// Create the periodic timer to handle refreshing activity data
   void createActivityTimer() => _getActivityTimer = Timer.periodic(
-    Duration(seconds: TautulliDatabase.REFRESH_RATE.read()),
-    (_) => activity = _api!.activity.getActivity(),
-  );
+        Duration(seconds: TautulliDatabase.REFRESH_RATE.read()),
+        (_) => activity = _api!.activity.getActivity(),
+      );
 
   /// Cancel the periodic timer
   void cancelActivityTimer() => _getActivityTimer?.cancel();
@@ -265,9 +265,7 @@ class TautulliState extends LunaModuleState {
   Map<int, Future<List<TautulliUserWatchTimeStats>>> get userWatchStats =>
       _userWatchStats;
   void setUserWatchStats(
-    int userId,
-    Future<List<TautulliUserWatchTimeStats>> data,
-  ) {
+      int userId, Future<List<TautulliUserWatchTimeStats>> data) {
     _userWatchStats[userId] = data;
     notifyListeners();
   }
@@ -276,9 +274,7 @@ class TautulliState extends LunaModuleState {
   Map<int, Future<List<TautulliUserPlayerStats>>> get userPlayerStats =>
       _userPlayerStats;
   void setUserPlayerStats(
-    int userId,
-    Future<List<TautulliUserPlayerStats>> data,
-  ) {
+      int userId, Future<List<TautulliUserPlayerStats>> data) {
     _userPlayerStats[userId] = data;
     notifyListeners();
   }
@@ -394,8 +390,7 @@ class TautulliState extends LunaModuleState {
   Future<TautulliGraphData>? get playCountByDayOfWeekGraph =>
       _playCountByDayOfWeekGraph;
   set playCountByDayOfWeekGraph(
-    Future<TautulliGraphData>? playCountByDayOfWeekGraph,
-  ) {
+      Future<TautulliGraphData>? playCountByDayOfWeekGraph) {
     _playCountByDayOfWeekGraph = playCountByDayOfWeekGraph;
     notifyListeners();
   }
@@ -413,8 +408,7 @@ class TautulliState extends LunaModuleState {
   Future<TautulliGraphData>? get playCountByTopPlatformsGraph =>
       _playCountByTopPlatformsGraph;
   set playCountByTopPlatformsGraph(
-    Future<TautulliGraphData>? playCountByTopPlatformsGraph,
-  ) {
+      Future<TautulliGraphData>? playCountByTopPlatformsGraph) {
     _playCountByTopPlatformsGraph = playCountByTopPlatformsGraph;
     notifyListeners();
   }
@@ -432,8 +426,7 @@ class TautulliState extends LunaModuleState {
   Future<TautulliGraphData>? get playCountByTopUsersGraph =>
       _playCountByTopUsersGraph;
   set playCountByTopUsersGraph(
-    Future<TautulliGraphData>? playCountByTopUsersGraph,
-  ) {
+      Future<TautulliGraphData>? playCountByTopUsersGraph) {
     _playCountByTopUsersGraph = playCountByTopUsersGraph;
     notifyListeners();
   }
@@ -459,8 +452,7 @@ class TautulliState extends LunaModuleState {
   Future<TautulliGraphData>? get dailyStreamTypeBreakdownGraph =>
       _dailyStreamTypeBreakdownGraph;
   set dailyStreamTypeBreakdownGraph(
-    Future<TautulliGraphData>? dailyStreamTypeBreakdownGraph,
-  ) {
+      Future<TautulliGraphData>? dailyStreamTypeBreakdownGraph) {
     _dailyStreamTypeBreakdownGraph = dailyStreamTypeBreakdownGraph;
     notifyListeners();
   }
@@ -478,19 +470,18 @@ class TautulliState extends LunaModuleState {
   Future<TautulliGraphData>? get playCountBySourceResolutionGraph =>
       _playCountBySourceResolutionGraph;
   set playCountBySourceResolutionGraph(
-    Future<TautulliGraphData>? playCountBySourceResolutionGraph,
-  ) {
+      Future<TautulliGraphData>? playCountBySourceResolutionGraph) {
     _playCountBySourceResolutionGraph = playCountBySourceResolutionGraph;
     notifyListeners();
   }
 
   void resetPlayCountBySourceResolutionGraph() {
     if (_api != null)
-      _playCountBySourceResolutionGraph = _api!.history
-          .getPlaysBySourceResolution(
-            timeRange: TautulliDatabase.GRAPHS_DAYS.read(),
-            yAxis: _graphYAxis,
-          );
+      _playCountBySourceResolutionGraph =
+          _api!.history.getPlaysBySourceResolution(
+        timeRange: TautulliDatabase.GRAPHS_DAYS.read(),
+        yAxis: _graphYAxis,
+      );
     notifyListeners();
   }
 
@@ -498,19 +489,18 @@ class TautulliState extends LunaModuleState {
   Future<TautulliGraphData>? get playCountByStreamResolutionGraph =>
       _playCountByStreamResolutionGraph;
   set playCountByStreamResolutionGraph(
-    Future<TautulliGraphData>? playCountByStreamResolutionGraph,
-  ) {
+      Future<TautulliGraphData>? playCountByStreamResolutionGraph) {
     _playCountByStreamResolutionGraph = playCountByStreamResolutionGraph;
     notifyListeners();
   }
 
   void resetPlayCountByStreamResolutionGraph() {
     if (_api != null)
-      _playCountByStreamResolutionGraph = _api!.history
-          .getPlaysByStreamResolution(
-            timeRange: TautulliDatabase.GRAPHS_DAYS.read(),
-            yAxis: _graphYAxis,
-          );
+      _playCountByStreamResolutionGraph =
+          _api!.history.getPlaysByStreamResolution(
+        timeRange: TautulliDatabase.GRAPHS_DAYS.read(),
+        yAxis: _graphYAxis,
+      );
     notifyListeners();
   }
 
@@ -518,19 +508,18 @@ class TautulliState extends LunaModuleState {
   Future<TautulliGraphData>? get playCountByPlatformStreamTypeGraph =>
       _playCountByPlatformStreamTypeGraph;
   set playCountByPlatformStreamTypeGraph(
-    Future<TautulliGraphData>? playCountByPlatformStreamTypeGraph,
-  ) {
+      Future<TautulliGraphData>? playCountByPlatformStreamTypeGraph) {
     _playCountByPlatformStreamTypeGraph = playCountByPlatformStreamTypeGraph;
     notifyListeners();
   }
 
   void resetPlayCountByPlatformStreamTypeGraph() {
     if (_api != null)
-      _playCountByPlatformStreamTypeGraph = _api!.history
-          .getStreamTypeByTopTenPlatforms(
-            timeRange: TautulliDatabase.GRAPHS_DAYS.read(),
-            yAxis: _graphYAxis,
-          );
+      _playCountByPlatformStreamTypeGraph =
+          _api!.history.getStreamTypeByTopTenPlatforms(
+        timeRange: TautulliDatabase.GRAPHS_DAYS.read(),
+        yAxis: _graphYAxis,
+      );
     notifyListeners();
   }
 
@@ -538,19 +527,18 @@ class TautulliState extends LunaModuleState {
   Future<TautulliGraphData>? get playCountByUserStreamTypeGraph =>
       _playCountByUserStreamTypeGraph;
   set playCountByUserStreamTypeGraph(
-    Future<TautulliGraphData>? playCountByUserStreamTypeGraph,
-  ) {
+      Future<TautulliGraphData>? playCountByUserStreamTypeGraph) {
     _playCountByUserStreamTypeGraph = playCountByUserStreamTypeGraph;
     notifyListeners();
   }
 
   void resetPlayCountByUserStreamTypeGraph() {
     if (_api != null)
-      _playCountByUserStreamTypeGraph = _api!.history
-          .getStreamTypeByTopTenUsers(
-            timeRange: TautulliDatabase.GRAPHS_DAYS.read(),
-            yAxis: _graphYAxis,
-          );
+      _playCountByUserStreamTypeGraph =
+          _api!.history.getStreamTypeByTopTenUsers(
+        timeRange: TautulliDatabase.GRAPHS_DAYS.read(),
+        yAxis: _graphYAxis,
+      );
     notifyListeners();
   }
 
@@ -601,10 +589,10 @@ class TautulliState extends LunaModuleState {
   Map<int, Future<List<TautulliLibraryWatchTimeStats>>> _libraryWatchTimeStats =
       {};
   Map<int, Future<List<TautulliLibraryWatchTimeStats>>>
-  get libraryWatchTimeStats => _libraryWatchTimeStats;
+      get libraryWatchTimeStats => _libraryWatchTimeStats;
   void fetchLibraryWatchTimeStats(int sectionId) {
-    _libraryWatchTimeStats[sectionId] = _api!.libraries
-        .getLibraryWatchTimeStats(sectionId: sectionId);
+    _libraryWatchTimeStats[sectionId] =
+        _api!.libraries.getLibraryWatchTimeStats(sectionId: sectionId);
     notifyListeners();
   }
 
@@ -612,9 +600,8 @@ class TautulliState extends LunaModuleState {
   Map<int, Future<List<TautulliLibraryUserStats>>> get libraryUserStats =>
       _libraryUserStats;
   void fetchLibraryUserStats(int sectionId) {
-    _libraryUserStats[sectionId] = _api!.libraries.getLibraryUserStats(
-      sectionId: sectionId,
-    );
+    _libraryUserStats[sectionId] =
+        _api!.libraries.getLibraryUserStats(sectionId: sectionId);
     notifyListeners();
   }
 

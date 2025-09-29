@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:thriftwood/core.dart';
-import 'package:thriftwood/extensions/datetime.dart';
-import 'package:thriftwood/extensions/duration/timestamp.dart';
-import 'package:thriftwood/modules/tautulli.dart';
+import 'package:lunasea/core.dart';
+import 'package:lunasea/extensions/datetime.dart';
+import 'package:lunasea/extensions/duration/timestamp.dart';
+import 'package:lunasea/modules/tautulli.dart';
 
 class TautulliUserDetailsProfile extends StatefulWidget {
   final TautulliTableUser user;
 
-  const TautulliUserDetailsProfile({super.key, required this.user});
+  const TautulliUserDetailsProfile({
+    Key? key,
+    required this.user,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -30,24 +33,26 @@ class _State extends State<TautulliUserDetailsProfile>
     // Initial load or refresh of the user profile data
     context.read<TautulliState>().setUserProfile(
           widget.user.userId!,
-          context.read<TautulliState>().api!.users.getUser(
-                userId: widget.user.userId!,
-              ),
+          context
+              .read<TautulliState>()
+              .api!
+              .users
+              .getUser(userId: widget.user.userId!),
         );
     // Initial load or refresh of the user watch stats
     context.read<TautulliState>().setUserWatchStats(
           widget.user.userId!,
           context.read<TautulliState>().api!.users.getUserWatchTimeStats(
-            userId: widget.user.userId!,
-            queryDays: [1, 7, 30, 0],
-          ),
+              userId: widget.user.userId!, queryDays: [1, 7, 30, 0]),
         );
     // Initial load or refresh of the user player stats
     context.read<TautulliState>().setUserPlayerStats(
           widget.user.userId!,
-          context.read<TautulliState>().api!.users.getUserPlayerStats(
-                userId: widget.user.userId!,
-              ),
+          context
+              .read<TautulliState>()
+              .api!
+              .users
+              .getUserPlayerStats(userId: widget.user.userId!),
         );
     setState(() => _initialLoad = true);
     // This await keeps the refresh indicator showing until the data is loaded
@@ -131,18 +136,12 @@ class _State extends State<TautulliUserDetailsProfile>
         ),
         LunaTableContent(title: '', body: ''),
         LunaTableContent(
-          title: 'title',
-          body: widget.user.lastPlayed ?? 'None',
-        ),
+            title: 'title', body: widget.user.lastPlayed ?? 'None'),
         LunaTableContent(
-          title: 'platform',
-          body: widget.user.platform ?? 'None',
-        ),
+            title: 'platform', body: widget.user.platform ?? 'None'),
         LunaTableContent(title: 'player', body: widget.user.player ?? 'None'),
         LunaTableContent(
-          title: 'location',
-          body: widget.user.ipAddress ?? 'None',
-        ),
+            title: 'location', body: widget.user.ipAddress ?? 'None'),
       ],
     );
   }
@@ -154,9 +153,7 @@ class _State extends State<TautulliUserDetailsProfile>
         (index) => LunaTableContent(
           title: _globalStatsTitle(watchtime[index].queryDays),
           body: _globalStatsContent(
-            watchtime[index].totalPlays,
-            watchtime[index].totalTime!,
-          ),
+              watchtime[index].totalPlays, watchtime[index].totalTime!),
         ),
       ),
     );
@@ -181,11 +178,10 @@ class _State extends State<TautulliUserDetailsProfile>
             LunaTableContent(title: 'player', body: player[index].playerName),
             LunaTableContent(title: 'platform', body: player[index].platform),
             LunaTableContent(
-              title: 'plays',
-              body: player[index].totalPlays == 1
-                  ? '1 Play'
-                  : '${player[index].totalPlays} Plays',
-            ),
+                title: 'plays',
+                body: player[index].totalPlays == 1
+                    ? '1 Play'
+                    : '${player[index].totalPlays} Plays'),
           ],
         ),
       );
