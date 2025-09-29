@@ -1,6 +1,7 @@
 import 'package:thriftwood/database/table.dart';
 import 'package:thriftwood/modules/sonarr/core/types/filter_releases.dart';
 import 'package:thriftwood/modules/sonarr/core/types/filter_series.dart';
+import 'package:thriftwood/modules/sonarr/core/types/monitor_status.dart';
 import 'package:thriftwood/modules/sonarr/core/types/sorting_releases.dart';
 import 'package:thriftwood/modules/sonarr/core/types/sorting_series.dart';
 import 'package:thriftwood/types/list_view_option.dart';
