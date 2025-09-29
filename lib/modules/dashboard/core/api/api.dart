@@ -59,7 +59,7 @@ class API {
         DateTime? date = DateTime.tryParse(
           entry['releaseDate'] ?? '',
         )?.toLocal().floor();
-        if (_isDateWithinBounds(date, today)) {
+        if (date != null && _isDateWithinBounds(date, today)) {
           List<CalendarData> day = map[date] ?? [];
           day.add(
             CalendarLidarrData(
@@ -113,13 +113,14 @@ class API {
         DateTime? release;
         if (physicalRelease != null || digitalRelease != null) {
           if (physicalRelease != null) {
-            release = digitalRelease.isBefore(physicalRelease)
+            release = digitalRelease != null &&
+                    digitalRelease.isBefore(physicalRelease)
                 ? digitalRelease
                 : physicalRelease;
           } else {
             release = digitalRelease ?? physicalRelease;
           }
-          if (_isDateWithinBounds(release, today)) {
+          if (release != null && _isDateWithinBounds(release, today)) {
             List<CalendarData> day = map[release] ?? [];
             day.add(
               CalendarRadarrData(
@@ -170,7 +171,7 @@ class API {
         DateTime? date = DateTime.tryParse(
           entry['airDateUtc'] ?? '',
         )?.toLocal().floor();
-        if (_isDateWithinBounds(date, today)) {
+        if (date != null && _isDateWithinBounds(date, today)) {
           List<CalendarData> day = map[date] ?? [];
           day.add(
             CalendarSonarrData(

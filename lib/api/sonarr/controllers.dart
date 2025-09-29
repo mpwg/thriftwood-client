@@ -1,5 +1,5 @@
-/// Library containing all logic and accessors to make calls to Sonarr's API.
-library;
+/// Library containing all API configuration for Sonarr.
+library sonarr_commands;
 
 import 'package:thriftwood/api/sonarr/models.dart';
 import 'package:thriftwood/api/sonarr/types.dart';

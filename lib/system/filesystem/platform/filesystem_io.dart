@@ -43,9 +43,11 @@ class _Desktop extends _Shared {
         fileName: name,
         lockParentWindow: true,
       );
-      File file = File(path);
-      file.writeAsBytesSync(data);
-      return true;
+      if (path != null) {
+        File file = File(path);
+        file.writeAsBytesSync(data);
+        return true;
+      }
       return false;
     } catch (error, stack) {
       LunaLogger().error('Failed to save to filesystem', error, stack);

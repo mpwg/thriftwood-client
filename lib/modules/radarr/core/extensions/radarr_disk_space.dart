@@ -18,7 +18,9 @@ extension LunaRadarrDiskSpaceExtension on RadarrDiskSpace {
   int get lunaPercentage {
     int? _percentNumerator = this.freeSpace;
     int? _percentDenominator = this.totalSpace;
-    if (_percentDenominator != 0) {
+    if (_percentDenominator != null &&
+        _percentDenominator != 0 &&
+        _percentNumerator != null) {
       int _val = ((_percentNumerator / _percentDenominator) * 100).round();
       return (_val - 100).abs();
     }
