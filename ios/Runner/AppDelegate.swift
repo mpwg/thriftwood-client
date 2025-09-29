@@ -24,17 +24,12 @@ import Flutter
     }
     
     // Initialize the bridge with the Flutter view controller
-    FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
+      FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
     
-    // Initialize shared data manager
-    let methodChannel = FlutterMethodChannel(
-      name: "com.thriftwood.bridge",
-      binaryMessenger: flutterViewController.binaryMessenger
-    )
-    SharedDataManager.shared.initialize(with: methodChannel)
-    
-    // Register test route for Phase 1 testing
-    FlutterSwiftUIBridge.shared.registerNativeView("/test")
+    // Register settings routes for Phase 2 hybrid functionality
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_configuration")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_profiles")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_system")
     
     print("Hybrid bridge system initialized successfully")
   }

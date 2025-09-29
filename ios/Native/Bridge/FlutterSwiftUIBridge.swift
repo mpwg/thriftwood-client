@@ -205,6 +205,12 @@ import Flutter
         switch route {
         case "/settings":
             return AnyView(SettingsWrapperView(data: data))
+        case "settings_configuration":
+            return AnyView(SwiftUISettingsView(selectedSection: .configuration))
+        case "settings_profiles":
+            return AnyView(SwiftUIProfilesView())
+        case "settings_system":
+            return AnyView(SwiftUISettingsView(selectedSection: .system))
         case "/dashboard":
             return AnyView(DashboardWrapperView(data: data))
         case "/test":
