@@ -11,6 +11,7 @@ import 'package:lunasea/system/network/network.dart';
 import 'package:lunasea/system/recovery_mode/main.dart';
 import 'package:lunasea/system/window_manager/window_manager.dart';
 import 'package:lunasea/system/platform.dart';
+import 'package:lunasea/system/bridge/bridge_initializer.dart';
 
 /// LunaSea Entry Point: Bootstrap & Run Application
 ///
@@ -38,6 +39,9 @@ Future<void> bootstrap() async {
   LunaLogger().initialize();
   LunaTheme().initialize();
   if (LunaWindowManager.isSupported) await LunaWindowManager().initialize();
+
+  // Initialize the hybrid bridge system
+  await BridgeInitializer.initialize();
   if (LunaNetwork.isSupported) LunaNetwork().initialize();
   if (LunaImageCache.isSupported) LunaImageCache().initialize();
   LunaRouter().initialize();
