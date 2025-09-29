@@ -11,7 +11,7 @@ import SwiftUI
 // MARK: - Main Settings View
 
 struct SwiftUISettingsView: View {
-    let viewModel: SettingsViewModel
+    @Bindable var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -331,6 +331,9 @@ struct SwiftUIProfilesView: View {
                 }
             }
         }
+        .task {
+            await viewModel.loadProfiles()
+        }
     }
 }
 
@@ -405,8 +408,8 @@ struct SwiftUIConfigurationView: View {
                     }
                 }
             }
-            .onAppear {
-                viewModel.loadConfiguration()
+            .task {
+                await viewModel.loadConfiguration()
             }
         }
     }

@@ -206,11 +206,16 @@ import Flutter
         case "/settings":
             return AnyView(SettingsWrapperView(data: data))
         case "settings_configuration":
-            return AnyView(SwiftUISettingsView(selectedSection: .configuration))
+            let settingsViewModel = SettingsViewModel()
+            let configurationViewModel = ConfigurationViewModel(settingsViewModel: settingsViewModel)
+            return AnyView(SwiftUIConfigurationView(viewModel: configurationViewModel))
         case "settings_profiles":
-            return AnyView(SwiftUIProfilesView())
+            let settingsViewModel = SettingsViewModel()
+            let profilesViewModel = ProfilesViewModel(settingsViewModel: settingsViewModel)
+            return AnyView(SwiftUIProfilesView(viewModel: profilesViewModel))
         case "settings_system":
-            return AnyView(SwiftUISettingsView(selectedSection: .system))
+            let settingsViewModel = SettingsViewModel()
+            return AnyView(SwiftUISettingsView(viewModel: settingsViewModel))
         case "/dashboard":
             return AnyView(DashboardWrapperView(data: data))
         case "/test":

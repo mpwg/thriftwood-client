@@ -281,7 +281,7 @@ class ProfilesViewModel {
     
     init(settingsViewModel: SettingsViewModel) {
         self.settingsViewModel = settingsViewModel
-        loadProfiles()
+        // Don't call loadProfiles() here - will be called when view appears
     }
     
     @MainActor
@@ -330,7 +330,7 @@ class ConfigurationViewModel {
     
     init(settingsViewModel: SettingsViewModel) {
         self.settingsViewModel = settingsViewModel
-        loadConfiguration()
+        // Don't call loadConfiguration() here - will be called when view appears
     }
     
     @MainActor
