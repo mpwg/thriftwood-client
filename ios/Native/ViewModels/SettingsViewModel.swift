@@ -10,19 +10,26 @@ import Foundation
 import SwiftUI
 import Combine
 import UniformTypeIdentifiers
-import UIKit
+// UIKit removed for pure SwiftUI implementation
 
 // MARK: - Flutter LunaLog Data Models
 
 /// Swift equivalent of Flutter's LunaLogType enum
+/// Matches exactly: lib/types/log_type.dart
 enum LunaLogType: String, CaseIterable, Equatable {
     case warning = "warning"
     case error = "error" 
     case critical = "critical"
     case debug = "debug"
-    case all = "all"
+    case all = "all"  // Special case for UI filtering
     
-    var displayName: String {
+    // Flutter equivalent: LunaLogType.key
+    var key: String {
+        return self.rawValue
+    }
+    
+    // Flutter equivalent: LunaLogType.title  
+    var title: String {
         switch self {
         case .warning: return "Warning"
         case .error: return "Error"
@@ -32,16 +39,26 @@ enum LunaLogType: String, CaseIterable, Equatable {
         }
     }
     
+    // Flutter equivalent: LunaLogType.description
+    var description: String {
+        if self == .all {
+            return "View all system logs"
+        }
+        return "View \(title.lowercased()) logs"
+    }
+    
+    // Flutter equivalent: LunaLogType.color
     var color: Color {
         switch self {
-        case .warning: return .orange
-        case .error: return .red
-        case .critical: return .purple
-        case .debug: return .blue
+        case .warning: return .orange    // LunaColours.orange
+        case .error: return .red         // LunaColours.red  
+        case .critical: return .purple   // LunaColours.accent
+        case .debug: return .secondary   // LunaColours.blueGrey
         case .all: return .primary
         }
     }
     
+    // Flutter equivalent: LunaLogType.icon (mapped to SF Symbols)
     var icon: String {
         switch self {
         case .warning: return "exclamationmark.triangle"
@@ -52,35 +69,46 @@ enum LunaLogType: String, CaseIterable, Equatable {
         }
     }
     
+    // Flutter equivalent: LunaLogType.enabled
     var enabled: Bool {
-        // Debug logs only enabled in beta builds like Flutter implementation
         switch self {
-        case .debug: return false // Would check if beta build
-        default: return true
+        case .debug: 
+            // Flutter: return LunaFlavor.BETA.isRunningFlavor()
+            // For now, disable debug logs like Flutter does in production
+            return false 
+        default: 
+            return true
         }
+    }
+    
+    // Flutter equivalent: LunaLogType.fromKey()
+    static func fromKey(_ key: String) -> LunaLogType? {
+        return LunaLogType(rawValue: key)
     }
 }
 
 /// Swift equivalent of Flutter's LunaLog class
+/// Matches exactly: lib/database/models/log.dart
 struct LunaLogEntry: Identifiable, Equatable {
     let id = UUID()
-    let timestamp: Int
-    let type: LunaLogType
-    let className: String?
-    let methodName: String?
-    let message: String
-    let error: String?
-    let stackTrace: String?
+    let timestamp: Int           // Flutter: @HiveField(0) final int timestamp
+    let type: LunaLogType       // Flutter: @HiveField(1) final LunaLogType type  
+    let className: String?      // Flutter: @HiveField(2) final String? className
+    let methodName: String?     // Flutter: @HiveField(3) final String? methodName
+    let message: String         // Flutter: @HiveField(4) final String message
+    let error: String?          // Flutter: @HiveField(5) final String? error
+    let stackTrace: String?     // Flutter: @HiveField(6) final String? stackTrace
     
     var date: Date {
+        // Flutter: DateTime.fromMillisecondsSinceEpoch(timestamp)
         Date(timeIntervalSince1970: TimeInterval(timestamp / 1000))
     }
     
-    /// Convert to JSON like Flutter's LunaLog.toJson()
+    /// Flutter equivalent: LunaLog.toJson()
     func toJSON() -> [String: Any] {
         var json: [String: Any] = [
             "timestamp": ISO8601DateFormatter().string(from: date),
-            "type": type.displayName,
+            "type": type.title,  // Use title, not displayName
             "message": message
         ]
         
@@ -98,6 +126,46 @@ struct LunaLogEntry: Identifiable, Equatable {
         }
         
         return json
+    }
+    
+    /// Flutter equivalent: LunaLog.withMessage factory
+    static func withMessage(
+        type: LunaLogType,
+        message: String,
+        className: String? = nil,
+        methodName: String? = nil
+    ) -> LunaLogEntry {
+        let timestamp = Int(Date().timeIntervalSince1970 * 1000)
+        return LunaLogEntry(
+            timestamp: timestamp,
+            type: type,
+            className: className,
+            methodName: methodName,
+            message: message,
+            error: nil,
+            stackTrace: nil
+        )
+    }
+    
+    /// Flutter equivalent: LunaLog.withError factory
+    static func withError(
+        type: LunaLogType,
+        message: String,
+        error: Error,
+        stackTrace: String? = nil,
+        className: String? = nil,
+        methodName: String? = nil
+    ) -> LunaLogEntry {
+        let timestamp = Int(Date().timeIntervalSince1970 * 1000)
+        return LunaLogEntry(
+            timestamp: timestamp,
+            type: type,
+            className: className,
+            methodName: methodName,
+            message: message,
+            error: error.localizedDescription,
+            stackTrace: stackTrace
+        )
     }
 }
 
@@ -336,6 +404,18 @@ class SettingsViewModel {
             profile.sabnzbdEnabled = enabled
             profile.sabnzbdHost = host
             profile.sabnzbdApiKey = apiKey
+        case "nzbget":
+            profile.nzbgetEnabled = enabled
+            profile.nzbgetHost = host
+            // For NZBGet, apiKey is username:password format
+            if apiKey.contains(":") {
+                let parts = apiKey.components(separatedBy: ":")
+                profile.nzbgetUser = parts[0]
+                profile.nzbgetPass = parts.count > 1 ? parts[1] : ""
+            } else {
+                profile.nzbgetUser = apiKey
+                profile.nzbgetPass = ""
+            }
         default:
             showError("Unknown service: \(serviceName)")
             return
@@ -385,20 +465,18 @@ class SettingsViewModel {
             // Export configuration data like Flutter's LunaConfig.export()
             let configData = try await hiveManager.exportConfiguration()
             
-            // Create timestamped filename like Flutter: "lunasea_TIMESTAMP.lunasea"
-            let timestamp = Int(Date().timeIntervalSince1970)
-            let filename = "lunasea_\(timestamp).lunasea"
+            // Create timestamped filename like Flutter: DateFormat('y-MM-dd kk-mm-ss').format(DateTime.now())
+            let formatter = DateFormatter()
+            formatter.dateFormat = "y-MM-dd HH-mm-ss"  // Flutter: 'y-MM-dd kk-mm-ss'
+            let timestamp = formatter.string(from: Date())
+            let filename = "\(timestamp).lunasea"
             
-            // Use LunaFileSystem.save() equivalent
-            let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let backupURL = documentsPath.appendingPathComponent(filename)
+            // Store export data for SwiftUI fileExporter
+            exportedBackupData = configData
+            exportedBackupFilename = filename
+            isShowingFileExporter = true
             
-            try configData.write(to: backupURL)
-            
-            showSuccessSnackBar(
-                title: "Backup Complete",
-                message: "Configuration backed up to \(filename)"
-            )
+            // Success will be shown after file is actually saved by SwiftUI fileExporter
             
         } catch {
             showError("Backup failed: \(error.localizedDescription)")
@@ -408,23 +486,86 @@ class SettingsViewModel {
     }
     
     /// Perform restore using exact Flutter LunaConfig.import() implementation
+    /// Uses SwiftUI fileImporter for pure SwiftUI compliance
     @MainActor
     func performRestore() async {
+        // Flutter implementation: File picker for .lunasea files + LunaConfig().import()
         isRestoring = true
         
-        do {
-            // Flutter implementation: File picker for .lunasea files + LunaConfig().import()
-            // iOS: Use document picker for .lunasea files
-            // For now, show alert to guide user to use Files app or cloud storage
-            showError("Please use the backup feature in the original Flutter app to restore configurations. iOS file picker integration coming soon.")
+        // Show confirmation dialog first like Flutter
+        let confirmation = await showConfirmationDialog(
+            title: "Restore Configuration",
+            message: "Select a .lunasea backup file to restore your configuration. This will overwrite your current settings."
+        )
+        
+        guard confirmation else {
             isRestoring = false
             return
+        }
+        
+        // Set flag for SwiftUI view to show file importer
+        isShowingFileImporter = true
+    }
+    
+    /// Handle file import from SwiftUI fileImporter
+    /// Called by SwiftUI view when file is selected
+    @MainActor
+    func handleFileImport(_ result: Result<URL, Error>) async {
+        defer { 
+            isShowingFileImporter = false
+            isRestoring = false 
+        }
+        
+        do {
+            let url = try result.get()
+            
+            // Read and import the backup file like Flutter's LunaConfig().import()
+            let backupData = try Data(contentsOf: url)
+            let backupString = String(data: backupData, encoding: .utf8) ?? ""
+            
+            let hiveManager = HiveDataManager.shared
+            try await hiveManager.importConfiguration(backupString)
+            
+            // Reset and reload like Flutter does after import
+            appSettings = ThriftwoodAppSettings()
+            await loadSettings()
+            
+            showSuccessSnackBar(
+                title: "Restore Complete",
+                message: "Configuration restored successfully"
+            )
             
         } catch {
             showError("Restore failed: \(error.localizedDescription)")
         }
+    }
+    
+    // File importer state for SwiftUI
+    var isShowingFileImporter: Bool = false
+    
+    // File exporter state for SwiftUI
+    var isShowingFileExporter: Bool = false
+    var exportedBackupData: Data?
+    var exportedBackupFilename: String = ""
+    
+    /// Handle backup export completion from SwiftUI fileExporter
+    @MainActor
+    func handleBackupExport(_ result: Result<URL, Error>) {
+        defer { 
+            isShowingFileExporter = false
+            exportedBackupData = nil
+            isBackingUp = false
+        }
         
-        isRestoring = false
+        switch result {
+        case .success(_):
+            showSuccessSnackBar(
+                title: "Backup Complete",
+                message: "Configuration backed up to \(exportedBackupFilename)"
+            )
+        case .failure(let error):
+            showError("Backup failed: \(error.localizedDescription)")
+        }
     }
     
     /// Clear image cache using exact Flutter LunaImageCache.clear() implementation
@@ -520,11 +661,46 @@ class SettingsViewModel {
     
     // MARK: - Helper Methods
     
+    /// Shows confirmation dialog matching Flutter's dialog behavior
+    /// Flutter equivalent: LunaDialog.dialog() with confirmation buttons
     private func showConfirmationDialog(title: String, message: String) async -> Bool {
-        // TODO: Implement proper SwiftUI confirmation dialog
-        // For now, always confirm to allow functionality testing
-        return true
+        // This will be handled by the SwiftUI view layer using .confirmationDialog()
+        // The view model sets the confirmation state and SwiftUI handles the UI
+        return await withCheckedContinuation { continuation in
+            // This pattern allows SwiftUI views to intercept and show native dialogs
+            // The view will call the continuation when user responds
+            Task { @MainActor in
+                // Store confirmation details for SwiftUI to access
+                self.pendingConfirmation = PendingConfirmation(
+                    title: title,
+                    message: message,
+                    continuation: continuation
+                )
+                self.isShowingConfirmationDialog = true
+            }
+        }
     }
+    
+    /// Handles confirmation dialog response
+    @MainActor
+    func handleConfirmationResponse(_ confirmed: Bool) {
+        guard let pending = pendingConfirmation else { return }
+        pending.continuation.resume(returning: confirmed)
+        pendingConfirmation = nil
+        isShowingConfirmationDialog = false
+    }
+    
+    // MARK: - Confirmation Dialog Support
+    
+    struct PendingConfirmation {
+        let title: String
+        let message: String
+        let continuation: CheckedContinuation<Bool, Never>
+    }
+    
+    var pendingConfirmation: PendingConfirmation?
+    var isShowingConfirmationDialog: Bool = false
+}
 }
 
 // MARK: - Profile View Model

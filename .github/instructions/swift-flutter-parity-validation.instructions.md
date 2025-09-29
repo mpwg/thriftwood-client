@@ -57,6 +57,15 @@ Swift data models **MUST** exactly mirror Flutter models:
 - Same default values and initialization
 - Same JSON serialization format for bridge compatibility
 
+### Rule 6: Compilation Requirement (MANDATORY)
+
+All Swift implementations **MUST** compile successfully:
+
+- **Zero compilation errors** in the Swift implementation
+- **All dependencies resolved** and properly linked
+- **Valid syntax and type safety** throughout
+- **Successful Xcode build** before validation approval
+
 ## Validation Checklist Template
 
 Use this checklist for every Swift implementation:
@@ -99,6 +108,14 @@ Use this checklist for every Swift implementation:
 - [ ] Navigation calls work bidirectionally
 - [ ] State changes sync properly across bridge
 - [ ] No data loss during platform switching
+
+### Compilation Validation
+
+- [ ] Swift implementation compiles without errors
+- [ ] No compilation warnings related to implementation
+- [ ] All dependencies are properly resolved
+- [ ] Xcode build succeeds completely
+- [ ] Type safety validation passes
 
 ### System Integration Validation
 
