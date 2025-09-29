@@ -1,969 +1,503 @@
-# Thriftwood Flutter to Native SwiftUI Migration Plan
+# Thriftwood Flutter to SwiftUI Hybrid Migration Plan
 
 ## Executive Summary
 
-This document outlines a gradual, view-by-view migration strategy to transform Thriftwood's iOS implementation from Flutter to native SwiftUI. The migration preserves the existing Flutter infrastructure while incrementally replacing views with native SwiftUI components, targeting iOS 18+ with modern Swift 6 patterns.
+This document outlines a hybrid migration strategy to gradually transition Thriftwood from Flutter to pure SwiftUI on iOS. The approach maintains a fully functional app at every step, allowing Flutter and SwiftUI views to coexist seamlessly while transitioning one view at a time.
 
-## Current Codebase Analysis
+## Migration Philosophy
 
-### Actual Flutter Implementation Structure
+**Hybrid Coexistence Strategy:**
 
-Based on the codebase analysis:
+- Start with 100% Flutter app
+- Gradually replace individual views with SwiftUI equivalents
+- Maintain seamless navigation between Flutter and SwiftUI views
+- End with 100% SwiftUI app
+- App remains fully functional at every step of the migration
 
-- **lib/core/**: Core functionality including API clients, database, UI components
+## Current State Analysis
 
-  - `api/`: Service API implementations (Radarr, Sonarr, Lidarr, etc.)
-  - `database/`: Profile management and configuration storage
-  - `ui/`: Shared UI components and utilities
+### Flutter Implementation Structure
 
-- **lib/modules/**: Feature modules
+- **lib/modules/**: Feature modules (dashboard, radarr, sonarr, lidarr, etc.)
+- **lib/core/api/**: Service API implementations
+- **lib/core/database/**: Profile management and configuration
+- **lib/core/ui/**: Shared UI components
+- **ios/**: Flutter iOS app with Runner target
 
-  - `dashboard/`: Home dashboard with quick actions
-  - `radarr/`, `sonarr/`, `lidarr/`: Media management modules
-  - `sabnzbd/`, `nzbget/`: Download client modules
-  - `tautulli/`: Plex analytics module
-  - `search/`: Cross-service search
-  - `settings/`: Configuration and profile management
-  - `wake_on_lan/`: Network utility
+### Target State
 
-- **ios/**: Existing iOS project with Flutter integration
-  - Already has Xcode project structure
-  - Uses CocoaPods for dependencies
-  - Fastlane configuration for deployment
+- Pure SwiftUI iOS app
+- Modern Swift 6 with async/await and actors
+- SwiftData for persistence
+- iOS 18+ features and optimizations
 
-## Gradual Migration Strategy
+## Hybrid Architecture Design
 
-### Phase 0: Initial Setup and Compilation (Week 1)
-
-**Milestone 1: Get the existing iOS project compiling in Xcode**
+### 1. Flutter-SwiftUI Bridge System
 
 ```swift
-OBJECTIVE: Establish native iOS development environment alongside Flutter
-TASKS:
-1. Open ios/Runner.xcworkspace in Xcode 16+
-2. Update project settings:
-   - Set iOS Deployment Target to 18.0
-   - Enable Swift 6 language mode
-   - Configure strict concurrency checking
-3. Resolve any compilation issues:
-   - Update CocoaPods dependencies
-   - Fix any deprecated API usage
-   - Ensure Flutter framework is properly linked
-4. Create new Swift target "ThriftwoodNative" alongside Flutter Runner:
-   - Add as embedded framework
-   - Configure to share bundle resources
-   - Set up module imports
-5. Test that both Flutter and native targets compile
-6. Verify app runs with existing Flutter implementation
+// Core bridge for seamless navigation between Flutter and SwiftUI
+class FlutterSwiftUIBridge: NSObject {
+    static let shared = FlutterSwiftUIBridge()
+
+    private var nativeViews: Set<String> = []
+    private weak var flutterViewController: FlutterViewController?
+
+    // Register which views are now native
+    func registerNativeView(_ route: String) {
+        nativeViews.insert(route)
+    }
+
+    // Check if view should be native
+    func shouldUseNativeView(for route: String) -> Bool {
+        return nativeViews.contains(route)
+    }
+
+    // Present SwiftUI view from Flutter
+    func presentNativeView(route: String, data: [String: Any] = [:]) {
+        guard let flutterVC = flutterViewController,
+              shouldUseNativeView(for: route) else { return }
+
+        let swiftUIView = createSwiftUIView(for: route, data: data)
+        let hostingController = UIHostingController(rootView: swiftUIView)
+
+        flutterVC.present(hostingController, animated: true)
+    }
+
+    // Navigate back to Flutter
+    func navigateBackToFlutter(data: [String: Any] = [:]) {
+        // Send data back to Flutter and dismiss SwiftUI view
+        flutterViewController?.dismiss(animated: true)
+    }
+}
 ```
 
-### Phase 1: SwiftUI Infrastructure (Week 2)
-
-**Create native infrastructure parallel to Flutter**
+### 2. Shared Data Layer
 
 ```swift
-OBJECTIVE: Establish SwiftUI foundation without breaking Flutter
-TASKS:
-1. Add SwiftUI entry point in ThriftwoodNative target:
-   - Create ThriftwoodApp.swift with @main
-   - Set up initial ContentView
-   - Configure to launch from AppDelegate when flag is set
-2. Create core native architecture:
-   /ThriftwoodNative/
-     /Core/
-       - APIClient.swift (base networking)
-       - ProfileManager.swift (configuration)
-       - ThemeManager.swift
-     /Models/
-       - ServiceModels.swift (Codable structs)
-     /ViewModels/
-       - Base ViewModels with @Observable
-     /Views/
-       - Initial view structure
-3. Implement feature flag system:
-   - UserDefaults flag to toggle Flutter/Native views
-   - Method swizzling to intercept Flutter navigation
-   - Bridge to present SwiftUI views from Flutter
-4. Create Flutter-to-SwiftUI bridge:
-   - MethodChannel for Flutter->Native communication
-   - Host SwiftUI views in FlutterViewController
-   - Share data models between platforms
+// Shared data models that work with both Flutter and SwiftUI
+protocol SharedDataProtocol {
+    func saveToFlutterStorage()
+    func loadFromFlutterStorage()
+    func notifyFlutterOfChanges()
+}
+
+// Profile system that works with both platforms
+class SharedProfileManager: ObservableObject {
+    @Published var activeProfile: Profile?
+
+    // Read/write to Flutter's existing Hive storage
+    func syncWithFlutterStorage() async {
+        // Bidirectional sync with Flutter's database
+    }
+}
 ```
 
-### Phase 2: First Native View - Settings (Week 3-4)
-
-**Migrate Settings as the first complete SwiftUI module**
+### 3. Navigation Coordination
 
 ```swift
-OBJECTIVE: Replace Settings module with SwiftUI while keeping Flutter running
-TASKS:
-1. Port Settings data models:
-   - Convert configuration models to Swift
-   - Implement Codable for persistence
-   - Create SwiftData schema for profiles
-2. Build SettingsViewModel:
-   @Observable
-   @MainActor
-   class SettingsViewModel {
-       var profiles: [Profile] = []
-       var activeProfile: Profile?
-       var connectionStatus: [String: Bool] = [:]
+// Coordinate navigation between Flutter and SwiftUI
+class HybridNavigationCoordinator {
+    func navigateFromFlutter(to route: String, data: [String: Any]) {
+        if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) {
+            // Show SwiftUI view
+            FlutterSwiftUIBridge.shared.presentNativeView(route: route, data: data)
+        } else {
+            // Continue with Flutter navigation
+            // Send navigation command back to Flutter
+        }
+    }
 
-       func testConnection(service: ServiceType) async
-       func saveProfile(_ profile: Profile) async
-   }
-3. Create SettingsView hierarchy:
-   - Main settings list
-   - Profile management views
-   - Service configuration forms
-   - Connection test UI
-4. Implement navigation intercept:
-   - Detect when Flutter navigates to settings
-   - Present SwiftUI SettingsView instead
-   - Handle back navigation to Flutter
-5. Test data synchronization:
-   - Ensure SwiftUI changes reflect in Flutter
-   - Verify profile switching works
+    func navigateFromSwiftUI(to route: String, data: [String: Any]) {
+        if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) {
+            // Show another SwiftUI view
+        } else {
+            // Navigate back to Flutter for this view
+            FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: data)
+            // Then navigate in Flutter
+        }
+    }
+}
+```
+
+## Step-by-Step Migration Process
+
+### Phase 1: Setup Hybrid Infrastructure (Week 1-2)
+
+**Goal: Establish bridge between Flutter and SwiftUI**
+
+```swift
+Tasks:
+1. Create FlutterSwiftUIBridge class
+2. Add MethodChannel for Flutter ↔ SwiftUI communication
+3. Setup shared data storage accessible by both platforms
+4. Create navigation coordination system
+5. Test basic view switching (Flutter → SwiftUI → Flutter)
+```
+
+**Flutter Side (Dart):**
+
+```dart
+// Method channel for communication with SwiftUI
+class NativeBridge {
+  static const platform = MethodChannel('com.thriftwood.bridge');
+
+  static Future<void> navigateToNativeView(String route, Map<String, dynamic> data) async {
+    await platform.invokeMethod('navigateToNative', {'route': route, 'data': data});
+  }
+
+  static Future<bool> isNativeViewAvailable(String route) async {
+    return await platform.invokeMethod('isNativeViewAvailable', {'route': route});
+  }
+}
+
+// Modified Flutter navigation to check for native views
+class HybridRouter {
+  static void navigateTo(BuildContext context, String route, {Map<String, dynamic>? data}) async {
+    final isNative = await NativeBridge.isNativeViewAvailable(route);
+
+    if (isNative) {
+      await NativeBridge.navigateToNativeView(route, data ?? {});
+    } else {
+      // Use existing Flutter navigation
+      context.go(route, extra: data);
+    }
+  }
+}
+```
+
+### Phase 2: First Hybrid View - Settings (Week 3-4)
+
+**Goal: Replace Settings with SwiftUI while maintaining full app functionality**
+
+```swift
+Tasks:
+1. Create SettingsView in SwiftUI
+2. Migrate settings data models to Swift
+3. Implement bidirectional data sync with Flutter
+4. Replace Flutter settings navigation with SwiftUI
+5. Ensure changes reflect in both platforms
+```
+
+**SwiftUI Implementation:**
+
+```swift
+// Settings view that works with existing Flutter data
+struct SettingsView: View {
+    @StateObject private var profileManager = SharedProfileManager()
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationView {
+            List {
+                Section("Profiles") {
+                    ForEach(profileManager.profiles) { profile in
+                        ProfileRow(profile: profile)
+                    }
+                }
+
+                Section("Services") {
+                    ServiceConfigurationView()
+                }
+            }
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Close") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .task {
+            await profileManager.syncWithFlutterStorage()
+        }
+    }
+}
+```
+
+**Flutter Integration:**
+
+```dart
+// Modified settings navigation in Flutter
+class SettingsButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.settings),
+      onPressed: () async {
+        // This will now open SwiftUI settings instead of Flutter
+        await HybridRouter.navigateTo(context, '/settings');
+      },
+    );
+  }
+}
 ```
 
 ### Phase 3: Dashboard Migration (Week 5-6)
 
-**Replace Dashboard with native implementation**
+**Goal: Replace Dashboard with SwiftUI while maintaining service module navigation**
 
 ```swift
-OBJECTIVE: Migrate the main dashboard to SwiftUI
-TASKS:
-1. Analyze current Flutter dashboard:
-   - lib/modules/dashboard/pages/dashboard.dart structure
-   - Quick action implementations
-   - Module grid layout
-2. Create DashboardViewModel:
-   - Service status monitoring
-   - Quick actions handling
-   - Module availability checks
-3. Build DashboardView:
-   - Module grid with NavigationLink
-   - Service status indicators
-   - Quick action buttons
-4. Implement hybrid navigation:
-   - SwiftUI dashboard launches Flutter modules
-   - Gradual module replacement strategy
-5. Port dashboard-specific API calls:
-   - Service status checks
-   - Recent activity fetching
+Tasks:
+1. Create SwiftUI Dashboard with service tiles
+2. Handle navigation to both SwiftUI and Flutter service modules
+3. Implement service status checking
+4. Add quick actions functionality
+5. Maintain existing deep linking
 ```
 
-### Phase 4: Service Module Migration (Week 7-12)
-
-**Migrate media service modules one by one**
-
-#### 4.1 Radarr Module (Week 7-8)
+**Hybrid Dashboard:**
 
 ```swift
-OBJECTIVE: Complete Radarr native implementation
-TASKS:
-1. Port Radarr API client:
-   - Convert from lib/core/api/radarr/
-   - Implement with async/await
-   - Actor-based for thread safety
-2. Create Radarr ViewModels:
-   - MovieListViewModel
-   - MovieDetailViewModel
-   - QueueViewModel
-3. Build Radarr Views:
-   - Movie grid/list view
-   - Movie detail with actions
-   - Add movie search
-   - Queue management
-4. Integrate with existing navigation:
-   - Replace Flutter Radarr views progressively
-   - Maintain data consistency
+struct DashboardView: View {
+    @StateObject private var viewModel = DashboardViewModel()
+
+    var body: some View {
+        NavigationView {
+            LazyVGrid(columns: columns, spacing: 16) {
+                ForEach(viewModel.services) { service in
+                    ServiceTile(service: service) {
+                        // Navigate to either SwiftUI or Flutter service view
+                        navigateToService(service)
+                    }
+                }
+            }
+            .navigationTitle("Dashboard")
+        }
+    }
+
+    private func navigateToService(_ service: Service) {
+        if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: service.route) {
+            // Navigate to SwiftUI service view
+        } else {
+            // Navigate back to Flutter for this service
+            FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: [
+                "route": service.route
+            ])
+        }
+    }
+}
 ```
 
-#### 4.2 Sonarr Module (Week 9-10)
+### Phase 4: Service Module Migration (Week 7-14)
+
+**Goal: Migrate each service module one by one**
+
+#### Week 7-8: Radarr Module
 
 ```swift
-OBJECTIVE: Complete Sonarr native implementation
-TASKS:
-1. Port Sonarr API client from lib/core/api/sonarr/
-2. Create Series/Episode ViewModels
-3. Build Sonarr view hierarchy
-4. Implement calendar view
-5. Handle series monitoring
+Tasks:
+1. Create RadarrHomeView in SwiftUI
+2. Implement movie list and detail views
+3. Connect to existing Radarr API endpoints
+4. Handle navigation from Dashboard (SwiftUI) and other modules (Flutter)
+5. Maintain search and filtering functionality
 ```
 
-#### 4.3 Download Clients (Week 11-12)
+#### Week 9-10: Sonarr Module
 
 ```swift
-OBJECTIVE: Migrate SABnzbd and NZBGet modules
-TASKS:
-1. Port download client APIs
-2. Create unified download queue view
-3. Implement queue management actions
-4. Build history views
+Tasks:
+1. Create SonarrHomeView with series management
+2. Implement episode views and calendar
+3. Handle season management
+4. Connect monitoring toggles
 ```
 
-### Phase 5: Complete Native Transition (Week 13-14)
-
-**Remove Flutter dependencies and polish**
+#### Week 11-12: Download Clients (SABnzbd, NZBGet)
 
 ```swift
-OBJECTIVE: Complete transition to pure SwiftUI
-TASKS:
-1. Remove Flutter module dependencies:
-   - Remove Flutter.framework
-   - Clean up bridging code
-   - Remove MethodChannels
-2. Migrate remaining modules:
-   - Tautulli analytics
-   - Search functionality
-   - Wake-on-LAN
-3. Implement native-only features:
-   - Widgets
-   - App Clips
-   - SharePlay support
-4. Performance optimization:
-   - Image caching
-   - List virtualization
-   - Background refresh
-5. Polish and testing:
-   - UI refinements
-   - Comprehensive testing
-   - Accessibility audit
+Tasks:
+1. Create unified download queue view
+2. Implement queue management actions
+3. Add download history
+4. Handle pause/resume functionality
+```
+
+#### Week 13-14: Remaining Modules (Lidarr, Tautulli, Search, Wake-on-LAN)
+
+```swift
+Tasks:
+1. Complete remaining service migrations
+2. Implement cross-module search
+3. Add analytics views for Tautulli
+4. Create Wake-on-LAN utilities
+```
+
+### Phase 5: Pure SwiftUI Transition (Week 15-16)
+
+**Goal: Remove Flutter completely and finalize pure SwiftUI app**
+
+```swift
+Tasks:
+1. Remove FlutterSwiftUIBridge system
+2. Replace all Flutter navigation with SwiftUI NavigationStack
+3. Clean up hybrid data synchronization
+4. Remove Flutter framework dependencies
+5. Optimize for pure SwiftUI performance
+6. Add iOS-exclusive features (Widgets, App Clips, etc.)
 ```
 
 ## Implementation Patterns
 
-### Gradual View Replacement Pattern
+### Seamless View Transition Pattern
 
 ```swift
-// Flutter-SwiftUI Bridge
-class ViewBridge: NSObject {
-    static let shared = ViewBridge()
+// Each view migration follows this pattern:
 
-    func shouldUseNativeView(for route: String) -> Bool {
-        // Check feature flag for specific routes
-        let nativeRoutes = UserDefaults.standard.stringArray(forKey: "nativeRoutes") ?? []
-        return nativeRoutes.contains(route)
-    }
-
-    func presentNativeView(for route: String, from controller: FlutterViewController) {
-        guard shouldUseNativeView(for: route) else { return }
-
-        let hostingController = UIHostingController(
-            rootView: NativeViewFactory.createView(for: route)
-        )
-        controller.present(hostingController, animated: true)
-    }
+// 1. Create SwiftUI equivalent
+struct NewSwiftUIView: View {
+    // SwiftUI implementation
 }
 
-// Native View Factory
-enum NativeViewFactory {
-    static func createView(for route: String) -> AnyView {
-        switch route {
-        case "/settings":
-            return AnyView(SettingsView())
-        case "/dashboard":
-            return AnyView(DashboardView())
-        case "/radarr":
-            return AnyView(RadarrHomeView())
-        default:
-            return AnyView(Text("Not implemented"))
-        }
+// 2. Register with bridge
+FlutterSwiftUIBridge.shared.registerNativeView("/viewroute")
+
+// 3. Flutter automatically uses SwiftUI version
+// No changes needed in Flutter navigation code
+```
+
+### Data Synchronization Pattern
+
+```swift
+// Ensure data changes are reflected in both platforms
+class HybridDataManager {
+    // Write to both Flutter storage and SwiftUI storage
+    func saveData<T: Codable>(_ data: T, forKey key: String) async {
+        // Save to SwiftData (SwiftUI)
+        await swiftDataManager.save(data, forKey: key)
+
+        // Sync to Flutter storage
+        await flutterStorageSync.save(data, forKey: key)
+
+        // Notify both platforms of changes
+        NotificationCenter.default.post(name: .dataChanged, object: key)
     }
 }
 ```
 
-### Modern MVVM Pattern for iOS 18+
+### Navigation Consistency Pattern
 
 ```swift
-// Model - Aligned with Flutter models
-struct Movie: Codable, Identifiable, Sendable {
-    let id: Int
-    let title: String
-    let year: Int
-    let hasFile: Bool
-    let monitored: Bool
-    // Match lib/core/api/radarr/models/movie.dart structure
-}
-
-// API Client - Actor for concurrency
-actor RadarrClient {
-    private let baseURL: URL
-    private let apiKey: String
-
-    func fetchMovies() async throws -> [Movie] {
-        var request = URLRequest(url: baseURL.appendingPathComponent("movie"))
-        request.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
-
-        let (data, _) = try await URLSession.shared.data(for: request)
-        return try JSONDecoder().decode([Movie].self, from: data)
-    }
-}
-
-// ViewModel - Observable with async/await
-@Observable
-@MainActor
-class MovieListViewModel {
-    var movies: [Movie] = []
-    var isLoading = false
-    var searchText = ""
-
-    var filteredMovies: [Movie] {
-        guard !searchText.isEmpty else { return movies }
-        return movies.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
-    }
-
-    private let client: RadarrClient
-
-    init(client: RadarrClient) {
-        self.client = client
-    }
-
-    func loadMovies() async {
-        isLoading = true
-        defer { isLoading = false }
-
-        do {
-            movies = try await client.fetchMovies()
-        } catch {
-            // Handle error
-        }
-    }
-}
-
-// View - Pure SwiftUI
-struct MovieListView: View {
-    @State private var viewModel: MovieListViewModel
-
-    var body: some View {
-        NavigationStack {
-            List(viewModel.filteredMovies) { movie in
-                MovieRow(movie: movie)
-            }
-            .searchable(text: $viewModel.searchText)
-            .navigationTitle("Movies")
-            .task {
-                await viewModel.loadMovies()
-            }
-            .refreshable {
-                await viewModel.loadMovies()
+// Maintain consistent navigation behavior
+extension View {
+    func hybridNavigationDestination<D: Hashable, C: View>(
+        for data: D.Type,
+        @ViewBuilder destination: @escaping (D) -> C
+    ) -> some View {
+        self.navigationDestination(for: data) { value in
+            // Check if destination should be native or Flutter
+            if shouldShowInSwiftUI(for: value) {
+                destination(value)
+            } else {
+                // Navigate to Flutter equivalent
+                FlutterNavigationView(destination: value)
             }
         }
     }
 }
 ```
 
-### Profile System Bridge
+## Testing Strategy for Hybrid App
+
+### Continuous Integration Testing
 
 ```swift
-// Bridge existing Flutter profile system
-class ProfileBridge {
-    static let shared = ProfileBridge()
+// Test both Flutter and SwiftUI components
+func testHybridNavigation() {
+    // Test Flutter → SwiftUI navigation
+    // Test SwiftUI → Flutter navigation
+    // Test data synchronization
+    // Test deep linking across platforms
+}
 
-    // Read from existing Flutter storage
-    func getCurrentProfile() -> Profile? {
-        // Read from shared UserDefaults/Keychain that Flutter uses
-        // Path: lib/core/database/database.dart
-    }
-
-    // Gradually migrate to SwiftData
-    func migrateToSwiftData() async {
-        // One-time migration from Flutter storage
-    }
+func testDataConsistency() {
+    // Ensure data changes in SwiftUI reflect in Flutter
+    // Ensure data changes in Flutter reflect in SwiftUI
+    // Test profile switching across platforms
 }
 ```
 
-## Migration Execution Checklist
+### User Acceptance Testing
 
-### Per-View Migration Steps
+- Test all navigation paths work seamlessly
+- Verify no visual inconsistencies between platforms
+- Ensure smooth transitions and animations
+- Test on multiple iOS devices and versions
 
-- [ ] Analyze Flutter view implementation
-- [ ] Create Swift models matching Dart models
-- [ ] Build ViewModel with @Observable
-- [ ] Implement SwiftUI view
-- [ ] Add to ViewBridge routing
-- [ ] Test alongside Flutter implementation
-- [ ] Enable native view via feature flag
-- [ ] Monitor for issues
-- [ ] Remove Flutter implementation
+## Success Criteria
 
-### Testing Strategy for Gradual Migration
+**Each Phase Must Meet:**
 
-1. **Parallel Testing**: Run both Flutter and Native views side-by-side
-2. **A/B Testing**: Use feature flags to test with subset of users
-3. **Data Validation**: Ensure data consistency between platforms
-4. **Performance Comparison**: Measure and compare metrics
-5. **Rollback Plan**: Quick disable via feature flags
+- [ ] App builds and runs successfully
+- [ ] All existing functionality preserved
+- [ ] No crashes or navigation dead ends
+- [ ] Data consistency maintained across platforms
+- [ ] Performance equal or better than previous phase
+- [ ] All deep links and external integrations work
 
-## Success Metrics
+**Final Success Criteria:**
 
-1. **Compilation**: iOS project compiles in Xcode with zero errors
-2. **Gradual Migration**: Each view works independently without breaking Flutter
-3. **Feature Parity**: All Flutter features available in SwiftUI
-4. **Performance**: Native views perform better than Flutter equivalents
-5. **Modern Swift**: 100% Swift 6 compliance with async/await
-6. **iOS 18 Features**: Leverage latest iOS capabilities
-7. **Code Sharing**: Reuse models and logic where possible
-8. **User Experience**: Seamless transition for users
+- [ ] 100% SwiftUI implementation
+- [ ] Zero Flutter dependencies
+- [ ] All features from original Flutter app
+- [ ] Improved performance and iOS integration
+- [ ] App Store ready for iOS 18+
 
 ## Risk Mitigation
 
 ### Technical Risks
 
-- **Hybrid Complexity**: Test bridge thoroughly, have fallback to Flutter
-- **Data Synchronization**: Use shared storage, validate consistency
-- **Navigation State**: Carefully manage navigation stack between platforms
-- **Performance**: Profile both implementations, ensure native is faster
+- **Navigation Complexity**: Maintain detailed navigation map, test all paths
+- **Data Synchronization**: Use shared storage layer, implement conflict resolution
+- **Performance**: Profile each phase, ensure no regressions
+- **State Management**: Careful coordination between Flutter and SwiftUI state
 
 ### Process Risks
 
-- **Incremental Releases**: Ship native views gradually to users
-- **Rollback Strategy**: Feature flags allow instant rollback
-- **Testing Coverage**: Maintain tests for both implementations
-- **Team Knowledge**: Document bridge patterns and architecture
+- **User Experience**: Maintain visual consistency during transition
+- **Testing Complexity**: Automated testing for both platforms at each phase
+- **Rollback Strategy**: Each phase can be rolled back independently
+- **Timeline Delays**: 20% buffer built into each phase
 
-## Current Codebase Specific Adjustments
+## Migration Checklist Per View
 
-Based on the actual codebase structure:
+**Before Starting View Migration:**
 
-1. **API Clients**: Port from `lib/core/api/` maintaining exact endpoints
-2. **Models**: Convert from `lib/core/api/*/models/` preserving JSON structure
-3. **UI Components**: Recreate `lib/core/ui/` components in SwiftUI
-4. **Navigation**: Replace `go_router` routes with NavigationStack
-5. **State Management**: Convert Provider pattern to @Observable ViewModels
-6. **Database**: Migrate from `lib/core/database/` to SwiftData
+- [ ] Analyze Flutter view implementation and dependencies
+- [ ] Design SwiftUI equivalent with same functionality
+- [ ] Plan data model sharing strategy
+- [ ] Identify navigation entry/exit points
 
-## Next Steps
+**During View Migration:**
 
-1. **Week 1**: Get iOS project compiling in Xcode 16
-2. **Week 2**: Create ThriftwoodNative target with basic SwiftUI shell
-3. **Week 3**: Implement Settings as first native view
-4. **Week 4**: Add Dashboard with hybrid navigation
-5. **Ongoing**: Migrate service modules one by one
+- [ ] Implement SwiftUI view with feature parity
+- [ ] Setup bidirectional data synchronization
+- [ ] Register view with FlutterSwiftUIBridge
+- [ ] Test navigation from all possible sources
+- [ ] Verify data consistency
+
+**After View Migration:**
+
+- [ ] Remove Flutter view code (after verification)
+- [ ] Update documentation
+- [ ] Performance testing and optimization
+- [ ] User acceptance testing
+
+## Timeline Summary
+
+| Phase | Duration | Deliverable                | App State                         |
+| ----- | -------- | -------------------------- | --------------------------------- |
+| 1     | 2 weeks  | Hybrid infrastructure      | 100% Flutter + Bridge             |
+| 2     | 2 weeks  | Settings in SwiftUI        | ~95% Flutter + Settings           |
+| 3     | 2 weeks  | Dashboard in SwiftUI       | ~90% Flutter + Dashboard/Settings |
+| 4     | 8 weeks  | Service modules in SwiftUI | ~20% Flutter + Most SwiftUI       |
+| 5     | 2 weeks  | Pure SwiftUI app           | 100% SwiftUI                      |
+
+**Total: 16 weeks to pure SwiftUI app**
 
 ---
 
-_This migration plan is designed for gradual, low-risk transition from Flutter to SwiftUI, allowing both implementations to coexist during the migration period._
-
-```swift
-// Build basic view structure
-// Implement ViewModel
-// Connect data bindings
-// Add user interactions
-```
-
-4. **Match Visual Design**
-
-   ```swift
-   // Apply styling and themes
-   // Implement animations
-   // Fine-tune layouts
-   // Test on multiple devices
-   ```
-
-5. **Test Feature Parity**
-   ```swift
-   // Compare with Flutter version
-   // Test all edge cases
-   // Verify data consistency
-   // Check performance metrics
-   ```
-
-## MVVM Architecture & Swift 6 Patterns
-
-### Modern SwiftUI MVVM Architecture
-
-The target architecture follows Apple's modern SwiftUI patterns with strict MVVM separation:
-
-#### Layer Responsibilities
-
-1. **Model Layer**
-
-   - Pure data structures (`struct` with `Codable`, `Sendable`)
-   - SwiftData persistence models (`@Model` classes)
-   - Business logic encapsulated in services
-
-2. **ViewModel Layer**
-
-   - `@Observable` classes (Swift 5.9+) for reactive state
-   - `@MainActor` isolation for UI thread safety
-   - Async/await for all asynchronous operations
-   - No direct UI dependencies
-
-3. **View Layer**
-   - SwiftUI views with declarative UI
-   - `@State` for view-specific ViewModels
-   - `@Environment` for shared dependencies
-   - Minimal business logic
-
-#### Swift 6 Concurrency Requirements
-
-- **Actor Isolation**: API clients and services use `actor` for data race safety
-- **Sendable Conformance**: All data crossing concurrency boundaries must be `Sendable`
-- **MainActor UI**: All ViewModels that update UI are `@MainActor` isolated
-- **Structured Concurrency**: Use `async/await` with proper task management
-
-#### Example Modern MVVM Pattern
-
-```swift
-// Model - Pure data, Sendable
-struct ServiceConfiguration: Codable, Sendable {
-    let host: String
-    let apiKey: String
-    let headers: [String: String]
-}
-
-// Service - Actor for thread safety
-actor ServiceAPIClient {
-    private let config: ServiceConfiguration
-
-    init(config: ServiceConfiguration) {
-        self.config = config
-    }
-
-    func fetchData() async throws -> [ServiceItem] {
-        // Network operations isolated in actor
-    }
-}
-
-// ViewModel - MainActor for UI updates
-@Observable
-@MainActor
-class ServiceViewModel {
-    var items: [ServiceItem] = []
-    var isLoading = false
-    var errorMessage: String?
-
-    private let apiClient: ServiceAPIClient
-
-    init(apiClient: ServiceAPIClient) {
-        self.apiClient = apiClient
-    }
-
-    func loadData() async {
-        isLoading = true
-        defer { isLoading = false }
-
-        do {
-            items = try await apiClient.fetchData()
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-}
-
-// View - Declarative UI only
-struct ServiceView: View {
-    @State private var viewModel: ServiceViewModel
-
-    init(apiClient: ServiceAPIClient) {
-        self._viewModel = State(initialValue: ServiceViewModel(apiClient: apiClient))
-    }
-
-    var body: some View {
-        NavigationView {
-            Group {
-                if viewModel.isLoading {
-                    ProgressView()
-                } else {
-                    ServiceListView(items: viewModel.items)
-                }
-            }
-            .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
-                Button("OK") { viewModel.errorMessage = nil }
-            } message: {
-                Text(viewModel.errorMessage ?? "")
-            }
-        }
-        .task {
-            await viewModel.loadData()
-        }
-    }
-}
-```
-
-## Thriftwood-Specific Migration Patterns
-
-### Service Module State Migration
-
-**Flutter Provider Pattern (Thriftwood):**
-
-```dart
-class RadarrState extends ChangeNotifier {
-  RadarrAPI? api;
-  bool enabled = false;
-  Map<int, Future<RadarrMovie>> movies = {};
-
-  void setMovie(int id, Future<RadarrMovie> future) {
-    movies[id] = future;
-    notifyListeners();
-  }
-}
-
-// Usage in Widget:
-context.read<RadarrState>().setMovie(movieId,
-  context.read<RadarrState>().api!.movies.getMovie(movieId: movieId)
-);
-```
-
-**SwiftUI Modern MVVM (Native):**
-
-```swift
-// Model
-struct RadarrMovie: Codable, Identifiable, Sendable {
-    let id: Int
-    let title: String
-    let status: String
-    let year: Int
-}
-
-// ViewModel (Observable)
-@Observable
-@MainActor
-class RadarrViewModel {
-    var isEnabled = false
-    var movies: [Int: RadarrMovie] = [:]
-    var loadingStates: [Int: Bool] = [:]
-    var errorMessage: String?
-
-    private let apiClient: RadarrAPIClient
-
-    init(apiClient: RadarrAPIClient) {
-        self.apiClient = apiClient
-    }
-
-    func loadMovie(id: Int) async {
-        loadingStates[id] = true
-        errorMessage = nil
-
-        do {
-            movies[id] = try await apiClient.getMovie(id: id)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-
-        loadingStates[id] = false
-    }
-}
-
-// View
-struct RadarrMovieView: View {
-    @State private var viewModel: RadarrViewModel
-    let movieId: Int
-
-    init(movieId: Int, apiClient: RadarrAPIClient) {
-        self.movieId = movieId
-        self._viewModel = State(initialValue: RadarrViewModel(apiClient: apiClient))
-    }
-
-    var body: some View {
-        Group {
-            if viewModel.loadingStates[movieId] == true {
-                ProgressView()
-            } else if let movie = viewModel.movies[movieId] {
-                MovieDetailView(movie: movie)
-            } else if let error = viewModel.errorMessage {
-                ErrorView(message: error)
-            }
-        }
-        .task {
-            await viewModel.loadMovie(id: movieId)
-        }
-    }
-}
-```
-
-### API Client Migration Pattern
-
-**Flutter Retrofit/Dio Pattern:**
-
-```dart
-@RestApi(baseUrl: "http://localhost:7878/api/v3/")
-abstract class RadarrAPI {
-  factory RadarrAPI(Dio dio) = _RadarrAPI;
-
-  @GET("/movie")
-  Future<List<RadarrMovie>> getMovies();
-
-  @GET("/movie/{id}")
-  Future<RadarrMovie> getMovie(@Path("id") int movieId);
-}
-```
-
-**SwiftUI URLSession Pattern:**
-
-```swift
-actor RadarrAPIClient {
-    private let baseURL: URL
-    private let session: URLSession
-    private let headers: [String: String]
-
-    func getMovies() async throws -> [RadarrMovie] {
-        let url = baseURL.appendingPathComponent("movie")
-        var request = URLRequest(url: url)
-        headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
-
-        let (data, _) = try await session.data(for: request)
-        return try JSONDecoder().decode([RadarrMovie].self, from: data)
-    }
-
-    func getMovie(id: Int) async throws -> RadarrMovie {
-        let url = baseURL.appendingPathComponent("movie/\(id)")
-        var request = URLRequest(url: url)
-        headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
-
-        let (data, _) = try await session.data(for: request)
-        return try JSONDecoder().decode(RadarrMovie.self, from: data)
-    }
-}
-```
-
-### Profile System Migration
-
-**Flutter Hive Profile System:**
-
-```dart
-@HiveType(typeId: 0)
-class LunaProfile extends HiveObject {
-  @HiveField(0)
-  String radarrHost = '';
-  @HiveField(1)
-  String radarrApiKey = '';
-  @HiveField(2)
-  Map<String, dynamic> radarrHeaders = {};
-}
-
-// Usage:
-final profile = LunaBox.profiles.read('default');
-```
-
-**SwiftUI SwiftData Profile System (Modern):**
-
-```swift
-// Model
-@Model
-class ThriftwoodProfile: Sendable {
-    var name: String
-    var radarrHost: String
-    var radarrApiKey: String
-    var radarrHeaders: [String: String]
-
-    init(name: String) {
-        self.name = name
-        self.radarrHost = ""
-        self.radarrApiKey = ""
-        self.radarrHeaders = [:]
-    }
-}
-
-// ViewModel
-@Observable
-@MainActor
-class ProfileViewModel {
-    var activeProfile: ThriftwoodProfile?
-    var availableProfiles: [ThriftwoodProfile] = []
-    var isLoading = false
-    var errorMessage: String?
-
-    private let profileService: ProfileService
-
-    init(profileService: ProfileService) {
-        self.profileService = profileService
-    }
-
-    func loadProfiles() async {
-        isLoading = true
-        defer { isLoading = false }
-
-        do {
-            availableProfiles = try await profileService.fetchProfiles()
-            if activeProfile == nil {
-                activeProfile = availableProfiles.first
-            }
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
-    func switchProfile(_ profile: ThriftwoodProfile) async {
-        activeProfile = profile
-        // Notify other services of profile change
-        await NotificationCenter.default.post(name: .profileChanged, object: profile)
-    }
-}
-
-// Service (Actor for thread safety)
-actor ProfileService {
-    private let modelContext: ModelContext
-
-    init(modelContext: ModelContext) {
-        self.modelContext = modelContext
-    }
-
-    func fetchProfiles() throws -> [ThriftwoodProfile] {
-        let descriptor = FetchDescriptor<ThriftwoodProfile>()
-        return try modelContext.fetch(descriptor)
-    }
-
-    func saveProfile(_ profile: ThriftwoodProfile) throws {
-        modelContext.insert(profile)
-        try modelContext.save()
-    }
-}
-
-    func loadProfile(named: String) async {
-        // Load from SwiftData
-    }
-}
-```
-
-## Testing Strategy
-
-### Unit Testing Requirements
-
-- Minimum 80% code coverage for ViewModels
-- Test all data transformations
-- Verify API response handling
-- Test error scenarios
-
-### UI Testing Requirements
-
-- Test critical user flows
-- Verify navigation paths
-- Test form validations
-- Check accessibility
-
-### Integration Testing
-
-- Test API integrations
-- Verify data persistence
-- Test push notifications
-- Validate deep linking
-
-## Success Metrics
-
-1. **MVVM Architecture Compliance**: Clear separation of Model, ViewModel, and View layers
-2. **Swift 6 Concurrency**: 100% data race safety with actor isolation and Sendable conformance
-3. **Modern State Management**: All state uses `@Observable` macro with async/await patterns
-4. **Service Integration Parity**: 100% of Radarr, Sonarr, Lidarr, NZBGet, SABnzbd, Tautulli APIs supported
-5. **Profile System**: Multi-profile configuration with SwiftData persistence
-6. **Performance**: App launch < 1 second, zero main thread blocking operations
-7. **Media Library Support**: Handle large libraries (10,000+ movies/shows) with efficient SwiftUI Lists
-8. **Offline Capability**: Graceful handling of service outages with cached data
-9. **Theme Consistency**: AMOLED black theme using modern SwiftUI styling
-10. **Test Coverage**: > 80% coverage using Swift Testing framework
-11. **Accessibility**: Full VoiceOver support and Dynamic Type compliance
-12. **App Store Ready**: Pass all iOS 17+ guidelines and SwiftUI best practices## Risk Mitigation
-
-### Swift 6 Migration Risks
-
-- **Concurrency Complexity**: Start with actors early, use Swift 6 migration guide
-- **Sendable Conformance**: Plan data model architecture to support Sendable requirements
-- **MainActor Isolation**: Carefully design ViewModel boundaries to avoid cross-actor calls
-- **Legacy Dependencies**: Audit third-party packages for Swift 6 compatibility
-- **Learning Curve**: Allocate time for team Swift 6 training and experimentation
-
-### Technical Risks
-
-- **SwiftUI Complexity**: Use modern SwiftUI patterns, avoid UIKit unless necessary
-- **State Management**: Leverage `@Observable` instead of complex Combine flows
-- **Performance Issues**: Profile with Instruments early and often, use Swift 6 optimizations
-- **API Integration**: Design actor-based API clients from the start
-- **Data Race Safety**: Enable strict concurrency checking from day one
-
-### Process Risks
-
-- **Timeline Delays**: Build 20% buffer for Swift 6 learning curve
-- **Architecture Drift**: Enforce MVVM with code reviews and architecture guidelines
-- **Testing Strategy**: Migrate to Swift Testing framework early in process
-- **Knowledge Transfer**: Document Swift 6 patterns and MVVM decisions
-- **Tooling Compatibility**: Verify all development tools support Swift 6
-
-## Rollback Strategy
-
-If critical issues arise:
-
-1. Maintain Flutter app in parallel until native is stable
-2. Use feature flags to toggle between implementations
-3. Keep git branches for each major phase
-4. Have hotfix process for Flutter app during transition
-
-## Post-Migration Checklist
-
-- [ ] All Flutter features implemented in SwiftUI
-- [ ] Comprehensive test coverage achieved
-- [ ] Performance benchmarks met or exceeded
-- [ ] Accessibility standards met
-- [ ] App Store submission ready
-- [ ] Documentation complete
-- [ ] Team trained on SwiftUI codebase
-- [ ] Flutter dependencies removed
-- [ ] Native-only features identified and roadmapped
-
-## Appendix: Resource Requirements
-
-### Team Skills Needed
-
-- **SwiftUI expertise (iOS 17+)** with modern patterns
-- **Swift 6 Concurrency** (actors, async/await, Sendable)
-- **MVVM Architecture** with `@Observable` macro
-- **SwiftData** for modern persistence
-- **Swift Testing** framework (replacing XCTest)
-- **REST API integration** with URLSession and actors
-- **CI/CD experience** (Xcode Cloud/Fastlane)
-- **Accessibility** implementation (VoiceOver, Dynamic Type)
-
-### Development Tools
-
-- **Xcode 16+** (required for Swift 6 and Swift Testing)
-- **Swift 6.0+** with strict concurrency checking enabled
-- **SwiftLint** configured for Swift 6 patterns
-- **Swift Package Manager** for dependencies
-- **Swift Testing** for unit and integration tests
-- **Instruments** for profiling and memory analysis
-- **Accessibility Inspector** for accessibility validation
-- **Proxyman/Charles** for network debugging
-
-### Swift 6 Configuration Requirements
-
-**Xcode Project Settings:**
-
-- Swift Language Version: Swift 6
-- Strict Concurrency Checking: Complete
-- iOS Deployment Target: iOS 17.0+
-- Enable Swift Testing Framework: Yes
-
-**Build Configuration:**
-
-```swift
-// Package.swift configuration
-.target(
-    name: "Thriftwood",
-    swiftSettings: [
-        .enableExperimentalFeature("StrictConcurrency"),
-        .enableUpcomingFeature("BareSlashRegexLiterals"),
-        .enableUpcomingFeature("ConciseMagicFile"),
-        .enableUpcomingFeature("ForwardTrailingClosures"),
-        .enableUpcomingFeature("ImplicitOpenExistentials")
-    ]
-)
-```
-
-**Compiler Flags:**
-
-- `-strict-concurrency=complete`
-- `-enable-actor-data-race-checks`
-- `-warn-swift3-objc-inference-minimal`
-
-### Time Estimates
-
-- Total Duration: 18 weeks (adjusted for Swift 6 migration complexity)
-- Developer Resources: 2-3 iOS developers with Swift 6 expertise
-- QA Resources: 1 QA engineer familiar with Swift Testing
-- Architecture Review: Weekly with focus on MVVM compliance
-- Performance Review: Bi-weekly using Instruments
-
----
-
-_This migration plan is designed to be executed by AI coding assistants with human oversight. Each task includes clear objectives and specific implementation steps suitable for AI-assisted development._
+_This migration plan ensures the app remains fully functional at every step, with smooth transitions between Flutter and SwiftUI views until the complete migration to pure SwiftUI is achieved._
