@@ -9,6 +9,9 @@
 import Foundation
 import Flutter
 
+// Import the Luna log types from SettingsViewModel
+// Note: In a real implementation, these would be in separate model files
+
 // MARK: - Hive Data Manager
 
 /// Manages bidirectional data sync between SwiftUI and Flutter's Hive storage
@@ -177,6 +180,150 @@ class HiveDataManager {
             result(FlutterError(code: "LOAD_ERROR", message: error.localizedDescription, details: nil))
         }
     }
+    
+    // MARK: - System Methods for Flutter Compatibility
+    
+    /// Export configuration using Flutter's LunaConfig.export() pattern
+    func exportConfiguration() async throws -> Data {
+        guard let methodChannel = methodChannel else {
+            throw HiveDataError.channelNotInitialized
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            methodChannel.invokeMethod("exportConfiguration", arguments: nil) { result in
+                if let error = result as? FlutterError {
+                    continuation.resume(throwing: NSError(domain: error.code, code: 0, userInfo: [NSLocalizedDescriptionKey: error.message ?? "Export failed"]))
+                } else if let jsonString = result as? String {
+                    if let data = jsonString.data(using: .utf8) {
+                        continuation.resume(returning: data)
+                    } else {
+                        continuation.resume(throwing: HiveDataError.encodingError("Failed to encode configuration"))
+                    }
+                } else {
+                    continuation.resume(throwing: HiveDataError.unknownError("Invalid export response"))
+                }
+            }
+        }
+    }
+    
+    /// Import configuration using Flutter's LunaConfig.import() pattern
+    func importConfiguration(_ data: Data) async throws {
+        guard let methodChannel = methodChannel else {
+            throw HiveDataError.channelNotInitialized
+        }
+        
+        guard let jsonString = String(data: data, encoding: .utf8) else {
+            throw HiveDataError.encodingError("Failed to decode configuration data")
+        }
+        
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            methodChannel.invokeMethod("importConfiguration", arguments: jsonString) { result in
+                if let error = result as? FlutterError {
+                    continuation.resume(throwing: NSError(domain: error.code, code: 0, userInfo: [NSLocalizedDescriptionKey: error.message ?? "Import failed"]))
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+    
+    /// Clear all configuration using Flutter's LunaDatabase.bootstrap() pattern
+    func clearAllConfiguration() async throws {
+        guard let methodChannel = methodChannel else {
+            throw HiveDataError.channelNotInitialized
+        }
+        
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            methodChannel.invokeMethod("clearAllConfiguration", arguments: nil) { result in
+                if let error = result as? FlutterError {
+                    continuation.resume(throwing: NSError(domain: error.code, code: 0, userInfo: [NSLocalizedDescriptionKey: error.message ?? "Clear configuration failed"]))
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+    
+    /// Get logs using Flutter's LunaBox.logs.data pattern
+    func getLogs() async throws -> [LunaLogEntry] {
+        guard let methodChannel = methodChannel else {
+            throw HiveDataError.channelNotInitialized
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            methodChannel.invokeMethod("getLogs", arguments: nil) { result in
+                if let error = result as? FlutterError {
+                    continuation.resume(throwing: NSError(domain: error.code, code: 0, userInfo: [NSLocalizedDescriptionKey: error.message ?? "Get logs failed"]))
+                } else if let logsArray = result as? [[String: Any]] {
+                    do {
+                        let logs = try logsArray.map { logDict -> LunaLogEntry in
+                            guard let timestamp = logDict["timestamp"] as? Int,
+                                  let typeString = logDict["type"] as? String,
+                                  let type = LunaLogType(rawValue: typeString),
+                                  let message = logDict["message"] as? String else {
+                                throw HiveDataError.decodingError("Invalid log format")
+                            }
+                            
+                            return LunaLogEntry(
+                                timestamp: timestamp,
+                                type: type,
+                                className: logDict["className"] as? String,
+                                methodName: logDict["methodName"] as? String,
+                                message: message,
+                                error: logDict["error"] as? String,
+                                stackTrace: logDict["stackTrace"] as? String
+                            )
+                        }
+                        continuation.resume(returning: logs)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                } else {
+                    continuation.resume(returning: [])
+                }
+            }
+        }
+    }
+    
+    /// Clear logs using Flutter's LunaLogger().clear() pattern
+    func clearLogs() async throws {
+        guard let methodChannel = methodChannel else {
+            throw HiveDataError.channelNotInitialized
+        }
+        
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            methodChannel.invokeMethod("clearLogs", arguments: nil) { result in
+                if let error = result as? FlutterError {
+                    continuation.resume(throwing: NSError(domain: error.code, code: 0, userInfo: [NSLocalizedDescriptionKey: error.message ?? "Clear logs failed"]))
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+    
+    /// Export logs using Flutter's LunaLogger().export() pattern
+    func exportLogs() async throws -> Data {
+        guard let methodChannel = methodChannel else {
+            throw HiveDataError.channelNotInitialized
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            methodChannel.invokeMethod("exportLogs", arguments: nil) { result in
+                if let error = result as? FlutterError {
+                    continuation.resume(throwing: NSError(domain: error.code, code: 0, userInfo: [NSLocalizedDescriptionKey: error.message ?? "Export logs failed"]))
+                } else if let jsonString = result as? String {
+                    if let data = jsonString.data(using: .utf8) {
+                        continuation.resume(returning: data)
+                    } else {
+                        continuation.resume(throwing: HiveDataError.encodingError("Failed to encode logs"))
+                    }
+                } else {
+                    continuation.resume(throwing: HiveDataError.unknownError("Invalid logs export response"))
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Storage Service Protocol
@@ -217,6 +364,8 @@ enum HiveDataError: LocalizedError {
     case encodingError(String)
     case decodingError(String)
     case notFound
+    case channelNotInitialized
+    case unknownError(String)
     
     var errorDescription: String? {
         switch self {
@@ -228,6 +377,10 @@ enum HiveDataError: LocalizedError {
             return "Decoding error: \(message)"
         case .notFound:
             return "Data not found"
+        case .channelNotInitialized:
+            return "Method channel not initialized"
+        case .unknownError(let message):
+            return "Unknown error: \(message)"
         }
     }
 }

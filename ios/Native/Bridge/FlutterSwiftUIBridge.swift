@@ -216,6 +216,9 @@ import Flutter
         case "settings_system":
             let settingsViewModel = SettingsViewModel()
             return AnyView(SwiftUISettingsView(viewModel: settingsViewModel))
+        case "settings_system_logs":
+            let systemLogsViewModel = SystemLogsViewModel()
+            return AnyView(SwiftUISystemLogsView(viewModel: systemLogsViewModel))
         case "/dashboard":
             return AnyView(DashboardWrapperView(data: data))
         case "/test":

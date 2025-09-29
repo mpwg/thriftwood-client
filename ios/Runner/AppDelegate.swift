@@ -30,6 +30,7 @@ import Flutter
     FlutterSwiftUIBridge.shared.registerNativeView("settings_configuration")
     FlutterSwiftUIBridge.shared.registerNativeView("settings_profiles")
     FlutterSwiftUIBridge.shared.registerNativeView("settings_system")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_system_logs")
     
     print("Hybrid bridge system initialized successfully")
   }

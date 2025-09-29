@@ -29,6 +29,9 @@ struct SwiftUISettingsView: View {
                 // Notifications Section
                 notificationsSection
                 
+                // System Section
+                systemSection
+                
                 // About Section
                 aboutSection
             }
@@ -65,6 +68,16 @@ struct SwiftUISettingsView: View {
                 }
             } message: {
                 Text(viewModel.errorMessage ?? "Unknown error")
+            }
+            .alert("Clear Configuration", isPresented: $viewModel.showingClearConfigConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Clear All Data", role: .destructive) {
+                    Task {
+                        await viewModel.clearConfiguration()
+                    }
+                }
+            } message: {
+                Text("This will reset all settings to default and cannot be undone. Are you sure?")
             }
         }
     }
@@ -204,6 +217,145 @@ struct SwiftUISettingsView: View {
                     Task { await viewModel.saveSettings() }
                 }
             ))
+        }
+    }
+    
+    @ViewBuilder
+    private var systemSection: some View {
+        Section("System") {
+            // Backup functionality
+            Button(action: {
+                Task {
+                    await viewModel.performBackup()
+                }
+            }) {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Backup Configuration")
+                            .foregroundColor(.primary)
+                        Text("Create a backup of your current configuration")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    if viewModel.isBackingUp {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                    } else {
+                        Image(systemName: "square.and.arrow.up")
+                            .foregroundColor(.blue)
+                    }
+                }
+            }
+            .disabled(viewModel.isBackingUp)
+            
+            // Restore functionality
+            Button(action: {
+                Task {
+                    await viewModel.performRestore()
+                }
+            }) {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Restore Configuration")
+                            .foregroundColor(.primary)
+                        Text("Restore configuration from a backup file")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    if viewModel.isRestoring {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                    } else {
+                        Image(systemName: "square.and.arrow.down")
+                            .foregroundColor(.blue)
+                    }
+                }
+            }
+            .disabled(viewModel.isRestoring)
+            
+            // System Logs
+            Button(action: {
+                Task {
+                    await FlutterSwiftUIBridge.shared.presentNativeView(
+                        route: "settings_system_logs"
+                    )
+                }
+            }) {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("System Logs")
+                            .foregroundColor(.primary)
+                        Text("View application logs and debug information")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "doc.text")
+                        .foregroundColor(.blue)
+                }
+            }
+            
+            // Clear Image Cache
+            Button(action: {
+                Task {
+                    await viewModel.clearImageCache()
+                }
+            }) {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Clear Image Cache")
+                            .foregroundColor(.primary)
+                        Text("Remove cached images to free up storage")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    if viewModel.isClearingCache {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                    } else {
+                        Image(systemName: "trash")
+                            .foregroundColor(.red)
+                    }
+                }
+            }
+            .disabled(viewModel.isClearingCache)
+            
+            // Clear Configuration
+            Button(action: {
+                viewModel.showingClearConfigConfirmation = true
+            }) {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Clear Configuration")
+                            .foregroundColor(.red)
+                        Text("Reset all settings to default (clean slate)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    if viewModel.isClearingConfig {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                    } else {
+                        Image(systemName: "exclamationmark.triangle")
+                            .foregroundColor(.red)
+                    }
+                }
+            }
+            .disabled(viewModel.isClearingConfig)
         }
     }
     
@@ -601,6 +753,163 @@ extension Bundle {
     }
 }
 
+// MARK: - System Logs View (MVVM Pattern)
+
+struct SwiftUISystemLogsView: View {
+    @Bindable var viewModel: SystemLogsViewModel
+    
+    init(viewModel: SystemLogsViewModel = SystemLogsViewModel()) {
+        self.viewModel = viewModel
+    }
+    
+    var body: some View {
+        NavigationStack {
+            VStack {
+                // Log type filter
+                Picker("Log Type", selection: $viewModel.selectedLogType) {
+                    ForEach(LunaLogType.allCases, id: \.self) { type in
+                        Text(type.displayName)
+                            .tag(type)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding()
+                
+                // Logs list
+                if viewModel.isLoading {
+                    ProgressView("Loading logs...")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if viewModel.filteredLogs.isEmpty {
+                    VStack(spacing: 16) {
+                        Image(systemName: "doc.text.magnifyingglass")
+                            .font(.system(size: 48))
+                            .foregroundStyle(.secondary)
+                        
+                        Text("No Logs Found")
+                            .font(.headline)
+                        
+                        Text("No logs match the selected filter")
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    List(viewModel.filteredLogs, id: \.id) { log in
+                        LunaLogEntryRow(log: log)
+                    }
+                    .refreshable {
+                        await viewModel.refreshLogs()
+                    }
+                }
+            }
+            .navigationTitle("System Logs")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button("Refresh") {
+                            Task {
+                                await viewModel.refreshLogs()
+                            }
+                        }
+                        
+                        Button("Clear All") {
+                            Task {
+                                await viewModel.clearLogs()
+                            }
+                        }
+                        
+                        Button("Export Logs") {
+                            Task {
+                                if let url = await viewModel.exportLogs() {
+                                    // Show share sheet for exported logs
+                                    // This would typically use UIActivityViewController
+                                }
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                }
+            }
+            .alert("Error", isPresented: $viewModel.isShowingError) {
+                Button("OK") {
+                    viewModel.isShowingError = false
+                }
+            } message: {
+                Text(viewModel.errorMessage ?? "Unknown error")
+            }
+            .task {
+                await viewModel.loadLogs()
+            }
+        }
+    }
+}
+
+// MARK: - Log Supporting Views
+
+struct LunaLogEntryRow: View {
+    let log: LunaLogEntry
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                // Log type badge with icon
+                HStack(spacing: 4) {
+                    Image(systemName: log.type.icon)
+                        .font(.caption)
+                    Text(log.type.displayName)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(log.type.color.opacity(0.2))
+                .foregroundColor(log.type.color)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+                
+                Spacer()
+                
+                // Timestamp (Flutter style)
+                Text(log.date, style: .time)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            // Message
+            Text(log.message)
+                .font(.body)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            // Additional Flutter log details
+            if let className = log.className, !className.isEmpty {
+                Text("Class: \(className)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            if let methodName = log.methodName, !methodName.isEmpty {
+                Text("Method: \(methodName)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            if let error = log.error, !error.isEmpty {
+                Text("Error: \(error)")
+                    .font(.caption)
+                    .foregroundColor(.red)
+                    .lineLimit(2)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
 // MARK: - Preview Support
 
 #if DEBUG
@@ -619,6 +928,12 @@ struct SwiftUIProfilesView_Previews: PreviewProvider {
 struct SwiftUIConfigurationView_Previews: PreviewProvider {
     static var previews: some View {
         SwiftUIConfigurationView(viewModel: ConfigurationViewModel(settingsViewModel: SettingsViewModel()))
+    }
+}
+
+struct SwiftUISystemLogsView_Previews: PreviewProvider {
+    static var previews: some View {
+        SwiftUISystemLogsView(viewModel: SystemLogsViewModel())
     }
 }
 #endif
