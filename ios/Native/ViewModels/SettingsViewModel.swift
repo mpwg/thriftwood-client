@@ -701,7 +701,6 @@ class SettingsViewModel {
     var pendingConfirmation: PendingConfirmation?
     var isShowingConfirmationDialog: Bool = false
 }
-}
 
 // MARK: - Profile View Model
 
