@@ -10,9 +10,14 @@ import SwiftData
 
 @main
 struct ThriftwoodApp: App {
+    
+    // MARK: - Theme Manager
+    @State private var themeManager = ThemeManager()
+    
+    // MARK: - SwiftData Container
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            ThriftwoodProfile.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,7 +30,9 @@ struct ThriftwoodApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainTabView()
+                .environment(themeManager)
+                .thriftwoodTheme(themeManager)
         }
         .modelContainer(sharedModelContainer)
     }
