@@ -7,8 +7,7 @@ import 'package:thriftwood/router/routes/tautulli.dart';
 class TautulliStatisticsRecentlyWatchedTile extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const TautulliStatisticsRecentlyWatchedTile({Key? key, required this.data})
-    : super(key: key);
+  const TautulliStatisticsRecentlyWatchedTile({super.key, required this.data});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -22,13 +21,13 @@ class _State extends State<TautulliStatisticsRecentlyWatchedTile> {
       body: _body(),
       onTap: _onTap,
       posterUrl: context.read<TautulliState>().getImageURLFromPath(
-        widget.data['thumb'],
-      ),
+            widget.data['thumb'],
+          ),
       posterHeaders: context.watch<TautulliState>().headers,
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
       backgroundUrl: context.read<TautulliState>().getImageURLFromPath(
-        widget.data['art'],
-      ),
+            widget.data['art'],
+          ),
       backgroundHeaders: context.watch<TautulliState>().headers,
     );
   }

@@ -4,7 +4,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrUpcomingRoute extends StatefulWidget {
-  const RadarrUpcomingRoute({Key? key}) : super(key: key);
+  const RadarrUpcomingRoute({super.key});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -33,17 +33,11 @@ class _State extends State<RadarrUpcomingRoute>
   }
 
   Widget get _body => LunaRefreshIndicator(
-    context: context,
-    key: _refreshKey,
-    onRefresh: _refresh,
-    child:
-        Selector<
-          RadarrState,
-          (
-            Future<List<RadarrMovie>>?,
-            Future<List<RadarrQualityProfile>>?
-          )
-        >(
+        context: context,
+        key: _refreshKey,
+        onRefresh: _refresh,
+        child: Selector<RadarrState,
+            (Future<List<RadarrMovie>>?, Future<List<RadarrQualityProfile>>?)>(
           selector: (_, state) => (state.upcoming, state.qualityProfiles),
           builder: (context, tuple, _) => FutureBuilder(
             future: Future.wait([tuple.$1!, tuple.$2!]),
@@ -66,7 +60,7 @@ class _State extends State<RadarrUpcomingRoute>
             },
           ),
         ),
-  );
+      );
 
   Widget _list(
     List<RadarrMovie> movies,

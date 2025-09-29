@@ -8,8 +8,7 @@ import 'package:thriftwood/router/routes/tautulli.dart';
 class TautulliSyncedItemTile extends StatelessWidget {
   final TautulliSyncedItem syncedItem;
 
-  const TautulliSyncedItemTile({Key? key, required this.syncedItem})
-    : super(key: key);
+  const TautulliSyncedItemTile({super.key, required this.syncedItem});
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +17,14 @@ class TautulliSyncedItemTile extends StatelessWidget {
       body: [_subtitle1(), _subtitle2(), _subtitle3()],
       backgroundHeaders: context.watch<TautulliState>().headers,
       backgroundUrl: context.watch<TautulliState>().getImageURLFromRatingKey(
-        syncedItem.ratingKey,
-        width: MediaQuery.of(context).size.width.truncate(),
-      ),
+            syncedItem.ratingKey,
+            width: MediaQuery.of(context).size.width.truncate(),
+          ),
       posterHeaders: context.watch<TautulliState>().headers,
       posterUrl: context.watch<TautulliState>().getImageURLFromRatingKey(
-        syncedItem.ratingKey,
-        width: MediaQuery.of(context).size.width.truncate(),
-      ),
+            syncedItem.ratingKey,
+            width: MediaQuery.of(context).size.width.truncate(),
+          ),
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
       onTap: () async => _onTap(context),
     );

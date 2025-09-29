@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/router/routes/radarr.dart';
 
 class RadarrAppBarAddMoviesAction extends StatelessWidget {
-  const RadarrAppBarAddMoviesAction({Key? key}) : super(key: key);
+  const RadarrAppBarAddMoviesAction({super.key});
 
   @override
   Widget build(BuildContext context) {

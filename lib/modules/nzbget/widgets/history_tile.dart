@@ -7,8 +7,8 @@ class NZBGetHistoryTile extends StatefulWidget {
   final NZBGetHistoryData data;
   final Function() refresh;
 
-  const NZBGetHistoryTile({Key? key, required this.data, required this.refresh})
-    : super(key: key);
+  const NZBGetHistoryTile(
+      {super.key, required this.data, required this.refresh});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -104,18 +104,17 @@ class _State extends State<NZBGetHistoryTile> {
             await NZBGetAPI.from(LunaProfile.current)
                 .retryHistoryEntry(widget.data.id)
                 .then((_) {
-                  widget.refresh();
-                  showLunaSuccessSnackBar(
-                    title: 'Retrying Job...',
-                    message: widget.data.name,
-                  );
-                })
-                .catchError((error) {
-                  showLunaErrorSnackBar(
-                    title: 'Failed to Retry Job',
-                    error: error,
-                  );
-                });
+              widget.refresh();
+              showLunaSuccessSnackBar(
+                title: 'Retrying Job...',
+                message: widget.data.name,
+              );
+            }).catchError((error) {
+              showLunaErrorSnackBar(
+                title: 'Failed to Retry Job',
+                error: error,
+              );
+            });
             break;
           }
         case 'hide':

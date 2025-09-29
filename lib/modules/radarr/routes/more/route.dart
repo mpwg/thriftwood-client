@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/radarr.dart';
 import 'package:thriftwood/router/routes/radarr.dart';
 
 class RadarrMoreRoute extends StatefulWidget {
-  const RadarrMoreRoute({Key? key}) : super(key: key);
+  const RadarrMoreRoute({super.key});
 
   @override
   State<RadarrMoreRoute> createState() => _State();

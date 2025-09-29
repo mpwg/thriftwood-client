@@ -5,7 +5,7 @@ import 'package:thriftwood/api/wake_on_lan/wake_on_lan.dart';
 class LunaDrawer extends StatelessWidget {
   final String page;
 
-  const LunaDrawer({Key? key, required this.page}) : super(key: key);
+  const LunaDrawer({super.key, required this.page});
 
   static List<LunaModule> moduleAlphabeticalList() {
     return LunaModule.active
@@ -109,8 +109,7 @@ class LunaDrawer extends StatelessWidget {
             ),
           ],
         ),
-        onTap:
-            onTap ??
+        onTap: onTap ??
             () async {
               Navigator.of(context).pop();
               if (!currentPage) module.launch();

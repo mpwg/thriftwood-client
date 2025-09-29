@@ -10,8 +10,7 @@ class RadarrQueueTile extends StatelessWidget {
   final RadarrQueueRecord record;
   final RadarrMovie? movie;
 
-  const RadarrQueueTile({Key? key, required this.record, required this.movie})
-    : super(key: key);
+  const RadarrQueueTile({super.key, required this.record, required this.movie});
 
   @override
   Widget build(BuildContext context) {
@@ -153,32 +152,31 @@ class RadarrQueueTile extends StatelessWidget {
                   .delete(
                     id: record.id!,
                     blacklist: RadarrDatabase.QUEUE_BLACKLIST.read(),
-                    removeFromClient: RadarrDatabase.QUEUE_REMOVE_FROM_CLIENT
-                        .read(),
+                    removeFromClient:
+                        RadarrDatabase.QUEUE_REMOVE_FROM_CLIENT.read(),
                   )
                   .then((_) {
-                    showLunaSuccessSnackBar(
-                      title: 'Removed From Queue',
-                      message: record.title,
-                    );
-                    context
-                        .read<RadarrState>()
-                        .api!
-                        .command
-                        .refreshMonitoredDownloads()
-                        .then((_) => context.read<RadarrState>().fetchQueue());
-                  })
-                  .catchError((error, stack) {
-                    LunaLogger().error(
-                      'Failed to remove queue record: ${record.id}',
-                      error,
-                      stack,
-                    );
-                    showLunaErrorSnackBar(
-                      title: 'Failed to Remove',
-                      error: error,
-                    );
-                  });
+                showLunaSuccessSnackBar(
+                  title: 'Removed From Queue',
+                  message: record.title,
+                );
+                context
+                    .read<RadarrState>()
+                    .api!
+                    .command
+                    .refreshMonitoredDownloads()
+                    .then((_) => context.read<RadarrState>().fetchQueue());
+              }).catchError((error, stack) {
+                LunaLogger().error(
+                  'Failed to remove queue record: ${record.id}',
+                  error,
+                  stack,
+                );
+                showLunaErrorSnackBar(
+                  title: 'Failed to Remove',
+                  error: error,
+                );
+              });
             }
           }
         },

@@ -6,7 +6,7 @@ import 'package:thriftwood/router/routes/sonarr.dart';
 import 'package:thriftwood/types/list_view_option.dart';
 
 class SonarrCatalogueRoute extends StatefulWidget {
-  const SonarrCatalogueRoute({Key? key}) : super(key: key);
+  const SonarrCatalogueRoute({super.key});
 
   @override
   State<SonarrCatalogueRoute> createState() => _State();
@@ -61,40 +61,38 @@ class _State extends State<SonarrCatalogueRoute>
       context: context,
       key: _refreshKey,
       onRefresh: _refresh,
-      child:
-          Selector<
-            SonarrState,
-            (
-              Future<Map<int?, SonarrSeries>>?,
-              Future<List<SonarrQualityProfile>>?
-            )
-          >(
-            selector: (_, state) => (state.series, state.qualityProfiles),
-            builder: (context, tuple, _) => FutureBuilder(
-              future: Future.wait([tuple.$1!, tuple.$2!]),
-              builder: (context, AsyncSnapshot<List<Object>> snapshot) {
-                if (snapshot.hasError) {
-                  if (snapshot.connectionState != ConnectionState.waiting) {
-                    LunaLogger().error(
-                      'Unable to fetch Sonarr series',
-                      snapshot.error,
-                      snapshot.stackTrace,
-                    );
-                  }
-                  return LunaMessage.error(
-                    onTap: _refreshKey.currentState!.show,
-                  );
-                }
-                if (snapshot.hasData) {
-                  return _series(
-                    snapshot.data![0] as Map<int, SonarrSeries>,
-                    snapshot.data![1] as List<SonarrQualityProfile>,
-                  );
-                }
-                return const LunaLoader();
-              },
-            ),
-          ),
+      child: Selector<
+          SonarrState,
+          (
+            Future<Map<int?, SonarrSeries>>?,
+            Future<List<SonarrQualityProfile>>?
+          )>(
+        selector: (_, state) => (state.series, state.qualityProfiles),
+        builder: (context, tuple, _) => FutureBuilder(
+          future: Future.wait([tuple.$1!, tuple.$2!]),
+          builder: (context, AsyncSnapshot<List<Object>> snapshot) {
+            if (snapshot.hasError) {
+              if (snapshot.connectionState != ConnectionState.waiting) {
+                LunaLogger().error(
+                  'Unable to fetch Sonarr series',
+                  snapshot.error,
+                  snapshot.stackTrace,
+                );
+              }
+              return LunaMessage.error(
+                onTap: _refreshKey.currentState!.show,
+              );
+            }
+            if (snapshot.hasData) {
+              return _series(
+                snapshot.data![0] as Map<int, SonarrSeries>,
+                snapshot.data![1] as List<SonarrQualityProfile>,
+              );
+            }
+            return const LunaLoader();
+          },
+        ),
+      ),
     );
   }
 

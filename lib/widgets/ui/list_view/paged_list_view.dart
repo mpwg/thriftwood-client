@@ -12,7 +12,7 @@ class LunaPagedListView<T> extends StatefulWidget {
   final Function? onRefresh;
 
   const LunaPagedListView({
-    Key? key,
+    super.key,
     required this.refreshKey,
     required this.pagingController,
     required this.itemBuilder,
@@ -21,7 +21,7 @@ class LunaPagedListView<T> extends StatefulWidget {
     this.onRefresh,
     this.itemExtent,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _State<T>();
@@ -81,9 +81,9 @@ class _State<T> extends State<LunaPagedListView<T>> {
               onTap: () => Future.sync(() => widget.pagingController.refresh()),
             ),
           ),
-          padding:
-              widget.padding ??
-              MediaQuery.of(context).padding
+          padding: widget.padding ??
+              MediaQuery.of(context)
+                  .padding
                   .copyWith(bottom: LunaUI.MARGIN_H_DEFAULT_V_HALF.bottom)
                   .add(
                     EdgeInsets.only(top: LunaUI.MARGIN_H_DEFAULT_V_HALF.top),

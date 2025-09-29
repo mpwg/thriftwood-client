@@ -5,7 +5,7 @@ class ErrorRoutePage extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final Exception? exception;
 
-  ErrorRoutePage({Key? key, this.exception}) : super(key: key);
+  ErrorRoutePage({super.key, this.exception});
 
   @override
   Widget build(BuildContext context) {

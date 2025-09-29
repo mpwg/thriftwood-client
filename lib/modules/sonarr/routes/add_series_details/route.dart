@@ -6,8 +6,7 @@ import 'package:thriftwood/widgets/pages/invalid_route.dart';
 class AddSeriesDetailsRoute extends StatefulWidget {
   final SonarrSeries? series;
 
-  const AddSeriesDetailsRoute({Key? key, required this.series})
-    : super(key: key);
+  const AddSeriesDetailsRoute({super.key, required this.series});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -98,14 +97,14 @@ class _State extends State<AddSeriesDetailsRoute>
     context.read<SonarrSeriesAddDetailsState>().initializeSeriesType();
     context.read<SonarrSeriesAddDetailsState>().initializeMonitorType();
     context.read<SonarrSeriesAddDetailsState>().initializeRootFolder(
-      rootFolders,
-    );
+          rootFolders,
+        );
     context.read<SonarrSeriesAddDetailsState>().initializeQualityProfile(
-      qualityProfiles,
-    );
+          qualityProfiles,
+        );
     context.read<SonarrSeriesAddDetailsState>().initializeLanguageProfile(
-      languageProfiles,
-    );
+          languageProfiles,
+        );
     context.read<SonarrSeriesAddDetailsState>().initializeTags(tags);
     context.read<SonarrSeriesAddDetailsState>().canExecuteAction = true;
     return LunaListView(

@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 class SonarrSeriesDetailsSeasonsPage extends StatefulWidget {
   final SonarrSeries? series;
 
-  const SonarrSeriesDetailsSeasonsPage({Key? key, required this.series})
-    : super(key: key);
+  const SonarrSeriesDetailsSeasonsPage({super.key, required this.series});
 
   @override
   State<StatefulWidget> createState() => _State();

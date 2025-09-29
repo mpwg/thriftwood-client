@@ -6,7 +6,7 @@ import 'package:thriftwood/extensions/datetime.dart';
 class SettingsSystemLogTile extends StatelessWidget {
   final LunaLog log;
 
-  const SettingsSystemLogTile({Key? key, required this.log}) : super(key: key);
+  const SettingsSystemLogTile({super.key, required this.log});
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/lidarr.dart';
 import 'package:thriftwood/router/routes/lidarr.dart';
 
 class LidarrRoute extends StatefulWidget {
-  const LidarrRoute({Key? key}) : super(key: key);
+  const LidarrRoute({super.key});
 
   @override
   State<LidarrRoute> createState() => _State();

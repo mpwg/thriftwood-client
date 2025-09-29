@@ -6,8 +6,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrAddMovieSearchPage extends StatefulWidget {
   final bool autofocusSearchBar;
 
-  const RadarrAddMovieSearchPage({Key? key, required this.autofocusSearchBar})
-    : super(key: key);
+  const RadarrAddMovieSearchPage({super.key, required this.autofocusSearchBar});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -55,17 +54,14 @@ class _State extends State<RadarrAddMovieSearchPage>
   Widget _body() {
     return Selector<RadarrState, Future<List<RadarrMovie>>?>(
       selector: (_, state) => state.movies,
-      builder: (context, movies, _) =>
-          Selector<
-            RadarrAddMovieState,
-            (Future<List<RadarrMovie>>?, Future<List<RadarrExclusion>>?)
-          >(
-            selector: (_, state) => (state.lookup, state.exclusions),
-            builder: (context, tuple, _) {
-              if (tuple.$1 == null) return Container();
-              return _builder(movies, tuple.$1, tuple.$2);
-            },
-          ),
+      builder: (context, movies, _) => Selector<RadarrAddMovieState,
+          (Future<List<RadarrMovie>>?, Future<List<RadarrExclusion>>?)>(
+        selector: (_, state) => (state.lookup, state.exclusions),
+        builder: (context, tuple, _) {
+          if (tuple.$1 == null) return Container();
+          return _builder(movies, tuple.$1, tuple.$2);
+        },
+      ),
     );
   }
 

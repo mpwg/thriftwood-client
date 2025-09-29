@@ -9,10 +9,10 @@ class TautulliActivityTile extends StatelessWidget {
   final bool disableOnTap;
 
   const TautulliActivityTile({
-    Key? key,
+    super.key,
     required this.session,
     this.disableOnTap = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +22,9 @@ class TautulliActivityTile extends StatelessWidget {
       posterHeaders: context.read<TautulliState>().headers,
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
       backgroundUrl: context.watch<TautulliState>().getImageURLFromPath(
-        session.art,
-        width: MediaQuery.of(context).size.width.truncate(),
-      ),
+            session.art,
+            width: MediaQuery.of(context).size.width.truncate(),
+          ),
       body: [_subtitle1(), _subtitle2(), _subtitle3()],
       bottom: _bottomWidget(),
       bottomHeight: LunaLinearPercentIndicator.height,

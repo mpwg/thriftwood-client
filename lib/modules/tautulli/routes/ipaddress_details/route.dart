@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/tautulli.dart';
 class IPDetailsRoute extends StatefulWidget {
   final String? ipAddress;
 
-  const IPDetailsRoute({Key? key, required this.ipAddress}) : super(key: key);
+  const IPDetailsRoute({super.key, required this.ipAddress});
 
   @override
   State<IPDetailsRoute> createState() => _State();

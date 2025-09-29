@@ -6,8 +6,7 @@ import 'package:thriftwood/router/routes/search.dart';
 class SearchSubcategoryTile extends StatelessWidget {
   final int index;
 
-  const SearchSubcategoryTile({Key? key, required this.index})
-    : super(key: key);
+  const SearchSubcategoryTile({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {

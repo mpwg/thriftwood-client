@@ -3,8 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrAddMovieDetailsMinimumAvailabilityTile extends StatelessWidget {
-  const RadarrAddMovieDetailsMinimumAvailabilityTile({Key? key})
-    : super(key: key);
+  const RadarrAddMovieDetailsMinimumAvailabilityTile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +15,8 @@ class RadarrAddMovieDetailsMinimumAvailabilityTile extends StatelessWidget {
           body: [TextSpan(text: availability.readable)],
           trailing: const LunaIconButton.arrow(),
           onTap: () async {
-            (bool, RadarrAvailability?) values = await RadarrDialogs()
-                .editMinimumAvailability(context);
+            (bool, RadarrAvailability?) values =
+                await RadarrDialogs().editMinimumAvailability(context);
             if (values.$1)
               context.read<RadarrAddMovieDetailsState>().availability =
                   values.$2!;

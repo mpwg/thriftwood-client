@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrRoute extends StatefulWidget {
-  const SonarrRoute({Key? key}) : super(key: key);
+  const SonarrRoute({super.key});
 
   @override
   State<SonarrRoute> createState() => _State();

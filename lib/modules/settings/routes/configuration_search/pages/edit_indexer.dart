@@ -8,8 +8,7 @@ import 'package:thriftwood/router/routes/settings.dart';
 class ConfigurationSearchEditIndexerRoute extends StatefulWidget {
   final int id;
 
-  const ConfigurationSearchEditIndexerRoute({Key? key, required this.id})
-    : super(key: key);
+  const ConfigurationSearchEditIndexerRoute({super.key, required this.id});
 
   @override
   State<ConfigurationSearchEditIndexerRoute> createState() => _State();

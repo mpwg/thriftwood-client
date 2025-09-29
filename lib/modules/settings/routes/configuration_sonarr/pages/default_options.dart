@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 import 'package:thriftwood/types/list_view_option.dart';
 
 class ConfigurationSonarrDefaultOptionsRoute extends StatefulWidget {
-  const ConfigurationSonarrDefaultOptionsRoute({Key? key}) : super(key: key);
+  const ConfigurationSonarrDefaultOptionsRoute({super.key});
 
   @override
   State<ConfigurationSonarrDefaultOptionsRoute> createState() => _State();
@@ -106,9 +106,8 @@ class _State extends State<ConfigurationSonarrDefaultOptionsRoute>
           if (values.$1) {
             _db.update(SonarrSeriesSorting.values[values.$2]);
             context.read<SonarrState>().seriesSortType = _db.read();
-            context.read<SonarrState>().seriesSortAscending = SonarrDatabase
-                .DEFAULT_SORTING_SERIES_ASCENDING
-                .read();
+            context.read<SonarrState>().seriesSortAscending =
+                SonarrDatabase.DEFAULT_SORTING_SERIES_ASCENDING.read();
           }
         },
       ),

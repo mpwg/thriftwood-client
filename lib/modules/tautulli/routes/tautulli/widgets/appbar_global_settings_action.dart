@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliAppBarGlobalSettingsAction extends StatelessWidget {
-  const TautulliAppBarGlobalSettingsAction({Key? key}) : super(key: key);
+  const TautulliAppBarGlobalSettingsAction({super.key});
 
   @override
   Widget build(BuildContext context) {

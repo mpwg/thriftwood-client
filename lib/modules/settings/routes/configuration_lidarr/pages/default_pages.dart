@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/lidarr.dart';
 
 class ConfigurationLidarrDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationLidarrDefaultPagesRoute({Key? key}) : super(key: key);
+  const ConfigurationLidarrDefaultPagesRoute({super.key});
 
   @override
   State<ConfigurationLidarrDefaultPagesRoute> createState() => _State();

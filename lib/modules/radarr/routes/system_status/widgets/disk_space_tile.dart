@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrDiskSpaceTile extends StatelessWidget {
   final RadarrDiskSpace diskSpace;
 
-  const RadarrDiskSpaceTile({Key? key, required this.diskSpace})
-    : super(key: key);
+  const RadarrDiskSpaceTile({super.key, required this.diskSpace});
 
   @override
   Widget build(BuildContext context) {

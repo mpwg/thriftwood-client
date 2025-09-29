@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/radarr.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationRadarrRoute extends StatefulWidget {
-  const ConfigurationRadarrRoute({Key? key}) : super(key: key);
+  const ConfigurationRadarrRoute({super.key});
 
   @override
   State<ConfigurationRadarrRoute> createState() => _State();

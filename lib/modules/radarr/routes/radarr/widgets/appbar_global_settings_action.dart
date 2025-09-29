@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrAppBarGlobalSettingsAction extends StatelessWidget {
-  const RadarrAppBarGlobalSettingsAction({Key? key}) : super(key: key);
+  const RadarrAppBarGlobalSettingsAction({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +11,8 @@ class RadarrAppBarGlobalSettingsAction extends StatelessWidget {
       icon: Icons.more_vert_rounded,
       iconSize: LunaUI.ICON_SIZE,
       onPressed: () async {
-        (bool, RadarrGlobalSettingsType?) values = await RadarrDialogs()
-            .globalSettings(context);
+        (bool, RadarrGlobalSettingsType?) values =
+            await RadarrDialogs().globalSettings(context);
         if (values.$1) values.$2!.execute(context);
       },
     );

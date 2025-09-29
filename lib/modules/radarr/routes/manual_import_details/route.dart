@@ -6,8 +6,7 @@ import 'package:thriftwood/widgets/pages/invalid_route.dart';
 class ManualImportDetailsRoute extends StatefulWidget {
   final String? path;
 
-  const ManualImportDetailsRoute({Key? key, required this.path})
-    : super(key: key);
+  const ManualImportDetailsRoute({super.key, required this.path});
 
   @override
   State<StatefulWidget> createState() => _State();

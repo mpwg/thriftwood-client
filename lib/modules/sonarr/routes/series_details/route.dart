@@ -9,8 +9,7 @@ import 'package:thriftwood/widgets/pages/invalid_route.dart';
 class SeriesDetailsRoute extends StatefulWidget {
   final int seriesId;
 
-  const SeriesDetailsRoute({Key? key, required this.seriesId})
-    : super(key: key);
+  const SeriesDetailsRoute({super.key, required this.seriesId});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -24,9 +23,8 @@ class _State extends State<SeriesDetailsRoute> with LunaLoadCallbackMixin {
   @override
   Future<void> loadCallback() async {
     if (widget.seriesId > 0) {
-      SonarrSeries? result = (await context
-          .read<SonarrState>()
-          .series)![widget.seriesId];
+      SonarrSeries? result =
+          (await context.read<SonarrState>().series)![widget.seriesId];
       setState(() => series = result);
       context.read<SonarrState>().fetchQualityProfiles();
       context.read<SonarrState>().fetchLanguageProfiles();
@@ -77,9 +75,8 @@ class _State extends State<SeriesDetailsRoute> with LunaLoadCallbackMixin {
       scaffoldKey: _scaffoldKey,
       module: LunaModule.SONARR,
       appBar: _appBar() as PreferredSizeWidget?,
-      bottomNavigationBar: context.watch<SonarrState>().enabled
-          ? _bottomNavigationBar()
-          : null,
+      bottomNavigationBar:
+          context.watch<SonarrState>().enabled ? _bottomNavigationBar() : null,
       body: _body(),
     );
   }

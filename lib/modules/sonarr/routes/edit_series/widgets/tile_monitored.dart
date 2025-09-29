@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeriesEditMonitoredTile extends StatelessWidget {
-  const SonarrSeriesEditMonitoredTile({Key? key}) : super(key: key);
+  const SonarrSeriesEditMonitoredTile({super.key});
 
   @override
   Widget build(BuildContext context) {

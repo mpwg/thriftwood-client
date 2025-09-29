@@ -10,8 +10,8 @@ class TautulliMediaDetailsMetadata extends StatefulWidget {
   const TautulliMediaDetailsMetadata({
     required this.type,
     required this.ratingKey,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -34,11 +34,11 @@ class _State extends State<TautulliMediaDetailsMetadata>
 
   Future<void> _refresh() async {
     context.read<TautulliState>().setMetadata(
-      widget.ratingKey,
-      context.read<TautulliState>().api!.libraries.getMetadata(
-        ratingKey: widget.ratingKey,
-      ),
-    );
+          widget.ratingKey,
+          context.read<TautulliState>().api!.libraries.getMetadata(
+                ratingKey: widget.ratingKey,
+              ),
+        );
     await context.read<TautulliState>().metadata[widget.ratingKey];
   }
 

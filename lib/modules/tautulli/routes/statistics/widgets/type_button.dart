@@ -4,7 +4,7 @@ import 'package:thriftwood/extensions/string/string.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliStatisticsTypeButton extends StatelessWidget {
-  const TautulliStatisticsTypeButton({Key? key}) : super(key: key);
+  const TautulliStatisticsTypeButton({super.key});
 
   @override
   Widget build(BuildContext context) =>
@@ -19,20 +19,20 @@ class TautulliStatisticsTypeButton extends StatelessWidget {
           },
           itemBuilder: (context) =>
               List<PopupMenuEntry<TautulliStatsType>>.generate(
-                TautulliStatsType.values.length,
-                (index) => PopupMenuItem<TautulliStatsType>(
-                  value: TautulliStatsType.values[index],
-                  child: Text(
-                    TautulliStatsType.values[index].value!.toTitleCase(),
-                    style: TextStyle(
-                      fontSize: LunaUI.FONT_SIZE_H3,
-                      color: type == TautulliStatsType.values[index]
-                          ? LunaColours.accent
-                          : Colors.white,
-                    ),
-                  ),
+            TautulliStatsType.values.length,
+            (index) => PopupMenuItem<TautulliStatsType>(
+              value: TautulliStatsType.values[index],
+              child: Text(
+                TautulliStatsType.values[index].value!.toTitleCase(),
+                style: TextStyle(
+                  fontSize: LunaUI.FONT_SIZE_H3,
+                  color: type == TautulliStatsType.values[index]
+                      ? LunaColours.accent
+                      : Colors.white,
                 ),
               ),
+            ),
+          ),
         ),
       );
 }

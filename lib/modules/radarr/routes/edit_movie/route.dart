@@ -6,7 +6,7 @@ import 'package:thriftwood/widgets/pages/invalid_route.dart';
 class MovieEditRoute extends StatefulWidget {
   final int movieId;
 
-  const MovieEditRoute({Key? key, required this.movieId}) : super(key: key);
+  const MovieEditRoute({super.key, required this.movieId});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -33,10 +33,10 @@ class _State extends State<MovieEditRoute>
     return ChangeNotifierProvider(
       create: (_) => RadarrMoviesEditState(),
       builder: (context, _) {
-        LunaLoadingState state = context
-            .select<RadarrMoviesEditState, LunaLoadingState>(
-              (state) => state.state,
-            );
+        LunaLoadingState state =
+            context.select<RadarrMoviesEditState, LunaLoadingState>(
+          (state) => state.state,
+        );
         return LunaScaffold(
           scaffoldKey: _scaffoldKey,
           appBar: _appBar() as PreferredSizeWidget?,

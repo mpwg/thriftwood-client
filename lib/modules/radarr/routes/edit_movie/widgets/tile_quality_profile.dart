@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrMoviesEditQualityProfileTile extends StatelessWidget {
   final List<RadarrQualityProfile?>? profiles;
 
-  const RadarrMoviesEditQualityProfileTile({Key? key, required this.profiles})
-    : super(key: key);
+  const RadarrMoviesEditQualityProfileTile({super.key, required this.profiles});
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +16,10 @@ class RadarrMoviesEditQualityProfileTile extends StatelessWidget {
         body: [TextSpan(text: profile.name ?? LunaUI.TEXT_EMDASH)],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, RadarrQualityProfile?) values = await RadarrDialogs()
-              .editQualityProfile(context, profiles!);
+          (bool, RadarrQualityProfile?) values =
+              await RadarrDialogs().editQualityProfile(context, profiles!);
           if (values.$1)
-            context.read<RadarrMoviesEditState>().qualityProfile =
-                values.$2!;
+            context.read<RadarrMoviesEditState>().qualityProfile = values.$2!;
         },
       ),
     );

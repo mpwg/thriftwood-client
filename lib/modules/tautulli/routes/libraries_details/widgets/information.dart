@@ -6,8 +6,8 @@ import 'package:thriftwood/modules/tautulli.dart';
 class TautulliLibrariesDetailsInformation extends StatefulWidget {
   final int sectionId;
 
-  const TautulliLibrariesDetailsInformation({Key? key, required this.sectionId})
-    : super(key: key);
+  const TautulliLibrariesDetailsInformation(
+      {super.key, required this.sectionId});
 
   @override
   State<TautulliLibrariesDetailsInformation> createState() => _State();
@@ -60,7 +60,8 @@ class _State extends State<TautulliLibrariesDetailsInformation>
             return LunaMessage.error(onTap: _refreshKey.currentState!.show);
           if (snapshot.hasData) {
             TautulliTableLibrary? library =
-                (snapshot.data![0] as TautulliLibrariesTable).libraries!
+                (snapshot.data![0] as TautulliLibrariesTable)
+                    .libraries!
                     .firstWhereOrNull(
                       (element) => element.sectionId == widget.sectionId,
                     );

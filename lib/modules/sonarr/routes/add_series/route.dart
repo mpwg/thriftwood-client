@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 class AddSeriesRoute extends StatefulWidget {
   final String query;
 
-  const AddSeriesRoute({Key? key, required this.query}) : super(key: key);
+  const AddSeriesRoute({super.key, required this.query});
 
   @override
   State<StatefulWidget> createState() => _State();

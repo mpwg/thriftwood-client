@@ -4,7 +4,7 @@ import 'package:thriftwood/database/models/external_module.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationExternalModulesRoute extends StatefulWidget {
-  const ConfigurationExternalModulesRoute({Key? key}) : super(key: key);
+  const ConfigurationExternalModulesRoute({super.key});
 
   @override
   State<ConfigurationExternalModulesRoute> createState() => _State();
@@ -56,10 +56,10 @@ class _State extends State<ConfigurationExternalModulesRoute>
   }
 
   List<Widget> _moduleSection() => [
-    if (LunaBox.externalModules.isEmpty)
-      LunaMessage(text: 'settings.NoExternalModulesFound'.tr()),
-    ..._modules,
-  ];
+        if (LunaBox.externalModules.isEmpty)
+          LunaMessage(text: 'settings.NoExternalModulesFound'.tr()),
+        ..._modules,
+      ];
 
   List<Widget> get _modules {
     final modules = LunaBox.externalModules.data.toList();

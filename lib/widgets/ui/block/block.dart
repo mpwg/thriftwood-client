@@ -43,7 +43,7 @@ class LunaBlock extends StatelessWidget {
   final Map? backgroundHeaders;
 
   const LunaBlock({
-    Key? key,
+    super.key,
     this.skeletonEnabled = false,
     this.skeletonPoster = true,
     this.skeletonSubtitles = 2,
@@ -67,7 +67,7 @@ class LunaBlock extends StatelessWidget {
     this.onLongPress,
     this.leading,
     this.trailing,
-  }) : super(key: key);
+  });
 
   static double calculateItemExtent(
     int subtitleLines, {

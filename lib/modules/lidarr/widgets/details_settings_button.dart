@@ -8,10 +8,10 @@ class LidarrDetailsSettingsButton extends StatefulWidget {
   final Function(bool) remove;
 
   const LidarrDetailsSettingsButton({
-    Key? key,
+    super.key,
     required this.data,
     required this.remove,
-  }) : super(key: key);
+  });
 
   @override
   State<LidarrDetailsSettingsButton> createState() => _State();
@@ -20,11 +20,11 @@ class LidarrDetailsSettingsButton extends StatefulWidget {
 class _State extends State<LidarrDetailsSettingsButton> {
   @override
   Widget build(BuildContext context) => Consumer<LidarrState>(
-    builder: (context, model, widget) => LunaIconButton(
-      icon: Icons.more_vert_rounded,
-      onPressed: () async => _handlePopup(context),
-    ),
-  );
+        builder: (context, model, widget) => LunaIconButton(
+          icon: Icons.more_vert_rounded,
+          onPressed: () async => _handlePopup(context),
+        ),
+      );
 
   Future<void> _handlePopup(BuildContext context) async {
     List<dynamic> values = await LidarrDialogs.editArtist(

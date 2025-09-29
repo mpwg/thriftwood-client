@@ -6,8 +6,7 @@ import 'package:thriftwood/widgets/sheets/download_client/button.dart';
 class ArtistAlbumReleasesRoute extends StatefulWidget {
   final int albumId;
 
-  const ArtistAlbumReleasesRoute({Key? key, required this.albumId})
-    : super(key: key);
+  const ArtistAlbumReleasesRoute({super.key, required this.albumId});
 
   @override
   State<ArtistAlbumReleasesRoute> createState() => _State();
@@ -115,9 +114,8 @@ class _State extends State<ArtistAlbumReleasesRoute>
     String query,
   ) {
     if ((releases?.length ?? 0) == 0) return releases;
-    LidarrReleasesSorting sorting = context
-        .read<LidarrState>()
-        .sortReleasesType;
+    LidarrReleasesSorting sorting =
+        context.read<LidarrState>().sortReleasesType;
     bool shouldHide = context.read<LidarrState>().hideRejectedReleases;
     bool ascending = context.read<LidarrState>().sortReleasesAscending;
     // Filter

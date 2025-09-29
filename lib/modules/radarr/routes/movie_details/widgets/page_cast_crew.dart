@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrMovieDetailsCastCrewPage extends StatefulWidget {
   final RadarrMovie? movie;
 
-  const RadarrMovieDetailsCastCrewPage({Key? key, required this.movie})
-    : super(key: key);
+  const RadarrMovieDetailsCastCrewPage({super.key, required this.movie});
 
   @override
   State<StatefulWidget> createState() => _State();

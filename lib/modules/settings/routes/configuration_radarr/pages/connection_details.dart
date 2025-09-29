@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/settings.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationRadarrConnectionDetailsRoute extends StatefulWidget {
-  const ConfigurationRadarrConnectionDetailsRoute({Key? key}) : super(key: key);
+  const ConfigurationRadarrConnectionDetailsRoute({super.key});
 
   @override
   State<ConfigurationRadarrConnectionDetailsRoute> createState() => _State();
@@ -117,10 +117,11 @@ class _State extends State<ConfigurationRadarrConnectionDetailsRoute>
           return;
         }
         RadarrAPI(
-              host: _profile.radarrHost,
-              apiKey: _profile.radarrKey,
-              headers: Map<String, dynamic>.from(_profile.radarrHeaders),
-            ).system
+          host: _profile.radarrHost,
+          apiKey: _profile.radarrKey,
+          headers: Map<String, dynamic>.from(_profile.radarrHeaders),
+        )
+            .system
             .status()
             .then(
               (_) => showLunaSuccessSnackBar(
@@ -131,12 +132,12 @@ class _State extends State<ConfigurationRadarrConnectionDetailsRoute>
               ),
             )
             .catchError((error, trace) {
-              LunaLogger().error('Connection Test Failed', error, trace);
-              showLunaErrorSnackBar(
-                title: 'settings.ConnectionTestFailed'.tr(),
-                error: error,
-              );
-            });
+          LunaLogger().error('Connection Test Failed', error, trace);
+          showLunaErrorSnackBar(
+            title: 'settings.ConnectionTestFailed'.tr(),
+            error: error,
+          );
+        });
       },
     );
   }

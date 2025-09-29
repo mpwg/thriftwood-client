@@ -4,8 +4,7 @@ import 'package:thriftwood/modules/settings.dart';
 
 class ConfigurationTautulliConnectionDetailsHeadersRoute
     extends StatelessWidget {
-  const ConfigurationTautulliConnectionDetailsHeadersRoute({Key? key})
-    : super(key: key);
+  const ConfigurationTautulliConnectionDetailsHeadersRoute({super.key});
 
   @override
   Widget build(BuildContext context) {

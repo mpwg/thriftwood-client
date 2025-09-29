@@ -8,8 +8,7 @@ import 'package:thriftwood/modules/sabnzbd.dart';
 class SABnzbdQueueFAB extends StatefulWidget {
   final ScrollController scrollController;
 
-  const SABnzbdQueueFAB({Key? key, required this.scrollController})
-    : super(key: key);
+  const SABnzbdQueueFAB({super.key, required this.scrollController});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -72,8 +71,7 @@ class _State extends State<SABnzbdQueueFAB> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      Selector<SABnzbdState, (bool, bool)>(
+  Widget build(BuildContext context) => Selector<SABnzbdState, (bool, bool)>(
         selector: (_, model) => (model.error, model.paused),
         builder: (context, data, _) {
           data.$2 ? _iconController!.forward() : _iconController!.reverse();
@@ -144,27 +142,21 @@ class _State extends State<SABnzbdQueueFAB> with TickerProviderStateMixin {
 
   Future<void> _pause(BuildContext context, SABnzbdAPI api) async {
     _iconController!.forward();
-    await api
-        .pauseQueue()
-        .then((_) {
-          Provider.of<SABnzbdState>(context, listen: false).paused = true;
-        })
-        .catchError((error) {
-          showLunaErrorSnackBar(title: 'Failed to Pause Queue', error: error);
-          _iconController!.reverse();
-        });
+    await api.pauseQueue().then((_) {
+      Provider.of<SABnzbdState>(context, listen: false).paused = true;
+    }).catchError((error) {
+      showLunaErrorSnackBar(title: 'Failed to Pause Queue', error: error);
+      _iconController!.reverse();
+    });
   }
 
   Future<void> _resume(BuildContext context, SABnzbdAPI api) async {
     _iconController!.reverse();
-    return await api
-        .resumeQueue()
-        .then((_) {
-          Provider.of<SABnzbdState>(context, listen: false).paused = false;
-        })
-        .catchError((error) {
-          showLunaErrorSnackBar(title: 'Failed to Resume Queue', error: error);
-          _iconController!.forward();
-        });
+    return await api.resumeQueue().then((_) {
+      Provider.of<SABnzbdState>(context, listen: false).paused = false;
+    }).catchError((error) {
+      showLunaErrorSnackBar(title: 'Failed to Resume Queue', error: error);
+      _iconController!.forward();
+    });
   }
 }

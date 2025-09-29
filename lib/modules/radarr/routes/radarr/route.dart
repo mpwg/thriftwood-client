@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrRoute extends StatefulWidget {
-  const RadarrRoute({Key? key}) : super(key: key);
+  const RadarrRoute({super.key});
 
   @override
   State<RadarrRoute> createState() => _State();

@@ -6,8 +6,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrMovieDetailsFilesFileBlock extends StatefulWidget {
   final RadarrMovieFile file;
 
-  const RadarrMovieDetailsFilesFileBlock({Key? key, required this.file})
-    : super(key: key);
+  const RadarrMovieDetailsFilesFileBlock({super.key, required this.file});
 
   @override
   State<StatefulWidget> createState() => _State();

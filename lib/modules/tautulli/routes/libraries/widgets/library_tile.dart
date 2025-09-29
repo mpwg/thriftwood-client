@@ -9,8 +9,7 @@ import 'package:thriftwood/router/routes/tautulli.dart';
 class TautulliLibrariesLibraryTile extends StatelessWidget {
   final TautulliTableLibrary library;
 
-  const TautulliLibrariesLibraryTile({Key? key, required this.library})
-    : super(key: key);
+  const TautulliLibrariesLibraryTile({super.key, required this.library});
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +34,8 @@ class TautulliLibrariesLibraryTile extends StatelessWidget {
         ),
       ],
       backgroundUrl: context.watch<TautulliState>().getImageURLFromPath(
-        library.thumb,
-      ),
+            library.thumb,
+          ),
       backgroundHeaders: context.watch<TautulliState>().headers,
       onTap: () => TautulliRoutes.LIBRARIES_DETAILS.go(
         params: {'section': library.sectionId.toString()},

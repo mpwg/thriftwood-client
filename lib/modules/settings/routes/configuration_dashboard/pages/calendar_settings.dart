@@ -11,7 +11,7 @@ import 'package:thriftwood/modules/dashboard/core/dialogs.dart';
 import 'package:thriftwood/modules/settings/core/dialogs.dart';
 
 class ConfigurationDashboardCalendarRoute extends StatefulWidget {
-  const ConfigurationDashboardCalendarRoute({Key? key}) : super(key: key);
+  const ConfigurationDashboardCalendarRoute({super.key});
 
   @override
   State<ConfigurationDashboardCalendarRoute> createState() => _State();
@@ -160,8 +160,8 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
         body: [TextSpan(text: _db.read().name)],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, CalendarStartingType?) _values = await SettingsDialogs()
-              .editCalendarStartingView(context);
+          (bool, CalendarStartingType?) _values =
+              await SettingsDialogs().editCalendarStartingView(context);
           if (_values.$1) _db.update(_values.$2!);
         },
       ),
@@ -176,8 +176,8 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
         body: [TextSpan(text: _db.read().name)],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, CalendarStartingDay?) results = await SettingsDialogs()
-              .editCalendarStartingDay(context);
+          (bool, CalendarStartingDay?) results =
+              await SettingsDialogs().editCalendarStartingDay(context);
           if (results.$1) _db.update(results.$2!);
         },
       ),
@@ -192,8 +192,8 @@ class _State extends State<ConfigurationDashboardCalendarRoute>
         body: [TextSpan(text: _db.read().name)],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, CalendarStartingSize?) _values = await SettingsDialogs()
-              .editCalendarStartingSize(context);
+          (bool, CalendarStartingSize?) _values =
+              await SettingsDialogs().editCalendarStartingSize(context);
           if (_values.$1) _db.update(_values.$2!);
         },
       ),

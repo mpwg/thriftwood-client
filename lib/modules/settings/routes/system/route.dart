@@ -9,7 +9,7 @@ import 'package:thriftwood/router/routes/settings.dart';
 import 'package:thriftwood/system/cache/image/image_cache.dart';
 
 class SystemRoute extends StatefulWidget {
-  const SystemRoute({Key? key}) : super(key: key);
+  const SystemRoute({super.key});
 
   @override
   State<SystemRoute> createState() => _State();

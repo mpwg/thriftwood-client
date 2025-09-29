@@ -5,7 +5,7 @@ import 'package:thriftwood/router/routes/search.dart';
 import 'package:thriftwood/widgets/sheets/download_client/button.dart';
 
 class ResultsRoute extends StatefulWidget {
-  const ResultsRoute({Key? key}) : super(key: key);
+  const ResultsRoute({super.key});
 
   @override
   State<ResultsRoute> createState() => _State();
@@ -17,9 +17,10 @@ class _State extends State<ResultsRoute> with LunaScrollControllerMixin {
       GlobalKey<RefreshIndicatorState>();
   late final PagingController<int, NewznabResultData> _pagingController =
       PagingController(
-        fetchPage: _fetchPage,
-        getNextPageKey: (state) => state.lastPageIsEmpty ? null : state.nextIntPageKey,
-      );
+    fetchPage: _fetchPage,
+    getNextPageKey: (state) =>
+        state.lastPageIsEmpty ? null : state.nextIntPageKey,
+  );
 
   @override
   void dispose() {
@@ -29,14 +30,11 @@ class _State extends State<ResultsRoute> with LunaScrollControllerMixin {
 
   Future<List<NewznabResultData>> _fetchPage(int pageKey) async {
     try {
-      NewznabCategoryData? category = context.read<SearchState>().activeCategory;
-      NewznabSubcategoryData? subcategory = context
-          .read<SearchState>()
-          .activeSubcategory;
-      final data = await context
-          .read<SearchState>()
-          .api
-          .getResults(
+      NewznabCategoryData? category =
+          context.read<SearchState>().activeCategory;
+      NewznabSubcategoryData? subcategory =
+          context.read<SearchState>().activeSubcategory;
+      final data = await context.read<SearchState>().api.getResults(
             categoryId: subcategory?.id ?? category?.id,
             offset: pageKey,
           );
@@ -63,9 +61,8 @@ class _State extends State<ResultsRoute> with LunaScrollControllerMixin {
   Widget _appBar() {
     String? title = 'search.Results'.tr();
     NewznabCategoryData? category = context.read<SearchState>().activeCategory;
-    NewznabSubcategoryData? subcategory = context
-        .read<SearchState>()
-        .activeSubcategory;
+    NewznabSubcategoryData? subcategory =
+        context.read<SearchState>().activeSubcategory;
     if (category != null) title = category.name;
     if (category != null && subcategory != null) {
       title = '$title > ${subcategory.name ?? 'thriftwood.Unknown'.tr()}';

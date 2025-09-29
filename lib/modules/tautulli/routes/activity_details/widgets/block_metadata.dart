@@ -5,8 +5,8 @@ import 'package:thriftwood/modules/tautulli.dart';
 class TautulliActivityDetailsMetadataBlock extends StatelessWidget {
   final TautulliSession session;
 
-  const TautulliActivityDetailsMetadataBlock({Key? key, required this.session})
-    : super(key: key);
+  const TautulliActivityDetailsMetadataBlock(
+      {super.key, required this.session});
 
   @override
   Widget build(BuildContext context) {

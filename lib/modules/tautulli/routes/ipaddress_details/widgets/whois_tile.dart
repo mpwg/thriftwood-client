@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/tautulli.dart';
 class TautulliIPAddressDetailsWHOISTile extends StatelessWidget {
   final TautulliWHOISInfo whois;
 
-  const TautulliIPAddressDetailsWHOISTile({Key? key, required this.whois})
-    : super(key: key);
+  const TautulliIPAddressDetailsWHOISTile({super.key, required this.whois});
 
   @override
   Widget build(BuildContext context) {

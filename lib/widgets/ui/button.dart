@@ -11,9 +11,9 @@ class LunaButton extends Card {
   static const DEFAULT_HEIGHT = 46.0;
 
   LunaButton._({
-    Key? key,
+    super.key,
     required Widget child,
-    EdgeInsets margin = LunaUI.MARGIN_HALF,
+    EdgeInsets super.margin = LunaUI.MARGIN_HALF,
     Color? backgroundColor,
     double height = DEFAULT_HEIGHT,
     Alignment alignment = Alignment.center,
@@ -22,38 +22,35 @@ class LunaButton extends Card {
     Function? onLongPress,
     LunaLoadingState? loadingState,
   }) : super(
-         key: key,
-         child: InkWell(
-           child: Container(
-             child: child,
-             decoration: decoration,
-             height: height,
-             alignment: alignment,
-           ),
-           borderRadius: BorderRadius.circular(LunaUI.BORDER_RADIUS),
-           onTap: () async {
-             HapticFeedback.lightImpact();
-             if (onTap != null && loadingState != LunaLoadingState.ACTIVE)
-               onTap();
-           },
-           onLongPress: () async {
-             HapticFeedback.heavyImpact();
-             if (onLongPress != null && loadingState != LunaLoadingState.ACTIVE)
-               onLongPress();
-           },
-         ),
-         margin: margin,
-         color: backgroundColor != null
-             ? backgroundColor.withOpacity(LunaUI.OPACITY_DIMMED)
-             : Theme.of(
-                 LunaState.context,
-               ).canvasColor.withOpacity(LunaUI.OPACITY_DIMMED),
-         shape: backgroundColor != null
-             ? LunaShapeBorder()
-             : LunaUI.shapeBorder,
-         elevation: LunaUI.ELEVATION,
-         clipBehavior: Clip.antiAlias,
-       );
+          child: InkWell(
+            child: Container(
+              child: child,
+              decoration: decoration,
+              height: height,
+              alignment: alignment,
+            ),
+            borderRadius: BorderRadius.circular(LunaUI.BORDER_RADIUS),
+            onTap: () async {
+              HapticFeedback.lightImpact();
+              if (onTap != null && loadingState != LunaLoadingState.ACTIVE)
+                onTap();
+            },
+            onLongPress: () async {
+              HapticFeedback.heavyImpact();
+              if (onLongPress != null &&
+                  loadingState != LunaLoadingState.ACTIVE) onLongPress();
+            },
+          ),
+          color: backgroundColor != null
+              ? backgroundColor.withOpacity(LunaUI.OPACITY_DIMMED)
+              : Theme.of(
+                  LunaState.context,
+                ).canvasColor.withOpacity(LunaUI.OPACITY_DIMMED),
+          shape:
+              backgroundColor != null ? LunaShapeBorder() : LunaUI.shapeBorder,
+          elevation: LunaUI.ELEVATION,
+          clipBehavior: Clip.antiAlias,
+        );
 
   /// Create a default button.
   ///

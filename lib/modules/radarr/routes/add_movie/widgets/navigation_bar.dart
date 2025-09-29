@@ -14,12 +14,11 @@ class RadarrAddMovieNavigationBar extends StatelessWidget {
   ];
 
   static List<String> get titles => [
-    'radarr.Search'.tr(),
-    'radarr.Discover'.tr(),
-  ];
+        'radarr.Search'.tr(),
+        'radarr.Discover'.tr(),
+      ];
 
-  const RadarrAddMovieNavigationBar({Key? key, required this.pageController})
-    : super(key: key);
+  const RadarrAddMovieNavigationBar({super.key, required this.pageController});
 
   @override
   Widget build(BuildContext context) {

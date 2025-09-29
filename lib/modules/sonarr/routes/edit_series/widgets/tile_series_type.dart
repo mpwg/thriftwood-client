@@ -4,7 +4,7 @@ import 'package:thriftwood/extensions/string/string.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeriesEditSeriesTypeTile extends StatelessWidget {
-  const SonarrSeriesEditSeriesTypeTile({Key? key}) : super(key: key);
+  const SonarrSeriesEditSeriesTypeTile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,8 +12,7 @@ class SonarrSeriesEditSeriesTypeTile extends StatelessWidget {
       title: 'sonarr.SeriesType'.tr(),
       body: [
         TextSpan(
-          text:
-              context
+          text: context
                   .watch<SonarrSeriesEditState>()
                   .seriesType
                   ?.value
@@ -27,8 +26,8 @@ class SonarrSeriesEditSeriesTypeTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    (bool, SonarrSeriesType?) result = await SonarrDialogs()
-        .editSeriesType(context);
+    (bool, SonarrSeriesType?) result =
+        await SonarrDialogs().editSeriesType(context);
     if (result.$1)
       context.read<SonarrSeriesEditState>().seriesType = result.$2!;
   }

@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/tautulli.dart';
 class TautulliLogsPlexMediaServerLogTile extends StatelessWidget {
   final TautulliPlexLog log;
 
-  const TautulliLogsPlexMediaServerLogTile({Key? key, required this.log})
-    : super(key: key);
+  const TautulliLogsPlexMediaServerLogTile({super.key, required this.log});
 
   @override
   Widget build(BuildContext context) {

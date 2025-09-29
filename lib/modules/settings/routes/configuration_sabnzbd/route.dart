@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/sabnzbd.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationSABnzbdRoute extends StatefulWidget {
-  const ConfigurationSABnzbdRoute({Key? key}) : super(key: key);
+  const ConfigurationSABnzbdRoute({super.key});
 
   @override
   State<ConfigurationSABnzbdRoute> createState() => _State();

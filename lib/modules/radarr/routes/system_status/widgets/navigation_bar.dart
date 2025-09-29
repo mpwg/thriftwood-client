@@ -15,9 +15,9 @@ class RadarrSystemStatusNavigationBar extends StatelessWidget {
   );
 
   const RadarrSystemStatusNavigationBar({
-    Key? key,
+    super.key,
     required this.pageController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

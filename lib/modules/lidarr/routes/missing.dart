@@ -8,10 +8,10 @@ class LidarrMissing extends StatefulWidget {
   final Function refreshAllPages;
 
   const LidarrMissing({
-    Key? key,
+    super.key,
     required this.refreshIndicatorKey,
     required this.refreshAllPages,
-  }) : super(key: key);
+  });
 
   @override
   State<LidarrMissing> createState() => _State();
@@ -49,29 +49,29 @@ class _State extends State<LidarrMissing> with AutomaticKeepAliveClientMixin {
   }
 
   Widget get _body => LunaRefreshIndicator(
-    context: context,
-    key: widget.refreshIndicatorKey,
-    onRefresh: _refresh,
-    child: FutureBuilder(
-      future: _future,
-      builder: (context, AsyncSnapshot<List<LidarrMissingData>> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            {
-              if (snapshot.hasError || snapshot.data == null)
-                return LunaMessage.error(onTap: _refresh);
-              _results = snapshot.data;
-              return _list;
+        context: context,
+        key: widget.refreshIndicatorKey,
+        onRefresh: _refresh,
+        child: FutureBuilder(
+          future: _future,
+          builder: (context, AsyncSnapshot<List<LidarrMissingData>> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                {
+                  if (snapshot.hasError || snapshot.data == null)
+                    return LunaMessage.error(onTap: _refresh);
+                  _results = snapshot.data;
+                  return _list;
+                }
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+              case ConnectionState.active:
+              default:
+                return const LunaLoader();
             }
-          case ConnectionState.none:
-          case ConnectionState.waiting:
-          case ConnectionState.active:
-          default:
-            return const LunaLoader();
-        }
-      },
-    ),
-  );
+          },
+        ),
+      );
 
   Widget get _list {
     if (_results?.isEmpty ?? true) {

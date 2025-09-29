@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrAddMovieDetailsMonitoredTile extends StatelessWidget {
-  const RadarrAddMovieDetailsMonitoredTile({Key? key}) : super(key: key);
+  const RadarrAddMovieDetailsMonitoredTile({super.key});
 
   @override
   Widget build(BuildContext context) {

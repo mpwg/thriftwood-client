@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrTagsTagTile extends StatefulWidget {
   final RadarrTag tag;
 
-  const RadarrTagsTagTile({Key? key, required this.tag}) : super(key: key);
+  const RadarrTagsTagTile({super.key, required this.tag});
 
   @override
   State<RadarrTagsTagTile> createState() => _State();
@@ -16,21 +16,16 @@ class _State extends State<RadarrTagsTagTile> with LunaLoadCallbackMixin {
 
   @override
   Future<void> loadCallback() async {
-    await context
-        .read<RadarrState>()
-        .movies!
-        .then((movies) {
-          List<String?> _movies = [];
-          movies.forEach((element) {
-            if (element.tags!.contains(widget.tag.id))
-              _movies.add(element.title);
-          });
-          _movies.sort();
-          if (mounted) setState(() => movieList = _movies);
-        })
-        .catchError((error) {
-          if (mounted) setState(() => movieList = null);
-        });
+    await context.read<RadarrState>().movies!.then((movies) {
+      List<String?> _movies = [];
+      movies.forEach((element) {
+        if (element.tags!.contains(widget.tag.id)) _movies.add(element.title);
+      });
+      _movies.sort();
+      if (mounted) setState(() => movieList = _movies);
+    }).catchError((error) {
+      if (mounted) setState(() => movieList = null);
+    });
   }
 
   @override
@@ -61,9 +56,8 @@ class _State extends State<RadarrTagsTagTile> with LunaLoadCallbackMixin {
   }
 
   Future<void> _movieDialog() async {
-    String data = (movieList?.isEmpty ?? true)
-        ? 'No Movies'
-        : movieList!.join('\n');
+    String data =
+        (movieList?.isEmpty ?? true) ? 'No Movies' : movieList!.join('\n');
     LunaDialogs().textPreview(context, 'Movie List', data);
   }
 

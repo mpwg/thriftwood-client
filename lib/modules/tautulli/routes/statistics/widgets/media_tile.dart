@@ -10,10 +10,10 @@ class TautulliStatisticsMediaTile extends StatefulWidget {
   final TautulliMediaType mediaType;
 
   const TautulliStatisticsMediaTile({
-    Key? key,
+    super.key,
     required this.data,
     required this.mediaType,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -27,13 +27,13 @@ class _State extends State<TautulliStatisticsMediaTile> {
       body: _body(),
       onTap: _onTap,
       posterUrl: context.read<TautulliState>().getImageURLFromPath(
-        widget.data['thumb'],
-      ),
+            widget.data['thumb'],
+          ),
       posterHeaders: context.watch<TautulliState>().headers,
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
       backgroundUrl: context.read<TautulliState>().getImageURLFromPath(
-        widget.data['art'],
-      ),
+            widget.data['art'],
+          ),
       backgroundHeaders: context.watch<TautulliState>().headers,
     );
   }
@@ -41,17 +41,14 @@ class _State extends State<TautulliStatisticsMediaTile> {
   List<TextSpan> _body() {
     return [
       TextSpan(
-        text:
-            widget.data['total_plays'].toString() +
+        text: widget.data['total_plays'].toString() +
             (widget.data['total_plays'] == 1 ? ' Play' : ' Plays'),
         style: TextStyle(
-          color:
-              context.watch<TautulliState>().statisticsType ==
+          color: context.watch<TautulliState>().statisticsType ==
                   TautulliStatsType.PLAYS
               ? LunaColours.accent
               : null,
-          fontWeight:
-              context.watch<TautulliState>().statisticsType ==
+          fontWeight: context.watch<TautulliState>().statisticsType ==
                   TautulliStatsType.PLAYS
               ? LunaUI.FONT_WEIGHT_BOLD
               : null,
@@ -63,13 +60,11 @@ class _State extends State<TautulliStatisticsMediaTile> {
                 seconds: widget.data['total_duration'],
               ).asWordsTimestamp(),
               style: TextStyle(
-                color:
-                    context.watch<TautulliState>().statisticsType ==
+                color: context.watch<TautulliState>().statisticsType ==
                         TautulliStatsType.DURATION
                     ? LunaColours.accent
                     : null,
-                fontWeight:
-                    context.watch<TautulliState>().statisticsType ==
+                fontWeight: context.watch<TautulliState>().statisticsType ==
                         TautulliStatsType.DURATION
                     ? LunaUI.FONT_WEIGHT_BOLD
                     : null,

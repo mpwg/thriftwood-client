@@ -6,8 +6,7 @@ class RadarrManualImportPathBar extends StatefulWidget
     implements PreferredSizeWidget {
   final ScrollController scrollController;
 
-  const RadarrManualImportPathBar({Key? key, required this.scrollController})
-    : super(key: key);
+  const RadarrManualImportPathBar({super.key, required this.scrollController});
 
   @override
   Size get preferredSize =>
@@ -37,9 +36,9 @@ class _State extends State<RadarrManualImportPathBar> {
                 context.read<RadarrManualImportState>().currentPath = value;
                 if (value.endsWith('/') || value.isEmpty) {
                   context.read<RadarrManualImportState>().fetchDirectories(
-                    context,
-                    value,
-                  );
+                        context,
+                        value,
+                      );
                 }
               },
               margin: EdgeInsets.zero,

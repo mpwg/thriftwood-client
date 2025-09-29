@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class ConfigurationSonarrDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationSonarrDefaultPagesRoute({Key? key}) : super(key: key);
+  const ConfigurationSonarrDefaultPagesRoute({super.key});
 
   @override
   State<ConfigurationSonarrDefaultPagesRoute> createState() => _State();

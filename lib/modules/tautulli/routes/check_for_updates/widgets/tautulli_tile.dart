@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/tautulli.dart';
 class TautulliCheckForUpdatesTautulliTile extends StatelessWidget {
   final TautulliUpdateCheck update;
 
-  const TautulliCheckForUpdatesTautulliTile({Key? key, required this.update})
-    : super(key: key);
+  const TautulliCheckForUpdatesTautulliTile({super.key, required this.update});
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +52,7 @@ class TautulliCheckForUpdatesTautulliTile extends StatelessWidget {
           children: [
             const TextSpan(text: 'Current Version: '),
             TextSpan(
-              text:
-                  update.currentRelease ??
+              text: update.currentRelease ??
                   update.currentVersion?.substring(
                     0,
                     min(7, update.currentVersion!.length),
@@ -68,8 +66,7 @@ class TautulliCheckForUpdatesTautulliTile extends StatelessWidget {
           children: [
             const TextSpan(text: 'Latest Version: '),
             TextSpan(
-              text:
-                  update.latestRelease ??
+              text: update.latestRelease ??
                   update.latestVersion?.substring(
                     0,
                     min(7, update.latestVersion!.length),

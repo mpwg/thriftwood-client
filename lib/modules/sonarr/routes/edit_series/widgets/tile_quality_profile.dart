@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 class SonarrSeriesEditQualityProfileTile extends StatelessWidget {
   final List<SonarrQualityProfile?> profiles;
 
-  const SonarrSeriesEditQualityProfileTile({Key? key, required this.profiles})
-    : super(key: key);
+  const SonarrSeriesEditQualityProfileTile({super.key, required this.profiles});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +13,7 @@ class SonarrSeriesEditQualityProfileTile extends StatelessWidget {
       title: 'sonarr.QualityProfile'.tr(),
       body: [
         TextSpan(
-          text:
-              context.watch<SonarrSeriesEditState>().qualityProfile?.name ??
+          text: context.watch<SonarrSeriesEditState>().qualityProfile?.name ??
               LunaUI.TEXT_EMDASH,
         ),
       ],
@@ -25,8 +23,8 @@ class SonarrSeriesEditQualityProfileTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    (bool, SonarrQualityProfile?) result = await SonarrDialogs()
-        .editQualityProfile(context, profiles);
+    (bool, SonarrQualityProfile?) result =
+        await SonarrDialogs().editQualityProfile(context, profiles);
     if (result.$1)
       context.read<SonarrSeriesEditState>().qualityProfile = result.$2!;
   }

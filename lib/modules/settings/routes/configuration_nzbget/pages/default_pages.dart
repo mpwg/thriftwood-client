@@ -4,7 +4,7 @@ import 'package:thriftwood/database/tables/nzbget.dart';
 import 'package:thriftwood/modules/nzbget.dart';
 
 class ConfigurationNZBGetDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationNZBGetDefaultPagesRoute({Key? key}) : super(key: key);
+  const ConfigurationNZBGetDefaultPagesRoute({super.key});
 
   @override
   State<ConfigurationNZBGetDefaultPagesRoute> createState() => _State();

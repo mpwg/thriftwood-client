@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/search.dart';
 
 class SearchRoute extends StatefulWidget {
-  const SearchRoute({Key? key}) : super(key: key);
+  const SearchRoute({super.key});
 
   @override
   State<SearchRoute> createState() => _State();
@@ -48,8 +48,8 @@ class _State extends State<SearchRoute> with LunaScrollControllerMixin {
         .toList();
     list.sort(
       (a, b) => a.indexer!.displayName.toLowerCase().compareTo(
-        b.indexer!.displayName.toLowerCase(),
-      ),
+            b.indexer!.displayName.toLowerCase(),
+          ),
     );
 
     return list;

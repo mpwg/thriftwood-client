@@ -7,8 +7,7 @@ import 'package:thriftwood/modules/tautulli.dart';
 class TautulliUserDetailsProfile extends StatefulWidget {
   final TautulliTableUser user;
 
-  const TautulliUserDetailsProfile({Key? key, required this.user})
-    : super(key: key);
+  const TautulliUserDetailsProfile({super.key, required this.user});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -30,26 +29,26 @@ class _State extends State<TautulliUserDetailsProfile>
   Future<void> loadCallback() async {
     // Initial load or refresh of the user profile data
     context.read<TautulliState>().setUserProfile(
-      widget.user.userId!,
-      context.read<TautulliState>().api!.users.getUser(
-        userId: widget.user.userId!,
-      ),
-    );
+          widget.user.userId!,
+          context.read<TautulliState>().api!.users.getUser(
+                userId: widget.user.userId!,
+              ),
+        );
     // Initial load or refresh of the user watch stats
     context.read<TautulliState>().setUserWatchStats(
-      widget.user.userId!,
-      context.read<TautulliState>().api!.users.getUserWatchTimeStats(
-        userId: widget.user.userId!,
-        queryDays: [1, 7, 30, 0],
-      ),
-    );
+          widget.user.userId!,
+          context.read<TautulliState>().api!.users.getUserWatchTimeStats(
+            userId: widget.user.userId!,
+            queryDays: [1, 7, 30, 0],
+          ),
+        );
     // Initial load or refresh of the user player stats
     context.read<TautulliState>().setUserPlayerStats(
-      widget.user.userId!,
-      context.read<TautulliState>().api!.users.getUserPlayerStats(
-        userId: widget.user.userId!,
-      ),
-    );
+          widget.user.userId!,
+          context.read<TautulliState>().api!.users.getUserPlayerStats(
+                userId: widget.user.userId!,
+              ),
+        );
     setState(() => _initialLoad = true);
     // This await keeps the refresh indicator showing until the data is loaded
     await Future.wait([

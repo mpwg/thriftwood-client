@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 class SonarrTagsTagTile extends StatefulWidget {
   final SonarrTag tag;
 
-  const SonarrTagsTagTile({Key? key, required this.tag}) : super(key: key);
+  const SonarrTagsTagTile({super.key, required this.tag});
 
   @override
   State<SonarrTagsTagTile> createState() => _State();
@@ -16,27 +16,22 @@ class _State extends State<SonarrTagsTagTile> with LunaLoadCallbackMixin {
 
   @override
   Future<void> loadCallback() async {
-    await context
-        .read<SonarrState>()
-        .series!
-        .then((series) {
-          List<String?> _series = [];
-          series.values.forEach((element) {
-            if (element.tags!.contains(widget.tag.id))
-              _series.add(element.title);
-          });
-          _series.sort();
-          if (mounted)
-            setState(() {
-              seriesList = _series;
-            });
-        })
-        .catchError((error) {
-          if (mounted)
-            setState(() {
-              seriesList = null;
-            });
+    await context.read<SonarrState>().series!.then((series) {
+      List<String?> _series = [];
+      series.values.forEach((element) {
+        if (element.tags!.contains(widget.tag.id)) _series.add(element.title);
+      });
+      _series.sort();
+      if (mounted)
+        setState(() {
+          seriesList = _series;
         });
+    }).catchError((error) {
+      if (mounted)
+        setState(() {
+          seriesList = null;
+        });
+    });
   }
 
   @override
@@ -84,23 +79,22 @@ class _State extends State<SonarrTagsTagTile> with LunaLoadCallbackMixin {
             .tag
             .delete(id: widget.tag.id!)
             .then((_) {
-              showLunaSuccessSnackBar(
-                title: 'Deleted Tag',
-                message: widget.tag.label,
-              );
-              context.read<SonarrState>().fetchTags();
-            })
-            .catchError((error, stack) {
-              LunaLogger().error(
-                'Failed to delete tag: ${widget.tag.id}',
-                error,
-                stack,
-              );
-              showLunaErrorSnackBar(
-                title: 'Failed to Delete Tag',
-                error: error,
-              );
-            });
+          showLunaSuccessSnackBar(
+            title: 'Deleted Tag',
+            message: widget.tag.label,
+          );
+          context.read<SonarrState>().fetchTags();
+        }).catchError((error, stack) {
+          LunaLogger().error(
+            'Failed to delete tag: ${widget.tag.id}',
+            error,
+            stack,
+          );
+          showLunaErrorSnackBar(
+            title: 'Failed to Delete Tag',
+            error: error,
+          );
+        });
     }
   }
 }

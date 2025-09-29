@@ -6,8 +6,8 @@ import 'package:thriftwood/modules/tautulli.dart';
 class TautulliLogsNotificationLogTile extends StatelessWidget {
   final TautulliNotificationLogRecord notification;
 
-  const TautulliLogsNotificationLogTile({Key? key, required this.notification})
-    : super(key: key);
+  const TautulliLogsNotificationLogTile(
+      {super.key, required this.notification});
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +34,15 @@ class TautulliLogsNotificationLogTile extends StatelessWidget {
   }
 
   Widget _trailing() => Column(
-    children: [
-      LunaIconButton(
-        icon: notification.success!
-            ? Icons.check_circle_rounded
-            : Icons.cancel_rounded,
-        color: notification.success! ? LunaColours.white : LunaColours.red,
-      ),
-    ],
-    crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisAlignment: MainAxisAlignment.center,
-  );
+        children: [
+          LunaIconButton(
+            icon: notification.success!
+                ? Icons.check_circle_rounded
+                : Icons.cancel_rounded,
+            color: notification.success! ? LunaColours.white : LunaColours.red,
+          ),
+        ],
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+      );
 }

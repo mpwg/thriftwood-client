@@ -12,10 +12,10 @@ class RadarrMissingTile extends StatefulWidget {
   final RadarrQualityProfile? profile;
 
   const RadarrMissingTile({
-    Key? key,
+    super.key,
     required this.movie,
     required this.profile,
-  }) : super(key: key);
+  });
 
   @override
   State<RadarrMissingTile> createState() => _State();
@@ -28,8 +28,8 @@ class _State extends State<RadarrMissingTile> {
       selector: (_, state) => state.missing,
       builder: (context, missing, _) => LunaBlock(
         backgroundUrl: context.read<RadarrState>().getFanartURL(
-          widget.movie.id,
-        ),
+              widget.movie.id,
+            ),
         posterUrl: context.read<RadarrState>().getPosterURL(widget.movie.id),
         posterHeaders: context.read<RadarrState>().headers,
         posterPlaceholderIcon: LunaIcons.VIDEO_CAM,

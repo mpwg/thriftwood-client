@@ -5,7 +5,7 @@ class NotEnabledPage extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final String module;
 
-  NotEnabledPage({Key? key, required this.module}) : super(key: key);
+  NotEnabledPage({super.key, required this.module});
 
   @override
   Widget build(BuildContext context) {

@@ -3,8 +3,7 @@ import 'package:thriftwood/modules.dart';
 import 'package:thriftwood/modules/settings.dart';
 
 class ConfigurationLidarrConnectionDetailsHeadersRoute extends StatelessWidget {
-  const ConfigurationLidarrConnectionDetailsHeadersRoute({Key? key})
-    : super(key: key);
+  const ConfigurationLidarrConnectionDetailsHeadersRoute({super.key});
 
   @override
   Widget build(BuildContext context) {

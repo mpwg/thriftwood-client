@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/search.dart';
 import 'package:thriftwood/router/routes/search.dart';
 
 class SearchSubcategoryAllTile extends StatelessWidget {
-  const SearchSubcategoryAllTile({Key? key}) : super(key: key);
+  const SearchSubcategoryAllTile({super.key});
 
   @override
   Widget build(BuildContext context) {

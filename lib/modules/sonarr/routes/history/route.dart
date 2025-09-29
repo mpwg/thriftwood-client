@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class HistoryRoute extends StatefulWidget {
-  const HistoryRoute({Key? key}) : super(key: key);
+  const HistoryRoute({super.key});
 
   @override
   State<HistoryRoute> createState() => _State();
@@ -17,7 +17,7 @@ class _State extends State<HistoryRoute>
     fetchPage: _fetchPage,
     getNextPageKey: (state) => _getNextPageKey(state),
   );
-  
+
   // Store pagination info
   int? _totalRecords;
   int? _currentPage;
@@ -36,23 +36,19 @@ class _State extends State<HistoryRoute>
 
   Future<List<SonarrHistoryRecord>> _fetchPage(int pageKey) async {
     try {
-      final data = await context
-          .read<SonarrState>()
-          .api!
-          .history
-          .get(
+      final data = await context.read<SonarrState>().api!.history.get(
             page: pageKey,
             pageSize: SonarrDatabase.CONTENT_PAGE_SIZE.read(),
             sortKey: SonarrHistorySortKey.DATE,
             sortDirection: SonarrSortDirection.DESCENDING,
             includeEpisode: true,
           );
-      
+
       // Store pagination info
       _totalRecords = data.totalRecords;
       _currentPage = data.page;
       _pageSize = data.pageSize;
-      
+
       return data.records ?? [];
     } catch (error, stack) {
       LunaLogger().error(
@@ -68,17 +64,14 @@ class _State extends State<HistoryRoute>
     if (_totalRecords == null || _currentPage == null || _pageSize == null) {
       return null;
     }
-    
+
     final currentPageKey = state.nextIntPageKey;
-    if (currentPageKey == null) {
-      return null;
-    }
     final totalItemsFetched = currentPageKey * _pageSize!;
-    
+
     if (totalItemsFetched < _totalRecords!) {
       return currentPageKey + 1;
     }
-    
+
     return null;
   }
 

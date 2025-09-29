@@ -5,8 +5,8 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrSystemStatusAboutPage extends StatefulWidget {
   final ScrollController scrollController;
 
-  const RadarrSystemStatusAboutPage({Key? key, required this.scrollController})
-    : super(key: key);
+  const RadarrSystemStatusAboutPage(
+      {super.key, required this.scrollController});
 
   @override
   State<StatefulWidget> createState() => _State();

@@ -11,12 +11,12 @@ class LidarrCatalogueTile extends StatefulWidget {
   final Function refreshState;
 
   const LidarrCatalogueTile({
-    Key? key,
+    super.key,
     required this.data,
     required this.scaffoldKey,
     required this.refresh,
     required this.refreshState,
-  }) : super(key: key);
+  });
 
   @override
   State<LidarrCatalogueTile> createState() => _State();
@@ -63,24 +63,21 @@ class _State extends State<LidarrCatalogueTile> {
     await _api
         .toggleArtistMonitored(widget.data.artistID, !widget.data.monitored!)
         .then((_) {
-          if (mounted)
-            setState(() => widget.data.monitored = !widget.data.monitored!);
-          widget.refreshState();
-          showLunaSuccessSnackBar(
-            title: widget.data.monitored!
-                ? 'Monitoring'
-                : 'No Longer Monitoring',
-            message: widget.data.title,
-          );
-        })
-        .catchError((error) {
-          showLunaErrorSnackBar(
-            title: widget.data.monitored!
-                ? 'Failed to Stop Monitoring'
-                : 'Failed to Monitor',
-            error: error,
-          );
-        });
+      if (mounted)
+        setState(() => widget.data.monitored = !widget.data.monitored!);
+      widget.refreshState();
+      showLunaSuccessSnackBar(
+        title: widget.data.monitored! ? 'Monitoring' : 'No Longer Monitoring',
+        message: widget.data.title,
+      );
+    }).catchError((error) {
+      showLunaErrorSnackBar(
+        title: widget.data.monitored!
+            ? 'Failed to Stop Monitoring'
+            : 'Failed to Monitor',
+        error: error,
+      );
+    });
   }
 
   Future<void> _enterArtist() async {
@@ -146,32 +143,30 @@ class _State extends State<LidarrCatalogueTile> {
           await _api
               .removeArtist(widget.data.artistID, deleteFiles: true)
               .then((_) {
-                showLunaSuccessSnackBar(
-                  title: 'Removed (With Data)',
-                  message: widget.data.title,
-                );
-                widget.refresh();
-              })
-              .catchError((error) {
-                showLunaErrorSnackBar(
-                  title: 'Failed to Remove (With Data)',
-                  error: error,
-                );
-              });
+            showLunaSuccessSnackBar(
+              title: 'Removed (With Data)',
+              message: widget.data.title,
+            );
+            widget.refresh();
+          }).catchError((error) {
+            showLunaErrorSnackBar(
+              title: 'Failed to Remove (With Data)',
+              error: error,
+            );
+          });
         }
       } else {
         await _api
             .removeArtist(widget.data.artistID, deleteFiles: false)
             .then((_) {
-              showLunaSuccessSnackBar(
-                title: 'Removed',
-                message: widget.data.title,
-              );
-              widget.refresh();
-            })
-            .catchError((error) {
-              showLunaErrorSnackBar(title: 'Failed to Remove', error: error);
-            });
+          showLunaSuccessSnackBar(
+            title: 'Removed',
+            message: widget.data.title,
+          );
+          widget.refresh();
+        }).catchError((error) {
+          showLunaErrorSnackBar(title: 'Failed to Remove', error: error);
+        });
       }
     }
   }

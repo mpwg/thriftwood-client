@@ -122,7 +122,7 @@ class LunaTheme {
   TextButtonThemeData get _sharedTextButtonThemeData {
     return TextButtonThemeData(
       style: ButtonStyle(
-        overlayColor: MaterialStateProperty.all<Color>(
+        overlayColor: WidgetStateProperty.all<Color>(
           LunaColours.accent.withOpacity(LunaUI.OPACITY_SPLASH),
         ),
       ),

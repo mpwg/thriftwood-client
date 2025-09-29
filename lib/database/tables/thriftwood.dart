@@ -1,12 +1,6 @@
-import 'package:thriftwood/database/models/external_module.dart';
-import 'package:thriftwood/database/models/indexer.dart';
-import 'package:thriftwood/database/models/log.dart';
 import 'package:thriftwood/database/models/profile.dart';
-import 'package:thriftwood/types/indexer_icon.dart';
-import 'package:thriftwood/types/list_view_option.dart';
 import 'package:thriftwood/modules.dart';
 import 'package:thriftwood/database/table.dart';
-import 'package:thriftwood/types/log_type.dart';
 import 'package:thriftwood/vendor.dart';
 import 'package:thriftwood/widgets/ui.dart';
 

@@ -4,7 +4,7 @@ import 'package:thriftwood/database/models/indexer.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationSearchAddIndexerRoute extends StatefulWidget {
-  const ConfigurationSearchAddIndexerRoute({Key? key}) : super(key: key);
+  const ConfigurationSearchAddIndexerRoute({super.key});
 
   @override
   State<ConfigurationSearchAddIndexerRoute> createState() => _State();

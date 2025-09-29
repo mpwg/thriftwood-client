@@ -6,8 +6,7 @@ import 'package:thriftwood/modules/lidarr.dart';
 class LidarrReleasesSortButton extends StatefulWidget {
   final ScrollController controller;
 
-  const LidarrReleasesSortButton({Key? key, required this.controller})
-    : super(key: key);
+  const LidarrReleasesSortButton({super.key, required this.controller});
 
   @override
   State<LidarrReleasesSortButton> createState() => _State();
@@ -16,12 +15,12 @@ class LidarrReleasesSortButton extends StatefulWidget {
 class _State extends State<LidarrReleasesSortButton> {
   @override
   Widget build(BuildContext context) => LunaCard(
-    context: context,
-    height: LunaTextInputBar.defaultHeight,
-    width: LunaTextInputBar.defaultHeight,
-    child: Consumer<LidarrState>(
-      builder: (context, model, _) =>
-          LunaPopupMenuButton<LidarrReleasesSorting>(
+        context: context,
+        height: LunaTextInputBar.defaultHeight,
+        width: LunaTextInputBar.defaultHeight,
+        child: Consumer<LidarrState>(
+          builder: (context, model, _) =>
+              LunaPopupMenuButton<LidarrReleasesSorting>(
             tooltip: 'Sort Releases',
             icon: Icons.sort_rounded,
             onSelected: (result) {
@@ -35,36 +34,34 @@ class _State extends State<LidarrReleasesSortButton> {
             },
             itemBuilder: (context) =>
                 List<PopupMenuEntry<LidarrReleasesSorting>>.generate(
-                  LidarrReleasesSorting.values.length,
-                  (index) => PopupMenuItem<LidarrReleasesSorting>(
-                    value: LidarrReleasesSorting.values[index],
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          LidarrReleasesSorting.values[index].readable,
-                          style: const TextStyle(fontSize: LunaUI.FONT_SIZE_H3),
-                        ),
-                        if (model.sortReleasesType ==
-                            LidarrReleasesSorting.values[index])
-                          Icon(
-                            model.sortReleasesAscending
-                                ? Icons.arrow_upward_rounded
-                                : Icons.arrow_downward_rounded,
-                            size: LunaUI.FONT_SIZE_H2,
-                            color: LunaColours.accent,
-                          ),
-                      ],
+              LidarrReleasesSorting.values.length,
+              (index) => PopupMenuItem<LidarrReleasesSorting>(
+                value: LidarrReleasesSorting.values[index],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      LidarrReleasesSorting.values[index].readable,
+                      style: const TextStyle(fontSize: LunaUI.FONT_SIZE_H3),
                     ),
-                  ),
+                    if (model.sortReleasesType ==
+                        LidarrReleasesSorting.values[index])
+                      Icon(
+                        model.sortReleasesAscending
+                            ? Icons.arrow_upward_rounded
+                            : Icons.arrow_downward_rounded,
+                        size: LunaUI.FONT_SIZE_H2,
+                        color: LunaColours.accent,
+                      ),
+                  ],
                 ),
+              ),
+            ),
           ),
-    ),
-    margin:
-        LunaTextInputBar.appBarMargin.subtract(
-              const EdgeInsets.only(left: 12.0),
-            )
-            as EdgeInsets,
-    color: Theme.of(context).canvasColor,
-  );
+        ),
+        margin: LunaTextInputBar.appBarMargin.subtract(
+          const EdgeInsets.only(left: 12.0),
+        ) as EdgeInsets,
+        color: Theme.of(context).canvasColor,
+      );
 }

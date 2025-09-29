@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/tautulli.dart';
 class TautulliCheckForUpdatesPMSTile extends StatelessWidget {
   final TautulliPMSUpdate update;
 
-  const TautulliCheckForUpdatesPMSTile({Key? key, required this.update})
-    : super(key: key);
+  const TautulliCheckForUpdatesPMSTile({super.key, required this.update});
 
   @override
   Widget build(BuildContext context) {

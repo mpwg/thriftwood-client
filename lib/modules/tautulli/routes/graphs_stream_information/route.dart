@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliGraphsStreamInformationRoute extends StatefulWidget {
-  const TautulliGraphsStreamInformationRoute({Key? key}) : super(key: key);
+  const TautulliGraphsStreamInformationRoute({super.key});
 
   @override
   State<TautulliGraphsStreamInformationRoute> createState() => _State();

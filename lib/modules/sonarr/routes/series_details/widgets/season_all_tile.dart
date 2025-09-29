@@ -7,8 +7,7 @@ import 'package:thriftwood/router/routes/sonarr.dart';
 class SonarrSeriesDetailsSeasonAllTile extends StatelessWidget {
   final SonarrSeries? series;
 
-  const SonarrSeriesDetailsSeasonAllTile({Key? key, required this.series})
-    : super(key: key);
+  const SonarrSeriesDetailsSeasonAllTile({super.key, required this.series});
 
   @override
   Widget build(BuildContext context) {

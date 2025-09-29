@@ -6,8 +6,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrMovieDetailsCastCrewTile extends StatelessWidget {
   final RadarrMovieCredits credits;
 
-  const RadarrMovieDetailsCastCrewTile({Key? key, required this.credits})
-    : super(key: key);
+  const RadarrMovieDetailsCastCrewTile({super.key, required this.credits});
 
   @override
   Widget build(BuildContext context) {

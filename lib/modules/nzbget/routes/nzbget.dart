@@ -11,7 +11,7 @@ import 'package:thriftwood/system/filesystem/filesystem.dart';
 class NZBGetRoute extends StatefulWidget {
   final bool showDrawer;
 
-  const NZBGetRoute({Key? key, this.showDrawer = true}) : super(key: key);
+  const NZBGetRoute({super.key, this.showDrawer = true});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -190,18 +190,15 @@ class _State extends State<NZBGetRoute> {
   Future<void> _sort() async {
     List values = await NZBGetDialogs.sortQueue(context);
     if (values[0])
-      await _api
-          .sortQueue(values[1])
-          .then((_) {
-            _refreshKeys[0]?.currentState?.show();
-            showLunaSuccessSnackBar(
-              title: 'Sorted Queue',
-              message: (values[1] as NZBGetSort?).name,
-            );
-          })
-          .catchError((error) {
-            showLunaErrorSnackBar(title: 'Failed to Sort Queue', error: error);
-          });
+      await _api.sortQueue(values[1]).then((_) {
+        _refreshKeys[0]?.currentState?.show();
+        showLunaSuccessSnackBar(
+          title: 'Sorted Queue',
+          message: (values[1] as NZBGetSort?).name,
+        );
+      }).catchError((error) {
+        showLunaErrorSnackBar(title: 'Failed to Sort Queue', error: error);
+      });
   }
 
   Future<void> _serverDetails() async => NZBGetRoutes.STATISTICS.go();

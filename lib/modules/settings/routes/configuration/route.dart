@@ -6,7 +6,7 @@ import 'package:thriftwood/system/quick_actions/quick_actions.dart';
 import 'package:thriftwood/utils/profile_tools.dart';
 
 class ConfigurationRoute extends StatefulWidget {
-  const ConfigurationRoute({Key? key}) : super(key: key);
+  const ConfigurationRoute({super.key});
 
   @override
   State<ConfigurationRoute> createState() => _State();

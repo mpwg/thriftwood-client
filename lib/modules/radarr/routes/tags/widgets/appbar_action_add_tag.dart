@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrTagsAppBarActionAddTag extends StatelessWidget {
   final bool asDialogButton;
 
-  const RadarrTagsAppBarActionAddTag({Key? key, this.asDialogButton = false})
-    : super(key: key);
+  const RadarrTagsAppBarActionAddTag({super.key, this.asDialogButton = false});
 
   @override
   Widget build(BuildContext context) {

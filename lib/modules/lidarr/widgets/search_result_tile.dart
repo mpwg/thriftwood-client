@@ -10,7 +10,7 @@ import 'package:thriftwood/router/router.dart';
 class LidarrReleasesTile extends StatefulWidget {
   final LidarrReleaseData release;
 
-  const LidarrReleasesTile({Key? key, required this.release}) : super(key: key);
+  const LidarrReleasesTile({super.key, required this.release});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -148,25 +148,24 @@ class _State extends State<LidarrReleasesTile> {
     await _api
         .downloadRelease(widget.release.guid, widget.release.indexerId)
         .then((_) {
-          showLunaSuccessSnackBar(
-            title: 'Downloading...',
-            message: widget.release.title,
-            showButton: true,
-            buttonText: 'Back',
-            buttonOnPressed: LunaRouter().popToRootRoute,
-          );
-        })
-        .catchError((error, stack) {
-          showLunaErrorSnackBar(
-            title: 'Failed to Start Downloading',
-            error: error,
-          );
-        });
+      showLunaSuccessSnackBar(
+        title: 'Downloading...',
+        message: widget.release.title,
+        showButton: true,
+        buttonText: 'Back',
+        buttonOnPressed: LunaRouter().popToRootRoute,
+      );
+    }).catchError((error, stack) {
+      showLunaErrorSnackBar(
+        title: 'Failed to Start Downloading',
+        error: error,
+      );
+    });
     setState(() => _downloadState = LunaLoadingState.INACTIVE);
   }
 
   Future<void> _showWarnings() async => await LunaDialogs().showRejections(
-    context,
-    widget.release.rejections.cast<String>(),
-  );
+        context,
+        widget.release.rejections.cast<String>(),
+      );
 }

@@ -4,7 +4,7 @@ import 'package:thriftwood/database/tables/sabnzbd.dart';
 import 'package:thriftwood/modules/sabnzbd.dart';
 
 class ConfigurationSABnzbdDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationSABnzbdDefaultPagesRoute({Key? key}) : super(key: key);
+  const ConfigurationSABnzbdDefaultPagesRoute({super.key});
 
   @override
   State<ConfigurationSABnzbdDefaultPagesRoute> createState() => _State();

@@ -14,12 +14,12 @@ class SonarrHistoryTile extends StatelessWidget {
   final SonarrEpisode? episode;
 
   const SonarrHistoryTile({
-    Key? key,
+    super.key,
     required this.history,
     required this.type,
     this.series,
     this.episode,
-  }) : super(key: key);
+  });
 
   bool _hasEpisodeInfo() {
     if (history.episode != null || episode != null) return true;
@@ -91,15 +91,13 @@ class SonarrHistoryTile extends StatelessWidget {
             backgroundColor: LunaColours.blueGrey,
           ),
       ],
-      expandedTableContent:
-          history.eventType?.lunaTableContent(
+      expandedTableContent: history.eventType?.lunaTableContent(
             history: history,
             showSourceTitle: type != SonarrHistoryTileType.ALL,
           ) ??
           [],
-      onLongPress: _hasLongPressAction()
-          ? () async => _onLongPress(context)
-          : null,
+      onLongPress:
+          _hasLongPressAction() ? () async => _onLongPress(context) : null,
     );
   }
 
@@ -131,8 +129,7 @@ class SonarrHistoryTile extends StatelessWidget {
     return TextSpan(
       children: [
         TextSpan(
-          text:
-              history.thriftwoodsonEpisode() ??
+          text: history.thriftwoodsonEpisode() ??
               episode?.thriftwoodsonEpisode() ??
               LunaUI.TEXT_EMDASH,
         ),

@@ -2,7 +2,7 @@
 /// a Python based monitoring and tracking tool for Plex Media Server.
 ///
 /// This library gives access to [tautulli_commands], [tautulli_models], and [tautulli_types], and is needed as the only entrypoint.
-library tautulli;
+library;
 
 // Imports
 import 'package:dio/dio.dart';

@@ -18,7 +18,7 @@ import 'package:thriftwood/widgets/ui.dart';
 class CalendarView extends StatefulWidget {
   final Map<DateTime, List<CalendarData>> events;
 
-  const CalendarView({Key? key, required this.events}) : super(key: key);
+  const CalendarView({super.key, required this.events});
 
   @override
   State<CalendarView> createState() => _State();
@@ -97,11 +97,11 @@ class _State extends State<CalendarView> {
       ],
       builder: (context, _) {
         DateTime firstDay = context.watch<DashboardState>().today.subtract(
-          Duration(days: DashboardDatabase.CALENDAR_DAYS_PAST.read()),
-        );
+              Duration(days: DashboardDatabase.CALENDAR_DAYS_PAST.read()),
+            );
         DateTime lastDay = context.watch<DashboardState>().today.add(
-          Duration(days: DashboardDatabase.CALENDAR_DAYS_FUTURE.read()),
-        );
+              Duration(days: DashboardDatabase.CALENDAR_DAYS_FUTURE.read()),
+            );
         return SafeArea(
           child: LunaCard(
             context: context,
@@ -128,9 +128,8 @@ class _State extends State<CalendarView> {
                     fontWeight: LunaUI.FONT_WEIGHT_BOLD,
                   ),
                 ),
-                startingDayOfWeek: DashboardDatabase.CALENDAR_STARTING_DAY
-                    .read()
-                    .data,
+                startingDayOfWeek:
+                    DashboardDatabase.CALENDAR_STARTING_DAY.read().data,
                 selectedDayPredicate: (date) {
                   return date.floor() ==
                       context.read<DashboardState>().selected;
@@ -212,7 +211,7 @@ class _State extends State<CalendarView> {
         case CalendarSonarrData:
           CalendarSonarrData _event = event;
           DateTime? _airTime = _event.airTimeObject?.toLocal();
-          bool _isAired = _airTime?.isBefore(DateTime.now()) ?? false;
+          bool _isAired = _airTime.isBefore(DateTime.now()) ?? false;
           if (!_event.hasFile && _isAired) counter++;
           break;
       }

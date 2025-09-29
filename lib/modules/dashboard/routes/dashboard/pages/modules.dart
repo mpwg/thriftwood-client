@@ -9,7 +9,7 @@ import 'package:thriftwood/api/wake_on_lan/wake_on_lan.dart';
 import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
 
 class ModulesPage extends StatefulWidget {
-  const ModulesPage({Key? key}) : super(key: key);
+  const ModulesPage({super.key});
 
   @override
   State<StatefulWidget> createState() => _State();

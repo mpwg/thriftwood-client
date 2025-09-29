@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/search.dart';
 import 'package:thriftwood/widgets/sheets/download_client/button.dart';
 
 class SearchIndexerRoute extends StatefulWidget {
-  const SearchIndexerRoute({Key? key}) : super(key: key);
+  const SearchIndexerRoute({super.key});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -15,9 +15,10 @@ class _State extends State<SearchIndexerRoute> with LunaScrollControllerMixin {
   final _refreshKey = GlobalKey<RefreshIndicatorState>();
   late final PagingController<int, NewznabResultData> _pagingController =
       PagingController(
-        fetchPage: _fetchPage,
-        getNextPageKey: (state) => state.lastPageIsEmpty ? null : state.nextIntPageKey,
-      );
+    fetchPage: _fetchPage,
+    getNextPageKey: (state) =>
+        state.lastPageIsEmpty ? null : state.nextIntPageKey,
+  );
   bool _firstSearched = false;
 
   @override
@@ -65,9 +66,8 @@ class _State extends State<SearchIndexerRoute> with LunaScrollControllerMixin {
   Widget _appBar() {
     String title = context.read<SearchState>().indexer.displayName;
     NewznabCategoryData? category = context.read<SearchState>().activeCategory;
-    NewznabSubcategoryData? subcategory = context
-        .read<SearchState>()
-        .activeSubcategory;
+    NewznabSubcategoryData? subcategory =
+        context.read<SearchState>().activeSubcategory;
     if (category != null) title = category.name!;
     if (category != null && subcategory != null) {
       title = '$title > ${subcategory.name ?? 'thriftwood.Unknown'.tr()}';

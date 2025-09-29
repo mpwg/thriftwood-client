@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class LogsNewslettersRoute extends StatefulWidget {
-  const LogsNewslettersRoute({Key? key}) : super(key: key);
+  const LogsNewslettersRoute({super.key});
 
   @override
   State<StatefulWidget> createState() => _State();

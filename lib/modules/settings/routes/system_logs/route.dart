@@ -7,7 +7,7 @@ import 'package:thriftwood/system/filesystem/filesystem.dart';
 import 'package:thriftwood/types/log_type.dart';
 
 class SystemLogsRoute extends StatefulWidget {
-  const SystemLogsRoute({Key? key}) : super(key: key);
+  const SystemLogsRoute({super.key});
 
   @override
   State<SystemLogsRoute> createState() => _State();

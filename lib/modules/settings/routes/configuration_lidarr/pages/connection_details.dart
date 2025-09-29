@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/settings.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationLidarrConnectionDetailsRoute extends StatefulWidget {
-  const ConfigurationLidarrConnectionDetailsRoute({Key? key}) : super(key: key);
+  const ConfigurationLidarrConnectionDetailsRoute({super.key});
 
   @override
   State<ConfigurationLidarrConnectionDetailsRoute> createState() => _State();
@@ -127,12 +127,12 @@ class _State extends State<ConfigurationLidarrConnectionDetailsRoute>
               ),
             )
             .catchError((error, trace) {
-              LunaLogger().error('Connection Test Failed', error, trace);
-              showLunaErrorSnackBar(
-                title: 'settings.ConnectionTestFailed'.tr(),
-                error: error,
-              );
-            });
+          LunaLogger().error('Connection Test Failed', error, trace);
+          showLunaErrorSnackBar(
+            title: 'settings.ConnectionTestFailed'.tr(),
+            error: error,
+          );
+        });
       },
     );
   }

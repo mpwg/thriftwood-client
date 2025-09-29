@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:thriftwood/core.dart';
 
 class ConfigurationDrawerRoute extends StatefulWidget {
-  const ConfigurationDrawerRoute({Key? key}) : super(key: key);
+  const ConfigurationDrawerRoute({super.key});
 
   @override
   State<ConfigurationDrawerRoute> createState() => _State();
@@ -44,20 +44,18 @@ class _State extends State<ConfigurationDrawerRoute>
           body: [
             TextSpan(text: 'settings.AutomaticallyManageOrderDescription'.tr()),
           ],
-          trailing: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE
-              .listenableBuilder(
-                builder: (context, _) => LunaSwitch(
-                  value: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.read(),
-                  onChanged: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.update,
-                ),
-              ),
+          trailing:
+              thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.listenableBuilder(
+            builder: (context, _) => LunaSwitch(
+              value: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.read(),
+              onChanged: thriftwoodDatabase.DRAWER_AUTOMATIC_MANAGE.update,
+            ),
+          ),
         ),
         LunaDivider(),
         Expanded(
           child: LunaReorderableListViewBuilder(
-            padding: MediaQuery.of(context).padding
-                .copyWith(top: 0)
-                .add(
+            padding: MediaQuery.of(context).padding.copyWith(top: 0).add(
                   EdgeInsets.only(
                     bottom: LunaUI.MARGIN_H_DEFAULT_V_HALF.bottom,
                   ),

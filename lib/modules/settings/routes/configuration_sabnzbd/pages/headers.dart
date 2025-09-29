@@ -4,8 +4,7 @@ import 'package:thriftwood/modules/settings.dart';
 
 class ConfigurationSABnzbdConnectionDetailsHeadersRoute
     extends StatelessWidget {
-  const ConfigurationSABnzbdConnectionDetailsHeadersRoute({Key? key})
-    : super(key: key);
+  const ConfigurationSABnzbdConnectionDetailsHeadersRoute({super.key});
 
   @override
   Widget build(BuildContext context) {

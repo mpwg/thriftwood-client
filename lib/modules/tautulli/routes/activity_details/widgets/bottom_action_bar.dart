@@ -7,9 +7,9 @@ class TautulliActivityDetailsBottomActionBar extends StatelessWidget {
   final int sessionKey;
 
   const TautulliActivityDetailsBottomActionBar({
-    Key? key,
+    super.key,
     required this.sessionKey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,18 +29,18 @@ class TautulliActivityDetailsBottomActionBar extends StatelessWidget {
                   icon: Icons.close_rounded,
                   color: LunaColours.red,
                   onTap: () async {
-                    (bool, String) _result = await TautulliDialogs()
-                        .terminateSession(context);
+                    (bool, String) _result =
+                        await TautulliDialogs().terminateSession(context);
                     if (_result.$1)
                       TautulliAPIHelper()
                           .terminateSession(
-                            context: context,
-                            session: session,
-                            terminationMessage: _result.$2,
-                          )
+                        context: context,
+                        session: session,
+                        terminationMessage: _result.$2,
+                      )
                           .then((value) {
-                            if (value) Navigator.of(context).pop();
-                          });
+                        if (value) Navigator.of(context).pop();
+                      });
                   },
                 ),
               ],

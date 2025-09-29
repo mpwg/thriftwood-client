@@ -15,8 +15,7 @@ class SABnzbdNavigationBar extends StatelessWidget {
 
   static const List<String> titles = ['Queue', 'History'];
 
-  const SABnzbdNavigationBar({Key? key, required this.pageController})
-    : super(key: key);
+  const SABnzbdNavigationBar({super.key, required this.pageController});
 
   @override
   Widget build(BuildContext context) {

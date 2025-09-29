@@ -7,7 +7,7 @@ import 'package:thriftwood/system/network/network.dart';
 import 'package:thriftwood/system/platform.dart';
 
 class ConfigurationGeneralRoute extends StatefulWidget {
-  const ConfigurationGeneralRoute({Key? key}) : super(key: key);
+  const ConfigurationGeneralRoute({super.key});
 
   @override
   State createState() => _State();
@@ -134,15 +134,14 @@ class _State extends State<ConfigurationGeneralRoute>
         title: 'settings.BackgroundImageOpacity'.tr(),
         body: [
           TextSpan(
-            text: _db.read() == 0
-                ? 'thriftwood.Disabled'.tr()
-                : '${_db.read()}%',
+            text:
+                _db.read() == 0 ? 'thriftwood.Disabled'.tr() : '${_db.read()}%',
           ),
         ],
         trailing: const LunaIconButton.arrow(),
         onTap: () async {
-          (bool, int) result = await SettingsDialogs()
-              .changeBackgroundImageOpacity(context);
+          (bool, int) result =
+              await SettingsDialogs().changeBackgroundImageOpacity(context);
           if (result.$1) _db.update(result.$2);
         },
       ),

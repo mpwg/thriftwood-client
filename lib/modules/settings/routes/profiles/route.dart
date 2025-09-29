@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/settings.dart';
 import 'package:thriftwood/utils/profile_tools.dart';
 
 class ProfilesRoute extends StatefulWidget {
-  const ProfilesRoute({Key? key}) : super(key: key);
+  const ProfilesRoute({super.key});
 
   @override
   State<ProfilesRoute> createState() => _State();

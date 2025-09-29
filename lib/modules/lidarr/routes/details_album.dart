@@ -10,11 +10,11 @@ class ArtistAlbumDetailsRoute extends StatefulWidget {
   final bool monitored;
 
   const ArtistAlbumDetailsRoute({
-    Key? key,
+    super.key,
     required this.artistId,
     required this.albumId,
     required this.monitored,
-  }) : super(key: key);
+  });
 
   @override
   State<ArtistAlbumDetailsRoute> createState() => _State();
@@ -114,15 +114,12 @@ class _State extends State<ArtistAlbumDetailsRoute>
 
   Future<void> _automaticSearch() async {
     LidarrAPI _api = LidarrAPI.from(LunaProfile.current);
-    _api
-        .searchAlbums([widget.albumId])
-        .then((_) {
-          showLunaSuccessSnackBar(title: 'Searching...', message: '');
-        })
-        .catchError((error, stack) {
-          LunaLogger().error('Failed to search for album', error, stack);
-          showLunaErrorSnackBar(title: 'Failed to Search', error: error);
-        });
+    _api.searchAlbums([widget.albumId]).then((_) {
+      showLunaSuccessSnackBar(title: 'Searching...', message: '');
+    }).catchError((error, stack) {
+      LunaLogger().error('Failed to search for album', error, stack);
+      showLunaErrorSnackBar(title: 'Failed to Search', error: error);
+    });
   }
 
   Future<void> _manualSearch() async {

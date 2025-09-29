@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliStatisticsTimeRangeButton extends StatelessWidget {
-  const TautulliStatisticsTimeRangeButton({Key? key}) : super(key: key);
+  const TautulliStatisticsTimeRangeButton({super.key});
 
   @override
   Widget build(BuildContext context) =>
@@ -11,29 +11,28 @@ class TautulliStatisticsTimeRangeButton extends StatelessWidget {
         selector: (_, state) => state.statisticsTimeRange,
         builder: (context, range, _) =>
             LunaPopupMenuButton<TautulliStatisticsTimeRange>(
-              tooltip: 'Time Range',
-              icon: Icons.access_time_rounded,
-              onSelected: (value) {
-                context.read<TautulliState>().statisticsTimeRange = value;
-                context.read<TautulliState>().resetStatistics();
-              },
-              itemBuilder: (context) =>
-                  List<PopupMenuEntry<TautulliStatisticsTimeRange>>.generate(
-                    TautulliStatisticsTimeRange.values.length,
-                    (index) => PopupMenuItem<TautulliStatisticsTimeRange>(
-                      value: TautulliStatisticsTimeRange.values[index],
-                      child: Text(
-                        TautulliStatisticsTimeRange.values[index].name,
-                        style: TextStyle(
-                          fontSize: LunaUI.FONT_SIZE_H3,
-                          color:
-                              range == TautulliStatisticsTimeRange.values[index]
-                              ? LunaColours.accent
-                              : Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
+          tooltip: 'Time Range',
+          icon: Icons.access_time_rounded,
+          onSelected: (value) {
+            context.read<TautulliState>().statisticsTimeRange = value;
+            context.read<TautulliState>().resetStatistics();
+          },
+          itemBuilder: (context) =>
+              List<PopupMenuEntry<TautulliStatisticsTimeRange>>.generate(
+            TautulliStatisticsTimeRange.values.length,
+            (index) => PopupMenuItem<TautulliStatisticsTimeRange>(
+              value: TautulliStatisticsTimeRange.values[index],
+              child: Text(
+                TautulliStatisticsTimeRange.values[index].name,
+                style: TextStyle(
+                  fontSize: LunaUI.FONT_SIZE_H3,
+                  color: range == TautulliStatisticsTimeRange.values[index]
+                      ? LunaColours.accent
+                      : Colors.white,
+                ),
+              ),
             ),
+          ),
+        ),
       );
 }

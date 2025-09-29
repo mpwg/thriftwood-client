@@ -7,10 +7,10 @@ class SeriesSeasonDetailsRoute extends StatefulWidget {
   final int seasonNumber;
 
   const SeriesSeasonDetailsRoute({
-    Key? key,
+    super.key,
     required this.seriesId,
     required this.seasonNumber,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -34,9 +34,8 @@ class _State extends State<SeriesSeasonDetailsRoute>
     return LunaScaffold(
       scaffoldKey: _scaffoldKey,
       appBar: _appBar() as PreferredSizeWidget?,
-      bottomNavigationBar: context.watch<SonarrState>().enabled
-          ? _bottomNavigationBar()
-          : null,
+      bottomNavigationBar:
+          context.watch<SonarrState>().enabled ? _bottomNavigationBar() : null,
       body: _body(),
     );
   }

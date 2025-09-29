@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliRoute extends StatefulWidget {
-  const TautulliRoute({Key? key}) : super(key: key);
+  const TautulliRoute({super.key});
 
   @override
   State<TautulliRoute> createState() => _State();

@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/settings.dart';
 import 'package:thriftwood/types/list_view_option.dart';
 
 class ConfigurationRadarrDefaultOptionsRoute extends StatefulWidget {
-  const ConfigurationRadarrDefaultOptionsRoute({Key? key}) : super(key: key);
+  const ConfigurationRadarrDefaultOptionsRoute({super.key});
 
   @override
   State<ConfigurationRadarrDefaultOptionsRoute> createState() => _State();
@@ -105,9 +105,8 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
           if (values.$1) {
             _db.update(RadarrMoviesSorting.values[values.$2]);
             context.read<RadarrState>().moviesSortType = _db.read();
-            context.read<RadarrState>().moviesSortAscending = RadarrDatabase
-                .DEFAULT_SORTING_MOVIES_ASCENDING
-                .read();
+            context.read<RadarrState>().moviesSortAscending =
+                RadarrDatabase.DEFAULT_SORTING_MOVIES_ASCENDING.read();
           }
         },
       ),
@@ -130,9 +129,8 @@ class _State extends State<ConfigurationRadarrDefaultOptionsRoute>
           value: _db.read(),
           onChanged: (value) {
             _db.update(value);
-            context.read<RadarrState>().moviesSortType = RadarrDatabase
-                .DEFAULT_SORTING_MOVIES
-                .read();
+            context.read<RadarrState>().moviesSortType =
+                RadarrDatabase.DEFAULT_SORTING_MOVIES.read();
             context.read<RadarrState>().moviesSortAscending = _db.read();
           },
         ),

@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class LogsPlexMediaServerRoute extends StatefulWidget {
-  const LogsPlexMediaServerRoute({Key? key}) : super(key: key);
+  const LogsPlexMediaServerRoute({super.key});
 
   @override
   State<StatefulWidget> createState() => _State();

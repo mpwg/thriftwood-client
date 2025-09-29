@@ -12,8 +12,8 @@ class ArtistDetailsRoute extends StatefulWidget {
   const ArtistDetailsRoute({
     required this.data,
     required this.artistId,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<ArtistDetailsRoute> createState() => _State();
@@ -38,23 +38,20 @@ class _State extends State<ArtistDetailsRoute> {
   Future<void> _fetch() async {
     if (mounted) setState(() => _error = false);
     final api = LidarrAPI.from(LunaProfile.current);
-    await api
-        .getArtist(widget.artistId)
-        .then((newData) {
-          if (mounted) {
-            setState(() {
-              data = newData;
-              _error = false;
-            });
-          }
-        })
-        .catchError((error) {
-          if (mounted) {
-            setState(() {
-              _error = true;
-            });
-          }
+    await api.getArtist(widget.artistId).then((newData) {
+      if (mounted) {
+        setState(() {
+          data = newData;
+          _error = false;
         });
+      }
+    }).catchError((error) {
+      if (mounted) {
+        setState(() {
+          _error = true;
+        });
+      }
+    });
   }
 
   @override
@@ -103,9 +100,9 @@ class _State extends State<ArtistDetailsRoute> {
       LidarrArtistNavigationBar(pageController: _pageController);
 
   List<Widget> get _tabs => [
-    LidarrDetailsOverview(data: data!),
-    LidarrDetailsAlbumList(artistID: data!.artistID),
-  ];
+        LidarrDetailsOverview(data: data!),
+        LidarrDetailsAlbumList(artistID: data!.artistID),
+      ];
 
   Widget get _body =>
       LunaPageView(controller: _pageController, children: _tabs);

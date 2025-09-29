@@ -12,10 +12,10 @@ class SonarrSeriesDetailsSeasonTile extends StatefulWidget {
   final int? seriesId;
 
   const SonarrSeriesDetailsSeasonTile({
-    Key? key,
+    super.key,
     required this.season,
     required this.seriesId,
-  }) : super(key: key);
+  });
 
   @override
   State<SonarrSeriesDetailsSeasonTile> createState() => _State();
@@ -67,8 +67,7 @@ class _State extends State<SonarrSeriesDetailsSeasonTile> {
 
   TextSpan _subtitle1() {
     return TextSpan(
-      text:
-          widget.season.statistics?.previousAiring?.asDateTime(
+      text: widget.season.statistics?.previousAiring?.asDateTime(
             showSeconds: false,
             delimiter: '@'.pad(),
           ) ??
@@ -78,8 +77,7 @@ class _State extends State<SonarrSeriesDetailsSeasonTile> {
 
   TextSpan _subtitle2() {
     return TextSpan(
-      text:
-          widget.season.statistics?.sizeOnDisk?.asBytes(decimals: 1) ??
+      text: widget.season.statistics?.sizeOnDisk?.asBytes(decimals: 1) ??
           LunaUI.TEXT_EMDASH,
     );
   }

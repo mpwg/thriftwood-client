@@ -4,32 +4,32 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliGraphsPlayCountBySourceResolutionGraph extends StatelessWidget {
-  const TautulliGraphsPlayCountBySourceResolutionGraph({Key? key})
-    : super(key: key);
+  const TautulliGraphsPlayCountBySourceResolutionGraph({super.key});
 
   @override
   Widget build(
     BuildContext context,
-  ) => Selector<TautulliState, Future<TautulliGraphData>?>(
-    selector: (_, state) => state.playCountBySourceResolutionGraph,
-    builder: (context, future, _) => FutureBuilder(
-      future: future,
-      builder: (context, AsyncSnapshot<TautulliGraphData> snapshot) {
-        if (snapshot.hasError) {
-          if (snapshot.connectionState != ConnectionState.waiting) {
-            LunaLogger().error(
-              'Unable to fetch Tautulli graph data: getPlaysBySourceResolution',
-              snapshot.error,
-              snapshot.stackTrace,
-            );
-          }
-          return TautulliGraphHelper().errorContainer(context);
-        }
-        if (snapshot.hasData) return _graph(context, snapshot.data!);
-        return TautulliGraphHelper().loadingContainer(context);
-      },
-    ),
-  );
+  ) =>
+      Selector<TautulliState, Future<TautulliGraphData>?>(
+        selector: (_, state) => state.playCountBySourceResolutionGraph,
+        builder: (context, future, _) => FutureBuilder(
+          future: future,
+          builder: (context, AsyncSnapshot<TautulliGraphData> snapshot) {
+            if (snapshot.hasError) {
+              if (snapshot.connectionState != ConnectionState.waiting) {
+                LunaLogger().error(
+                  'Unable to fetch Tautulli graph data: getPlaysBySourceResolution',
+                  snapshot.error,
+                  snapshot.stackTrace,
+                );
+              }
+              return TautulliGraphHelper().errorContainer(context);
+            }
+            if (snapshot.hasData) return _graph(context, snapshot.data!);
+            return TautulliGraphHelper().loadingContainer(context);
+          },
+        ),
+      );
 
   Widget _graph(BuildContext context, TautulliGraphData data) {
     return LunaCard(

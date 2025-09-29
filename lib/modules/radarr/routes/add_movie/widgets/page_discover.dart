@@ -4,7 +4,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrAddMovieDiscoverPage extends StatefulWidget {
-  const RadarrAddMovieDiscoverPage({Key? key}) : super(key: key);
+  const RadarrAddMovieDiscoverPage({super.key});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -38,36 +38,33 @@ class _State extends State<RadarrAddMovieDiscoverPage>
       onRefresh: loadCallback,
       child: Selector<RadarrState, Future<List<RadarrMovie>>?>(
         selector: (_, state) => state.movies,
-        builder: (context, movies, _) =>
-            Selector<
-              RadarrAddMovieState,
-              (Future<List<RadarrMovie>>?, Future<List<RadarrExclusion>>?)
-            >(
-              selector: (_, state) => (state.discovery, state.exclusions),
-              builder: (context, tuple, _) => FutureBuilder(
-                future: Future.wait([movies!, tuple.$1!, tuple.$2!]),
-                builder: (context, AsyncSnapshot<List<Object>> snapshot) {
-                  if (snapshot.hasError) {
-                    if (snapshot.connectionState != ConnectionState.waiting)
-                      LunaLogger().error(
-                        'Unable to fetch Radarr discovery',
-                        snapshot.error,
-                        snapshot.stackTrace,
-                      );
-                    return LunaMessage.error(
-                      onTap: _refreshKey.currentState!.show,
-                    );
-                  }
-                  if (snapshot.hasData)
-                    return _list(
-                      snapshot.data![0] as List<RadarrMovie>,
-                      snapshot.data![1] as List<RadarrMovie>,
-                      snapshot.data![2] as List<RadarrExclusion>,
-                    );
-                  return const LunaLoader();
-                },
-              ),
-            ),
+        builder: (context, movies, _) => Selector<RadarrAddMovieState,
+            (Future<List<RadarrMovie>>?, Future<List<RadarrExclusion>>?)>(
+          selector: (_, state) => (state.discovery, state.exclusions),
+          builder: (context, tuple, _) => FutureBuilder(
+            future: Future.wait([movies!, tuple.$1!, tuple.$2!]),
+            builder: (context, AsyncSnapshot<List<Object>> snapshot) {
+              if (snapshot.hasError) {
+                if (snapshot.connectionState != ConnectionState.waiting)
+                  LunaLogger().error(
+                    'Unable to fetch Radarr discovery',
+                    snapshot.error,
+                    snapshot.stackTrace,
+                  );
+                return LunaMessage.error(
+                  onTap: _refreshKey.currentState!.show,
+                );
+              }
+              if (snapshot.hasData)
+                return _list(
+                  snapshot.data![0] as List<RadarrMovie>,
+                  snapshot.data![1] as List<RadarrMovie>,
+                  snapshot.data![2] as List<RadarrExclusion>,
+                );
+              return const LunaLoader();
+            },
+          ),
+        ),
       ),
     );
   }

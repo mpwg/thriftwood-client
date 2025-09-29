@@ -8,10 +8,10 @@ class LidarrCatalogue extends StatefulWidget {
   final Function refreshAllPages;
 
   const LidarrCatalogue({
-    Key? key,
+    super.key,
     required this.refreshIndicatorKey,
     required this.refreshAllPages,
-  }) : super(key: key);
+  });
 
   @override
   State<LidarrCatalogue> createState() => _State();
@@ -128,9 +128,8 @@ class _State extends State<LidarrCatalogue>
     String query,
   ) {
     if ((artists?.length ?? 0) == 0) return artists;
-    LidarrCatalogueSorting sorting = context
-        .read<LidarrState>()
-        .sortCatalogueType;
+    LidarrCatalogueSorting sorting =
+        context.read<LidarrState>().sortCatalogueType;
     bool shouldHide = context.read<LidarrState>().hideUnmonitoredArtists;
     bool ascending = context.read<LidarrState>().sortCatalogueAscending;
     // Filter

@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationSonarrConnectionDetailsRoute extends StatefulWidget {
-  const ConfigurationSonarrConnectionDetailsRoute({Key? key}) : super(key: key);
+  const ConfigurationSonarrConnectionDetailsRoute({super.key});
 
   @override
   State<ConfigurationSonarrConnectionDetailsRoute> createState() => _State();
@@ -117,26 +117,23 @@ class _State extends State<ConfigurationSonarrConnectionDetailsRoute>
           return;
         }
         SonarrAPI(
-              host: _profile.sonarrHost,
-              apiKey: _profile.sonarrKey,
-              headers: Map<String, dynamic>.from(_profile.sonarrHeaders),
-            ).system
-            .getStatus()
-            .then((_) {
-              showLunaSuccessSnackBar(
-                title: 'settings.ConnectedSuccessfully'.tr(),
-                message: 'settings.ConnectedSuccessfullyMessage'.tr(
-                  args: [LunaModule.SONARR.title],
-                ),
-              );
-            })
-            .catchError((error, trace) {
-              LunaLogger().error('Connection Test Failed', error, trace);
-              showLunaErrorSnackBar(
-                title: 'settings.ConnectionTestFailed'.tr(),
-                error: error,
-              );
-            });
+          host: _profile.sonarrHost,
+          apiKey: _profile.sonarrKey,
+          headers: Map<String, dynamic>.from(_profile.sonarrHeaders),
+        ).system.getStatus().then((_) {
+          showLunaSuccessSnackBar(
+            title: 'settings.ConnectedSuccessfully'.tr(),
+            message: 'settings.ConnectedSuccessfullyMessage'.tr(
+              args: [LunaModule.SONARR.title],
+            ),
+          );
+        }).catchError((error, trace) {
+          LunaLogger().error('Connection Test Failed', error, trace);
+          showLunaErrorSnackBar(
+            title: 'settings.ConnectionTestFailed'.tr(),
+            error: error,
+          );
+        });
       },
     );
   }

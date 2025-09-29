@@ -3,7 +3,7 @@ import 'package:thriftwood/router/routes/sonarr.dart';
 import 'package:thriftwood/widgets/ui.dart';
 
 class SonarrAppBarAddSeriesAction extends StatelessWidget {
-  const SonarrAppBarAddSeriesAction({Key? key}) : super(key: key);
+  const SonarrAppBarAddSeriesAction({super.key});
 
   @override
   Widget build(BuildContext context) {

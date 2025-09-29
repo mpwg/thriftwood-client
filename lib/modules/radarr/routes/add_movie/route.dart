@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class AddMovieRoute extends StatefulWidget {
   final String query;
 
-  const AddMovieRoute({Key? key, required this.query}) : super(key: key);
+  const AddMovieRoute({super.key, required this.query});
 
   @override
   State<StatefulWidget> createState() => _State();

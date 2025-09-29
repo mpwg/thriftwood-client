@@ -6,7 +6,7 @@ import 'package:thriftwood/extensions/string/string.dart';
 import 'package:thriftwood/modules/nzbget.dart';
 
 class NZBGetAppBarStats extends StatelessWidget {
-  const NZBGetAppBarStats({Key? key}) : super(key: key);
+  const NZBGetAppBarStats({super.key});
 
   @override
   Widget build(BuildContext context) =>
@@ -54,8 +54,8 @@ class NZBGetAppBarStats extends StatelessWidget {
   String _status(bool paused, String speed) => paused
       ? 'Paused'
       : speed == '0.0 B/s'
-      ? 'Idle'
-      : speed;
+          ? 'Idle'
+          : speed;
 
   Future<void> _onTap(BuildContext context, String speed) async {
     HapticFeedback.lightImpact();

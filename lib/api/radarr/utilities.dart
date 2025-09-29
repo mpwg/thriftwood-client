@@ -1,5 +1,5 @@
 /// Library containing all utility functions for Radarr data.
-library radarr_utilities;
+library;
 
 import 'package:thriftwood/api/radarr/types.dart';
 
@@ -94,7 +94,8 @@ class RadarrUtilities {
   /// Converts a string to a [RadarrTrackedDownloadState] object.
   static RadarrTrackedDownloadState? trackedDownloadStateFromJson(
     String? type,
-  ) => RadarrTrackedDownloadState.DOWNLOADING.from(type);
+  ) =>
+      RadarrTrackedDownloadState.DOWNLOADING.from(type);
 
   /// Converts a [RadarrTrackedDownloadState] object back to its string representation.
   static String? trackedDownloadStateToJson(RadarrTrackedDownloadState? type) =>
@@ -103,10 +104,12 @@ class RadarrUtilities {
   /// Converts a string to a [RadarrTrackedDownloadStatus] object.
   static RadarrTrackedDownloadStatus? trackedDownloadStatusFromJson(
     String? type,
-  ) => RadarrTrackedDownloadStatus.OK.from(type);
+  ) =>
+      RadarrTrackedDownloadStatus.OK.from(type);
 
   /// Converts a [RadarrTrackedDownloadStatus] object back to its string representation.
   static String? trackedDownloadStatusToJson(
     RadarrTrackedDownloadStatus? type,
-  ) => type?.key;
+  ) =>
+      type?.key;
 }

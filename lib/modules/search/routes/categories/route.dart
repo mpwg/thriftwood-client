@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/search.dart';
 import 'package:thriftwood/router/routes/search.dart';
 
 class CategoriesRoute extends StatefulWidget {
-  const CategoriesRoute({Key? key}) : super(key: key);
+  const CategoriesRoute({super.key});
 
   @override
   State<CategoriesRoute> createState() => _State();
@@ -58,8 +58,7 @@ class _State extends State<CategoriesRoute>
             return LunaMessage.error(onTap: _refreshKey.currentState!.show);
           }
           if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasData)
-            return _list(snapshot.data!);
+              snapshot.hasData) return _list(snapshot.data!);
           return const LunaLoader();
         },
       ),

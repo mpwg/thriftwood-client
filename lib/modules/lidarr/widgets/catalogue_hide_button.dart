@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/lidarr.dart';
 class LidarrCatalogueHideButton extends StatefulWidget {
   final ScrollController controller;
 
-  const LidarrCatalogueHideButton({Key? key, required this.controller})
-    : super(key: key);
+  const LidarrCatalogueHideButton({super.key, required this.controller});
 
   @override
   State<LidarrCatalogueHideButton> createState() => _State();
@@ -15,22 +14,22 @@ class LidarrCatalogueHideButton extends StatefulWidget {
 class _State extends State<LidarrCatalogueHideButton> {
   @override
   Widget build(BuildContext context) => LunaCard(
-    context: context,
-    child: Consumer<LidarrState>(
-      builder: (context, model, widget) => InkWell(
-        child: LunaIconButton(
-          icon: model.hideUnmonitoredArtists
-              ? Icons.visibility_off_rounded
-              : Icons.visibility_rounded,
+        context: context,
+        child: Consumer<LidarrState>(
+          builder: (context, model, widget) => InkWell(
+            child: LunaIconButton(
+              icon: model.hideUnmonitoredArtists
+                  ? Icons.visibility_off_rounded
+                  : Icons.visibility_rounded,
+            ),
+            onTap: () =>
+                model.hideUnmonitoredArtists = !model.hideUnmonitoredArtists,
+            borderRadius: BorderRadius.circular(LunaUI.BORDER_RADIUS),
+          ),
         ),
-        onTap: () =>
-            model.hideUnmonitoredArtists = !model.hideUnmonitoredArtists,
-        borderRadius: BorderRadius.circular(LunaUI.BORDER_RADIUS),
-      ),
-    ),
-    height: LunaTextInputBar.defaultHeight,
-    width: LunaTextInputBar.defaultHeight,
-    margin: const EdgeInsets.symmetric(horizontal: 12.0),
-    color: Theme.of(context).canvasColor,
-  );
+        height: LunaTextInputBar.defaultHeight,
+        width: LunaTextInputBar.defaultHeight,
+        margin: const EdgeInsets.symmetric(horizontal: 12.0),
+        color: Theme.of(context).canvasColor,
+      );
 }

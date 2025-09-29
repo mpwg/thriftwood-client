@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/settings.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationSABnzbdConnectionDetailsRoute extends StatefulWidget {
-  const ConfigurationSABnzbdConnectionDetailsRoute({Key? key})
-    : super(key: key);
+  const ConfigurationSABnzbdConnectionDetailsRoute({super.key});
 
   @override
   State<ConfigurationSABnzbdConnectionDetailsRoute> createState() => _State();
@@ -128,12 +127,12 @@ class _State extends State<ConfigurationSABnzbdConnectionDetailsRoute>
               ),
             )
             .catchError((error, trace) {
-              LunaLogger().error('Connection Test Failed', error, trace);
-              showLunaErrorSnackBar(
-                title: 'settings.ConnectionTestFailed'.tr(),
-                error: error,
-              );
-            });
+          LunaLogger().error('Connection Test Failed', error, trace);
+          showLunaErrorSnackBar(
+            title: 'settings.ConnectionTestFailed'.tr(),
+            error: error,
+          );
+        });
       },
     );
   }

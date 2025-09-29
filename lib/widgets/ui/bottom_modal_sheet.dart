@@ -9,11 +9,11 @@ class LunaBottomModalSheet<T> {
     return showBarModalBottomSheet<T>(
       context: LunaState.context,
       expand: false,
-      backgroundColor: LunaTheme.isAMOLEDTheme
-          ? Colors.black
-          : LunaColours.primary,
+      backgroundColor:
+          LunaTheme.isAMOLEDTheme ? Colors.black : LunaColours.primary,
       shape: LunaShapeBorder(topOnly: true, useBorder: LunaUI.shouldUseBorder),
-      builder: (context) => (builder ?? this.builder)?.call(context) ?? Container(),
+      builder: (context) =>
+          (builder ?? this.builder).call(context) ?? Container(),
       closeProgressThreshold: 0.90,
       elevation: LunaUI.ELEVATION,
       overlayStyle: LunaTheme().overlayStyle,
@@ -24,5 +24,6 @@ class LunaBottomModalSheet<T> {
 
   Future<dynamic> show({
     Widget Function(BuildContext context)? builder,
-  }) async => showModal(builder: builder);
+  }) async =>
+      showModal(builder: builder);
 }

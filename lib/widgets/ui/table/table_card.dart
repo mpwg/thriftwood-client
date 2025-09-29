@@ -6,8 +6,7 @@ class LunaTableCard extends StatelessWidget {
   final List<LunaTableContent>? content;
   final List<LunaButton>? buttons;
 
-  const LunaTableCard({Key? key, this.content, this.buttons, this.title})
-    : super(key: key);
+  const LunaTableCard({super.key, this.content, this.buttons, this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +66,8 @@ class LunaTableCard extends StatelessWidget {
     if (buttons == null) return Container(height: 0.0);
     return Padding(
       child: Row(
-        children: buttons!
-            .map<Widget>((button) => Expanded(child: button))
-            .toList(),
+        children:
+            buttons!.map<Widget>((button) => Expanded(child: button)).toList(),
       ),
       padding: const EdgeInsets.only(
         top: LunaUI.DEFAULT_MARGIN_SIZE / 2 - LunaUI.DEFAULT_MARGIN_SIZE / 4,

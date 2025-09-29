@@ -7,8 +7,8 @@ import 'package:thriftwood/widgets/pages/invalid_route.dart';
 class ConfigurationSearchEditIndexerHeadersRoute extends StatefulWidget {
   final int id;
 
-  const ConfigurationSearchEditIndexerHeadersRoute({Key? key, required this.id})
-    : super(key: key);
+  const ConfigurationSearchEditIndexerHeadersRoute(
+      {super.key, required this.id});
 
   @override
   State<ConfigurationSearchEditIndexerHeadersRoute> createState() => _State();

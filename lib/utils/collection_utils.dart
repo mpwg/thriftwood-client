@@ -1,8 +1,8 @@
 /// Custom collection utilities to replace external collection package dependency.
-/// 
-/// This file provides extension methods on Iterable that were previously 
+///
+/// This file provides extension methods on Iterable that were previously
 /// provided by the `collection` package, specifically `firstWhereOrNull`.
-library collection_utils;
+library;
 
 /// Extension on [Iterable] to provide additional utility methods.
 extension IterableExtensions<E> on Iterable<E> {

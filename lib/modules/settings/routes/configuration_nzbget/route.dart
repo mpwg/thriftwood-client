@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/nzbget.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationNZBGetRoute extends StatefulWidget {
-  const ConfigurationNZBGetRoute({Key? key}) : super(key: key);
+  const ConfigurationNZBGetRoute({super.key});
 
   @override
   State<ConfigurationNZBGetRoute> createState() => _State();

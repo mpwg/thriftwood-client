@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class ConfigurationTautulliDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationTautulliDefaultPagesRoute({Key? key}) : super(key: key);
+  const ConfigurationTautulliDefaultPagesRoute({super.key});
 
   @override
   State<ConfigurationTautulliDefaultPagesRoute> createState() => _State();

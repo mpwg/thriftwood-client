@@ -1,5 +1,5 @@
 /// Library containing all utilty functions for Tautulli data.
-library tautulli_utilities;
+library;
 
 // ignore: always_use_package_imports
 import './types.dart';

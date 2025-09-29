@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 class SonarrTagsAppBarActionAddTag extends StatelessWidget {
   final bool asDialogButton;
 
-  const SonarrTagsAppBarActionAddTag({Key? key, this.asDialogButton = false})
-    : super(key: key);
+  const SonarrTagsAppBarActionAddTag({super.key, this.asDialogButton = false});
 
   @override
   Widget build(BuildContext context) {

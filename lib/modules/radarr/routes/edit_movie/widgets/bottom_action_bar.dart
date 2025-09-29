@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/radarr.dart';
 import 'package:thriftwood/router/router.dart';
 
 class RadarrEditMovieActionBar extends StatelessWidget {
-  const RadarrEditMovieActionBar({Key? key}) : super(key: key);
+  const RadarrEditMovieActionBar({super.key});
 
   @override
   Widget build(BuildContext context) {

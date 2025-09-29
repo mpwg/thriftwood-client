@@ -15,8 +15,7 @@ class TautulliGraphsNavigationBar extends StatelessWidget {
 
   static const List<String> titles = ['Plays by Period', 'Stream Information'];
 
-  const TautulliGraphsNavigationBar({Key? key, required this.pageController})
-    : super(key: key);
+  const TautulliGraphsNavigationBar({super.key, required this.pageController});
 
   @override
   Widget build(BuildContext context) {

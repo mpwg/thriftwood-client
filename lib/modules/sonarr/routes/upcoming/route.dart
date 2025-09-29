@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrUpcomingRoute extends StatefulWidget {
-  const SonarrUpcomingRoute({Key? key}) : super(key: key);
+  const SonarrUpcomingRoute({super.key});
 
   @override
   State<SonarrUpcomingRoute> createState() => _State();
@@ -39,39 +39,33 @@ class _State extends State<SonarrUpcomingRoute>
       context: context,
       key: _refreshKey,
       onRefresh: loadCallback,
-      child:
-          Selector<
-            SonarrState,
-            (
-              Future<Map<int?, SonarrSeries>>?,
-              Future<List<SonarrCalendar>>?
-            )
-          >(
-            selector: (_, state) => (state.series, state.upcoming),
-            builder: (context, tuple, _) => FutureBuilder(
-              future: Future.wait([tuple.$1!, tuple.$2!]),
-              builder: (context, AsyncSnapshot<List<Object>> snapshot) {
-                if (snapshot.hasError) {
-                  if (snapshot.connectionState != ConnectionState.waiting) {
-                    LunaLogger().error(
-                      'Unable to fetch Sonarr upcoming episodes',
-                      snapshot.error,
-                      snapshot.stackTrace,
-                    );
-                  }
-                  return LunaMessage.error(
-                    onTap: _refreshKey.currentState!.show,
-                  );
-                }
-                if (snapshot.hasData)
-                  return _episodes(
-                    snapshot.data![0] as Map<int, SonarrSeries>,
-                    snapshot.data![1] as List<SonarrCalendar>,
-                  );
-                return const LunaLoader();
-              },
-            ),
-          ),
+      child: Selector<SonarrState,
+          (Future<Map<int?, SonarrSeries>>?, Future<List<SonarrCalendar>>?)>(
+        selector: (_, state) => (state.series, state.upcoming),
+        builder: (context, tuple, _) => FutureBuilder(
+          future: Future.wait([tuple.$1!, tuple.$2!]),
+          builder: (context, AsyncSnapshot<List<Object>> snapshot) {
+            if (snapshot.hasError) {
+              if (snapshot.connectionState != ConnectionState.waiting) {
+                LunaLogger().error(
+                  'Unable to fetch Sonarr upcoming episodes',
+                  snapshot.error,
+                  snapshot.stackTrace,
+                );
+              }
+              return LunaMessage.error(
+                onTap: _refreshKey.currentState!.show,
+              );
+            }
+            if (snapshot.hasData)
+              return _episodes(
+                snapshot.data![0] as Map<int, SonarrSeries>,
+                snapshot.data![1] as List<SonarrCalendar>,
+              );
+            return const LunaLoader();
+          },
+        ),
+      ),
     );
   }
 
@@ -127,17 +121,18 @@ class _State extends State<SonarrUpcomingRoute>
     String? date,
     List<SonarrCalendar> upcoming,
     Map<int, SonarrSeries> series,
-  ) => [
-    LunaHeader(
-      text: date,
-      // subtitle: 'This is a test',
-    ),
-    ...List.generate(
-      upcoming.length,
-      (index) => SonarrUpcomingTile(
-        record: upcoming[index],
-        series: series[upcoming[index].seriesId!],
-      ),
-    ),
-  ];
+  ) =>
+      [
+        LunaHeader(
+          text: date,
+          // subtitle: 'This is a test',
+        ),
+        ...List.generate(
+          upcoming.length,
+          (index) => SonarrUpcomingTile(
+            record: upcoming[index],
+            series: series[upcoming[index].seriesId!],
+          ),
+        ),
+      ];
 }

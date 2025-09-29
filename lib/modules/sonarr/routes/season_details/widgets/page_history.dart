@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeasonDetailsHistoryPage extends StatefulWidget {
-  const SonarrSeasonDetailsHistoryPage({Key? key}) : super(key: key);
+  const SonarrSeasonDetailsHistoryPage({super.key});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -32,14 +32,10 @@ class _State extends State<SonarrSeasonDetailsHistoryPage>
           context.read<SonarrSeasonDetailsState>().fetchHistory(context),
       child: FutureBuilder(
         future: Future.wait([
-          context.select<
-            SonarrSeasonDetailsState,
-            Future<List<SonarrHistoryRecord>>?
-          >((s) => s.history)!,
-          context.select<
-            SonarrSeasonDetailsState,
-            Future<Map<int?, SonarrEpisode>>?
-          >((s) => s.episodes)!,
+          context.select<SonarrSeasonDetailsState,
+              Future<List<SonarrHistoryRecord>>?>((s) => s.history)!,
+          context.select<SonarrSeasonDetailsState,
+              Future<Map<int?, SonarrEpisode>>?>((s) => s.episodes)!,
         ]),
         builder: (context, AsyncSnapshot<List<Object>> snapshot) {
           if (snapshot.hasError) {

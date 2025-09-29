@@ -24,10 +24,10 @@ class RadarrMovieDetailsNavigationBar extends StatefulWidget {
   final RadarrMovie? movie;
 
   const RadarrMovieDetailsNavigationBar({
-    Key? key,
+    super.key,
     required this.pageController,
     required this.movie,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -64,18 +64,17 @@ class _State extends State<RadarrMovieDetailsNavigationBar> {
     setState(() => _automaticLoadingState = LunaLoadingState.ACTIVE);
     RadarrAPIHelper()
         .automaticSearch(
-          context: context,
-          movieId: widget.movie!.id!,
-          title: widget.movie!.title!,
-        )
+      context: context,
+      movieId: widget.movie!.id!,
+      title: widget.movie!.title!,
+    )
         .then((value) {
-          if (mounted)
-            setState(() {
-              _automaticLoadingState = value
-                  ? LunaLoadingState.INACTIVE
-                  : LunaLoadingState.ERROR;
-            });
+      if (mounted)
+        setState(() {
+          _automaticLoadingState =
+              value ? LunaLoadingState.INACTIVE : LunaLoadingState.ERROR;
         });
+    });
   }
 
   Future<void> _manual() async {

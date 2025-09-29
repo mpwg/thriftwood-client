@@ -13,8 +13,8 @@ class SABnzbdQueueTile extends StatefulWidget {
     required this.index,
     required this.queueContext,
     required this.refresh,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -79,24 +79,22 @@ class _Helper {
     await SABnzbdAPI.from(LunaProfile.current)
         .pauseSingleJob(data.nzoId)
         .then((_) {
-          showLunaSuccessSnackBar(title: 'Job Paused', message: data.name);
-          refresh();
-        })
-        .catchError((error) {
-          showLunaErrorSnackBar(title: 'Failed to Pause Job', error: error);
-        });
+      showLunaSuccessSnackBar(title: 'Job Paused', message: data.name);
+      refresh();
+    }).catchError((error) {
+      showLunaErrorSnackBar(title: 'Failed to Pause Job', error: error);
+    });
   }
 
   Future<void> _resumeJob() async {
     await SABnzbdAPI.from(LunaProfile.current)
         .resumeSingleJob(data.nzoId)
         .then((_) {
-          showLunaSuccessSnackBar(title: 'Job Resumed', message: data.name);
-          refresh();
-        })
-        .catchError((error) {
-          showLunaErrorSnackBar(title: 'Failed to Resume Job', error: error);
-        });
+      showLunaSuccessSnackBar(title: 'Job Resumed', message: data.name);
+      refresh();
+    }).catchError((error) {
+      showLunaErrorSnackBar(title: 'Failed to Resume Job', error: error);
+    });
   }
 
   Future<void> _category() async {
@@ -108,20 +106,19 @@ class _Helper {
       await SABnzbdAPI.from(LunaProfile.current)
           .setCategory(data.nzoId, values[1])
           .then((_) {
-            showLunaSuccessSnackBar(
-              title: values[1] == ''
-                  ? 'Category Set (No Category)'
-                  : 'Category Set (${values[1]})',
-              message: data.name,
-            );
-            refresh();
-          })
-          .catchError((error) {
-            showLunaErrorSnackBar(
-              title: 'Failed to Set Category',
-              error: error,
-            );
-          });
+        showLunaSuccessSnackBar(
+          title: values[1] == ''
+              ? 'Category Set (No Category)'
+              : 'Category Set (${values[1]})',
+          message: data.name,
+        );
+        refresh();
+      }).catchError((error) {
+        showLunaErrorSnackBar(
+          title: 'Failed to Set Category',
+          error: error,
+        );
+      });
   }
 
   Future<void> _priority() async {
@@ -130,18 +127,17 @@ class _Helper {
       await SABnzbdAPI.from(LunaProfile.current)
           .setJobPriority(data.nzoId, values[1])
           .then((_) {
-            showLunaSuccessSnackBar(
-              title: 'Priority Set (${(values[2])})',
-              message: data.name,
-            );
-            refresh();
-          })
-          .catchError((error) {
-            showLunaErrorSnackBar(
-              title: 'Failed to Set Priority',
-              error: error,
-            );
-          });
+        showLunaSuccessSnackBar(
+          title: 'Priority Set (${(values[2])})',
+          message: data.name,
+        );
+        refresh();
+      }).catchError((error) {
+        showLunaErrorSnackBar(
+          title: 'Failed to Set Priority',
+          error: error,
+        );
+      });
   }
 
   Future<void> _rename() async {
@@ -150,12 +146,11 @@ class _Helper {
       SABnzbdAPI.from(LunaProfile.current)
           .renameJob(data.nzoId, values[1])
           .then((_) {
-            showLunaSuccessSnackBar(title: 'Job Renamed', message: values[1]);
-            refresh();
-          })
-          .catchError((error) {
-            showLunaErrorSnackBar(title: 'Failed to Rename Job', error: error);
-          });
+        showLunaSuccessSnackBar(title: 'Job Renamed', message: values[1]);
+        refresh();
+      }).catchError((error) {
+        showLunaErrorSnackBar(title: 'Failed to Rename Job', error: error);
+      });
   }
 
   Future<void> _delete() async {
@@ -164,12 +159,11 @@ class _Helper {
       await SABnzbdAPI.from(LunaProfile.current)
           .deleteJob(data.nzoId)
           .then((_) {
-            showLunaSuccessSnackBar(title: 'Job Deleted', message: data.name);
-            refresh();
-          })
-          .catchError((error) {
-            showLunaErrorSnackBar(title: 'Failed to Delete Job', error: error);
-          });
+        showLunaSuccessSnackBar(title: 'Job Deleted', message: data.name);
+        refresh();
+      }).catchError((error) {
+        showLunaErrorSnackBar(title: 'Failed to Delete Job', error: error);
+      });
   }
 
   Future<void> _password() async {
@@ -178,17 +172,16 @@ class _Helper {
       await SABnzbdAPI.from(LunaProfile.current)
           .setJobPassword(data.nzoId, data.name, values[1])
           .then((_) {
-            showLunaSuccessSnackBar(
-              title: 'Job Password Set',
-              message: data.name,
-            );
-            refresh();
-          })
-          .catchError((error) {
-            showLunaErrorSnackBar(
-              title: 'Failed to Set Job Password',
-              error: error,
-            );
-          });
+        showLunaSuccessSnackBar(
+          title: 'Job Password Set',
+          message: data.name,
+        );
+        refresh();
+      }).catchError((error) {
+        showLunaErrorSnackBar(
+          title: 'Failed to Set Job Password',
+          error: error,
+        );
+      });
   }
 }

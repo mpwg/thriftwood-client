@@ -7,7 +7,7 @@ import 'package:thriftwood/widgets/sheets/download_client/button.dart';
 class MovieReleasesRoute extends StatefulWidget {
   final int movieId;
 
-  const MovieReleasesRoute({Key? key, required this.movieId}) : super(key: key);
+  const MovieReleasesRoute({super.key, required this.movieId});
 
   @override
   State<StatefulWidget> createState() => _State();

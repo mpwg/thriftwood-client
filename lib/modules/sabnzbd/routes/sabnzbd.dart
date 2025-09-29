@@ -10,7 +10,7 @@ import 'package:thriftwood/system/filesystem/filesystem.dart';
 class SABnzbdRoute extends StatefulWidget {
   final bool showDrawer;
 
-  const SABnzbdRoute({Key? key, this.showDrawer = true}) : super(key: key);
+  const SABnzbdRoute({super.key, this.showDrawer = true});
 
   @override
   State<SABnzbdRoute> createState() => _State();
@@ -159,15 +159,14 @@ class _State extends State<SABnzbdRoute> {
       SABnzbdAPI.from(LunaProfile.current)
           .clearHistory(values[1], values[2])
           .then((_) {
-            showLunaSuccessSnackBar(
-              title: 'History Cleared',
-              message: values[3],
-            );
-            _refreshAllPages();
-          })
-          .catchError((error) {
-            showLunaErrorSnackBar(title: 'Failed to Upload NZB', error: error);
-          });
+        showLunaSuccessSnackBar(
+          title: 'History Cleared',
+          message: values[3],
+        );
+        _refreshAllPages();
+      }).catchError((error) {
+        showLunaErrorSnackBar(title: 'Failed to Upload NZB', error: error);
+      });
   }
 
   Future<void> _sort() async {
@@ -176,13 +175,13 @@ class _State extends State<SABnzbdRoute> {
       await SABnzbdAPI.from(LunaProfile.current)
           .sortQueue(values[1], values[2])
           .then((_) {
-            showLunaSuccessSnackBar(title: 'Sorted Queue', message: values[3]);
-            (_refreshKeys[0] as GlobalKey<RefreshIndicatorState>).currentState
-                ?.show();
-          })
-          .catchError((error) {
-            showLunaErrorSnackBar(title: 'Failed to Sort Queue', error: error);
-          });
+        showLunaSuccessSnackBar(title: 'Sorted Queue', message: values[3]);
+        (_refreshKeys[0] as GlobalKey<RefreshIndicatorState>)
+            .currentState
+            ?.show();
+      }).catchError((error) {
+        showLunaErrorSnackBar(title: 'Failed to Sort Queue', error: error);
+      });
   }
 
   Future<void> _addNZB() async {

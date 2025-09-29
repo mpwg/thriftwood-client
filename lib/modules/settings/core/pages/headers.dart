@@ -9,7 +9,7 @@ import 'package:thriftwood/modules/tautulli.dart';
 class SettingsHeaderRoute extends StatefulWidget {
   final LunaModule module;
 
-  const SettingsHeaderRoute({Key? key, required this.module}) : super(key: key);
+  const SettingsHeaderRoute({super.key, required this.module});
 
   @override
   State<StatefulWidget> createState() => _State();

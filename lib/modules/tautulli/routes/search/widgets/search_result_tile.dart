@@ -8,10 +8,10 @@ class TautulliSearchResultTile extends StatefulWidget {
   final TautulliMediaType mediaType;
 
   const TautulliSearchResultTile({
-    Key? key,
+    super.key,
     required this.result,
     required this.mediaType,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -28,13 +28,13 @@ class _State extends State<TautulliSearchResultTile> {
         _library(),
       ],
       posterUrl: context.watch<TautulliState>().getImageURLFromPath(
-        widget.result.thumb,
-      ),
+            widget.result.thumb,
+          ),
       posterHeaders: context.watch<TautulliState>().headers,
       backgroundHeaders: context.watch<TautulliState>().headers,
       backgroundUrl: context.watch<TautulliState>().getImageURLFromPath(
-        widget.result.art,
-      ),
+            widget.result.art,
+          ),
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
       onTap: _onTap,
     );

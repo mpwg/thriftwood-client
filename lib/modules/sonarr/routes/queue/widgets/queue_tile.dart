@@ -12,10 +12,10 @@ class SonarrQueueTile extends StatefulWidget {
   final SonarrQueueTileType type;
 
   const SonarrQueueTile({
-    Key? key,
+    super.key,
     required this.queueRecord,
     required this.type,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -54,8 +54,8 @@ class _State extends State<SonarrQueueTile> {
   }
 
   Widget _collapsedTrailing() {
-    (String, IconData, Color) _status = widget.queueRecord
-        .lunaStatusParameters();
+    (String, IconData, Color) _status =
+        widget.queueRecord.lunaStatusParameters();
     return LunaIconButton(icon: _status.$2, color: _status.$3);
   }
 
@@ -69,8 +69,7 @@ class _State extends State<SonarrQueueTile> {
     return TextSpan(
       children: [
         TextSpan(
-          text:
-              widget.queueRecord.episode?.thriftwoodsonEpisode() ??
+          text: widget.queueRecord.episode?.thriftwoodsonEpisode() ??
               LunaUI.TEXT_EMDASH,
         ),
         const TextSpan(text: ': '),
@@ -101,8 +100,8 @@ class _State extends State<SonarrQueueTile> {
   }
 
   TextSpan _subtitle4() {
-    (String, IconData, Color) _params = widget.queueRecord
-        .lunaStatusParameters(canBeWhite: false);
+    (String, IconData, Color) _params =
+        widget.queueRecord.lunaStatusParameters(canBeWhite: false);
     return TextSpan(
       style: TextStyle(
         color: _params.$3,
@@ -117,8 +116,8 @@ class _State extends State<SonarrQueueTile> {
   }
 
   List<LunaHighlightedNode> _expandedHighlightedNodes() {
-    (String, IconData, Color) _status = widget.queueRecord
-        .lunaStatusParameters(canBeWhite: false);
+    (String, IconData, Color) _status =
+        widget.queueRecord.lunaStatusParameters(canBeWhite: false);
     return [
       LunaHighlightedNode(
         text: widget.queueRecord.protocol!.lunaReadable(),
@@ -145,8 +144,7 @@ class _State extends State<SonarrQueueTile> {
       if (widget.type == SonarrQueueTileType.ALL)
         LunaTableContent(
           title: 'sonarr.Episode'.tr(),
-          body:
-              widget.queueRecord.episode?.thriftwoodsonEpisode() ??
+          body: widget.queueRecord.episode?.thriftwoodsonEpisode() ??
               LunaUI.TEXT_EMDASH,
         ),
       if (widget.type == SonarrQueueTileType.ALL)
@@ -211,26 +209,26 @@ class _State extends State<SonarrQueueTile> {
           if (result) {
             SonarrAPIController()
                 .removeFromQueue(
-                  context: context,
-                  queueRecord: widget.queueRecord,
-                )
+              context: context,
+              queueRecord: widget.queueRecord,
+            )
                 .then((_) {
-                  switch (widget.type) {
-                    case SonarrQueueTileType.ALL:
-                      context.read<SonarrQueueState>().fetchQueue(
+              switch (widget.type) {
+                case SonarrQueueTileType.ALL:
+                  context.read<SonarrQueueState>().fetchQueue(
                         context,
                         hardCheck: true,
                       );
-                      break;
-                    case SonarrQueueTileType.EPISODE:
-                      context.read<SonarrSeasonDetailsState>().fetchState(
+                  break;
+                case SonarrQueueTileType.EPISODE:
+                  context.read<SonarrSeasonDetailsState>().fetchState(
                         context,
                         shouldFetchEpisodes: false,
                         shouldFetchFiles: false,
                       );
-                      break;
-                  }
-                });
+                  break;
+              }
+            });
           }
         },
       ),

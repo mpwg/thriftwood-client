@@ -6,7 +6,7 @@ import 'package:thriftwood/modules/dashboard/core/dialogs.dart';
 import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
 
 class ConfigurationDashboardDefaultPagesRoute extends StatefulWidget {
-  const ConfigurationDashboardDefaultPagesRoute({Key? key}) : super(key: key);
+  const ConfigurationDashboardDefaultPagesRoute({super.key});
 
   @override
   State<ConfigurationDashboardDefaultPagesRoute> createState() => _State();

@@ -5,7 +5,7 @@ import 'package:thriftwood/database/config.dart';
 import 'package:thriftwood/system/filesystem/filesystem.dart';
 
 class SettingsSystemBackupRestoreBackupTile extends StatelessWidget {
-  const SettingsSystemBackupRestoreBackupTile({Key? key}) : super(key: key);
+  const SettingsSystemBackupRestoreBackupTile({super.key});
 
   @override
   Widget build(BuildContext context) {

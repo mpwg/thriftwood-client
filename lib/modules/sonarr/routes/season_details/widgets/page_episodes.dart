@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeasonDetailsEpisodesPage extends StatefulWidget {
-  const SonarrSeasonDetailsEpisodesPage({Key? key}) : super(key: key);
+  const SonarrSeasonDetailsEpisodesPage({super.key});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -72,7 +72,8 @@ class _State extends State<SonarrSeasonDetailsEpisodesPage>
           );
 
           if (result.$1) {
-            final eps = (await state.episodes)!.values
+            final eps = (await state.episodes)!
+                .values
                 .filter((ep) => state.selectedEpisodes.contains(ep.id!))
                 .toList();
             result.$2!.execute(context, eps);
@@ -85,10 +86,10 @@ class _State extends State<SonarrSeasonDetailsEpisodesPage>
 
   Future<void> _refresh() async {
     await context.read<SonarrSeasonDetailsState>().fetchState(
-      context,
-      shouldFetchHistory: false,
-      shouldFetchMostRecentEpisodeHistory: false,
-    );
+          context,
+          shouldFetchHistory: false,
+          shouldFetchMostRecentEpisodeHistory: false,
+        );
     await Future.wait([
       context.read<SonarrSeasonDetailsState>().episodes!,
       context.read<SonarrSeasonDetailsState>().files!,
@@ -171,8 +172,8 @@ class _State extends State<SonarrSeasonDetailsEpisodesPage>
         return b.episodeNumber!.compareTo(a.episodeNumber!);
       });
 
-    Map<int?, List<SonarrEpisode>> _seasons = _episodes
-        .groupBy<int?, SonarrEpisode>((e) => e.seasonNumber);
+    Map<int?, List<SonarrEpisode>> _seasons =
+        _episodes.groupBy<int?, SonarrEpisode>((e) => e.seasonNumber);
     if (_seasons.length == 1) {
       return _episodes
           .map(

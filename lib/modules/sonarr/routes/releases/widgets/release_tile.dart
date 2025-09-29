@@ -7,7 +7,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 class SonarrReleasesTile extends StatefulWidget {
   final SonarrRelease release;
 
-  const SonarrReleasesTile({required this.release, Key? key}) : super(key: key);
+  const SonarrReleasesTile({required this.release, super.key});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -171,7 +171,7 @@ class _State extends State<SonarrReleasesTile> {
   }
 
   Future<void> _showWarnings() async => await LunaDialogs().showRejections(
-    context,
-    widget.release.rejections ?? [],
-  );
+        context,
+        widget.release.rejections ?? [],
+      );
 }

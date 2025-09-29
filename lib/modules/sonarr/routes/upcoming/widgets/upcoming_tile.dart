@@ -8,8 +8,7 @@ class SonarrUpcomingTile extends StatefulWidget {
   final SonarrCalendar record;
   final SonarrSeries? series;
 
-  const SonarrUpcomingTile({Key? key, required this.record, this.series})
-    : super(key: key);
+  const SonarrUpcomingTile({super.key, required this.record, this.series});
 
   @override
   State<SonarrUpcomingTile> createState() => _State();
@@ -20,15 +19,14 @@ class _State extends State<SonarrUpcomingTile> {
   Widget build(BuildContext context) {
     return LunaBlock(
       backgroundUrl: context.read<SonarrState>().getFanartURL(
-        widget.record.seriesId,
-      ),
+            widget.record.seriesId,
+          ),
       posterUrl: context.read<SonarrState>().getPosterURL(
-        widget.record.seriesId,
-      ),
+            widget.record.seriesId,
+          ),
       posterHeaders: context.read<SonarrState>().headers,
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
-      title:
-          widget.record.series?.title ??
+      title: widget.record.series?.title ??
           widget.series?.title ??
           LunaUI.TEXT_EMDASH,
       body: [_subtitle1(), _subtitle2(), _subtitle3()],
@@ -40,10 +38,10 @@ class _State extends State<SonarrUpcomingTile> {
   }
 
   Widget _trailing() => LunaIconButton(
-    text: widget.record.lunaAirTime,
-    onPressed: _trailingOnPressed,
-    onLongPress: _trailingOnLongPress,
-  );
+        text: widget.record.lunaAirTime,
+        onPressed: _trailingOnPressed,
+        onLongPress: _trailingOnLongPress,
+      );
 
   TextSpan _subtitle1() {
     return TextSpan(
@@ -70,8 +68,8 @@ class _State extends State<SonarrUpcomingTile> {
     Color color = widget.record.hasFile!
         ? LunaColours.accent
         : widget.record.lunaHasAired
-        ? LunaColours.red
-        : LunaColours.blue;
+            ? LunaColours.red
+            : LunaColours.blue;
     return TextSpan(
       style: TextStyle(fontWeight: LunaUI.FONT_WEIGHT_BOLD, color: color),
       children: [
@@ -102,7 +100,9 @@ class _State extends State<SonarrUpcomingTile> {
   }
 
   Future<void> _trailingOnPressed() async {
-    Provider.of<SonarrState>(context, listen: false).api!.command
+    Provider.of<SonarrState>(context, listen: false)
+        .api!
+        .command
         .episodeSearch(episodeIds: [widget.record.id!])
         .then(
           (_) => showLunaSuccessSnackBar(

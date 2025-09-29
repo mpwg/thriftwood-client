@@ -9,8 +9,7 @@ import 'package:thriftwood/router/routes/tautulli.dart';
 class TautulliStatisticsUserTile extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const TautulliStatisticsUserTile({Key? key, required this.data})
-    : super(key: key);
+  const TautulliStatisticsUserTile({super.key, required this.data});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -23,8 +22,8 @@ class _State extends State<TautulliStatisticsUserTile> {
       title: widget.data['friendly_name'] ?? 'Unknown User',
       body: _body(),
       posterUrl: context.watch<TautulliState>().getImageURLFromPath(
-        widget.data['user_thumb'],
-      ),
+            widget.data['user_thumb'],
+          ),
       posterHeaders: context.watch<TautulliState>().headers,
       posterIsSquare: true,
       posterPlaceholderIcon: LunaIcons.USER,
@@ -37,17 +36,14 @@ class _State extends State<TautulliStatisticsUserTile> {
       TextSpan(
         children: [
           TextSpan(
-            text:
-                widget.data['total_plays'].toString() +
+            text: widget.data['total_plays'].toString() +
                 (widget.data['total_plays'] == 1 ? ' Play' : ' Plays'),
             style: TextStyle(
-              color:
-                  context.watch<TautulliState>().statisticsType ==
+              color: context.watch<TautulliState>().statisticsType ==
                       TautulliStatsType.PLAYS
                   ? LunaColours.accent
                   : null,
-              fontWeight:
-                  context.watch<TautulliState>().statisticsType ==
+              fontWeight: context.watch<TautulliState>().statisticsType ==
                       TautulliStatsType.PLAYS
                   ? LunaUI.FONT_WEIGHT_BOLD
                   : null,
@@ -60,13 +56,11 @@ class _State extends State<TautulliStatisticsUserTile> {
                     seconds: widget.data['total_duration'],
                   ).asWordsTimestamp(),
                   style: TextStyle(
-                    color:
-                        context.watch<TautulliState>().statisticsType ==
+                    color: context.watch<TautulliState>().statisticsType ==
                             TautulliStatsType.DURATION
                         ? LunaColours.accent
                         : null,
-                    fontWeight:
-                        context.watch<TautulliState>().statisticsType ==
+                    fontWeight: context.watch<TautulliState>().statisticsType ==
                             TautulliStatsType.DURATION
                         ? LunaUI.FONT_WEIGHT_BOLD
                         : null,

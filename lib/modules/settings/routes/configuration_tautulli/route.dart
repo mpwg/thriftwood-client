@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/tautulli.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationTautulliRoute extends StatefulWidget {
-  const ConfigurationTautulliRoute({Key? key}) : super(key: key);
+  const ConfigurationTautulliRoute({super.key});
 
   @override
   State<ConfigurationTautulliRoute> createState() => _State();

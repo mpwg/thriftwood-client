@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 import 'package:thriftwood/router/router.dart';
 
 class SonarrEditSeriesActionBar extends StatelessWidget {
-  const SonarrEditSeriesActionBar({Key? key}) : super(key: key);
+  const SonarrEditSeriesActionBar({super.key});
 
   @override
   Widget build(BuildContext context) {

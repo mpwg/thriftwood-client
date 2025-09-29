@@ -8,8 +8,7 @@ import 'package:thriftwood/modules/nzbget.dart';
 class NZBGetQueueFAB extends StatefulWidget {
   final ScrollController scrollController;
 
-  const NZBGetQueueFAB({Key? key, required this.scrollController})
-    : super(key: key);
+  const NZBGetQueueFAB({super.key, required this.scrollController});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -72,8 +71,7 @@ class _State extends State<NZBGetQueueFAB> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      Selector<NZBGetState, (bool, bool)>(
+  Widget build(BuildContext context) => Selector<NZBGetState, (bool, bool)>(
         selector: (_, model) => (model.error, model.paused),
         builder: (context, data, _) {
           data.$2 ? _iconController.forward() : _iconController.reverse();
@@ -144,27 +142,21 @@ class _State extends State<NZBGetQueueFAB> with TickerProviderStateMixin {
 
   Future<void> _pause(BuildContext context, NZBGetAPI api) async {
     _iconController.forward();
-    await api
-        .pauseQueue()
-        .then((_) {
-          Provider.of<NZBGetState>(context, listen: false).paused = true;
-        })
-        .catchError((error) {
-          _iconController.reverse();
-          showLunaErrorSnackBar(title: 'Failed to Pause Queue', error: error);
-        });
+    await api.pauseQueue().then((_) {
+      Provider.of<NZBGetState>(context, listen: false).paused = true;
+    }).catchError((error) {
+      _iconController.reverse();
+      showLunaErrorSnackBar(title: 'Failed to Pause Queue', error: error);
+    });
   }
 
   Future<void> _resume(BuildContext context, NZBGetAPI api) async {
     _iconController.reverse();
-    return await api
-        .resumeQueue()
-        .then((_) {
-          Provider.of<NZBGetState>(context, listen: false).paused = false;
-        })
-        .catchError((error) {
-          _iconController.forward();
-          showLunaErrorSnackBar(title: 'Failed to Resume Queue', error: error);
-        });
+    return await api.resumeQueue().then((_) {
+      Provider.of<NZBGetState>(context, listen: false).paused = false;
+    }).catchError((error) {
+      _iconController.forward();
+      showLunaErrorSnackBar(title: 'Failed to Resume Queue', error: error);
+    });
   }
 }

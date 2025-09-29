@@ -4,7 +4,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliGraphsPlaysByMonthGraph extends StatelessWidget {
-  const TautulliGraphsPlaysByMonthGraph({Key? key}) : super(key: key);
+  const TautulliGraphsPlaysByMonthGraph({super.key});
 
   @override
   Widget build(BuildContext context) =>

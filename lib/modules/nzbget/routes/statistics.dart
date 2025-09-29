@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/nzbget.dart';
 
 class StatisticsRoute extends StatefulWidget {
-  const StatisticsRoute({Key? key}) : super(key: key);
+  const StatisticsRoute({super.key});
 
   @override
   State<StatisticsRoute> createState() => _State();
@@ -51,49 +51,49 @@ class _State extends State<StatisticsRoute> with LunaScrollControllerMixin {
 
   @override
   Widget build(BuildContext context) => LunaScaffold(
-    scaffoldKey: _scaffoldKey,
-    appBar: _appBar as PreferredSizeWidget?,
-    body: _body,
-  );
+        scaffoldKey: _scaffoldKey,
+        appBar: _appBar as PreferredSizeWidget?,
+        body: _body,
+      );
 
   Widget get _appBar => LunaAppBar(
-    title: 'Server Statistics',
-    scrollControllers: [scrollController],
-  );
+        title: 'Server Statistics',
+        scrollControllers: [scrollController],
+      );
 
   Widget get _body => LunaRefreshIndicator(
-    context: context,
-    key: _refreshKey,
-    onRefresh: _refresh,
-    child: FutureBuilder(
-      future: _future,
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            {
-              if (snapshot.hasError || snapshot.data == null)
-                return LunaMessage.error(onTap: _refresh);
-              return _list;
+        context: context,
+        key: _refreshKey,
+        onRefresh: _refresh,
+        child: FutureBuilder(
+          future: _future,
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                {
+                  if (snapshot.hasError || snapshot.data == null)
+                    return LunaMessage.error(onTap: _refresh);
+                  return _list;
+                }
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+              case ConnectionState.active:
+              default:
+                return const LunaLoader();
             }
-          case ConnectionState.none:
-          case ConnectionState.waiting:
-          case ConnectionState.active:
-          default:
-            return const LunaLoader();
-        }
-      },
-    ),
-  );
+          },
+        ),
+      );
 
   Widget get _list => LunaListView(
-    controller: scrollController,
-    children: <Widget>[
-      const LunaHeader(text: 'Status'),
-      _statusBlock(),
-      const LunaHeader(text: 'Logs'),
-      for (var entry in _logs) NZBGetLogTile(data: entry),
-    ],
-  );
+        controller: scrollController,
+        children: <Widget>[
+          const LunaHeader(text: 'Status'),
+          _statusBlock(),
+          const LunaHeader(text: 'Logs'),
+          for (var entry in _logs) NZBGetLogTile(data: entry),
+        ],
+      );
 
   Widget _statusBlock() {
     return LunaTableCard(

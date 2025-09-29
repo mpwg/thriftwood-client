@@ -6,8 +6,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 class SonarrAddSeriesSearchPage extends StatefulWidget {
   final ScrollController scrollController;
 
-  const SonarrAddSeriesSearchPage({Key? key, required this.scrollController})
-    : super(key: key);
+  const SonarrAddSeriesSearchPage({super.key, required this.scrollController});
 
   @override
   State<SonarrAddSeriesSearchPage> createState() => _State();
@@ -29,21 +28,18 @@ class _State extends State<SonarrAddSeriesSearchPage>
   @override
   Widget build(BuildContext context) {
     return Consumer<SonarrState>(
-      builder: (context, state, _) =>
-          Selector<
-            SonarrAddSeriesState,
-            (Future<List<SonarrSeries>>?, Future<List<SonarrExclusion>>?)
-          >(
-            selector: (_, state) => (state.lookup, state.exclusions),
-            builder: (context, tuple, _) {
-              if (tuple.$1 == null) return Container();
-              return _builder(
-                lookup: tuple.$1,
-                exclusions: tuple.$2,
-                series: state.series,
-              );
-            },
-          ),
+      builder: (context, state, _) => Selector<SonarrAddSeriesState,
+          (Future<List<SonarrSeries>>?, Future<List<SonarrExclusion>>?)>(
+        selector: (_, state) => (state.lookup, state.exclusions),
+        builder: (context, tuple, _) {
+          if (tuple.$1 == null) return Container();
+          return _builder(
+            lookup: tuple.$1,
+            exclusions: tuple.$2,
+            series: state.series,
+          );
+        },
+      ),
     );
   }
 

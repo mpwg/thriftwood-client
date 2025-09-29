@@ -5,7 +5,7 @@ import 'package:thriftwood/modules/search/core.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationSearchRoute extends StatefulWidget {
-  const ConfigurationSearchRoute({Key? key}) : super(key: key);
+  const ConfigurationSearchRoute({super.key});
 
   @override
   State<ConfigurationSearchRoute> createState() => _State();

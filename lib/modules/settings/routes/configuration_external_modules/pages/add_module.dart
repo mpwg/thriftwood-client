@@ -4,7 +4,7 @@ import 'package:thriftwood/database/models/external_module.dart';
 import 'package:thriftwood/modules/settings.dart';
 
 class ConfigurationExternalModulesAddRoute extends StatefulWidget {
-  const ConfigurationExternalModulesAddRoute({Key? key}) : super(key: key);
+  const ConfigurationExternalModulesAddRoute({super.key});
 
   @override
   State<ConfigurationExternalModulesAddRoute> createState() => _State();

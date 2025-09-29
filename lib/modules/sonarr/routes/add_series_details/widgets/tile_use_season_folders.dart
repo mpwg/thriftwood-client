@@ -3,8 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeriesAddDetailsUseSeasonFoldersTile extends StatelessWidget {
-  const SonarrSeriesAddDetailsUseSeasonFoldersTile({Key? key})
-    : super(key: key);
+  const SonarrSeriesAddDetailsUseSeasonFoldersTile({super.key});
 
   @override
   Widget build(BuildContext context) {

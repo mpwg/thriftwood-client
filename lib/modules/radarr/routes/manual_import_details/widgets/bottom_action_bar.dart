@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
-  const RadarrManualImportDetailsBottomActionBar({Key? key}) : super(key: key);
+  const RadarrManualImportDetailsBottomActionBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +23,8 @@ class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
           type: LunaButtonType.TEXT,
           text: 'radarr.Import'.tr(),
           icon: Icons.download_done_rounded,
-          loadingState: context
-              .watch<RadarrManualImportDetailsState>()
-              .loadingState,
+          loadingState:
+              context.watch<RadarrManualImportDetailsState>().loadingState,
           onTap: () async => _importOnTap(context),
         ),
       ],
@@ -33,8 +32,8 @@ class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
   }
 
   Future<void> _importModeOnTap(BuildContext context) async {
-    (bool, RadarrImportMode?) result = await RadarrDialogs()
-        .setManualImportMode(context);
+    (bool, RadarrImportMode?) result =
+        await RadarrDialogs().setManualImportMode(context);
     if (result.$1)
       RadarrDatabase.MANUAL_IMPORT_DEFAULT_MODE.update(result.$2!.value);
   }
@@ -43,9 +42,8 @@ class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
     if (context.read<RadarrManualImportDetailsState>().canExecuteAction &&
         context.read<RadarrManualImportDetailsState>().loadingState ==
             LunaLoadingState.INACTIVE) {
-      List<RadarrManualImport> _imports = await context
-          .read<RadarrManualImportDetailsState>()
-          .manualImport!;
+      List<RadarrManualImport> _imports =
+          await context.read<RadarrManualImportDetailsState>().manualImport!;
       _imports = _imports
           .where(
             (import) => context
@@ -65,8 +63,8 @@ class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
       List<RadarrManualImportFile> _files = [];
       _imports.forEach((import) {
         if (_allValid) {
-          (RadarrManualImportFile?, String?) _file = RadarrAPIHelper()
-              .buildManualImportFile(import: import);
+          (RadarrManualImportFile?, String?) _file =
+              RadarrAPIHelper().buildManualImportFile(import: import);
           if (_file.$1 != null) {
             _files.add(_file.$1!);
           } else {
@@ -90,14 +88,13 @@ class RadarrManualImportDetailsBottomActionBar extends StatelessWidget {
               (result) => result
                   ? Navigator.of(context).pop()
                   : context
-                            .read<RadarrManualImportDetailsState>()
-                            .loadingState =
-                        LunaLoadingState.INACTIVE,
+                      .read<RadarrManualImportDetailsState>()
+                      .loadingState = LunaLoadingState.INACTIVE,
             )
             .catchError(
-              (_) =>
-                  context.read<RadarrManualImportDetailsState>().loadingState =
-                      LunaLoadingState.ERROR,
+              (_) => context
+                  .read<RadarrManualImportDetailsState>()
+                  .loadingState = LunaLoadingState.ERROR,
             );
       }
     }

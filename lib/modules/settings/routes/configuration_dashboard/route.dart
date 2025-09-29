@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationDashboardRoute extends StatefulWidget {
-  const ConfigurationDashboardRoute({Key? key}) : super(key: key);
+  const ConfigurationDashboardRoute({super.key});
 
   @override
   State<ConfigurationDashboardRoute> createState() => _State();

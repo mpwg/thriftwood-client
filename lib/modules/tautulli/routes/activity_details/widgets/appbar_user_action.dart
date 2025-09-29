@@ -7,8 +7,8 @@ import 'package:thriftwood/router/routes/tautulli.dart';
 class TautulliActivityDetailsUserAction extends StatelessWidget {
   final int sessionKey;
 
-  const TautulliActivityDetailsUserAction({Key? key, required this.sessionKey})
-    : super(key: key);
+  const TautulliActivityDetailsUserAction(
+      {super.key, required this.sessionKey});
 
   @override
   Widget build(BuildContext context) {

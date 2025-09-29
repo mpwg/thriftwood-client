@@ -6,8 +6,7 @@ import 'package:thriftwood/modules/tautulli.dart';
 class ActivityDetailsRoute extends StatefulWidget {
   final int sessionKey;
 
-  const ActivityDetailsRoute({Key? key, required this.sessionKey})
-    : super(key: key);
+  const ActivityDetailsRoute({super.key, required this.sessionKey});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -74,10 +73,10 @@ class _State extends State<ActivityDetailsRoute>
             return LunaMessage.error(onTap: _refreshKey.currentState!.show);
           }
           if (snapshot.hasData) {
-            TautulliSession? session = snapshot.data!.sessions!
-                .firstWhereOrNull(
-                  (element) => element.sessionKey == widget.sessionKey,
-                );
+            TautulliSession? session =
+                snapshot.data!.sessions!.firstWhereOrNull(
+              (element) => element.sessionKey == widget.sessionKey,
+            );
             return _session(session);
           }
           return const LunaLoader();

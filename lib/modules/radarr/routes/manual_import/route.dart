@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class ManualImportRoute extends StatefulWidget {
-  const ManualImportRoute({Key? key}) : super(key: key);
+  const ManualImportRoute({super.key});
 
   @override
   State<ManualImportRoute> createState() => _State();
@@ -38,10 +38,10 @@ class _State extends State<ManualImportRoute> with LunaScrollControllerMixin {
 
   Widget _body(BuildContext context) {
     return FutureBuilder(
-      future: context
-          .select<RadarrManualImportState, Future<RadarrFileSystem>?>(
-            (state) => state.directories,
-          ),
+      future:
+          context.select<RadarrManualImportState, Future<RadarrFileSystem>?>(
+        (state) => state.directories,
+      ),
       builder: (context, AsyncSnapshot<RadarrFileSystem> snapshot) {
         if (snapshot.hasError) {
           if (snapshot.connectionState != ConnectionState.waiting) {
@@ -54,9 +54,9 @@ class _State extends State<ManualImportRoute> with LunaScrollControllerMixin {
           return LunaMessage.error(
             onTap: () {
               context.read<RadarrManualImportState>().fetchDirectories(
-                context,
-                context.read<RadarrManualImportState>().currentPath,
-              );
+                    context,
+                    context.read<RadarrManualImportState>().currentPath,
+                  );
             },
           );
         }

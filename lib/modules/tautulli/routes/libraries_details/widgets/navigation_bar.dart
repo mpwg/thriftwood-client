@@ -16,9 +16,9 @@ class TautulliLibrariesDetailsNavigationBar extends StatelessWidget {
   static const List<String> titles = ['Information', 'User Stats'];
 
   const TautulliLibrariesDetailsNavigationBar({
-    Key? key,
+    super.key,
     required this.pageController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

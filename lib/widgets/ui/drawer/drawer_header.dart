@@ -4,7 +4,7 @@ import 'package:thriftwood/core.dart';
 class LunaDrawerHeader extends StatelessWidget {
   final String page;
 
-  const LunaDrawerHeader({Key? key, required this.page}) : super(key: key);
+  const LunaDrawerHeader({super.key, required this.page});
 
   @override
   Widget build(BuildContext context) {

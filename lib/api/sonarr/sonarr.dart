@@ -1,4 +1,4 @@
-library sonarr;
+library;
 
 import 'package:dio/dio.dart';
 import 'package:thriftwood/api/sonarr/controllers.dart';

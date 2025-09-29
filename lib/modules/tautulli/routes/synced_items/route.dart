@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class SyncedItemsRoute extends StatefulWidget {
-  const SyncedItemsRoute({Key? key}) : super(key: key);
+  const SyncedItemsRoute({super.key});
 
   @override
   State<SyncedItemsRoute> createState() => _State();

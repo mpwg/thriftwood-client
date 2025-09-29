@@ -7,7 +7,7 @@ import 'package:thriftwood/modules/search.dart';
 class SearchResultTile extends StatelessWidget {
   final NewznabResultData data;
 
-  const SearchResultTile({Key? key, required this.data}) : super(key: key);
+  const SearchResultTile({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +74,8 @@ class SearchResultTile extends StatelessWidget {
   }
 
   Future<void> _sendToClient(BuildContext context) async {
-    (bool, SearchDownloadType?) result = await SearchDialogs()
-        .downloadResult(context);
+    (bool, SearchDownloadType?) result =
+        await SearchDialogs().downloadResult(context);
     if (result.$1) result.$2!.execute(context, data);
   }
 }

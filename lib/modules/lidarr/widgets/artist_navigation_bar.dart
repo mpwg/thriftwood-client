@@ -15,8 +15,7 @@ class LidarrArtistNavigationBar extends StatelessWidget {
     Icons.my_library_music_rounded,
   ];
 
-  const LidarrArtistNavigationBar({Key? key, required this.pageController})
-    : super(key: key);
+  const LidarrArtistNavigationBar({super.key, required this.pageController});
 
   @override
   Widget build(BuildContext context) {

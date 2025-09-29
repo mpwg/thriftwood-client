@@ -6,8 +6,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrManualImportDetailsTile extends StatelessWidget {
   final RadarrManualImport manualImport;
 
-  const RadarrManualImportDetailsTile({Key? key, required this.manualImport})
-    : super(key: key);
+  const RadarrManualImportDetailsTile({super.key, required this.manualImport});
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +22,7 @@ class RadarrManualImportDetailsTile extends StatelessWidget {
         collapsedSubtitles: [_subtitle1(context), _subtitle2(context)],
         expandedTableButtons: _buttons(context),
         expandedTableContent: _table(context),
-        backgroundColor:
-            context
+        backgroundColor: context
                 .watch<RadarrManualImportDetailsState>()
                 .selectedFiles
                 .contains(manualImport.id)
@@ -187,8 +185,7 @@ class RadarrManualImportDetailsTileState extends ChangeNotifier {
     if ((_manualImport.languages ?? []).indexWhere(
           (lang) => lang.id == language.id,
         ) >=
-        0)
-      return;
+        0) return;
     _manualImport.languages!.add(language);
     notifyListeners();
   }
@@ -209,8 +206,8 @@ class RadarrManualImportDetailsTileState extends ChangeNotifier {
         _manualImport.languages![0].id! >= 0)
       Future.microtask(
         () => context.read<RadarrManualImportDetailsState>().addSelectedFile(
-          _manualImport.id!,
-        ),
+              _manualImport.id!,
+            ),
       );
   }
 

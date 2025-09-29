@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class RadarrMovieDetailsFilesPage extends StatefulWidget {
-  const RadarrMovieDetailsFilesPage({Key? key}) : super(key: key);
+  const RadarrMovieDetailsFilesPage({super.key});
 
   @override
   State<StatefulWidget> createState() => _State();

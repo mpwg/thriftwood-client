@@ -6,19 +6,16 @@ import 'package:thriftwood/router/routes/tautulli.dart';
 class TautulliLibrariesDetailsUserStatsTile extends StatelessWidget {
   final TautulliLibraryUserStats user;
 
-  const TautulliLibrariesDetailsUserStatsTile({Key? key, required this.user})
-    : super(key: key);
+  const TautulliLibrariesDetailsUserStatsTile({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return LunaBlock(
       posterUrl: context.watch<TautulliState>().getImageURLFromPath(
-        user.userThumb,
-      ),
-      posterHeaders: context
-          .watch<TautulliState>()
-          .headers
-          .cast<String, String>(),
+            user.userThumb,
+          ),
+      posterHeaders:
+          context.watch<TautulliState>().headers.cast<String, String>(),
       posterPlaceholderIcon: LunaIcons.USER,
       title: user.friendlyName,
       body: [

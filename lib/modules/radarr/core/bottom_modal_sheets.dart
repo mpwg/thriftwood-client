@@ -60,9 +60,8 @@ class RadarrBottomModalSheets {
               ],
               trailing: const LunaIconButton.arrow(),
               onTap: () async {
-                List<RadarrLanguage> languages = await context
-                    .read<RadarrState>()
-                    .languages!;
+                List<RadarrLanguage> languages =
+                    await context.read<RadarrState>().languages!;
                 await RadarrDialogs().setManualImportLanguages(
                   context,
                   languages,
@@ -94,14 +93,13 @@ class RadarrBottomModalSheets {
               ],
               trailing: const LunaIconButton.arrow(),
               onTap: () async {
-                List<RadarrQualityDefinition> profiles = await context
-                    .read<RadarrState>()
-                    .qualityDefinitions!;
+                List<RadarrQualityDefinition> profiles =
+                    await context.read<RadarrState>().qualityDefinitions!;
                 (bool, RadarrQualityDefinition?) result =
                     await RadarrDialogs().selectQualityDefinition(
-                      context,
-                      profiles,
-                    );
+                  context,
+                  profiles,
+                );
                 if (result.$1)
                   context
                       .read<RadarrManualImportDetailsTileState>()
@@ -111,8 +109,7 @@ class RadarrBottomModalSheets {
             LunaBlock(
               title: 'Proper',
               trailing: Switch(
-                value:
-                    context
+                value: context
                         .watch<RadarrManualImportDetailsTileState>()
                         .manualImport
                         .quality
@@ -125,17 +122,15 @@ class RadarrBottomModalSheets {
                       .manualImport;
                   _import.quality?.revision?.version = value ? 2 : 1;
                   context
-                          .read<RadarrManualImportDetailsTileState>()
-                          .manualImport =
-                      _import;
+                      .read<RadarrManualImportDetailsTileState>()
+                      .manualImport = _import;
                 },
               ),
             ),
             LunaBlock(
               title: 'Real',
               trailing: Switch(
-                value:
-                    context
+                value: context
                         .watch<RadarrManualImportDetailsTileState>()
                         .manualImport
                         .quality
@@ -148,9 +143,8 @@ class RadarrBottomModalSheets {
                       .manualImport;
                   _import.quality?.revision?.real = value ? 1 : 0;
                   context
-                          .read<RadarrManualImportDetailsTileState>()
-                          .manualImport =
-                      _import;
+                      .read<RadarrManualImportDetailsTileState>()
+                      .manualImport = _import;
                 },
               ),
             ),
@@ -164,9 +158,8 @@ class RadarrBottomModalSheets {
     bool result = false;
     RadarrMovie? movie;
     context
-            .read<RadarrManualImportDetailsTileState>()
-            .configureMoviesSearchQuery =
-        '';
+        .read<RadarrManualImportDetailsTileState>()
+        .configureMoviesSearchQuery = '';
 
     List<RadarrMovie> _sortAndFilter(List<RadarrMovie> movies, String query) {
       List<RadarrMovie> _filtered = movies
@@ -215,7 +208,7 @@ class RadarrBottomModalSheets {
                   if (movies[index].year != null && movies[index].year != 0)
                     title += ' (${movies[index].year})';
                   String? overview = movies[index].overview;
-                  if (overview?.isEmpty ?? true)
+                  if (overview.isEmpty ?? true)
                     overview = 'radarr.NoSummaryIsAvailable'.tr();
                   return LunaBlock(
                     title: title,
@@ -238,8 +231,7 @@ class RadarrBottomModalSheets {
                       const RadarrManualImportDetailsConfigureMoviesSearchBar(),
                   hideLeading: true,
                 ),
-                appBarHeight:
-                    LunaAppBar.APPBAR_HEIGHT +
+                appBarHeight: LunaAppBar.APPBAR_HEIGHT +
                     LunaTextInputBar.defaultAppBarHeight,
               );
             }

@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/tautulli.dart';
 import 'package:thriftwood/router/routes/settings.dart';
 
 class ConfigurationTautulliConnectionDetailsRoute extends StatefulWidget {
-  const ConfigurationTautulliConnectionDetailsRoute({Key? key})
-    : super(key: key);
+  const ConfigurationTautulliConnectionDetailsRoute({super.key});
 
   @override
   State<ConfigurationTautulliConnectionDetailsRoute> createState() => _State();
@@ -118,10 +117,11 @@ class _State extends State<ConfigurationTautulliConnectionDetailsRoute>
           return;
         }
         TautulliAPI(
-              host: _profile.tautulliHost,
-              apiKey: _profile.tautulliKey,
-              headers: Map<String, dynamic>.from(_profile.tautulliHeaders),
-            ).miscellaneous
+          host: _profile.tautulliHost,
+          apiKey: _profile.tautulliKey,
+          headers: Map<String, dynamic>.from(_profile.tautulliHeaders),
+        )
+            .miscellaneous
             .arnold()
             .then(
               (_) => showLunaSuccessSnackBar(
@@ -132,12 +132,12 @@ class _State extends State<ConfigurationTautulliConnectionDetailsRoute>
               ),
             )
             .catchError((error, trace) {
-              LunaLogger().error('Connection Test Failed', error, trace);
-              showLunaErrorSnackBar(
-                title: 'settings.ConnectionTestFailed'.tr(),
-                error: error,
-              );
-            });
+          LunaLogger().error('Connection Test Failed', error, trace);
+          showLunaErrorSnackBar(
+            title: 'settings.ConnectionTestFailed'.tr(),
+            error: error,
+          );
+        });
       },
     );
   }

@@ -11,8 +11,7 @@ class SonarrMissingTile extends StatefulWidget {
   final SonarrMissingRecord record;
   final SonarrSeries? series;
 
-  const SonarrMissingTile({Key? key, required this.record, this.series})
-    : super(key: key);
+  const SonarrMissingTile({super.key, required this.record, this.series});
 
   @override
   State<SonarrMissingTile> createState() => _State();
@@ -23,15 +22,14 @@ class _State extends State<SonarrMissingTile> {
   Widget build(BuildContext context) {
     return LunaBlock(
       backgroundUrl: context.read<SonarrState>().getFanartURL(
-        widget.record.seriesId,
-      ),
+            widget.record.seriesId,
+          ),
       posterUrl: context.read<SonarrState>().getPosterURL(
-        widget.record.seriesId,
-      ),
+            widget.record.seriesId,
+          ),
       posterHeaders: context.read<SonarrState>().headers,
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
-      title:
-          widget.record.series?.title ??
+      title: widget.record.series?.title ??
           widget.series?.title ??
           LunaUI.TEXT_EMDASH,
       body: [_subtitle1(), _subtitle2(), _subtitle3()],
@@ -104,7 +102,9 @@ class _State extends State<SonarrMissingTile> {
   }
 
   Future<void> _trailingOnTap() async {
-    Provider.of<SonarrState>(context, listen: false).api!.command
+    Provider.of<SonarrState>(context, listen: false)
+        .api!
+        .command
         .episodeSearch(episodeIds: [widget.record.id!])
         .then(
           (_) => showLunaSuccessSnackBar(

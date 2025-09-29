@@ -6,7 +6,7 @@ import 'package:thriftwood/router/routes/radarr.dart';
 import 'package:thriftwood/types/list_view_option.dart';
 
 class RadarrCatalogueRoute extends StatefulWidget {
-  const RadarrCatalogueRoute({Key? key}) : super(key: key);
+  const RadarrCatalogueRoute({super.key});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -53,41 +53,35 @@ class _State extends State<RadarrCatalogueRoute>
       context: context,
       key: _refreshKey,
       onRefresh: _refresh,
-      child:
-          Selector<
-            RadarrState,
-            (
-              Future<List<RadarrMovie>>?,
-              Future<List<RadarrQualityProfile>>?
-            )
-          >(
-            selector: (_, state) => (state.movies, state.qualityProfiles),
-            builder: (context, tuple, _) {
-              return FutureBuilder(
-                future: Future.wait([tuple.$1!, tuple.$2!]),
-                builder: (context, AsyncSnapshot<List<Object>> snapshot) {
-                  if (snapshot.hasError) {
-                    if (snapshot.connectionState != ConnectionState.waiting) {
-                      LunaLogger().error(
-                        'Unable to fetch Radarr movies',
-                        snapshot.error,
-                        snapshot.stackTrace,
-                      );
-                    }
-                    return LunaMessage.error(
-                      onTap: _refreshKey.currentState!.show,
-                    );
-                  }
-                  if (snapshot.hasData)
-                    return _movieList(
-                      snapshot.data![0] as List<RadarrMovie>,
-                      snapshot.data![1] as List<RadarrQualityProfile>,
-                    );
-                  return const LunaLoader();
-                },
-              );
+      child: Selector<RadarrState,
+          (Future<List<RadarrMovie>>?, Future<List<RadarrQualityProfile>>?)>(
+        selector: (_, state) => (state.movies, state.qualityProfiles),
+        builder: (context, tuple, _) {
+          return FutureBuilder(
+            future: Future.wait([tuple.$1!, tuple.$2!]),
+            builder: (context, AsyncSnapshot<List<Object>> snapshot) {
+              if (snapshot.hasError) {
+                if (snapshot.connectionState != ConnectionState.waiting) {
+                  LunaLogger().error(
+                    'Unable to fetch Radarr movies',
+                    snapshot.error,
+                    snapshot.stackTrace,
+                  );
+                }
+                return LunaMessage.error(
+                  onTap: _refreshKey.currentState!.show,
+                );
+              }
+              if (snapshot.hasData)
+                return _movieList(
+                  snapshot.data![0] as List<RadarrMovie>,
+                  snapshot.data![1] as List<RadarrQualityProfile>,
+                );
+              return const LunaLoader();
             },
-          ),
+          );
+        },
+      ),
     );
   }
 

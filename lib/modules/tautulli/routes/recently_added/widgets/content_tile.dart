@@ -9,9 +9,9 @@ class TautulliRecentlyAddedContentTile extends StatefulWidget {
   final TautulliRecentlyAdded recentlyAdded;
 
   const TautulliRecentlyAddedContentTile({
-    Key? key,
+    super.key,
     required this.recentlyAdded,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -25,12 +25,12 @@ class _State extends State<TautulliRecentlyAddedContentTile> {
       body: _body,
       posterHeaders: context.watch<TautulliState>().headers,
       posterUrl: context.watch<TautulliState>().getImageURLFromPath(
-        _posterLink,
-      ),
+            _posterLink,
+          ),
       backgroundHeaders: context.watch<TautulliState>().headers,
       backgroundUrl: context.watch<TautulliState>().getImageURLFromPath(
-        widget.recentlyAdded.art,
-      ),
+            widget.recentlyAdded.art,
+          ),
       posterPlaceholderIcon: LunaIcons.VIDEO_CAM,
       onTap: _onTap,
     );

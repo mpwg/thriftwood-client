@@ -5,8 +5,8 @@ import 'package:thriftwood/modules/sonarr.dart';
 class SonarrSeriesEditLanguageProfileTile extends StatelessWidget {
   final List<SonarrLanguageProfile?> profiles;
 
-  const SonarrSeriesEditLanguageProfileTile({Key? key, required this.profiles})
-    : super(key: key);
+  const SonarrSeriesEditLanguageProfileTile(
+      {super.key, required this.profiles});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +14,7 @@ class SonarrSeriesEditLanguageProfileTile extends StatelessWidget {
       title: 'sonarr.LanguageProfile'.tr(),
       body: [
         TextSpan(
-          text:
-              context.watch<SonarrSeriesEditState>().languageProfile?.name ??
+          text: context.watch<SonarrSeriesEditState>().languageProfile?.name ??
               LunaUI.TEXT_EMDASH,
         ),
       ],
@@ -25,8 +24,8 @@ class SonarrSeriesEditLanguageProfileTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    (bool, SonarrLanguageProfile?) result = await SonarrDialogs()
-        .editLanguageProfiles(context, profiles);
+    (bool, SonarrLanguageProfile?) result =
+        await SonarrDialogs().editLanguageProfiles(context, profiles);
     if (result.$1)
       context.read<SonarrSeriesEditState>().languageProfile = result.$2!;
   }

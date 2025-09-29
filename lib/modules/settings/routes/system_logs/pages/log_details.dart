@@ -7,8 +7,7 @@ import 'package:thriftwood/types/log_type.dart';
 class SystemLogsDetailsRoute extends StatefulWidget {
   final LunaLogType? type;
 
-  const SystemLogsDetailsRoute({Key? key, required this.type})
-    : super(key: key);
+  const SystemLogsDetailsRoute({super.key, required this.type});
 
   @override
   State<SystemLogsDetailsRoute> createState() => _State();
@@ -60,17 +59,15 @@ class _State extends State<SystemLogsDetailsRoute>
 
     switch (widget.type) {
       case LunaLogType.WARNING:
-        logs = box.data
-            .where((log) => log.type == LunaLogType.WARNING)
-            .toList();
+        logs =
+            box.data.where((log) => log.type == LunaLogType.WARNING).toList();
         break;
       case LunaLogType.ERROR:
         logs = box.data.where((log) => log.type == LunaLogType.ERROR).toList();
         break;
       case LunaLogType.CRITICAL:
-        logs = box.data
-            .where((log) => log.type == LunaLogType.CRITICAL)
-            .toList();
+        logs =
+            box.data.where((log) => log.type == LunaLogType.CRITICAL).toList();
         break;
       case LunaLogType.DEBUG:
         logs = box.data.where((log) => log.type == LunaLogType.DEBUG).toList();

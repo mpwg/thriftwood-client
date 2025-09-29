@@ -11,7 +11,7 @@ import 'package:thriftwood/modules/dashboard/routes/dashboard/widgets/navigation
 class ScheduleView extends StatefulWidget {
   final Map<DateTime, List<CalendarData>> events;
 
-  const ScheduleView({Key? key, required this.events}) : super(key: key);
+  const ScheduleView({super.key, required this.events});
 
   @override
   State<ScheduleView> createState() => _State();

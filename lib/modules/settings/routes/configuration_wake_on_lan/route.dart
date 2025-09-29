@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/settings.dart';
 
 class ConfigurationWakeOnLANRoute extends StatefulWidget {
-  const ConfigurationWakeOnLANRoute({Key? key}) : super(key: key);
+  const ConfigurationWakeOnLANRoute({super.key});
 
   @override
   State<ConfigurationWakeOnLANRoute> createState() => _State();

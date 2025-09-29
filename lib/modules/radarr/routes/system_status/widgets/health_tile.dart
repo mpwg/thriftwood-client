@@ -6,8 +6,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrHealthCheckTile extends StatelessWidget {
   final RadarrHealthCheck healthCheck;
 
-  const RadarrHealthCheckTile({Key? key, required this.healthCheck})
-    : super(key: key);
+  const RadarrHealthCheckTile({super.key, required this.healthCheck});
 
   @override
   Widget build(BuildContext context) {

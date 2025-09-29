@@ -3,8 +3,7 @@ import 'package:thriftwood/modules.dart';
 import 'package:thriftwood/modules/settings.dart';
 
 class ConfigurationSonarrConnectionDetailsHeadersRoute extends StatelessWidget {
-  const ConfigurationSonarrConnectionDetailsHeadersRoute({Key? key})
-    : super(key: key);
+  const ConfigurationSonarrConnectionDetailsHeadersRoute({super.key});
 
   @override
   Widget build(BuildContext context) {

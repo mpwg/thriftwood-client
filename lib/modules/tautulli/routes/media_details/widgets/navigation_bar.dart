@@ -16,9 +16,9 @@ class TautulliMediaDetailsNavigationBar extends StatelessWidget {
   static const List<String> titles = ['Metadata', 'History'];
 
   const TautulliMediaDetailsNavigationBar({
-    Key? key,
+    super.key,
     required this.pageController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

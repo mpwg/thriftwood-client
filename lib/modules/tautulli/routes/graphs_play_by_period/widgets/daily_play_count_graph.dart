@@ -4,7 +4,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliGraphsDailyPlayCountGraph extends StatelessWidget {
-  const TautulliGraphsDailyPlayCountGraph({Key? key}) : super(key: key);
+  const TautulliGraphsDailyPlayCountGraph({super.key});
 
   @override
   Widget build(BuildContext context) =>

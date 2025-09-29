@@ -4,7 +4,7 @@
 /// **Only v3 and newer releases of Radarr are supported with this library.**
 ///
 /// This library gives access to [radarr_commands], and is needed as the only entrypoint.
-library radarr;
+library;
 
 // Imports
 import 'package:dio/dio.dart';

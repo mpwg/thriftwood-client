@@ -4,8 +4,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/tautulli.dart';
 
 class TautulliGraphsDailyStreamTypeBreakdownGraph extends StatelessWidget {
-  const TautulliGraphsDailyStreamTypeBreakdownGraph({Key? key})
-    : super(key: key);
+  const TautulliGraphsDailyStreamTypeBreakdownGraph({super.key});
 
   @override
   Widget build(BuildContext context) =>

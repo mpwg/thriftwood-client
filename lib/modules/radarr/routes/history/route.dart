@@ -4,7 +4,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/radarr.dart';
 
 class HistoryRoute extends StatefulWidget {
-  const HistoryRoute({Key? key}) : super(key: key);
+  const HistoryRoute({super.key});
 
   @override
   State<HistoryRoute> createState() => _State();
@@ -16,10 +16,10 @@ class _State extends State<HistoryRoute> with LunaScrollControllerMixin {
       GlobalKey<RefreshIndicatorState>();
   late final PagingController<int, RadarrHistoryRecord> _pagingController =
       PagingController(
-        fetchPage: _fetchPage,
-        getNextPageKey: (state) => _getNextPageKey(state),
-      );
-  
+    fetchPage: _fetchPage,
+    getNextPageKey: (state) => _getNextPageKey(state),
+  );
+
   // Store pagination info
   int? _totalRecords;
   int? _currentPage;
@@ -33,22 +33,18 @@ class _State extends State<HistoryRoute> with LunaScrollControllerMixin {
 
   Future<List<RadarrHistoryRecord>> _fetchPage(int pageKey) async {
     try {
-      final data = await context
-          .read<RadarrState>()
-          .api!
-          .history
-          .get(
+      final data = await context.read<RadarrState>().api!.history.get(
             page: pageKey,
             pageSize: RadarrDatabase.CONTENT_PAGE_SIZE.read(),
             sortKey: RadarrHistorySortKey.DATE,
             sortDirection: RadarrSortDirection.DESCENDING,
           );
-      
+
       // Store pagination info
       _totalRecords = data.totalRecords;
       _currentPage = data.page;
       _pageSize = data.pageSize;
-      
+
       return data.records ?? [];
     } catch (error, stack) {
       LunaLogger().error(
@@ -64,17 +60,14 @@ class _State extends State<HistoryRoute> with LunaScrollControllerMixin {
     if (_totalRecords == null || _currentPage == null || _pageSize == null) {
       return null;
     }
-    
+
     final currentPageKey = state.nextIntPageKey;
-    if (currentPageKey == null) {
-      return null;
-    }
     final totalItemsFetched = currentPageKey * _pageSize!;
-    
+
     if (totalItemsFetched < _totalRecords!) {
       return currentPageKey + 1;
     }
-    
+
     return null;
   }
 

@@ -16,8 +16,7 @@ class LidarrNavigationBar extends StatelessWidget {
 
   static List<String> get titles => ['Artists', 'Missing', 'History'];
 
-  const LidarrNavigationBar({Key? key, required this.pageController})
-    : super(key: key);
+  const LidarrNavigationBar({super.key, required this.pageController});
 
   @override
   Widget build(BuildContext context) {

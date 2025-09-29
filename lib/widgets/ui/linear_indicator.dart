@@ -11,11 +11,11 @@ class LunaLinearPercentIndicator extends StatelessWidget {
   final Color? backgroundColor;
 
   const LunaLinearPercentIndicator({
-    Key? key,
+    super.key,
     this.percent,
     this.progressColor = LunaColours.accent,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

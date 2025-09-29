@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/radarr.dart';
 import 'package:thriftwood/router/routes/radarr.dart';
 
 class RadarrManualImportBottomActionBar extends StatelessWidget {
-  const RadarrManualImportBottomActionBar({Key? key}) : super(key: key);
+  const RadarrManualImportBottomActionBar({super.key});
 
   @override
   Widget build(BuildContext context) {

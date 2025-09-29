@@ -6,8 +6,7 @@ import 'package:thriftwood/modules/sonarr.dart';
 class SonarrSeriesSearchBarSortButton extends StatefulWidget {
   final ScrollController controller;
 
-  const SonarrSeriesSearchBarSortButton({Key? key, required this.controller})
-    : super(key: key);
+  const SonarrSeriesSearchBarSortButton({super.key, required this.controller});
 
   @override
   State<SonarrSeriesSearchBarSortButton> createState() => _State();
@@ -16,22 +15,23 @@ class SonarrSeriesSearchBarSortButton extends StatefulWidget {
 class _State extends State<SonarrSeriesSearchBarSortButton> {
   @override
   Widget build(BuildContext context) => LunaCard(
-    context: context,
-    child: Consumer<SonarrState>(
-      builder: (context, state, _) => LunaPopupMenuButton<SonarrSeriesSorting>(
-        tooltip: 'sonarr.SortCatalogue'.tr(),
-        icon: Icons.sort_rounded,
-        onSelected: (result) {
-          if (state.seriesSortType == result) {
-            state.seriesSortAscending = !state.seriesSortAscending;
-          } else {
-            state.seriesSortAscending = true;
-            state.seriesSortType = result;
-          }
-          widget.controller.animateToStart();
-        },
-        itemBuilder: (context) =>
-            List<PopupMenuEntry<SonarrSeriesSorting>>.generate(
+        context: context,
+        child: Consumer<SonarrState>(
+          builder: (context, state, _) =>
+              LunaPopupMenuButton<SonarrSeriesSorting>(
+            tooltip: 'sonarr.SortCatalogue'.tr(),
+            icon: Icons.sort_rounded,
+            onSelected: (result) {
+              if (state.seriesSortType == result) {
+                state.seriesSortAscending = !state.seriesSortAscending;
+              } else {
+                state.seriesSortAscending = true;
+                state.seriesSortType = result;
+              }
+              widget.controller.animateToStart();
+            },
+            itemBuilder: (context) =>
+                List<PopupMenuEntry<SonarrSeriesSorting>>.generate(
               SonarrSeriesSorting.values.length,
               (index) => PopupMenuItem<SonarrSeriesSorting>(
                 value: SonarrSeriesSorting.values[index],
@@ -42,8 +42,7 @@ class _State extends State<SonarrSeriesSearchBarSortButton> {
                       SonarrSeriesSorting.values[index].readable,
                       style: TextStyle(
                         fontSize: LunaUI.FONT_SIZE_H3,
-                        color:
-                            state.seriesSortType ==
+                        color: state.seriesSortType ==
                                 SonarrSeriesSorting.values[index]
                             ? LunaColours.accent
                             : Colors.white,
@@ -62,11 +61,11 @@ class _State extends State<SonarrSeriesSearchBarSortButton> {
                 ),
               ),
             ),
-      ),
-    ),
-    height: LunaTextInputBar.defaultHeight,
-    width: LunaTextInputBar.defaultHeight,
-    margin: const EdgeInsets.only(left: LunaUI.DEFAULT_MARGIN_SIZE),
-    color: Theme.of(context).canvasColor,
-  );
+          ),
+        ),
+        height: LunaTextInputBar.defaultHeight,
+        width: LunaTextInputBar.defaultHeight,
+        margin: const EdgeInsets.only(left: LunaUI.DEFAULT_MARGIN_SIZE),
+        color: Theme.of(context).canvasColor,
+      );
 }

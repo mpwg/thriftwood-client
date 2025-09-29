@@ -6,7 +6,7 @@ import 'package:thriftwood/widgets/pages/invalid_route.dart';
 class HistoryStagesRoute extends StatefulWidget {
   final SABnzbdHistoryData? history;
 
-  const HistoryStagesRoute({Key? key, required this.history}) : super(key: key);
+  const HistoryStagesRoute({super.key, required this.history});
 
   @override
   State<HistoryStagesRoute> createState() => _State();

@@ -7,7 +7,7 @@ import 'package:thriftwood/modules/radarr.dart';
 class RadarrReleasesTile extends StatefulWidget {
   final RadarrRelease release;
 
-  const RadarrReleasesTile({required this.release, Key? key}) : super(key: key);
+  const RadarrReleasesTile({required this.release, super.key});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -94,8 +94,7 @@ class _State extends State<RadarrReleasesTile> {
       LunaTableContent(title: 'size', body: widget.release.lunaSize),
       LunaTableContent(
         title: 'language',
-        body:
-            widget.release.languages
+        body: widget.release.languages
                 ?.map<String>((language) => language.name ?? LunaUI.TEXT_EMDASH)
                 .join('\n') ??
             LunaUI.TEXT_EMDASH,
@@ -139,17 +138,16 @@ class _State extends State<RadarrReleasesTile> {
     RadarrAPIHelper()
         .pushRelease(context: context, release: widget.release)
         .then((value) {
-          if (mounted)
-            setState(
-              () => _downloadState = value
-                  ? LunaLoadingState.INACTIVE
-                  : LunaLoadingState.ERROR,
-            );
-        });
+      if (mounted)
+        setState(
+          () => _downloadState =
+              value ? LunaLoadingState.INACTIVE : LunaLoadingState.ERROR,
+        );
+    });
   }
 
   Future<void> _showWarnings() async => await LunaDialogs().showRejections(
-    context,
-    widget.release.rejections ?? [],
-  );
+        context,
+        widget.release.rejections ?? [],
+      );
 }

@@ -6,7 +6,7 @@ import 'package:thriftwood/widgets/pages/invalid_route.dart';
 class SeriesEditRoute extends StatefulWidget {
   final int seriesId;
 
-  const SeriesEditRoute({Key? key, required this.seriesId}) : super(key: key);
+  const SeriesEditRoute({super.key, required this.seriesId});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -33,10 +33,10 @@ class _State extends State<SeriesEditRoute>
     return ChangeNotifierProvider(
       create: (_) => SonarrSeriesEditState(),
       builder: (context, _) {
-        LunaLoadingState state = context
-            .select<SonarrSeriesEditState, LunaLoadingState>(
-              (state) => state.state,
-            );
+        LunaLoadingState state =
+            context.select<SonarrSeriesEditState, LunaLoadingState>(
+          (state) => state.state,
+        );
         return LunaScaffold(
           scaffoldKey: _scaffoldKey,
           appBar: _appBar() as PreferredSizeWidget?,
@@ -109,11 +109,11 @@ class _State extends State<SeriesEditRoute>
     if (context.read<SonarrSeriesEditState>().series == null) {
       context.read<SonarrSeriesEditState>().series = series;
       context.read<SonarrSeriesEditState>().initializeQualityProfile(
-        qualityProfiles,
-      );
+            qualityProfiles,
+          );
       context.read<SonarrSeriesEditState>().initializeLanguageProfile(
-        languageProfiles,
-      );
+            languageProfiles,
+          );
       context.read<SonarrSeriesEditState>().initializeTags(tags);
       context.read<SonarrSeriesEditState>().canExecuteAction = true;
     }

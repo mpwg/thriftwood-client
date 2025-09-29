@@ -14,18 +14,18 @@ class SonarrSeriesTile extends StatefulWidget {
   final _SonarrSeriesTileType type;
 
   const SonarrSeriesTile({
-    Key? key,
+    super.key,
     required this.series,
     required this.profile,
     this.type = _SonarrSeriesTileType.TILE,
-  }) : super(key: key);
+  });
 
   const SonarrSeriesTile.grid({
-    Key? key,
+    super.key,
     required this.series,
     required this.profile,
     this.type = _SonarrSeriesTileType.GRID,
-  }) : super(key: key);
+  });
 
   @override
   State<SonarrSeriesTile> createState() => _State();
@@ -161,8 +161,8 @@ class _State extends State<SonarrSeriesTile> {
   }
 
   Future<void> _onLongPress() async {
-    (bool, SonarrSeriesSettingsType?) values = await SonarrDialogs()
-        .seriesSettings(context, widget.series);
+    (bool, SonarrSeriesSettingsType?) values =
+        await SonarrDialogs().seriesSettings(context, widget.series);
     if (values.$1) values.$2!.execute(context, widget.series);
   }
 }

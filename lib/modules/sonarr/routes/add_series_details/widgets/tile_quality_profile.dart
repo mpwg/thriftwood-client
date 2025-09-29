@@ -3,7 +3,7 @@ import 'package:thriftwood/core.dart';
 import 'package:thriftwood/modules/sonarr.dart';
 
 class SonarrSeriesAddDetailsQualityProfileTile extends StatelessWidget {
-  const SonarrSeriesAddDetailsQualityProfileTile({Key? key}) : super(key: key);
+  const SonarrSeriesAddDetailsQualityProfileTile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +11,7 @@ class SonarrSeriesAddDetailsQualityProfileTile extends StatelessWidget {
       title: 'sonarr.QualityProfile'.tr(),
       body: [
         TextSpan(
-          text:
-              context
+          text: context
                   .watch<SonarrSeriesAddDetailsState>()
                   .qualityProfile
                   .name ??
@@ -25,14 +24,12 @@ class SonarrSeriesAddDetailsQualityProfileTile extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    List<SonarrQualityProfile> _profiles = await context
-        .read<SonarrState>()
-        .qualityProfiles!;
-    (bool, SonarrQualityProfile?) result = await SonarrDialogs()
-        .editQualityProfile(context, _profiles);
+    List<SonarrQualityProfile> _profiles =
+        await context.read<SonarrState>().qualityProfiles!;
+    (bool, SonarrQualityProfile?) result =
+        await SonarrDialogs().editQualityProfile(context, _profiles);
     if (result.$1) {
-      context.read<SonarrSeriesAddDetailsState>().qualityProfile =
-          result.$2!;
+      context.read<SonarrSeriesAddDetailsState>().qualityProfile = result.$2!;
       SonarrDatabase.ADD_SERIES_DEFAULT_QUALITY_PROFILE.update(
         result.$2!.id,
       );

@@ -4,7 +4,7 @@ import 'package:thriftwood/modules/settings.dart';
 import 'package:thriftwood/system/quick_actions/quick_actions.dart';
 
 class ConfigurationQuickActionsRoute extends StatefulWidget {
-  const ConfigurationQuickActionsRoute({Key? key}) : super(key: key);
+  const ConfigurationQuickActionsRoute({super.key});
 
   @override
   State<ConfigurationQuickActionsRoute> createState() => _State();

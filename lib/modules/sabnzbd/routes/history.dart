@@ -5,8 +5,7 @@ import 'package:thriftwood/modules/sabnzbd.dart';
 class SABnzbdHistory extends StatefulWidget {
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
 
-  const SABnzbdHistory({Key? key, required this.refreshIndicatorKey})
-    : super(key: key);
+  const SABnzbdHistory({super.key, required this.refreshIndicatorKey});
 
   @override
   State<SABnzbdHistory> createState() => _State();

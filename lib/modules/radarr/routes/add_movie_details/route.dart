@@ -8,10 +8,10 @@ class AddMovieDetailsRoute extends StatefulWidget {
   final bool isDiscovery;
 
   const AddMovieDetailsRoute({
-    Key? key,
+    super.key,
     required this.movie,
     required this.isDiscovery,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -98,11 +98,11 @@ class _State extends State<AddMovieDetailsRoute>
   }) {
     context.read<RadarrAddMovieDetailsState>().initializeAvailability();
     context.read<RadarrAddMovieDetailsState>().initializeQualityProfile(
-      qualityProfiles,
-    );
+          qualityProfiles,
+        );
     context.read<RadarrAddMovieDetailsState>().initializeRootFolder(
-      rootFolders,
-    );
+          rootFolders,
+        );
     context.read<RadarrAddMovieDetailsState>().initializeTags(tags);
     context.read<RadarrAddMovieDetailsState>().canExecuteAction = true;
     return LunaRefreshIndicator(

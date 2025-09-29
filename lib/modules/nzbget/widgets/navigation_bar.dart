@@ -15,8 +15,7 @@ class NZBGetNavigationBar extends StatelessWidget {
     Icons.history_rounded,
   ];
 
-  const NZBGetNavigationBar({Key? key, required this.pageController})
-    : super(key: key);
+  const NZBGetNavigationBar({super.key, required this.pageController});
 
   @override
   Widget build(BuildContext context) {

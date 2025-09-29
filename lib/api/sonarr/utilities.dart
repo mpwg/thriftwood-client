@@ -1,4 +1,4 @@
-library sonarr_utilities;
+library;
 
 import 'package:thriftwood/modules/sonarr.dart';
 
@@ -55,15 +55,19 @@ class SonarrUtilities {
 
   static SonarrTrackedDownloadState? queueTrackedDownloadStateFromJson(
     String? state,
-  ) => SonarrTrackedDownloadState.DOWNLOADING.from(state);
+  ) =>
+      SonarrTrackedDownloadState.DOWNLOADING.from(state);
   static String? queueTrackedDownloadStateToJson(
     SonarrTrackedDownloadState? state,
-  ) => state?.value;
+  ) =>
+      state?.value;
 
   static SonarrTrackedDownloadStatus? queueTrackedDownloadStatusFromJson(
     String? status,
-  ) => SonarrTrackedDownloadStatus.OK.from(status);
+  ) =>
+      SonarrTrackedDownloadStatus.OK.from(status);
   static String? queueTrackedDownloadStatusToJson(
     SonarrTrackedDownloadStatus? status,
-  ) => status?.value;
+  ) =>
+      status?.value;
 }

@@ -9,7 +9,7 @@ import 'package:thriftwood/widgets/pages/invalid_route.dart';
 class MovieDetailsRoute extends StatefulWidget {
   final int movieId;
 
-  const MovieDetailsRoute({Key? key, required this.movieId}) : super(key: key);
+  const MovieDetailsRoute({super.key, required this.movieId});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -67,9 +67,8 @@ class _State extends State<MovieDetailsRoute> with LunaLoadCallbackMixin {
       scaffoldKey: _scaffoldKey,
       module: LunaModule.RADARR,
       appBar: _appBar(),
-      bottomNavigationBar: context.watch<RadarrState>().enabled
-          ? _bottomNavigationBar()
-          : null,
+      bottomNavigationBar:
+          context.watch<RadarrState>().enabled ? _bottomNavigationBar() : null,
       body: _body(),
     );
   }

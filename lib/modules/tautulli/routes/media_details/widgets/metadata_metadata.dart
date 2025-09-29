@@ -7,8 +7,8 @@ import 'package:thriftwood/modules/tautulli.dart';
 class TautulliMediaDetailsMetadataMetadata extends StatelessWidget {
   final TautulliMetadata? metadata;
 
-  const TautulliMediaDetailsMetadataMetadata({Key? key, required this.metadata})
-    : super(key: key);
+  const TautulliMediaDetailsMetadataMetadata(
+      {super.key, required this.metadata});
 
   @override
   Widget build(BuildContext context) {
