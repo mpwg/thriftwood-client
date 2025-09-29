@@ -46,8 +46,8 @@ class ThriftwoodProfile: Codable, Identifiable {
     
     var nzbgetEnabled: Bool
     var nzbgetHost: String
-    var nzbgetUsername: String
-    var nzbgetPassword: String
+    var nzbgetUser: String
+    var nzbgetPass: String
     var nzbgetCustomHeaders: [String: String]
     var nzbgetStrictTLS: Bool
     
@@ -99,8 +99,8 @@ class ThriftwoodProfile: Codable, Identifiable {
         
         self.nzbgetEnabled = false
         self.nzbgetHost = ""
-        self.nzbgetUsername = ""
-        self.nzbgetPassword = ""
+        self.nzbgetUser = ""
+        self.nzbgetPass = ""
         self.nzbgetCustomHeaders = [:]
         self.nzbgetStrictTLS = true
         
@@ -316,8 +316,8 @@ extension ThriftwoodProfile {
         let nzbget = DownloadClientConfiguration(name: "NZBGet")
         nzbget.enabled = nzbgetEnabled
         nzbget.host = nzbgetHost
-        nzbget.username = nzbgetUsername
-        nzbget.password = nzbgetPassword
+        nzbget.username = nzbgetUser
+        nzbget.password = nzbgetPass
         nzbget.customHeaders = nzbgetCustomHeaders
         nzbget.strictTLS = nzbgetStrictTLS
         configs.append(nzbget)

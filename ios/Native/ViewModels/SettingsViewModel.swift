@@ -521,10 +521,9 @@ class SettingsViewModel {
             
             // Read and import the backup file like Flutter's LunaConfig().import()
             let backupData = try Data(contentsOf: url)
-            let backupString = String(data: backupData, encoding: .utf8) ?? ""
             
             let hiveManager = HiveDataManager.shared
-            try await hiveManager.importConfiguration(backupString)
+            try await hiveManager.importConfiguration(backupData)
             
             // Reset and reload like Flutter does after import
             appSettings = ThriftwoodAppSettings()

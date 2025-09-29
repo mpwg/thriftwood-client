@@ -768,7 +768,7 @@ struct SwiftUISystemLogsView: View {
                 // Log type filter
                 Picker("Log Type", selection: $viewModel.selectedLogType) {
                     ForEach(LunaLogType.allCases, id: \.self) { type in
-                        Text(type.displayName)
+                        Text(type.title)
                             .tag(type)
                     }
                 }
@@ -863,7 +863,7 @@ struct LunaLogEntryRow: View {
                 HStack(spacing: 4) {
                     Image(systemName: log.type.icon)
                         .font(.caption)
-                    Text(log.type.displayName)
+                    Text(log.type.title)
                         .font(.caption)
                         .fontWeight(.medium)
                 }
