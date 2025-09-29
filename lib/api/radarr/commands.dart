@@ -1,5 +1,5 @@
-/// Library containing all logic and accessors to make calls to Radarr's API.
-library;
+/// Library containing all API configuration for Radarr.
+library radarr_commands;
 
 import 'package:dio/dio.dart';
 import 'package:thriftwood/api/radarr/models.dart';

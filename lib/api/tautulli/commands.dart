@@ -1,5 +1,5 @@
 /// Library containing all logic and accessors to make calls to Tautulli's API.
-library;
+library tautulli_commands;
 
 import 'dart:typed_data';
 import 'package:dio/dio.dart';

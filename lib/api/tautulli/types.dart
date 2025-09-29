@@ -1,5 +1,5 @@
 /// Library containing all type definitions for Tautulli data.
-library;
+library tautulli_types;
 
 part 'types/api_lookup_service.dart';
 part 'types/fallback_image.dart';
