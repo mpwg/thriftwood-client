@@ -2,453 +2,456 @@
 
 ## Executive Summary
 
-This document outlines a systematic approach to migrate Thriftwood's iOS implementation from Flutter to native SwiftUI. Thriftwood is a self-hosted media server controller app that manages Radarr (movies), Sonarr (TV), Lidarr (music), NZBGet/SABnzbd (downloads), Tautulli (Plex stats), and other services. The migration follows a module-by-module strategy, preserving the existing service integrations and multi-profile architecture.
+This document outlines a gradual, view-by-view migration strategy to transform Thriftwood's iOS implementation from Flutter to native SwiftUI. The migration preserves the existing Flutter infrastructure while incrementally replacing views with native SwiftUI components, targeting iOS 18+ with modern Swift 6 patterns.
 
-## Current Thriftwood Architecture Analysis
+## Current Codebase Analysis
 
-### App Overview
+### Actual Flutter Implementation Structure
 
-- **Purpose**: Self-hosted media server management dashboard
-- **Target Services**: Radarr, Sonarr, Lidarr, NZBGet, SABnzbd, Tautulli, Search indexers, Wake-on-LAN
-- **Key Features**: Multi-service API integration, profile management, unified calendar, statistics, search across services
-- **Current iOS**: iOS 13.0+, uses Fastlane for deployment, CocoaPods for dependencies
+Based on the codebase analysis:
 
-### Flutter Implementation Details
+- **lib/core/**: Core functionality including API clients, database, UI components
 
-- **State Management**: Provider pattern with ChangeNotifier per module (RadarrState, SonarrState, etc.)
-- **Navigation**: go_router with declarative routing per module
-- **Database**: Hive local storage with profile-based configuration
-- **API Layer**: Retrofit + Dio with generated clients for each service
-- **Architecture**: Module-based with clear separation (lib/modules/radarr/, lib/modules/sonarr/, etc.)
+  - `api/`: Service API implementations (Radarr, Sonarr, Lidarr, etc.)
+  - `database/`: Profile management and configuration storage
+  - `ui/`: Shared UI components and utilities
 
-### Core Modules to Migrate
+- **lib/modules/**: Feature modules
 
-1. **Dashboard**: Central hub with calendar, recent activity, quick actions
-2. **Service Modules**: Radarr, Sonarr, Lidarr (content management)
-3. **Download Clients**: NZBGet, SABnzbd (download monitoring)
-4. **Analytics**: Tautulli (Plex statistics and user management)
-5. **Search**: Cross-service indexer search
-6. **Settings**: Service configuration, profiles, themes
-7. **Utilities**: Wake-on-LAN, external modules
+  - `dashboard/`: Home dashboard with quick actions
+  - `radarr/`, `sonarr/`, `lidarr/`: Media management modules
+  - `sabnzbd/`, `nzbget/`: Download client modules
+  - `tautulli/`: Plex analytics module
+  - `search/`: Cross-service search
+  - `settings/`: Configuration and profile management
+  - `wake_on_lan/`: Network utility
 
-## Migration Strategy
+- **ios/**: Existing iOS project with Flutter integration
+  - Already has Xcode project structure
+  - Uses CocoaPods for dependencies
+  - Fastlane configuration for deployment
 
-### Core Principles
+## Gradual Migration Strategy
 
-- **MVVM Architecture**: Clear separation of View, ViewModel, and Model layers
-- **Swift 6 Concurrency**: Actor-based API clients with data race safety
-- **Modern State Management**: Use `@Observable` macro and async/await patterns
-- **Service API Compatibility**: Maintain exact API compatibility with existing services
-- **Profile System Preservation**: Keep multi-profile configuration system with SwiftData
-- **iOS 17+ Target**: Leverage latest SwiftUI and Swift 6 capabilities
-- **Fastlane Integration**: Maintain existing CI/CD pipeline
+### Phase 0: Initial Setup and Compilation (Week 1)
 
-### Phase Overview
-
-1. **Phase 1: Foundation & Settings** (Week 1-2)
-
-   - SwiftUI project setup with Thriftwood branding
-   - Profile management system (multi-configuration support)
-   - Settings module migration (service configurations)
-
-2. **Phase 2: Core Services & APIs** (Week 3-4)
-
-   - Service connection models (Radarr, Sonarr, etc.)
-   - API client layer with URLSession
-   - Local storage with SwiftData/CoreData
-
-3. **Phase 3: Dashboard & Navigation** (Week 5-7)
-
-   - Main dashboard with service status
-   - go_router equivalent navigation system
-   - Unified calendar for all services
-
-4. **Phase 4: Content Management Modules** (Week 8-12)
-
-   - Radarr module (movies, queues, history, search)
-   - Sonarr module (TV shows, calendar, releases)
-   - Lidarr module (music, artists, albums)
-
-5. **Phase 5: Download & Analytics** (Week 13-15)
-
-   - NZBGet/SABnzbd download monitoring
-   - Tautulli statistics and user management
-   - Search across indexers
-
-6. **Phase 6: Polish & Deployment** (Week 16)
-   - Theme system (including AMOLED black)
-   - Fastlane integration
-   - App Store submission
-
-## Detailed Task Breakdown
-
-### Phase 1: Foundation & Settings
-
-#### Task 1.1: Create Thriftwood iOS Project
+**Milestone 1: Get the existing iOS project compiling in Xcode**
 
 ```swift
-OBJECTIVE: Set up Thriftwood-specific iOS project architecture
+OBJECTIVE: Establish native iOS development environment alongside Flutter
 TASKS:
-1. Create new Xcode project "Thriftwood" with SwiftUI + iOS 16+ target
-2. Configure bundle ID: app.thriftwood.thriftwood (match existing)
-3. Set up modular architecture matching Flutter structure:
-   - /Core (shared utilities, theme, network)
-   - /Modules/Dashboard, /Modules/Radarr, /Modules/Sonarr, etc.
-   - /Services (API clients, database, configuration)
-   - /Models (service-specific data models)
-4. Import Thriftwood branding assets (icons, launch screens)
-5. Configure existing Fastlane integration for deployment
+1. Open ios/Runner.xcworkspace in Xcode 16+
+2. Update project settings:
+   - Set iOS Deployment Target to 18.0
+   - Enable Swift 6 language mode
+   - Configure strict concurrency checking
+3. Resolve any compilation issues:
+   - Update CocoaPods dependencies
+   - Fix any deprecated API usage
+   - Ensure Flutter framework is properly linked
+4. Create new Swift target "ThriftwoodNative" alongside Flutter Runner:
+   - Add as embedded framework
+   - Configure to share bundle resources
+   - Set up module imports
+5. Test that both Flutter and native targets compile
+6. Verify app runs with existing Flutter implementation
 ```
 
-#### Task 1.2: Profile Management System
+### Phase 1: SwiftUI Infrastructure (Week 2)
+
+**Create native infrastructure parallel to Flutter**
 
 ```swift
-OBJECTIVE: Implement multi-profile configuration system
+OBJECTIVE: Establish SwiftUI foundation without breaking Flutter
 TASKS:
-1. Create LunaProfile model matching Flutter's profile system
-2. Implement ProfileManager with SwiftData/CoreData storage
-3. Create profile selection UI (Settings > Profiles)
-4. Implement profile switching functionality
-5. Ensure all service configurations are profile-scoped
-6. Test profile import/export functionality
+1. Add SwiftUI entry point in ThriftwoodNative target:
+   - Create ThriftwoodApp.swift with @main
+   - Set up initial ContentView
+   - Configure to launch from AppDelegate when flag is set
+2. Create core native architecture:
+   /ThriftwoodNative/
+     /Core/
+       - APIClient.swift (base networking)
+       - ProfileManager.swift (configuration)
+       - ThemeManager.swift
+     /Models/
+       - ServiceModels.swift (Codable structs)
+     /ViewModels/
+       - Base ViewModels with @Observable
+     /Views/
+       - Initial view structure
+3. Implement feature flag system:
+   - UserDefaults flag to toggle Flutter/Native views
+   - Method swizzling to intercept Flutter navigation
+   - Bridge to present SwiftUI views from Flutter
+4. Create Flutter-to-SwiftUI bridge:
+   - MethodChannel for Flutter->Native communication
+   - Host SwiftUI views in FlutterViewController
+   - Share data models between platforms
 ```
 
-#### Task 1.3: Settings Module Foundation
+### Phase 2: First Native View - Settings (Week 3-4)
+
+**Migrate Settings as the first complete SwiftUI module**
 
 ```swift
-OBJECTIVE: Migrate core settings and configuration screens
+OBJECTIVE: Replace Settings module with SwiftUI while keeping Flutter running
 TASKS:
-1. Create SettingsView with navigation structure matching Flutter
-2. Implement configuration sections:
-   - General settings (theme, language)
-   - Service configurations (Radarr, Sonarr, Lidarr, etc.)
-   - System settings (logs, cache)
-3. Create service connection detail forms with validation
-4. Implement custom header configuration for API requests
-5. Test connection validation for each service type
+1. Port Settings data models:
+   - Convert configuration models to Swift
+   - Implement Codable for persistence
+   - Create SwiftData schema for profiles
+2. Build SettingsViewModel:
+   @Observable
+   @MainActor
+   class SettingsViewModel {
+       var profiles: [Profile] = []
+       var activeProfile: Profile?
+       var connectionStatus: [String: Bool] = [:]
+
+       func testConnection(service: ServiceType) async
+       func saveProfile(_ profile: Profile) async
+   }
+3. Create SettingsView hierarchy:
+   - Main settings list
+   - Profile management views
+   - Service configuration forms
+   - Connection test UI
+4. Implement navigation intercept:
+   - Detect when Flutter navigates to settings
+   - Present SwiftUI SettingsView instead
+   - Handle back navigation to Flutter
+5. Test data synchronization:
+   - Ensure SwiftUI changes reflect in Flutter
+   - Verify profile switching works
 ```
 
-### Phase 2: Core Services & APIs
+### Phase 3: Dashboard Migration (Week 5-6)
 
-#### Task 2.1: Service Data Models
+**Replace Dashboard with native implementation**
 
 ```swift
-OBJECTIVE: Convert Thriftwood service models to Swift
+OBJECTIVE: Migrate the main dashboard to SwiftUI
 TASKS:
-1. Create service-specific model groups:
-   - RadarrModels: Movie, QueueItem, History, SystemStatus
-   - SonarrModels: Series, Episode, Calendar, Release
-   - LidarrModels: Artist, Album, Track, Search
-   - TautulliModels: User, Session, History, Statistics
-   - DownloadModels: NZBGet/SABnzbd queue, history, stats
-2. Implement Codable conformance matching exact JSON from APIs
-3. Create model extensions for computed properties and helpers
-4. Add comprehensive unit tests validating JSON parsing
-5. Implement proper error handling for API response variations
+1. Analyze current Flutter dashboard:
+   - lib/modules/dashboard/pages/dashboard.dart structure
+   - Quick action implementations
+   - Module grid layout
+2. Create DashboardViewModel:
+   - Service status monitoring
+   - Quick actions handling
+   - Module availability checks
+3. Build DashboardView:
+   - Module grid with NavigationLink
+   - Service status indicators
+   - Quick action buttons
+4. Implement hybrid navigation:
+   - SwiftUI dashboard launches Flutter modules
+   - Gradual module replacement strategy
+5. Port dashboard-specific API calls:
+   - Service status checks
+   - Recent activity fetching
 ```
 
-#### Task 2.2: API Client Layer
+### Phase 4: Service Module Migration (Week 7-12)
+
+**Migrate media service modules one by one**
+
+#### 4.1 Radarr Module (Week 7-8)
 
 ```swift
-OBJECTIVE: Build service API clients matching Flutter Retrofit implementation
+OBJECTIVE: Complete Radarr native implementation
 TASKS:
-1. Create base APIClient with URLSession:
-   - Support for custom headers per service
-   - API key authentication handling
-   - Request/response logging with privacy
-   - Automatic retry with exponential backoff
-2. Implement service-specific clients:
-   - RadarrAPI: Movies, queue, history, system endpoints
-   - SonarrAPI: Series, episodes, calendar, releases
-   - LidarrAPI: Artists, albums, search, wanted
-   - TautulliAPI: Activity, history, users, statistics
-   - DownloadAPI: NZBGet/SABnzbd status and control
-3. Handle service-specific authentication (API keys, basic auth)
-4. Implement connection testing for each service
-5. Create mock clients for testing and previews
+1. Port Radarr API client:
+   - Convert from lib/core/api/radarr/
+   - Implement with async/await
+   - Actor-based for thread safety
+2. Create Radarr ViewModels:
+   - MovieListViewModel
+   - MovieDetailViewModel
+   - QueueViewModel
+3. Build Radarr Views:
+   - Movie grid/list view
+   - Movie detail with actions
+   - Add movie search
+   - Queue management
+4. Integrate with existing navigation:
+   - Replace Flutter Radarr views progressively
+   - Maintain data consistency
 ```
 
-#### Task 2.3: State Management Architecture
+#### 4.2 Sonarr Module (Week 9-10)
 
 ```swift
-OBJECTIVE: Implement modular state management matching Flutter Provider pattern
+OBJECTIVE: Complete Sonarr native implementation
 TASKS:
-1. Create service-specific ObservableObject stores:
-   - RadarrStore, SonarrStore, LidarrStore, TautulliStore, etc.
-   - Match Flutter state management patterns
-2. Implement profile-aware configuration loading
-3. Set up Combine publishers for cross-module communication
-4. Create centralized AppStore for global state coordination
-5. Implement state persistence and restoration
-6. Handle offline/connection error states gracefully
+1. Port Sonarr API client from lib/core/api/sonarr/
+2. Create Series/Episode ViewModels
+3. Build Sonarr view hierarchy
+4. Implement calendar view
+5. Handle series monitoring
 ```
 
-### Phase 3: Dashboard & Navigation
-
-#### Task 3.1: Main Navigation System
+#### 4.3 Download Clients (Week 11-12)
 
 ```swift
-OBJECTIVE: Implement Thriftwood's modular navigation matching go_router
+OBJECTIVE: Migrate SABnzbd and NZBGet modules
 TASKS:
-1. Create TabView with service modules:
-   - Dashboard, Radarr, Sonarr, Lidarr, Downloads, Tautulli, Search, Settings
-2. Implement NavigationStack for each module's internal routing
-3. Create deep linking support for service-specific screens
-4. Add navigation state restoration between app launches
-5. Implement module enabling/disabling based on configuration
-6. Create navigation helpers matching Flutter's routing patterns
+1. Port download client APIs
+2. Create unified download queue view
+3. Implement queue management actions
+4. Build history views
 ```
 
-#### Task 3.2: Dashboard Module
+### Phase 5: Complete Native Transition (Week 13-14)
+
+**Remove Flutter dependencies and polish**
 
 ```swift
-OBJECTIVE: Central dashboard with service status and unified calendar
+OBJECTIVE: Complete transition to pure SwiftUI
 TASKS:
-1. Create DashboardView with service status cards:
-   - Show connection status for each configured service
-   - Display quick stats (movies, shows, downloads, etc.)
-   - Recent activity feed from all services
-2. Implement unified calendar matching Flutter version:
-   - Radarr movie releases
-   - Sonarr episode air dates
-   - Combined view with filtering options
-3. Add quick actions menu:
-   - Search across services
-   - Wake-on-LAN functionality
-   - Service-specific shortcuts
-4. Implement pull-to-refresh for real-time updates
-5. Create dashboard customization settings
+1. Remove Flutter module dependencies:
+   - Remove Flutter.framework
+   - Clean up bridging code
+   - Remove MethodChannels
+2. Migrate remaining modules:
+   - Tautulli analytics
+   - Search functionality
+   - Wake-on-LAN
+3. Implement native-only features:
+   - Widgets
+   - App Clips
+   - SharePlay support
+4. Performance optimization:
+   - Image caching
+   - List virtualization
+   - Background refresh
+5. Polish and testing:
+   - UI refinements
+   - Comprehensive testing
+   - Accessibility audit
 ```
 
-#### Task 3.3: Theme System
+## Implementation Patterns
+
+### Gradual View Replacement Pattern
 
 ```swift
-OBJECTIVE: Implement Thriftwood's theming including AMOLED black
-TASKS:
-1. Create ThemeManager matching Flutter's theme system:
-   - Standard dark/light themes
-   - AMOLED black theme option
-   - Custom accent colors
-2. Implement theme switching with live preview
-3. Create themed UI components library:
-   - Cards, buttons, navigation elements
-   - Media-specific components (movie posters, progress bars)
-4. Add theme persistence across app launches
-5. Support system appearance following (when not AMOLED)
+// Flutter-SwiftUI Bridge
+class ViewBridge: NSObject {
+    static let shared = ViewBridge()
+
+    func shouldUseNativeView(for route: String) -> Bool {
+        // Check feature flag for specific routes
+        let nativeRoutes = UserDefaults.standard.stringArray(forKey: "nativeRoutes") ?? []
+        return nativeRoutes.contains(route)
+    }
+
+    func presentNativeView(for route: String, from controller: FlutterViewController) {
+        guard shouldUseNativeView(for: route) else { return }
+
+        let hostingController = UIHostingController(
+            rootView: NativeViewFactory.createView(for: route)
+        )
+        controller.present(hostingController, animated: true)
+    }
+}
+
+// Native View Factory
+enum NativeViewFactory {
+    static func createView(for route: String) -> AnyView {
+        switch route {
+        case "/settings":
+            return AnyView(SettingsView())
+        case "/dashboard":
+            return AnyView(DashboardView())
+        case "/radarr":
+            return AnyView(RadarrHomeView())
+        default:
+            return AnyView(Text("Not implemented"))
+        }
+    }
+}
 ```
 
-### Phase 4: Content Management Modules
-
-#### Task 4.1: Radarr Module (Movies)
+### Modern MVVM Pattern for iOS 18+
 
 ```swift
-OBJECTIVE: Complete Radarr movie management functionality
-TASKS:
-1. Create RadarrHomeView with movie collection:
-   - Grid/list view toggle matching Flutter
-   - Movie posters with status indicators
-   - Sorting and filtering options
-2. Implement movie detail screens:
-   - Movie information, cast, crew
-   - File management and quality selection
-   - Manual search and download options
-3. Create specialized views:
-   - Movies calendar for upcoming releases
-   - Queue monitoring with progress indicators
-   - History view with search/filter
-   - Missing movies with search capabilities
-4. Add movie search and add functionality
-5. Implement system status and configuration screens
+// Model - Aligned with Flutter models
+struct Movie: Codable, Identifiable, Sendable {
+    let id: Int
+    let title: String
+    let year: Int
+    let hasFile: Bool
+    let monitored: Bool
+    // Match lib/core/api/radarr/models/movie.dart structure
+}
+
+// API Client - Actor for concurrency
+actor RadarrClient {
+    private let baseURL: URL
+    private let apiKey: String
+
+    func fetchMovies() async throws -> [Movie] {
+        var request = URLRequest(url: baseURL.appendingPathComponent("movie"))
+        request.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try JSONDecoder().decode([Movie].self, from: data)
+    }
+}
+
+// ViewModel - Observable with async/await
+@Observable
+@MainActor
+class MovieListViewModel {
+    var movies: [Movie] = []
+    var isLoading = false
+    var searchText = ""
+
+    var filteredMovies: [Movie] {
+        guard !searchText.isEmpty else { return movies }
+        return movies.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+    }
+
+    private let client: RadarrClient
+
+    init(client: RadarrClient) {
+        self.client = client
+    }
+
+    func loadMovies() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            movies = try await client.fetchMovies()
+        } catch {
+            // Handle error
+        }
+    }
+}
+
+// View - Pure SwiftUI
+struct MovieListView: View {
+    @State private var viewModel: MovieListViewModel
+
+    var body: some View {
+        NavigationStack {
+            List(viewModel.filteredMovies) { movie in
+                MovieRow(movie: movie)
+            }
+            .searchable(text: $viewModel.searchText)
+            .navigationTitle("Movies")
+            .task {
+                await viewModel.loadMovies()
+            }
+            .refreshable {
+                await viewModel.loadMovies()
+            }
+        }
+    }
+}
 ```
 
-#### Task 4.2: Sonarr Module (TV Shows)
+### Profile System Bridge
 
 ```swift
-OBJECTIVE: Complete Sonarr TV show management functionality
-TASKS:
-1. Create SonarrHomeView with series collection:
-   - Series posters with season/episode counts
-   - Continuing vs ended series filtering
-   - Monitoring status indicators
-2. Implement series detail screens:
-   - Series information and cast
-   - Season/episode management
-   - Episode file quality and management
-3. Create specialized views:
-   - TV calendar for upcoming episodes
-   - Queue monitoring for active downloads
-   - History with episode-specific details
-   - Upcoming episodes view
-4. Add series search and monitoring setup
-5. Implement release management and manual search
+// Bridge existing Flutter profile system
+class ProfileBridge {
+    static let shared = ProfileBridge()
+
+    // Read from existing Flutter storage
+    func getCurrentProfile() -> Profile? {
+        // Read from shared UserDefaults/Keychain that Flutter uses
+        // Path: lib/core/database/database.dart
+    }
+
+    // Gradually migrate to SwiftData
+    func migrateToSwiftData() async {
+        // One-time migration from Flutter storage
+    }
+}
 ```
 
-#### Task 4.3: Lidarr Module (Music)
+## Migration Execution Checklist
+
+### Per-View Migration Steps
+
+- [ ] Analyze Flutter view implementation
+- [ ] Create Swift models matching Dart models
+- [ ] Build ViewModel with @Observable
+- [ ] Implement SwiftUI view
+- [ ] Add to ViewBridge routing
+- [ ] Test alongside Flutter implementation
+- [ ] Enable native view via feature flag
+- [ ] Monitor for issues
+- [ ] Remove Flutter implementation
+
+### Testing Strategy for Gradual Migration
+
+1. **Parallel Testing**: Run both Flutter and Native views side-by-side
+2. **A/B Testing**: Use feature flags to test with subset of users
+3. **Data Validation**: Ensure data consistency between platforms
+4. **Performance Comparison**: Measure and compare metrics
+5. **Rollback Plan**: Quick disable via feature flags
+
+## Success Metrics
+
+1. **Compilation**: iOS project compiles in Xcode with zero errors
+2. **Gradual Migration**: Each view works independently without breaking Flutter
+3. **Feature Parity**: All Flutter features available in SwiftUI
+4. **Performance**: Native views perform better than Flutter equivalents
+5. **Modern Swift**: 100% Swift 6 compliance with async/await
+6. **iOS 18 Features**: Leverage latest iOS capabilities
+7. **Code Sharing**: Reuse models and logic where possible
+8. **User Experience**: Seamless transition for users
+
+## Risk Mitigation
+
+### Technical Risks
+
+- **Hybrid Complexity**: Test bridge thoroughly, have fallback to Flutter
+- **Data Synchronization**: Use shared storage, validate consistency
+- **Navigation State**: Carefully manage navigation stack between platforms
+- **Performance**: Profile both implementations, ensure native is faster
+
+### Process Risks
+
+- **Incremental Releases**: Ship native views gradually to users
+- **Rollback Strategy**: Feature flags allow instant rollback
+- **Testing Coverage**: Maintain tests for both implementations
+- **Team Knowledge**: Document bridge patterns and architecture
+
+## Current Codebase Specific Adjustments
+
+Based on the actual codebase structure:
+
+1. **API Clients**: Port from `lib/core/api/` maintaining exact endpoints
+2. **Models**: Convert from `lib/core/api/*/models/` preserving JSON structure
+3. **UI Components**: Recreate `lib/core/ui/` components in SwiftUI
+4. **Navigation**: Replace `go_router` routes with NavigationStack
+5. **State Management**: Convert Provider pattern to @Observable ViewModels
+6. **Database**: Migrate from `lib/core/database/` to SwiftData
+
+## Next Steps
+
+1. **Week 1**: Get iOS project compiling in Xcode 16
+2. **Week 2**: Create ThriftwoodNative target with basic SwiftUI shell
+3. **Week 3**: Implement Settings as first native view
+4. **Week 4**: Add Dashboard with hybrid navigation
+5. **Ongoing**: Migrate service modules one by one
+
+---
+
+_This migration plan is designed for gradual, low-risk transition from Flutter to SwiftUI, allowing both implementations to coexist during the migration period._
 
 ```swift
-OBJECTIVE: Complete Lidarr music management functionality
-TASKS:
-1. Create LidarrHomeView with artist collection:
-   - Artist artwork and album counts
-   - Monitoring status and quality profiles
-2. Implement artist/album detail screens:
-   - Artist biography and discography
-   - Album tracks with quality indicators
-   - Manual search and download options
-3. Create specialized views:
-   - Music calendar for upcoming releases
-   - Queue monitoring for downloads
-   - History view with track details
-   - Wanted albums management
-4. Add artist/album search functionality
-5. Implement music library statistics and management
+// Build basic view structure
+// Implement ViewModel
+// Connect data bindings
+// Add user interactions
 ```
-
-### Phase 5: Download Clients & Analytics
-
-#### Task 5.1: Download Client Integration
-
-```swift
-OBJECTIVE: NZBGet and SABnzbd download monitoring
-TASKS:
-1. Create DownloadsView with unified queue monitoring:
-   - Active downloads with progress bars
-   - Queue management (pause, resume, delete)
-   - Speed and ETA indicators
-2. Implement client-specific features:
-   - NZBGet post-processing status
-   - SABnzbd category management
-   - History with repair/unpack status
-3. Create download statistics dashboard:
-   - Speed graphs and bandwidth usage
-   - Storage space monitoring
-   - Weekly/monthly download statistics
-4. Add download control actions:
-   - Queue reordering and prioritization
-   - Pause/resume individual downloads
-   - Server shutdown/restart controls
-```
-
-#### Task 5.2: Tautulli Analytics
-
-```swift
-OBJECTIVE: Plex statistics and user management via Tautulli
-TASKS:
-1. Create TautulliHomeView with server overview:
-   - Current activity with live sessions
-   - Server statistics and performance
-   - Recently added media highlights
-2. Implement user management screens:
-   - User list with watch statistics
-   - Individual user details and history
-   - Login/IP address tracking
-3. Create analytics dashboards:
-   - Play statistics with graphs
-   - Most watched content rankings
-   - User activity patterns
-4. Add server management features:
-   - Media library scanning
-   - Server logs and notifications
-   - System information monitoring
-```
-
-#### Task 5.3: Search & Utilities
-
-```swift
-OBJECTIVE: Cross-service search and utility features
-TASKS:
-1. Create unified search interface:
-   - Search across Radarr, Sonarr, Lidarr simultaneously
-   - Indexer management and testing
-   - Search result aggregation and deduplication
-2. Implement Wake-on-LAN functionality:
-   - Server discovery and configuration
-   - Magic packet sending with validation
-   - Scheduled wake-up options
-3. Add external module support:
-   - Custom service integration framework
-   - URL scheme handling for external apps
-   - Third-party service bookmarks
-4. Create utility screens:
-   - System logs viewer with filtering
-   - Cache management and clearing
-   - Import/export configuration tools
-```
-
-### Phase 6: Polish & Optimization
-
-#### Task 6.1: Performance Optimization
-
-```
-OBJECTIVE: Optimize app performance
-TASKS:
-1. Profile app using Instruments:
-   - Memory usage
-   - CPU usage
-   - Network activity
-2. Optimize image loading and caching
-3. Implement lazy loading where appropriate
-4. Reduce app launch time
-5. Optimize build settings
-6. Minimize app size
-```
-
-#### Task 6.2: Accessibility
-
-```
-OBJECTIVE: Ensure full accessibility compliance
-TASKS:
-1. Add VoiceOver support to all views
-2. Implement Dynamic Type support
-3. Add accessibility labels and hints
-4. Test with Accessibility Inspector
-5. Implement haptic feedback appropriately
-6. Ensure proper focus management
-```
-
-#### Task 6.3: Testing & Quality Assurance
-
-```
-OBJECTIVE: Comprehensive testing coverage
-TASKS:
-1. Write unit tests for ViewModels
-2. Create UI tests for critical flows
-3. Implement snapshot testing
-4. Set up CI/CD pipeline
-5. Perform regression testing
-6. Conduct user acceptance testing
-```
-
-## Migration Execution Guidelines
-
-### For Each Component Migration
-
-1. **Analyze Flutter Implementation**
-
-   ```swift
-   // Document Flutter widget structure
-   // Note state management approach
-   // List all user interactions
-   // Document business logic
-   ```
-
-2. **Design SwiftUI Solution**
-
-   ```swift
-   // Create view hierarchy plan
-   // Design ViewModel structure
-   // Plan state management
-   // Consider SwiftUI limitations
-   ```
-
-3. **Implement Core Functionality**
-
-   ```swift
-   // Build basic view structure
-   // Implement ViewModel
-   // Connect data bindings
-   // Add user interactions
-   ```
 
 4. **Match Visual Design**
 
