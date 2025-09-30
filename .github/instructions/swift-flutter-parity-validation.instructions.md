@@ -235,9 +235,83 @@ All Swift implementations **MUST** compile successfully:
 - **async/await** patterns for all asynchronous operations
 - **@MainActor** for UI update functions
 
-### Rule 11: Hybrid Navigation Validation (MANDATORY)
+### Rule 11: Method Channel Management (MANDATORY)
 
 **Critical missing validation that caused dashboard navigation failure:**
+
+**PROBLEM ANALYSIS**: The dashboard navigation issue occurred because multiple Flutter services were calling `setMethodCallHandler` on the same method channel (`com.thriftwood.bridge`), causing only the last registered handler to receive method calls. When SwiftUI attempted to navigate back to Flutter with `onReturnFromNative`, the call went to `DashboardBridgeService` instead of `HybridRouter`.
+
+**METHOD CHANNEL EXCLUSIVE OWNERSHIP RULE**:
+
+- **Only ONE service can call `setMethodCallHandler` per channel** - subsequent calls override previous handlers
+- **All services sharing a channel MUST coordinate through a central dispatcher**
+- **Bridge services MUST either use unique channels OR delegate unhandled methods**
+
+**Implementation Requirements:**
+
+```dart
+// ❌ WRONG: Multiple services calling setMethodCallHandler on same channel
+class HybridRouter {
+  void initialize() {
+    bridgeChannel.setMethodCallHandler(_handleMethodCall); // This gets overridden!
+  }
+}
+
+class DashboardBridgeService {
+  void initialize() {
+    bridgeChannel.setMethodCallHandler(_handleMethodCall); // This overrides HybridRouter!
+  }
+}
+
+// ✅ CORRECT: Central dispatcher pattern
+class BridgeMethodDispatcher {
+  final Map<String, Function> _methodHandlers = {};
+
+  void initialize() {
+    bridgeChannel.setMethodCallHandler(_centralDispatch); // Single handler
+  }
+
+  void registerMethodHandler(String method, Function handler) {
+    _methodHandlers[method] = handler;
+  }
+
+  Future<dynamic> _centralDispatch(MethodCall call) async {
+    final handler = _methodHandlers[call.method];
+    if (handler != null) {
+      return await handler(call);
+    }
+    throw PlatformException(code: 'UNIMPLEMENTED', message: 'Method ${call.method} not implemented');
+  }
+}
+
+// ✅ ALSO CORRECT: Service delegation pattern
+class DashboardBridgeService {
+  final HybridRouter _hybridRouter;
+
+  Future<dynamic> _handleMethodCall(MethodCall call) async {
+    switch (call.method) {
+      case 'dashboardSpecificMethod':
+        return await _handleDashboardMethod(call);
+      default:
+        // Delegate unhandled methods to HybridRouter
+        return await _hybridRouter.handleMethodCall(call);
+    }
+  }
+}
+```
+
+**MANDATORY Method Channel Validation Checklist:**
+
+- [ ] **Channel ownership documented**: Each method channel has exactly one `setMethodCallHandler` call
+- [ ] **Method routing verified**: All expected method calls reach correct handlers
+- [ ] **Handler delegation implemented**: Services delegate unknown methods to appropriate handlers
+- [ ] **Method coverage tested**: All bridge methods manually tested end-to-end
+- [ ] **Channel conflict detection**: Build-time or runtime detection of multiple handlers on same channel
+- [ ] **Method call logging**: Debug logging shows which service handles each method call
+
+### Rule 12: Hybrid Navigation Validation (MANDATORY)
+
+**Navigation flow validation that would have caught the dashboard issue:**
 
 **All registered SwiftUI views MUST have working end-to-end navigation:**
 
@@ -250,6 +324,7 @@ All Swift implementations **MUST** compile successfully:
 - **Bridge Registration Verification**: All registered SwiftUI views MUST be callable from Flutter
 - **Navigation Testing**: Every registered SwiftUI view MUST be manually tested via Flutter navigation
 - **Route Path Mapping**: Bridge route mapping MUST handle both exact matches and path variations
+- **Return Navigation Testing**: All SwiftUI views MUST successfully navigate back to Flutter
 
 **Implementation Requirements:**
 
@@ -399,6 +474,35 @@ Use this checklist for every Swift implementation. **ALL items must be checked b
 - [ ] **Error propagation across bridge**
 - [ ] **Performance impact minimal**
 - [ ] **Memory management proper (no retain cycles)**
+
+### 🔗 Method Channel Management Validation (CRITICAL)
+
+**These validations would have prevented the dashboard navigation failure:**
+
+- [ ] **Single handler per channel verified**
+  - Confirm only one `setMethodCallHandler` call per method channel
+  - Check for handler override conflicts during bridge initialization
+- [ ] **Method call routing documented**
+  - Document which service handles which method calls
+  - Verify method call dispatch logic covers all expected cases
+- [ ] **Handler delegation implemented**
+  - Services delegate unhandled method calls to appropriate fallback handlers
+  - No method calls result in "UNIMPLEMENTED" exceptions unexpectedly
+- [ ] **Channel conflict detection active**
+  - Runtime or build-time detection of multiple handlers on same channel
+  - Clear error messages when handler conflicts are detected
+- [ ] **Method call logging enabled**
+  - Debug logs show which service receives and handles each method call
+  - Method call flow traceable from SwiftUI → Flutter bridge → service handler
+- [ ] **End-to-end method testing completed**
+  - All bridge method calls manually tested from SwiftUI to Flutter
+  - Return navigation methods (like `onReturnFromNative`) verified working
+- [ ] **Method handler coverage verified**
+  - All registered SwiftUI views can successfully call back to Flutter
+  - All Flutter → SwiftUI navigation methods functional
+- [ ] **Error handling for unknown methods**
+  - Clear error messages when unimplemented methods are called
+  - Graceful fallback behavior for missing method handlers
 
 ### 🧭 Hybrid Navigation Validation (CRITICAL - MISSING CAUSED DASHBOARD ISSUE)
 
@@ -1212,6 +1316,166 @@ struct RadarrMoviesView: View {
 - **🚨 Red**: Immediate rejection, cannot proceed
 - **⚠️ Yellow**: Warning, requires attention before next PR
 - **✅ Green**: Approved, meets all parity requirements
+
+## Debugging Guide for Hybrid Navigation Issues
+
+### Method Channel Handler Conflicts (Most Common Issue)
+
+**Symptoms:**
+
+- SwiftUI navigation works but return navigation fails
+- "Method [method] not implemented" exceptions in Flutter
+- Debug logs show method calls going to wrong service
+- Navigation appears to work but produces unexpected errors
+
+**Debugging Steps:**
+
+1. **Check Handler Registration Order** in `lib/system/bridge/bridge_initializer.dart`:
+
+```dart
+// Look for multiple setMethodCallHandler calls on same channel
+// The LAST one to call setMethodCallHandler wins!
+
+void initialize() {
+  HybridRouter().initialize();        // Sets handler on 'com.thriftwood.bridge'
+  DashboardBridgeService().initialize(); // OVERRIDES HybridRouter handler!
+}
+```
+
+2. **Add Method Call Logging** to identify which service receives calls:
+
+```dart
+Future<dynamic> _handleMethodCall(MethodCall call) async {
+  print('🔍 ${runtimeType} received method call: ${call.method}');
+  // ... handle method
+}
+```
+
+3. **Verify Method Coverage** by listing all expected methods each service should handle:
+
+```dart
+// Document expected methods for each service
+// HybridRouter: onReturnFromNative, navigateToFlutter, isNativeViewAvailable
+// DashboardBridgeService: dashboardSpecificMethod1, dashboardSpecificMethod2
+// Any overlap = potential conflict!
+```
+
+4. **Test Method Call Flow**:
+
+- From SwiftUI, call each bridge method
+- Verify correct Flutter service receives the call
+- Check that method execution completes successfully
+
+**Resolution Patterns:**
+
+**Pattern 1: Central Dispatcher**
+
+```dart
+class BridgeMethodDispatcher {
+  static final _instance = BridgeMethodDispatcher._internal();
+  factory BridgeMethodDispatcher() => _instance;
+  BridgeMethodDispatcher._internal();
+
+  final Map<String, Future<dynamic> Function(MethodCall)> _handlers = {};
+
+  void initialize() {
+    _bridgeChannel.setMethodCallHandler(_dispatch);
+  }
+
+  void registerHandler(String method, Future<dynamic> Function(MethodCall) handler) {
+    _handlers[method] = handler;
+  }
+
+  Future<dynamic> _dispatch(MethodCall call) async {
+    final handler = _handlers[call.method];
+    if (handler != null) {
+      return await handler(call);
+    }
+    throw PlatformException(code: 'UNIMPLEMENTED', message: 'Method ${call.method} not handled by any service');
+  }
+}
+```
+
+**Pattern 2: Service Delegation**
+
+```dart
+class DashboardBridgeService {
+  final HybridRouter _hybridRouter;
+
+  Future<dynamic> _handleMethodCall(MethodCall call) async {
+    // Handle dashboard-specific methods
+    switch (call.method) {
+      case 'dashboardMethod1':
+      case 'dashboardMethod2':
+        return await _handleDashboardMethod(call);
+      default:
+        // Delegate to HybridRouter for navigation methods
+        return await _hybridRouter.handleMethodCall(call);
+    }
+  }
+}
+```
+
+### Route Registration Mismatches
+
+**Symptoms:**
+
+- SwiftUI view registered but Flutter navigation doesn't work
+- `isNativeViewAvailable` returns false for registered routes
+- Manual navigation to SwiftUI works but automatic routing fails
+
+**Debugging Steps:**
+
+1. **Check Route Path Consistency**:
+
+```swift
+// iOS Bridge Registration
+registerNativeView("settings")           // ❌ Wrong if Flutter route is "/settings"
+registerNativeView("/settings")          // ✅ Correct
+
+// Flutter Route Definition
+GoRoute(path: '/settings', ...)          // Must match exactly
+```
+
+2. **Verify Registration Success** in iOS logs:
+
+```
+✅ Settings view registered with FlutterSwiftUIBridge  // Good
+❌ Registration failed for route: settings             // Bad
+```
+
+3. **Test Route Availability Check**:
+
+```dart
+final available = await NativeBridge.isNativeViewAvailable('/settings');
+print('Route /settings available: $available'); // Should be true
+```
+
+### Data Synchronization Failures
+
+**Symptoms:**
+
+- SwiftUI view loads but shows outdated data
+- Changes in SwiftUI don't appear in Flutter
+- Data inconsistencies between platforms
+
+**Debugging Steps:**
+
+1. **Check SharedDataManager Integration**:
+
+```swift
+// Verify data loading from Flutter storage
+let data = try await sharedDataManager.loadData(type: MyDataType.self, forKey: "my_key")
+print("Loaded from Flutter: \(data)")
+```
+
+2. **Verify Bidirectional Sync**:
+
+```swift
+// After making changes, confirm sync to Flutter
+await syncToFlutter()
+print("Data synced back to Flutter")
+```
 
 ## Exception Process & Documentation
 
