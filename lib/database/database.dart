@@ -3,15 +3,13 @@ import 'package:lunasea/database/models/profile.dart';
 import 'package:lunasea/database/table.dart';
 import 'package:lunasea/database/tables/lunasea.dart';
 import 'package:lunasea/system/filesystem/filesystem.dart';
-import 'package:lunasea/system/platform.dart';
 import 'package:lunasea/vendor.dart';
 
 class LunaDatabase {
   static const String _DATABASE_LEGACY_PATH = 'database';
-  static const String _DATABASE_PATH = 'LunaSea/database';
 
   String get path {
-    if (LunaPlatform.isWindows || LunaPlatform.isLinux) return _DATABASE_PATH;
+    // iOS uses legacy path
     return _DATABASE_LEGACY_PATH;
   }
 
