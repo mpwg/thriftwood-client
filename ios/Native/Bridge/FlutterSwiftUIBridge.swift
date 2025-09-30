@@ -293,6 +293,30 @@ import Flutter
         case "settings_quick_actions":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIQuickActionsSettingsView(viewModel: settingsViewModel))
+        
+        // Service-specific settings views
+        case "settings_radarr":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIRadarrSettingsView(viewModel: settingsViewModel))
+        case "settings_sonarr":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUISonarrSettingsView(viewModel: settingsViewModel))
+        case "settings_lidarr":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUILidarrSettingsView(viewModel: settingsViewModel))
+        case "settings_sabnzbd":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUISABnzbdSettingsView(viewModel: settingsViewModel))
+        case "settings_nzbget":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUINZBGetSettingsView(viewModel: settingsViewModel))
+        case "settings_tautulli":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUITautulliSettingsView(viewModel: settingsViewModel))
+        case "settings_overseerr":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIOverseerrSettingsView(viewModel: settingsViewModel))
+        
         case "settings_all":
             return AnyView(SwiftUIAllSettingsView())
         case "dashboard":
