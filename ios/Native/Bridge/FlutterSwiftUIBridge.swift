@@ -203,26 +203,26 @@ import Flutter
         print("Creating SwiftUI view for route: \(route)")
         
         switch route {
-        case "/settings":
+        case "settings":
             let settingsViewModel = SettingsViewModel()
             return AnyView(SwiftUISettingsView(viewModel: settingsViewModel))
-        case "/settings/configuration":
+        case "settings_configuration":
             let settingsViewModel = SettingsViewModel()
             let configurationViewModel = ConfigurationViewModel(settingsViewModel: settingsViewModel)
             return AnyView(SwiftUIConfigurationView(viewModel: configurationViewModel))
-        case "/settings/profiles":
+        case "settings_profiles":
             let settingsViewModel = SettingsViewModel()
             let profilesViewModel = ProfilesViewModel(settingsViewModel: settingsViewModel)
             return AnyView(SwiftUIProfilesView(viewModel: profilesViewModel))
-        case "/settings/system":
+        case "settings_system":
             let settingsViewModel = SettingsViewModel()
             return AnyView(SwiftUISettingsView(viewModel: settingsViewModel))
-        case "/settings/system/logs":
+        case "settings_system_logs":
             let systemLogsViewModel = SystemLogsViewModel()
             return AnyView(SwiftUISystemLogsView(viewModel: systemLogsViewModel))
-        case "/dashboard":
+        case "dashboard":
             return AnyView(DashboardWrapperView(data: data))
-        case "/test":
+        case "test":
             return AnyView(TestSwiftUIView(route: route, data: data))
         default:
             // Fallback view for unimplemented routes
