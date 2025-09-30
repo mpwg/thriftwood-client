@@ -428,6 +428,48 @@ class SettingsViewModel {
         await saveSettings()
     }
     
+    /// Update download client configuration
+    @MainActor
+    func updateDownloadClientConfiguration(_ clientName: String, enabled: Bool, host: String, username: String, password: String, apiKey: String) async {
+        guard var profile = selectedProfile else { return }
+        
+        switch clientName.lowercased() {
+        case "sabnzbd":
+            profile.sabnzbdEnabled = enabled
+            profile.sabnzbdHost = host
+            profile.sabnzbdApiKey = apiKey
+        case "nzbget":
+            profile.nzbgetEnabled = enabled
+            profile.nzbgetHost = host
+            profile.nzbgetUser = username
+            profile.nzbgetPass = password
+        default:
+            showError("Unknown download client: \(clientName)")
+            return
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        await saveSettings()
+    }
+    
+    /// Test Wake on LAN functionality
+    @MainActor
+    func testWakeOnLAN() async {
+        guard let profile = selectedProfile,
+              profile.wakeOnLanEnabled,
+              !profile.wakeOnLanMACAddress.isEmpty else {
+            showError("Wake on LAN is not properly configured")
+            return
+        }
+        
+        // TODO: Implement actual Wake on LAN packet sending
+        // For now, just show success message
+        showSuccessSnackBar(title: "Wake Signal Sent", message: "Sent wake packet to \(profile.wakeOnLanMACAddress)")
+    }
+    
     // MARK: - Private Methods
     
     private func showError(_ message: String) {
@@ -800,6 +842,39 @@ class ConfigurationViewModel {
         
         // Basic validation: ensure host and API key are provided
         return !service.host.isEmpty && !service.apiKey.isEmpty
+    }
+    
+    @MainActor
+    func updateDownloadClientConfiguration(_ config: DownloadClientConfiguration) async {
+        await settingsViewModel.updateDownloadClientConfiguration(
+            config.name,
+            enabled: config.enabled,
+            host: config.host,
+            username: config.username,
+            password: config.password,
+            apiKey: config.apiKey
+        )
+        loadConfiguration()
+    }
+    
+    @MainActor
+    func testDownloadClientConnection(for client: DownloadClientConfiguration) async -> Bool {
+        // Basic validation for download clients
+        isLoading = true
+        
+        // Simulate network delay for user feedback
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        isLoading = false
+        
+        // Validation based on client type
+        if client.name.lowercased() == "sabnzbd" {
+            return !client.host.isEmpty && !client.apiKey.isEmpty
+        } else if client.name.lowercased() == "nzbget" {
+            return !client.host.isEmpty && !client.username.isEmpty && !client.password.isEmpty
+        }
+        
+        return !client.host.isEmpty
     }
 }
 

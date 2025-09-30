@@ -46,16 +46,20 @@ struct SwiftUISettingsView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        Button("Configuration") {
+                        Button("All Settings") {
                             Task {
                                 await FlutterSwiftUIBridge.shared.presentNativeView(
-                                    route: "/settings/configuration"
+                                    route: "settings_all"
                                 )
                             }
                         }
                         
                         Button("System Logs") {
-                            // TODO: Navigate to system logs
+                            Task {
+                                await FlutterSwiftUIBridge.shared.presentNativeView(
+                                    route: "settings_system_logs"
+                                )
+                            }
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
@@ -546,7 +550,28 @@ struct SwiftUIConfigurationView: View {
                     // Download client configurations
                     Section("Download Clients") {
                         ForEach(viewModel.downloadClientConfigurations) { client in
-                            DownloadClientConfigurationRow(client: client)
+                            DownloadClientConfigurationRow(
+                                client: client,
+                                isExpanded: expandedServices.contains(client.name),
+                                onToggleExpanded: {
+                                    if expandedServices.contains(client.name) {
+                                        expandedServices.remove(client.name)
+                                    } else {
+                                        expandedServices.insert(client.name)
+                                    }
+                                },
+                                onUpdate: { updatedClient in
+                                    Task {
+                                        await viewModel.updateDownloadClientConfiguration(updatedClient)
+                                    }
+                                },
+                                onTestConnection: { client in
+                                    Task {
+                                        let success = await viewModel.testDownloadClientConnection(for: client)
+                                        // Show feedback
+                                    }
+                                }
+                            )
                         }
                     }
                 }
@@ -714,22 +739,81 @@ struct ServiceConfigurationRow: View {
 
 struct DownloadClientConfigurationRow: View {
     @Bindable var client: DownloadClientConfiguration
+    let isExpanded: Bool
+    let onToggleExpanded: () -> Void
+    let onUpdate: (DownloadClientConfiguration) -> Void
+    let onTestConnection: (DownloadClientConfiguration) -> Void
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text(client.name)
-                    .font(.headline)
+                VStack(alignment: .leading) {
+                    Text(client.name)
+                        .font(.headline)
+                    
+                    if client.enabled && !client.host.isEmpty {
+                        Text(client.host)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    } else if client.enabled {
+                        Text("Not configured")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                    } else {
+                        Text("Disabled")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
                 
                 Spacer()
                 
                 Toggle("", isOn: $client.enabled)
+                    .onChange(of: client.enabled) { _, _ in
+                        onUpdate(client)
+                    }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                onToggleExpanded()
             }
             
-            if client.enabled {
-                Text("Configuration coming soon...")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            if isExpanded && client.enabled {
+                VStack(spacing: 12) {
+                    TextField("Host URL", text: $client.host)
+                        .textFieldStyle(.roundedBorder)
+                        .autocapitalization(.none)
+                        .keyboardType(.URL)
+                    
+                    if client.name.lowercased() == "sabnzbd" {
+                        SecureField("API Key", text: $client.apiKey)
+                            .textFieldStyle(.roundedBorder)
+                    } else if client.name.lowercased() == "nzbget" {
+                        TextField("Username", text: $client.username)
+                            .textFieldStyle(.roundedBorder)
+                            .autocapitalization(.none)
+                        
+                        SecureField("Password", text: $client.password)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    
+                    Toggle("Strict TLS", isOn: $client.strictTLS)
+                    
+                    HStack {
+                        Button("Test Connection") {
+                            onTestConnection(client)
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Spacer()
+                        
+                        Button("Save") {
+                            onUpdate(client)
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                }
+                .padding(.leading)
             }
         }
     }
@@ -911,6 +995,377 @@ struct LunaLogEntryRow: View {
 }
 
 // MARK: - Preview Support
+
+// MARK: - General Settings View
+
+struct SwiftUIGeneralSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Application") {
+                    TextField("App Name", text: Binding(
+                        get: { viewModel.appSettings.appName },
+                        set: { newValue in
+                            viewModel.appSettings.appName = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                    .textFieldStyle(.roundedBorder)
+                }
+                
+                Section("Advanced") {
+                    Toggle("Advanced Settings", isOn: Binding(
+                        get: { viewModel.appSettings.enableAdvancedSettings },
+                        set: { newValue in
+                            viewModel.appSettings.enableAdvancedSettings = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                    
+                    Toggle("Error Reporting", isOn: Binding(
+                        get: { viewModel.appSettings.enableErrorReporting },
+                        set: { newValue in
+                            viewModel.appSettings.enableErrorReporting = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                    
+                    Toggle("Analytics", isOn: Binding(
+                        get: { viewModel.appSettings.enableAnalytics },
+                        set: { newValue in
+                            viewModel.appSettings.enableAnalytics = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                }
+            }
+            .navigationTitle("General Settings")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Dashboard Settings View
+
+struct SwiftUIDashboardSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Refresh") {
+                    HStack {
+                        Text("Refresh Interval")
+                        Spacer()
+                        Picker("", selection: Binding(
+                            get: { viewModel.appSettings.dashboardRefreshInterval },
+                            set: { newValue in
+                                viewModel.appSettings.dashboardRefreshInterval = newValue
+                                Task { await viewModel.saveSettings() }
+                            }
+                        )) {
+                            Text("1 minute").tag(60)
+                            Text("5 minutes").tag(300)
+                            Text("10 minutes").tag(600)
+                            Text("15 minutes").tag(900)
+                            Text("30 minutes").tag(1800)
+                        }
+                        .pickerStyle(.menu)
+                    }
+                }
+                
+                Section("Calendar") {
+                    Toggle("Enable Calendar View", isOn: Binding(
+                        get: { viewModel.appSettings.enableCalendarView },
+                        set: { newValue in
+                            viewModel.appSettings.enableCalendarView = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                    
+                    if viewModel.appSettings.enableCalendarView {
+                        HStack {
+                            Text("Days Ahead")
+                            Spacer()
+                            Picker("", selection: Binding(
+                                get: { viewModel.appSettings.calendarDaysAhead },
+                                set: { newValue in
+                                    viewModel.appSettings.calendarDaysAhead = newValue
+                                    Task { await viewModel.saveSettings() }
+                                }
+                            )) {
+                                Text("7 days").tag(7)
+                                Text("14 days").tag(14)
+                                Text("30 days").tag(30)
+                                Text("60 days").tag(60)
+                            }
+                            .pickerStyle(.menu)
+                        }
+                        
+                        Picker("Starting Day", selection: Binding(
+                            get: { viewModel.appSettings.calendarStartingDay },
+                            set: { newValue in
+                                viewModel.appSettings.calendarStartingDay = newValue
+                                Task { await viewModel.saveSettings() }
+                            }
+                        )) {
+                            ForEach(CalendarStartDay.allCases, id: \.self) { day in
+                                Text(day.displayName).tag(day)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        
+                        Picker("Starting View", selection: Binding(
+                            get: { viewModel.appSettings.calendarStartingType },
+                            set: { newValue in
+                                viewModel.appSettings.calendarStartingType = newValue
+                                Task { await viewModel.saveSettings() }
+                            }
+                        )) {
+                            ForEach(CalendarStartType.allCases, id: \.self) { type in
+                                Text(type.displayName).tag(type)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+                }
+            }
+            .navigationTitle("Dashboard Settings")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Wake on LAN Settings View
+
+struct SwiftUIWakeOnLANSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Wake on LAN Configuration") {
+                    Toggle("Enable Wake on LAN", isOn: Binding(
+                        get: { viewModel.selectedProfile?.wakeOnLanEnabled ?? false },
+                        set: { newValue in
+                            viewModel.selectedProfile?.wakeOnLanEnabled = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                    
+                    if viewModel.selectedProfile?.wakeOnLanEnabled == true {
+                        TextField("MAC Address", text: Binding(
+                            get: { viewModel.selectedProfile?.wakeOnLanMACAddress ?? "" },
+                            set: { newValue in
+                                viewModel.selectedProfile?.wakeOnLanMACAddress = newValue
+                                Task { await viewModel.saveSettings() }
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .autocapitalization(.allCharacters)
+                        
+                        TextField("Broadcast Address", text: Binding(
+                            get: { viewModel.selectedProfile?.wakeOnLanBroadcastAddress ?? "" },
+                            set: { newValue in
+                                viewModel.selectedProfile?.wakeOnLanBroadcastAddress = newValue
+                                Task { await viewModel.saveSettings() }
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.decimalPad)
+                    }
+                }
+                
+                if viewModel.selectedProfile?.wakeOnLanEnabled == true {
+                    Section("Test") {
+                        Button("Send Wake Signal") {
+                            Task {
+                                // TODO: Implement actual wake on LAN functionality
+                                await viewModel.testWakeOnLAN()
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+            .navigationTitle("Wake on LAN")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - All Settings Menu View (Flutter-like hierarchy)
+
+struct SwiftUIAllSettingsView: View {
+    @State private var settingsViewModel = SettingsViewModel()
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                // Configuration Section
+                Section("Configuration") {
+                    SettingsMenuItem(
+                        title: "General",
+                        subtitle: "Customize LunaSea",
+                        icon: "brush",
+                        route: "settings_general"
+                    )
+                    
+                    SettingsMenuItem(
+                        title: "Dashboard",
+                        subtitle: "Configure Dashboard",
+                        icon: "house",
+                        route: "settings_dashboard"
+                    )
+                    
+                    SettingsMenuItem(
+                        title: "Service Configuration", 
+                        subtitle: "Configure Services & Download Clients",
+                        icon: "gear",
+                        route: "settings_configuration"
+                    )
+                }
+                
+                // Services Section
+                Section("Services & Features") {
+                    SettingsMenuItem(
+                        title: "Wake on LAN",
+                        subtitle: "Configure Wake on LAN",
+                        icon: "wifi.router",
+                        route: "settings_wake_on_lan"
+                    )
+                    
+                    SettingsMenuItem(
+                        title: "Search",
+                        subtitle: "Configure Search (Coming Soon)",
+                        icon: "magnifyingglass",
+                        route: "settings_search",
+                        isEnabled: false
+                    )
+                    
+                    SettingsMenuItem(
+                        title: "External Modules",
+                        subtitle: "Configure External Modules (Coming Soon)",
+                        icon: "cube.box",
+                        route: "settings_external_modules",
+                        isEnabled: false
+                    )
+                }
+                
+                // Interface Section
+                Section("Interface") {
+                    SettingsMenuItem(
+                        title: "Drawer",
+                        subtitle: "Customize the Drawer (Coming Soon)",
+                        icon: "sidebar.left",
+                        route: "settings_drawer",
+                        isEnabled: false
+                    )
+                    
+                    SettingsMenuItem(
+                        title: "Quick Actions",
+                        subtitle: "Quick Actions on the Home Screen (Coming Soon)",
+                        icon: "bolt",
+                        route: "settings_quick_actions",
+                        isEnabled: false
+                    )
+                }
+                
+                // System Section 
+                Section("System") {
+                    SettingsMenuItem(
+                        title: "Profiles",
+                        subtitle: "Manage Profiles",
+                        icon: "person.2",
+                        route: "settings_profiles"
+                    )
+                    
+                    SettingsMenuItem(
+                        title: "System Logs",
+                        subtitle: "View Application Logs",
+                        icon: "doc.text",
+                        route: "settings_system_logs"
+                    )
+                }
+            }
+            .navigationTitle("All Settings")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SettingsMenuItem: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let route: String
+    var isEnabled: Bool = true
+    
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .foregroundColor(isEnabled ? .blue : .gray)
+                .frame(width: 24, height: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(isEnabled ? .primary : .gray)
+                
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            if isEnabled {
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+                    .font(.caption)
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if isEnabled {
+                Task {
+                    await FlutterSwiftUIBridge.shared.presentNativeView(route: route)
+                }
+            }
+        }
+        .disabled(!isEnabled)
+    }
+}
 
 #if DEBUG
 struct SwiftUISettingsView_Previews: PreviewProvider {

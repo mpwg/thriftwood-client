@@ -149,6 +149,38 @@ class ThriftwoodAppSettings: Codable {
     var enableNotifications: Bool
     var enableBroadcastNotifications: Bool
     
+    // General Settings
+    var appName: String
+    var enableAdvancedSettings: Bool
+    var enableErrorReporting: Bool
+    var enableAnalytics: Bool
+    
+    // Dashboard Settings
+    var dashboardRefreshInterval: Int // seconds
+    var enableCalendarView: Bool
+    var calendarDaysAhead: Int
+    var calendarStartingDay: CalendarStartDay
+    var calendarStartingType: CalendarStartType
+    
+    // Drawer Settings
+    var drawerAutoExpand: Bool
+    var drawerGroupModules: Bool
+    var drawerShowVersion: Bool
+    
+    // Quick Actions Settings
+    var enableQuickActions: Bool
+    var quickActionItems: [QuickActionItem]
+    
+    // Search Settings
+    var enableSearchHistory: Bool
+    var maxSearchHistory: Int
+    var defaultSearchCategory: String
+    var enableTorrentSearching: Bool
+    var enableUsenetSearching: Bool
+    
+    // External Modules Settings
+    var externalModules: [ExternalModule]
+    
     init() {
         self.selectedTheme = .system
         self.enabledProfile = "default"
@@ -163,6 +195,38 @@ class ThriftwoodAppSettings: Codable {
         self.backupFrequency = .daily
         self.enableNotifications = true
         self.enableBroadcastNotifications = false
+        
+        // General Settings defaults
+        self.appName = "Thriftwood"
+        self.enableAdvancedSettings = false
+        self.enableErrorReporting = true
+        self.enableAnalytics = false
+        
+        // Dashboard Settings defaults
+        self.dashboardRefreshInterval = 300 // 5 minutes
+        self.enableCalendarView = true
+        self.calendarDaysAhead = 14
+        self.calendarStartingDay = .monday
+        self.calendarStartingType = .today
+        
+        // Drawer Settings defaults
+        self.drawerAutoExpand = false
+        self.drawerGroupModules = true
+        self.drawerShowVersion = true
+        
+        // Quick Actions defaults
+        self.enableQuickActions = true
+        self.quickActionItems = []
+        
+        // Search Settings defaults
+        self.enableSearchHistory = true
+        self.maxSearchHistory = 50
+        self.defaultSearchCategory = "all"
+        self.enableTorrentSearching = true
+        self.enableUsenetSearching = true
+        
+        // External Modules defaults
+        self.externalModules = []
     }
 }
 
@@ -195,6 +259,68 @@ enum BackupFrequency: String, CaseIterable, Codable {
         case .monthly: return "Monthly"
         case .manual: return "Manual Only"
         }
+    }
+}
+
+enum CalendarStartDay: String, CaseIterable, Codable {
+    case sunday = "sunday"
+    case monday = "monday"
+    
+    var displayName: String {
+        switch self {
+        case .sunday: return "Sunday"
+        case .monday: return "Monday"
+        }
+    }
+}
+
+enum CalendarStartType: String, CaseIterable, Codable {
+    case today = "today"
+    case thisWeek = "thisWeek"
+    case thisMonth = "thisMonth"
+    
+    var displayName: String {
+        switch self {
+        case .today: return "Today"
+        case .thisWeek: return "This Week"
+        case .thisMonth: return "This Month"
+        }
+    }
+}
+
+// MARK: - Quick Actions
+
+struct QuickActionItem: Codable, Identifiable {
+    let id = UUID()
+    var title: String
+    var icon: String
+    var route: String
+    var isEnabled: Bool
+    
+    init(title: String, icon: String, route: String, isEnabled: Bool = true) {
+        self.title = title
+        self.icon = icon
+        self.route = route
+        self.isEnabled = isEnabled
+    }
+}
+
+// MARK: - External Modules
+
+struct ExternalModule: Codable, Identifiable {
+    let id = UUID()
+    var name: String
+    var displayName: String
+    var host: String
+    var icon: String
+    var isEnabled: Bool
+    
+    init(name: String, displayName: String, host: String, icon: String = "globe", isEnabled: Bool = true) {
+        self.name = name
+        self.displayName = displayName
+        self.host = host
+        self.icon = icon
+        self.isEnabled = isEnabled
     }
 }
 

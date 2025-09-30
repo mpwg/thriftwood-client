@@ -220,6 +220,17 @@ import Flutter
         case "settings_system_logs":
             let systemLogsViewModel = SystemLogsViewModel()
             return AnyView(SwiftUISystemLogsView(viewModel: systemLogsViewModel))
+        case "settings_general":
+            let settingsViewModel = SettingsViewModel()
+            return AnyView(SwiftUIGeneralSettingsView(viewModel: settingsViewModel))
+        case "settings_dashboard":
+            let settingsViewModel = SettingsViewModel()
+            return AnyView(SwiftUIDashboardSettingsView(viewModel: settingsViewModel))
+        case "settings_wake_on_lan":
+            let settingsViewModel = SettingsViewModel()
+            return AnyView(SwiftUIWakeOnLANSettingsView(viewModel: settingsViewModel))
+        case "settings_all":
+            return AnyView(SwiftUIAllSettingsView())
         case "dashboard":
             return AnyView(DashboardWrapperView(data: data))
         case "test":
