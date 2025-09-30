@@ -204,7 +204,19 @@ class SettingsViewModel {
     init(dataManager: HiveDataManager = .shared, storageService: StorageService = UserDefaultsStorageService()) {
         self.dataManager = dataManager
         self.storageService = storageService
+        
+        // Initialize with default settings that include a default profile
         self.appSettings = ThriftwoodAppSettings()
+        
+        // Ensure we have initial profile state
+        if appSettings.profiles.isEmpty {
+            let defaultProfile = ThriftwoodProfile(name: "default")
+            appSettings.profiles["default"] = defaultProfile
+            appSettings.enabledProfile = "default"
+        }
+        
+        self.selectedProfile = appSettings.profiles[appSettings.enabledProfile]
+        self.availableProfiles = Array(appSettings.profiles.keys).sorted()
         
         Task { @MainActor in
             await loadSettings()
@@ -220,9 +232,26 @@ class SettingsViewModel {
         defer { isLoading = false }
         
         do {
-            // Load app settings
+            // First, try to load from SwiftUI's local storage
+            var loadedFromLocal = false
             if let loadedSettings = try await storageService.load(ThriftwoodAppSettings.self, forKey: "app_settings") {
                 appSettings = loadedSettings
+                loadedFromLocal = true
+            }
+            
+            // If no local data exists, try to load from Flutter's Hive storage
+            if !loadedFromLocal {
+                print("No SwiftUI settings found, attempting to load from Flutter Hive storage...")
+                
+                if let hiveSettings = try await dataManager.loadSettingsFromHive() {
+                    appSettings = hiveSettings
+                    // Save to local storage for future loads
+                    try await storageService.save(appSettings, forKey: "app_settings")
+                    print("Successfully loaded settings from Flutter Hive storage")
+                } else {
+                    print("No Hive settings found, using default settings")
+                    // Keep the default appSettings initialized in init()
+                }
             }
             
             // Load available profiles
@@ -231,13 +260,31 @@ class SettingsViewModel {
             // Set selected profile
             if let currentProfile = appSettings.profiles[appSettings.enabledProfile] {
                 selectedProfile = currentProfile
+                print("Selected profile: \(currentProfile.name)")
+            } else {
+                print("Warning: No profile found for enabled profile key: \(appSettings.enabledProfile)")
+                // Try to find any available profile or create default
+                if let firstProfile = appSettings.profiles.first {
+                    appSettings.enabledProfile = firstProfile.key
+                    selectedProfile = firstProfile.value
+                    print("Switched to first available profile: \(firstProfile.key)")
+                } else {
+                    // Create default profile if none exist
+                    let defaultProfile = ThriftwoodProfile(name: "default")
+                    appSettings.profiles["default"] = defaultProfile
+                    appSettings.enabledProfile = "default" 
+                    selectedProfile = defaultProfile
+                    availableProfiles = ["default"]
+                    print("Created default profile")
+                }
             }
             
-            // Sync with Hive storage
+            // Sync with Hive storage to ensure consistency
             await syncWithHiveStorage()
             
         } catch {
             showError(error.localizedDescription)
+            print("Error loading settings: \(error)")
         }
     }
     
@@ -480,6 +527,34 @@ class SettingsViewModel {
     private func showSuccessSnackBar(title: String, message: String) {
         // In a real implementation, this would show a success notification
         print("✅ \(title): \(message)")
+    }
+    
+    /// Test method to manually force a reload from Hive storage
+    @MainActor
+    func testReloadFromHive() async {
+        print("🔄 Testing profile reload from Hive storage...")
+        
+        do {
+            if let hiveSettings = try await dataManager.loadSettingsFromHive() {
+                appSettings = hiveSettings
+                availableProfiles = Array(appSettings.profiles.keys).sorted()
+                
+                if let currentProfile = appSettings.profiles[appSettings.enabledProfile] {
+                    selectedProfile = currentProfile
+                    print("✅ Successfully loaded profile '\(currentProfile.name)' from Hive storage")
+                } else {
+                    print("⚠️ No current profile found, enabled profile: '\(appSettings.enabledProfile)'")
+                }
+                
+                // Save to local storage
+                try await storageService.save(appSettings, forKey: "app_settings")
+            } else {
+                print("⚠️ No settings found in Hive storage")
+            }
+        } catch {
+            print("❌ Error loading from Hive storage: \(error)")
+            showError("Failed to reload from Hive: \(error.localizedDescription)")
+        }
     }
     
     private func syncWithHiveStorage() async {
@@ -883,7 +958,17 @@ class ConfigurationViewModel {
 extension SettingsViewModel {
     /// Convenience computed properties
     var currentProfileName: String {
-        selectedProfile?.name ?? "default"
+        if let profile = selectedProfile {
+            return profile.name
+        }
+        
+        // Fallback: try to get the currently enabled profile name
+        if !appSettings.enabledProfile.isEmpty {
+            return appSettings.enabledProfile
+        }
+        
+        // Final fallback
+        return "No Profile Selected"
     }
     
     var enabledServices: [String] {

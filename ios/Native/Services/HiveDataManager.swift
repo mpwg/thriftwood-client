@@ -60,10 +60,15 @@ class HiveDataManager {
     
     /// Sync settings to Flutter's Hive storage
     func syncSettings(_ settings: ThriftwoodAppSettings) async {
+        guard let methodChannel = methodChannel else {
+            print("Warning: Method channel not initialized, cannot sync settings to Hive storage")
+            return
+        }
+        
         do {
             let settingsDict = try settings.toDictionary()
             
-            await methodChannel?.invokeMethod("updateHiveSettings", arguments: [
+            await methodChannel.invokeMethod("updateHiveSettings", arguments: [
                 "settings": settingsDict
             ])
         } catch {
@@ -73,16 +78,26 @@ class HiveDataManager {
     
     /// Notify Flutter of profile change
     func notifyProfileChange(_ profileName: String) async {
-        await methodChannel?.invokeMethod("profileChanged", arguments: [
+        guard let methodChannel = methodChannel else {
+            print("Warning: Method channel not initialized, cannot notify Flutter of profile change")
+            return
+        }
+        
+        await methodChannel.invokeMethod("profileChanged", arguments: [
             "profile": profileName
         ])
     }
     
     /// Load settings from Flutter's Hive storage
     func loadSettingsFromHive() async throws -> ThriftwoodAppSettings? {
+        guard let methodChannel = methodChannel else {
+            print("Warning: Method channel not initialized, cannot load from Hive storage")
+            return nil
+        }
+        
         return try await withCheckedThrowingContinuation { continuation in
             Task { @MainActor in
-                methodChannel?.invokeMethod("getHiveSettings", arguments: nil) { result in
+                methodChannel.invokeMethod("getHiveSettings", arguments: nil) { result in
                     if let error = result as? FlutterError {
                         continuation.resume(throwing: HiveDataError.flutterError(error.message ?? "Unknown error"))
                     } else if let settingsDict = result as? [String: Any] {

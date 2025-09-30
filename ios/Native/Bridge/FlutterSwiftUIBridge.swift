@@ -137,7 +137,17 @@ import Flutter
             self?.handleMethodCall(call, result: result)
         }
         
+        // Set up Hive data synchronization channel
+        let hiveMethodChannel = FlutterMethodChannel(
+            name: "com.thriftwood.hive",
+            binaryMessenger: binaryMessenger
+        )
+        
+        // Initialize the HiveDataManager with the Hive-specific method channel
+        HiveDataManager.shared.initialize(with: hiveMethodChannel)
+        
         print("Method channel 'com.thriftwood.bridge' established")
+        print("Method channel 'com.thriftwood.hive' established for data synchronization")
     }
     
     private func handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

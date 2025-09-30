@@ -227,6 +227,28 @@ struct SwiftUISettingsView: View {
     @ViewBuilder
     private var systemSection: some View {
         Section("System") {
+            // Debug: Test Hive sync button (development only)
+            Button(action: {
+                Task {
+                    await viewModel.testReloadFromHive()
+                }
+            }) {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("🔄 Test Hive Sync")
+                            .foregroundColor(.primary)
+                        Text("Debug: Reload profile data from Flutter storage")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "arrow.clockwise")
+                        .foregroundColor(.orange)
+                }
+            }
+            
             // Backup functionality
             Button(action: {
                 Task {
