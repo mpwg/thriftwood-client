@@ -222,11 +222,10 @@ import Flutter
             return AnyView(SwiftUIConfigurationView(viewModel: configurationViewModel))
         case "settings_profiles":
             let settingsViewModel = SettingsViewModel()
-            let profilesViewModel = ProfilesViewModel(settingsViewModel: settingsViewModel)
-            return AnyView(SwiftUIProfilesView(viewModel: profilesViewModel))
+            return AnyView(SwiftUIProfilesView(viewModel: settingsViewModel))
         case "settings_system":
             let settingsViewModel = SettingsViewModel()
-            return AnyView(SwiftUISettingsView(viewModel: settingsViewModel))
+            return AnyView(SwiftUISystemView(viewModel: settingsViewModel))
         case "settings_system_logs":
             let systemLogsViewModel = SystemLogsViewModel()
             return AnyView(SwiftUISystemLogsView(viewModel: systemLogsViewModel))

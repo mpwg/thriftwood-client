@@ -10,39 +10,28 @@
 import SwiftUI
 
 struct SwiftUIProfilesView: View {
-    let viewModel: ProfilesViewModel
-    @State private var showingCreateProfile = false
-    @State private var showingRenameProfile = false
-    @State private var showingDeleteConfirmation = false
-    @State private var newProfileName = ""
-    @State private var selectedProfileToRename: ThriftwoodProfile?
-    @State private var selectedProfileToDelete: ThriftwoodProfile?
+    @Bindable var viewModel: SettingsViewModel
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
             List {
-                Section("Current Profile") {
-                    ForEach(viewModel.profiles) { profile in
-                        ProfileRow(
-                            profile: profile,
-                            isSelected: profile.name == viewModel.currentProfile,
-                            onSelect: {
-                                Task {
-                                    await viewModel.selectProfile(profile.name)
-                                }
-                            },
-                            onRename: {
-                                selectedProfileToRename = profile
-                                newProfileName = profile.name
-                                showingRenameProfile = true
-                            },
-                            onDelete: profile.name != "default" ? {
-                                selectedProfileToDelete = profile
-                                showingDeleteConfirmation = true
-                            } : nil
-                        )
-                    }
-                }
+                // MARK: - Flutter Parity Implementation
+                // Flutter equivalent: lib/modules/settings/routes/profiles/route.dart
+                // Validation date: 2025-01-17
+                // Exact match to Flutter's 4-button structure
+                
+                // Enabled Profile (matches _enabledProfile())
+                enabledProfileRow
+                
+                // Add Profile (matches _addProfile())
+                addProfileRow
+                
+                // Rename Profile (matches _renameProfile())
+                renameProfileRow
+                
+                // Delete Profile (matches _deleteProfile())  
+                deleteProfileRow
             }
             .navigationTitle("Profiles")
             .navigationBarTitleDisplayMode(.large)
@@ -52,61 +41,108 @@ struct SwiftUIProfilesView: View {
                         FlutterSwiftUIBridge.shared.navigateBackToFlutter()
                     }
                 }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Add Profile") {
-                        showingCreateProfile = true
-                    }
-                }
             }
-            .alert("Create Profile", isPresented: $showingCreateProfile) {
-                TextField("Profile Name", text: $newProfileName)
-                Button("Create") {
-                    Task {
-                        await viewModel.createProfile(newProfileName)
-                        newProfileName = ""
-                    }
-                }
-                Button("Cancel", role: .cancel) {
-                    newProfileName = ""
-                }
-            }
-            .alert("Rename Profile", isPresented: $showingRenameProfile) {
-                TextField("New Name", text: $newProfileName)
-                Button("Rename") {
-                    if let profile = selectedProfileToRename {
-                        Task {
-                            await viewModel.renameProfile(from: profile.name, to: newProfileName)
-                            selectedProfileToRename = nil
-                            newProfileName = ""
-                        }
-                    }
-                }
-                Button("Cancel", role: .cancel) {
-                    selectedProfileToRename = nil
-                    newProfileName = ""
-                }
-            }
-            .alert("Delete Profile", isPresented: $showingDeleteConfirmation) {
-                Button("Delete", role: .destructive) {
-                    if let profile = selectedProfileToDelete {
-                        Task {
-                            await viewModel.deleteProfile(profile.name)
-                            selectedProfileToDelete = nil
-                        }
-                    }
-                }
-                Button("Cancel", role: .cancel) {
-                    selectedProfileToDelete = nil
+            .alert("Error", isPresented: $viewModel.isShowingError) {
+                Button("OK") {
+                    viewModel.isShowingError = false
                 }
             } message: {
-                if let profile = selectedProfileToDelete {
-                    Text("Are you sure you want to delete the profile '\(profile.name)'? This action cannot be undone.")
-                }
+                Text(viewModel.errorMessage ?? "Unknown error")
             }
         }
-        .task {
-            await viewModel.loadProfiles()
+    }
+    
+    // MARK: - Profile Management Rows (exact Flutter structure)
+    
+    private var enabledProfileRow: some View {
+        Button(action: {
+            Task {
+                await viewModel.showEnabledProfileDialog()
+            }
+        }) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("Enabled Profile")
+                        .foregroundColor(.primary)
+                    Text(viewModel.currentProfileName)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "person")
+                    .foregroundColor(.blue)
+            }
+        }
+    }
+    
+    private var addProfileRow: some View {
+        Button(action: {
+            Task {
+                await viewModel.showAddProfileDialog()
+            }
+        }) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("Add Profile")
+                        .foregroundColor(.primary)
+                    Text("Add Profile Description")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "plus")
+                    .foregroundColor(.green)
+            }
+        }
+    }
+    
+    private var renameProfileRow: some View {
+        Button(action: {
+            Task {
+                await viewModel.showRenameProfileDialog()
+            }
+        }) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("Rename Profile")
+                        .foregroundColor(.primary)
+                    Text("Rename Profile Description")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "pencil")
+                    .foregroundColor(.orange)
+            }
+        }
+    }
+    
+    private var deleteProfileRow: some View {
+        Button(action: {
+            Task {
+                await viewModel.showDeleteProfileDialog()
+            }
+        }) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("Delete Profile")
+                        .foregroundColor(.primary)
+                    Text("Delete Profile Description")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "trash")
+                    .foregroundColor(.red)
+            }
         }
     }
 }

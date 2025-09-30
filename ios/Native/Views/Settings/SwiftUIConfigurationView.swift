@@ -33,6 +33,44 @@ struct SwiftUIConfigurationView: View {
                         .padding()
                     }
                 } else {
+                    // General Configuration Options (matching Flutter configuration screen)
+                    Section {
+                        SettingsMenuItem(
+                            title: "General",
+                            subtitle: "Customize LunaSea",
+                            icon: "brush",
+                            route: "settings_general"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "Drawer",
+                            subtitle: "Customize the Drawer",
+                            icon: "sidebar.left",
+                            route: "settings_drawer"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "Quick Actions",
+                            subtitle: "Quick Actions on the Home Screen",
+                            icon: "bolt",
+                            route: "settings_quick_actions"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "Dashboard",
+                            subtitle: "Configure Dashboard",
+                            icon: "house",
+                            route: "settings_dashboard"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "External Modules",
+                            subtitle: "Configure External Modules",
+                            icon: "cube.box",
+                            route: "settings_external_modules"
+                        )
+                    }
+                    
                     // Service configurations
                     Section("Services") {
                         ForEach(viewModel.serviceConfigurations) { service in
@@ -87,6 +125,65 @@ struct SwiftUIConfigurationView: View {
                                 }
                             )
                         }
+                    }
+                    
+                    // Individual Service Configuration (matching Flutter's service list)
+                    Section("Configure Services") {
+                        SettingsMenuItem(
+                            title: "Lidarr",
+                            subtitle: "Configure Lidarr",
+                            icon: "music.note.list",
+                            route: "settings_lidarr"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "NZBGet",
+                            subtitle: "Configure NZBGet",
+                            icon: "arrow.down.circle",
+                            route: "settings_nzbget"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "Radarr",
+                            subtitle: "Configure Radarr",
+                            icon: "film",
+                            route: "settings_radarr"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "SABnzbd",
+                            subtitle: "Configure SABnzbd",
+                            icon: "arrow.down.square",
+                            route: "settings_sabnzbd"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "Search",
+                            subtitle: "Configure Search",
+                            icon: "magnifyingglass",
+                            route: "settings_search"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "Sonarr",
+                            subtitle: "Configure Sonarr",
+                            icon: "tv",
+                            route: "settings_sonarr"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "Tautulli",
+                            subtitle: "Configure Tautulli",
+                            icon: "chart.bar",
+                            route: "settings_tautulli"
+                        )
+                        
+                        SettingsMenuItem(
+                            title: "Wake on LAN",
+                            subtitle: "Configure Wake on LAN",
+                            icon: "wifi.router",
+                            route: "settings_wake_on_lan"
+                        )
                     }
                 }
             }

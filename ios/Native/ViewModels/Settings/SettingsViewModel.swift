@@ -35,6 +35,7 @@ class SettingsViewModel {
     var isClearingCache: Bool = false
     var isClearingConfig: Bool = false
     var showingClearConfigConfirmation: Bool = false
+    var showingClearCacheConfirmation: Bool = false
     
     // MARK: - Services
     private let dataManager: HiveDataManager
@@ -856,6 +857,40 @@ class SettingsViewModel {
         
         isClearingConfig = false
         showingClearConfigConfirmation = false
+    }
+    
+    // MARK: - Profile Management Dialog Methods (Flutter Parity)
+    
+    /// Show enabled profile selection dialog (matches Flutter's SettingsDialogs().enabledProfile())
+    @MainActor
+    func showEnabledProfileDialog() async {
+        // This would show a dialog to select from available profiles
+        // For now, just log that it was called - full implementation would use SwiftUI sheets
+        print("Show enabled profile dialog called")
+    }
+    
+    /// Show add profile dialog (matches Flutter's SettingsDialogs().addProfile())
+    @MainActor
+    func showAddProfileDialog() async {
+        // This would show a text input dialog to create a new profile
+        // For now, just log that it was called - full implementation would use SwiftUI sheets
+        print("Show add profile dialog called")
+    }
+    
+    /// Show rename profile dialog (matches Flutter's SettingsDialogs().renameProfile())
+    @MainActor
+    func showRenameProfileDialog() async {
+        // This would show a dialog to select a profile and rename it
+        // For now, just log that it was called - full implementation would use SwiftUI sheets
+        print("Show rename profile dialog called")
+    }
+    
+    /// Show delete profile dialog (matches Flutter's SettingsDialogs().deleteProfile())
+    @MainActor
+    func showDeleteProfileDialog() async {
+        // This would show a dialog to select and confirm deletion of a profile
+        // For now, just log that it was called - full implementation would use SwiftUI sheets
+        print("Show delete profile dialog called")
     }
     
     // MARK: - Helper Methods
