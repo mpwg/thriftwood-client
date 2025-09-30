@@ -11,7 +11,6 @@ import SwiftUI
 
 struct SwiftUIConfigurationView: View {
     let viewModel: ConfigurationViewModel
-    @State private var expandedServices: Set<String> = []
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -75,56 +74,14 @@ struct SwiftUIConfigurationView: View {
                     // Service configurations
                     Section("Services") {
                         ForEach(viewModel.serviceConfigurations) { service in
-                            ServiceConfigurationRow(
-                                service: service,
-                                isExpanded: expandedServices.contains(service.name),
-                                onToggleExpanded: {
-                                    if expandedServices.contains(service.name) {
-                                        expandedServices.remove(service.name)
-                                    } else {
-                                        expandedServices.insert(service.name)
-                                    }
-                                },
-                                onUpdate: { updatedService in
-                                    Task {
-                                        await viewModel.updateServiceConfiguration(updatedService)
-                                    }
-                                },
-                                onTestConnection: { service in
-                                    Task {
-                                        let success = await viewModel.testConnection(for: service)
-                                        // Show feedback
-                                    }
-                                }
-                            )
+                            ServiceConfigurationTile(service: service, settingsViewModel: viewModel.settingsViewModel)
                         }
                     }
                     
                     // Download client configurations
                     Section("Download Clients") {
                         ForEach(viewModel.downloadClientConfigurations) { client in
-                            DownloadClientConfigurationRow(
-                                client: client,
-                                isExpanded: expandedServices.contains(client.name),
-                                onToggleExpanded: {
-                                    if expandedServices.contains(client.name) {
-                                        expandedServices.remove(client.name)
-                                    } else {
-                                        expandedServices.insert(client.name)
-                                    }
-                                },
-                                onUpdate: { updatedClient in
-                                    Task {
-                                        await viewModel.updateDownloadClientConfiguration(updatedClient)
-                                    }
-                                },
-                                onTestConnection: { client in
-                                    Task {
-                                        let success = await viewModel.testDownloadClientConnection(for: client)
-                                        // Show feedback
-                                    }
-                                }
-                            )
+                            DownloadClientTile(client: client, settingsViewModel: viewModel.settingsViewModel)
                         }
                     }
                     

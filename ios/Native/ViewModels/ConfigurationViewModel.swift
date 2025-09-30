@@ -21,7 +21,7 @@ class ConfigurationViewModel {
     var errorMessage: String?
     var isShowingError: Bool = false
     
-    private let settingsViewModel: SettingsViewModel
+    let settingsViewModel: SettingsViewModel
     
     init(settingsViewModel: SettingsViewModel) {
         self.settingsViewModel = settingsViewModel

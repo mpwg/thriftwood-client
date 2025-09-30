@@ -15,62 +15,42 @@ struct SwiftUINZBGetSettingsView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                Section("Download Client") {
+            Form {
+                // Information banner
+                Section {
+                    Text("Configure your NZBGet download client to enable automatic NZB downloads and queue management.")
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 4)
+                }
+                
+                // Enable/Disable Toggle
+                Section {
                     Toggle("Enable NZBGet", isOn: Binding(
                         get: { viewModel.selectedProfile?.downloadClientConfigurations.first(where: { $0.name == "NZBGet" })?.enabled ?? false },
                         set: { newValue in
                             viewModel.updateDownloadClientEnabled("NZBGet", enabled: newValue)
                         }
                     ))
+                    .toggleStyle(SwitchToggleStyle())
                 }
                 
                 if let nzbgetConfig = viewModel.selectedProfile?.downloadClientConfigurations.first(where: { $0.name == "NZBGet" }), nzbgetConfig.enabled {
-                    Section("Connection Details") {
-                        TextField("Host URL", text: Binding(
-                            get: { nzbgetConfig.host },
-                            set: { newValue in
-                                viewModel.updateDownloadClientHost("NZBGet", host: newValue)
-                            }
-                        ))
-                        .textFieldStyle(.roundedBorder)
-                        .keyboardType(.URL)
-                        .autocapitalization(.none)
-                        
-                        TextField("Username", text: Binding(
-                            get: { nzbgetConfig.username },
-                            set: { newValue in
-                                viewModel.updateDownloadClientUsername("NZBGet", username: newValue)
-                            }
-                        ))
-                        .textFieldStyle(.roundedBorder)
-                        .autocapitalization(.none)
-                        
-                        SecureField("Password", text: Binding(
-                            get: { nzbgetConfig.password },
-                            set: { newValue in
-                                viewModel.updateDownloadClientPassword("NZBGet", password: newValue)
-                            }
-                        ))
-                        .textFieldStyle(.roundedBorder)
-                        
-                        Toggle("Strict TLS Validation", isOn: Binding(
-                            get: { nzbgetConfig.strictTLS },
-                            set: { newValue in
-                                viewModel.updateDownloadClientStrictTLS("NZBGet", strictTLS: newValue)
-                            }
-                        ))
-                    }
-                    
-                    Section("Default Pages") {
-                        Picker("Home Page", selection: .constant("Queue")) {
-                            Text("Queue").tag("Queue")
-                            Text("History").tag("History")
-                            Text("Statistics").tag("Statistics")
+                    // Connection Details Navigation
+                    Section {
+                        NavigationLink(destination: NZBGetConnectionDetailsView(viewModel: viewModel)) {
+                            Label("Connection Details", systemImage: "network")
                         }
-                        .pickerStyle(.menu)
                     }
                     
+                    // Default Pages Navigation
+                    Section {
+                        NavigationLink(destination: NZBGetDefaultPagesView(viewModel: viewModel)) {
+                            Label("Default Pages", systemImage: "doc.text")
+                        }
+                    }
+                    
+                    // Connection Test
                     Section("Connection Test") {
                         Button("Test Connection") {
                             // TODO: Implement connection test
@@ -89,5 +69,96 @@ struct SwiftUINZBGetSettingsView: View {
                 }
             }
         }
+    }
+}
+
+struct NZBGetConnectionDetailsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        Form {
+            if let nzbgetConfig = viewModel.selectedProfile?.downloadClientConfigurations.first(where: { $0.name == "NZBGet" }) {
+                Section("Connection") {
+                    HStack {
+                        Text("Host")
+                        Spacer()
+                        TextField("Required", text: Binding(
+                            get: { nzbgetConfig.host },
+                            set: { newValue in
+                                viewModel.updateDownloadClientHost("NZBGet", host: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .multilineTextAlignment(.trailing)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                    }
+                    
+                    HStack {
+                        Text("Username")
+                        Spacer()
+                        TextField("Optional", text: Binding(
+                            get: { nzbgetConfig.username },
+                            set: { newValue in
+                                viewModel.updateDownloadClientUsername("NZBGet", username: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .multilineTextAlignment(.trailing)
+                        .autocapitalization(.none)
+                    }
+                    
+                    HStack {
+                        Text("Password")
+                        Spacer()
+                        SecureField("Optional", text: Binding(
+                            get: { nzbgetConfig.password },
+                            set: { newValue in
+                                viewModel.updateDownloadClientPassword("NZBGet", password: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .multilineTextAlignment(.trailing)
+                    }
+                }
+                
+                Section("Security") {
+                    Toggle("Strict TLS", isOn: Binding(
+                        get: { nzbgetConfig.strictTLS },
+                        set: { newValue in
+                            viewModel.updateDownloadClientStrictTLS("NZBGet", strictTLS: newValue)
+                        }
+                    ))
+                }
+                
+                Section("Headers") {
+                    Text("Custom Headers")
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                    // Headers management would go here - simplified for now
+                }
+            }
+        }
+        .navigationTitle("Connection Details")
+    }
+}
+
+struct NZBGetDefaultPagesView: View {
+    @Bindable var viewModel: SettingsViewModel
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        Form {
+            Section("Default Pages") {
+                Picker("Home Page", selection: .constant("Queue")) {
+                    Text("Queue").tag("Queue")
+                    Text("History").tag("History")
+                    Text("Statistics").tag("Statistics")
+                }
+                .pickerStyle(.menu)
+            }
+        }
+        .navigationTitle("Default Pages")
     }
 }
