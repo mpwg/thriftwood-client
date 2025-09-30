@@ -14,6 +14,41 @@ This document outlines a hybrid migration strategy to gradually transition Thrif
 - End with 100% SwiftUI app
 - App remains fully functional at every step of the migration
 
+## User Migration Control
+
+**User Choice During Migration:**
+
+During the hybrid migration period, users have complete control over which implementation they use through a settings toggle. This ensures users can:
+
+- **Fallback to stability**: If a SwiftUI implementation has issues, users can instantly switch back to the proven Flutter version
+- **Test new features**: Users can opt into SwiftUI implementations to test new iOS-native features and performance improvements
+- **Gradual adoption**: Users comfortable with the current Flutter experience can delay migration until SwiftUI versions are fully mature
+
+**Implementation Details:**
+
+- **Toggle Location**: Main Settings screen (`Settings > Settings Version`)
+- **Database Storage**: `LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI`
+- **Default State**: Flutter (for maximum stability)
+- **Scope**: Affects all settings navigation and related features
+- **Data Consistency**: Both implementations read from the same data store
+- **Real-time Switching**: Changes take effect immediately without app restart
+
+**User Experience:**
+
+```text
+Settings Version
+┌─────────────────────────────────────────────────────────┐
+│ Currently using SwiftUI settings (iOS native experience) │
+│                                               [Toggle ON] │
+└─────────────────────────────────────────────────────────┘
+
+Settings Version
+┌──────────────────────────────────────────────────────────┐
+│ Currently using Flutter settings (cross-platform experience) │
+│                                               [Toggle OFF] │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Current State Analysis
 
 ### Flutter Implementation Structure

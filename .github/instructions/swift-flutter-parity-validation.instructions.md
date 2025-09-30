@@ -32,7 +32,87 @@ Swift implementations **MUST** be pure SwiftUI without UIKit dependencies:
 - **Must use iOS 17+ @Observable pattern** instead of legacy ObservableObject
 - **Must follow MVVM architecture** with proper ViewModels
 
-### Rule 3: Mandatory Migration Documentation (MANDATORY)
+### Rule 3: Hybrid Migration Toggle (MANDATORY)
+
+**During the migration period, users MUST have the ability to switch between Flutter and SwiftUI implementations:**
+
+- **Toggle Location**: Main settings screen (`lib/modules/settings/routes/settings/route.dart`)
+- **Database Key**: `LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI`
+- **Default State**: Flutter implementation (for stability during migration)
+- **Behavior**: Toggle affects all settings navigation, with individual features respecting this choice
+- **User Experience**: Clear labeling indicating which version is currently active
+- **Data Consistency**: Both implementations must access the same underlying data store
+- **Migration Transparency**: Users can switch back to Flutter if SwiftUI version has issues
+
+**Implementation Requirements:**
+
+```dart
+// Flutter: Settings version selector widget (REQUIRED)
+Widget _settingsVersionSelector() {
+  const _db = LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI;
+  return _db.listenableBuilder(
+    builder: (context, _) {
+      bool useSwiftUISettings = _db.read();
+
+      return LunaBlock(
+        title: 'Settings Version',
+        body: [
+          TextSpan(
+            text: useSwiftUISettings
+                ? 'Currently using SwiftUI settings (iOS native experience)'
+                : 'Currently using Flutter settings (cross-platform experience)',
+          )
+        ],
+        trailing: LunaSwitch(
+          value: useSwiftUISettings,
+          onChanged: _db.update,
+        ),
+      );
+    },
+  );
+}
+
+// Navigation handler that respects the toggle (REQUIRED)
+void _handleSettingsNavigation(String section, bool useSwiftUISettings) {
+  if (useSwiftUISettings) {
+    // Navigate to SwiftUI version via bridge
+    FlutterSwiftUIBridge.navigateToNativeView(
+      'settings_$section',
+      data: {'section': section},
+    );
+  } else {
+    // Navigate to Flutter version using existing routes
+    _navigateToFlutterSettings(section);
+  }
+}
+```
+
+**Bridge Registration Requirements:**
+
+```swift
+// Swift: All migrated views must be registered with the bridge
+extension FlutterSwiftUIBridge {
+    func registerMigratedViews() {
+        // Register each SwiftUI view that replaces a Flutter equivalent
+        registerNativeView("settings")
+        registerNativeView("settings_configuration")
+        registerNativeView("settings_profiles")
+        registerNativeView("settings_system")
+        // Add more as migration progresses
+    }
+
+    // Bridge must respect user choice and gracefully fallback
+    func createSwiftUIView(for route: String, data: [String: Any]) -> AnyView {
+        guard shouldUseNativeView(for: route) else {
+            // Fallback to Flutter for unimplemented views
+            return AnyView(EmptyView())
+        }
+        // Create appropriate SwiftUI view
+    }
+}
+```
+
+### Rule 4: Mandatory Migration Documentation (MANDATORY)
 
 **Every ported function, class, and view MUST include migration tracking comments:**
 
@@ -61,7 +141,7 @@ Swift implementations **MUST** be pure SwiftUI without UIKit dependencies:
 /// - [list all equivalent functions]
 ```
 
-### Rule 4: Bidirectional ViewModel Integration (MANDATORY)
+### Rule 5: Bidirectional ViewModel Integration (MANDATORY)
 
 **All ViewModels MUST implement proper Flutter ↔ Swift data synchronization:**
 
@@ -102,7 +182,7 @@ class SwiftViewModel {
 }
 ```
 
-### Rule 5: Method Channel Integration (MANDATORY)
+### Rule 6: Method Channel Integration (MANDATORY)
 
 **All SwiftUI views MUST properly integrate with Flutter method channels:**
 
@@ -112,7 +192,7 @@ class SwiftViewModel {
 - **State updates** must notify both platforms immediately
 - **Error states** must be consistent across platforms
 
-### Rule 6: Zero TODOs Policy (MANDATORY)
+### Rule 7: Zero TODOs Policy (MANDATORY)
 
 Swift implementations **MUST** be 100% complete:
 
@@ -123,7 +203,7 @@ Swift implementations **MUST** be 100% complete:
 - **All edge cases must be handled**
 - **All Flutter features must be documented as ported**
 
-### Rule 7: Data Model Consistency (MANDATORY)
+### Rule 8: Data Model Consistency (MANDATORY)
 
 Swift data models **MUST** exactly mirror Flutter models:
 
@@ -134,7 +214,7 @@ Swift data models **MUST** exactly mirror Flutter models:
 - **Must implement SharedDataProtocol** for cross-platform sync
 - **Must include Flutter model mapping documentation**
 
-### Rule 8: Compilation Requirement (MANDATORY)
+### Rule 9: Compilation Requirement (MANDATORY)
 
 All Swift implementations **MUST** compile successfully:
 
@@ -144,7 +224,7 @@ All Swift implementations **MUST** compile successfully:
 - **Successful Xcode build** before validation approval
 - **Swift 6 strict concurrency compliance**
 
-### Rule 9: Modern SwiftUI Patterns (MANDATORY)
+### Rule 10: Modern SwiftUI Patterns (MANDATORY)
 
 **Must follow iOS 17+ best practices:**
 

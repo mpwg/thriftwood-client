@@ -106,10 +106,12 @@ Bridge initialization happens in `lib/main.dart` via `BridgeInitializer.initiali
 
 ### During Migration Period
 
+- **User Migration Control**: Maintain the settings toggle (`LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI`) that allows users to switch between Flutter and SwiftUI implementations
 - **Test both platforms**: Ensure data consistency and navigation flow
 - **Bridge registration**: Register migrated views with `FlutterSwiftUIBridge`
 - **Maintain functionality**: App must remain fully functional at each phase
 - **Performance monitoring**: No regressions during hybrid period
+- **Fallback capability**: Users can instantly revert to Flutter if SwiftUI version has issues
 
 ### SwiftUI Code Organization
 
