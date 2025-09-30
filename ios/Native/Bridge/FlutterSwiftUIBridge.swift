@@ -234,48 +234,64 @@ import Flutter
         result(getAllNativeViews())
     }
     
+    // MARK: - Shared ViewModels
+    private var sharedSettingsViewModel: SettingsViewModel?
+    
+    private func getSharedSettingsViewModel() -> SettingsViewModel {
+        if let existing = sharedSettingsViewModel {
+            return existing
+        }
+        
+        let viewModel = SettingsViewModel()
+        sharedSettingsViewModel = viewModel
+        return viewModel
+    }
+    
     // MARK: - SwiftUI View Factory
     
     func createSwiftUIView(for route: String, data: [String: Any]) -> AnyView {
-        print("Creating SwiftUI view for route: \(route)")
+        // Only log when creating non-settings views to reduce noise
+        if !route.hasPrefix("settings_") {
+            print("Creating SwiftUI view for route: \(route)")
+        }
         
         switch route {
         case "settings":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUISettingsView(viewModel: settingsViewModel))
         case "settings_configuration":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             let configurationViewModel = ConfigurationViewModel(settingsViewModel: settingsViewModel)
             return AnyView(SwiftUIConfigurationView(viewModel: configurationViewModel))
         case "settings_profiles":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIProfilesView(viewModel: settingsViewModel))
         case "settings_system":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUISystemView(viewModel: settingsViewModel))
         case "settings_system_logs":
             let systemLogsViewModel = SystemLogsViewModel()
             return AnyView(SwiftUISystemLogsView(viewModel: systemLogsViewModel))
         case "settings_general":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIGeneralSettingsView(viewModel: settingsViewModel))
         case "settings_dashboard":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIDashboardSettingsView(viewModel: settingsViewModel))
         case "settings_wake_on_lan":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIWakeOnLANSettingsView(viewModel: settingsViewModel))
         case "settings_search":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUISearchSettingsView(viewModel: settingsViewModel))
         case "settings_external_modules":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIExternalModulesSettingsView(viewModel: settingsViewModel))
         case "settings_drawer":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIDrawerSettingsView(viewModel: settingsViewModel))
         case "settings_quick_actions":
-            let settingsViewModel = SettingsViewModel()
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIQuickActionsSettingsView(viewModel: settingsViewModel))
         case "settings_all":
             return AnyView(SwiftUIAllSettingsView())

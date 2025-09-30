@@ -37,6 +37,9 @@ class SettingsViewModel {
     var showingClearConfigConfirmation: Bool = false
     var showingClearCacheConfirmation: Bool = false
     
+    // MARK: - State Management
+    private var hasLoadedInitialSettings: Bool = false
+    
     // MARK: - Services
     private let dataManager: HiveDataManager
     private let storageService: StorageService
@@ -59,8 +62,12 @@ class SettingsViewModel {
         self.selectedProfile = appSettings.profiles[appSettings.enabledProfile]
         self.availableProfiles = Array(appSettings.profiles.keys).sorted()
         
-        Task { @MainActor in
-            await loadSettings()
+        // Only load settings if this is the first initialization
+        if !hasLoadedInitialSettings {
+            Task { @MainActor in
+                await loadSettings()
+                hasLoadedInitialSettings = true
+            }
         }
     }
     
@@ -101,7 +108,8 @@ class SettingsViewModel {
             // Set selected profile
             if let currentProfile = appSettings.profiles[appSettings.enabledProfile] {
                 selectedProfile = currentProfile
-                print("Selected profile: \(currentProfile.name)")
+                // Reduce debug noise - only log during explicit profile switches
+                // print("Selected profile: \(currentProfile.name)")
             } else {
                 print("Warning: No profile found for enabled profile key: \(appSettings.enabledProfile)")
                 // Try to find any available profile or create default
@@ -134,7 +142,9 @@ class SettingsViewModel {
     func saveSettings() async {
         do {
             try await storageService.save(appSettings, forKey: "app_settings")
+            print("💾 Explicitly saving settings to storage")
             await syncWithHiveStorage()
+            print("✅ Settings synced to Hive successfully")
         } catch {
             showError("Failed to save settings: \(error.localizedDescription)")
         }
@@ -645,7 +655,8 @@ class SettingsViewModel {
         // Sync settings with Flutter's Hive storage
         do {
             try await dataManager.syncSettings(appSettings)
-            print("✅ Settings synced to Hive successfully")
+            // Reduce debug noise - only log during explicit save operations
+            // print("✅ Settings synced to Hive successfully")
         } catch {
             print("❌ Failed to sync settings to Hive: \(error)")
             await MainActor.run {
