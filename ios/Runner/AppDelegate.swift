@@ -42,6 +42,16 @@ import Flutter
     FlutterSwiftUIBridge.shared.registerNativeView("settings_external_modules")
     FlutterSwiftUIBridge.shared.registerNativeView("settings_drawer")
     FlutterSwiftUIBridge.shared.registerNativeView("settings_quick_actions")
+    
+    // Service-specific settings routes
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_radarr")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_sonarr")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_lidarr")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_sabnzbd")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_nzbget")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_tautulli")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_overseerr")
+    
     FlutterSwiftUIBridge.shared.registerNativeView("settings_all")
 
     print("Hybrid bridge system initialized successfully")
