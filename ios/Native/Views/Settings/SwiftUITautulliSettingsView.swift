@@ -71,7 +71,7 @@ struct SwiftUITautulliSettingsView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Activity Refresh Rate")
                                     .font(.body)
-                                Text("Every 10 Seconds")
+                                Text("Every \(viewModel.appSettings.tautulliRefreshRate) Seconds")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -83,7 +83,7 @@ struct SwiftUITautulliSettingsView: View {
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            // TODO: Show refresh rate picker
+                            viewModel.showTautulliRefreshRatePicker()
                         }
                     }
                     
@@ -118,7 +118,7 @@ struct SwiftUITautulliSettingsView: View {
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            // TODO: Show termination message dialog
+                            viewModel.showTautulliTerminationMessageDialog()
                         }
                     }
                     
@@ -128,7 +128,7 @@ struct SwiftUITautulliSettingsView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Statistics Item Count")
                                     .font(.body)
-                                Text("100 Items")
+                                Text("\(viewModel.appSettings.tautulliStatisticsCount) Items")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -140,7 +140,7 @@ struct SwiftUITautulliSettingsView: View {
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            // TODO: Show statistics count picker
+                            viewModel.showTautulliStatisticsCountPicker()
                         }
                     }
                 }
@@ -153,6 +153,47 @@ struct SwiftUITautulliSettingsView: View {
                         dismiss()
                     }
                 }
+            }
+            .alert("Activity Refresh Rate", isPresented: $viewModel.isShowingTautulliRefreshRatePicker) {
+                TextField("Refresh rate (seconds)", text: $viewModel.tautulliRefreshRateInput)
+                    .keyboardType(.numberPad)
+                Button("Set") {
+                    Task {
+                        await viewModel.setTautulliRefreshRate()
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    viewModel.isShowingTautulliRefreshRatePicker = false
+                }
+            } message: {
+                Text("Set the refresh rate for activity updates. Minimum of 1 second.")
+            }
+            .alert("Termination Message", isPresented: $viewModel.isShowingTautulliTerminationMessageDialog) {
+                TextField("Enter termination message", text: $viewModel.tautulliTerminationMessageInput)
+                Button("Set") {
+                    Task {
+                        await viewModel.setTautulliTerminationMessage()
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    viewModel.isShowingTautulliTerminationMessageDialog = false
+                }
+            } message: {
+                Text("Set a custom message to display when playback is terminated.")
+            }
+            .alert("Statistics Item Count", isPresented: $viewModel.isShowingTautulliStatisticsCountPicker) {
+                TextField("Number of items", text: $viewModel.tautulliStatisticsCountInput)
+                    .keyboardType(.numberPad)
+                Button("Set") {
+                    Task {
+                        await viewModel.setTautulliStatisticsCount()
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    viewModel.isShowingTautulliStatisticsCountPicker = false
+                }
+            } message: {
+                Text("Set the number of items to display in statistics. Minimum of 1 item.")
             }
         }
     }

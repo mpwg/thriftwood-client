@@ -110,7 +110,7 @@ struct SwiftUIRadarrSettingsView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Queue Size")
                                     .font(.body)
-                                Text("50 Items")
+                                Text("\(viewModel.appSettings.radarrQueuePageSize) Items")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -122,7 +122,7 @@ struct SwiftUIRadarrSettingsView: View {
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            // TODO: Show queue size picker
+                            viewModel.showRadarrQueueSizePicker()
                         }
                     }
                 }
@@ -135,6 +135,20 @@ struct SwiftUIRadarrSettingsView: View {
                         dismiss()
                     }
                 }
+            }
+            .alert("Queue Size", isPresented: $viewModel.isShowingRadarrQueueSizePicker) {
+                TextField("Enter queue size", text: $viewModel.queueSizeInput)
+                    .keyboardType(.numberPad)
+                Button("Set") {
+                    Task {
+                        await viewModel.setRadarrQueueSize()
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    viewModel.isShowingRadarrQueueSizePicker = false
+                }
+            } message: {
+                Text("Set the amount of items fetched for the queue. Minimum of 1 item.")
             }
         }
     }

@@ -97,7 +97,7 @@ struct SwiftUISonarrSettingsView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Queue Size")
                                     .font(.body)
-                                Text("50 Items")
+                                Text("\(viewModel.appSettings.sonarrQueuePageSize) Items")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -109,7 +109,7 @@ struct SwiftUISonarrSettingsView: View {
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            // TODO: Show queue size picker
+                            viewModel.showSonarrQueueSizePicker()
                         }
                     }
                 }
@@ -122,6 +122,20 @@ struct SwiftUISonarrSettingsView: View {
                         dismiss()
                     }
                 }
+            }
+            .alert("Queue Size", isPresented: $viewModel.isShowingSonarrQueueSizePicker) {
+                TextField("Enter queue size", text: $viewModel.queueSizeInput)
+                    .keyboardType(.numberPad)
+                Button("Set") {
+                    Task {
+                        await viewModel.setSonarrQueueSize()
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    viewModel.isShowingSonarrQueueSizePicker = false
+                }
+            } message: {
+                Text("Set the amount of items fetched for the queue. Minimum of 1 item.")
             }
         }
     }

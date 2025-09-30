@@ -68,6 +68,15 @@ class ThriftwoodAppSettings: Codable {
     // External Modules Settings
     var externalModules: [ExternalModule]
     
+    // Queue Settings (matching Flutter database tables)
+    var sonarrQueuePageSize: Int
+    var radarrQueuePageSize: Int
+    
+    // Tautulli Settings
+    var tautulliRefreshRate: Int // seconds
+    var tautulliTerminationMessage: String
+    var tautulliStatisticsCount: Int
+    
     init() {
         self.selectedTheme = .system
         self.enabledProfile = "default"
@@ -115,6 +124,15 @@ class ThriftwoodAppSettings: Codable {
         
         // External Modules defaults
         self.externalModules = []
+        
+        // Queue Settings defaults (matching Flutter)
+        self.sonarrQueuePageSize = 50
+        self.radarrQueuePageSize = 50
+        
+        // Tautulli Settings defaults
+        self.tautulliRefreshRate = 15 // 15 seconds
+        self.tautulliTerminationMessage = ""
+        self.tautulliStatisticsCount = 10
     }
 }
 

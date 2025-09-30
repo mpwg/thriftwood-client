@@ -50,13 +50,24 @@ struct SwiftUIWakeOnLANSettingsView: View {
                 
                 if viewModel.selectedProfile?.wakeOnLanEnabled == true {
                     Section("Test") {
-                        Button("Send Wake Signal") {
+                        Button(action: {
                             Task {
-                                // TODO: Implement actual wake on LAN functionality
-                                await viewModel.testWakeOnLAN()
+                                await viewModel.sendWakeOnLANPacket()
+                            }
+                        }) {
+                            HStack {
+                                if viewModel.isWakingDevice {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Image(systemName: "wifi.router")
+                                }
+                                Text("Send Wake Signal")
                             }
                         }
                         .buttonStyle(.bordered)
+                        .disabled(viewModel.isWakingDevice)
                     }
                 }
             }

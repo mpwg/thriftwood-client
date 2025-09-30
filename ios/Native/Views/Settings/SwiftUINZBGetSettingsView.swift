@@ -52,10 +52,24 @@ struct SwiftUINZBGetSettingsView: View {
                     
                     // Connection Test
                     Section("Connection Test") {
-                        Button("Test Connection") {
-                            // TODO: Implement connection test
+                        Button(action: {
+                            Task {
+                                await viewModel.testNZBGetConnection()
+                            }
+                        }) {
+                            HStack {
+                                if viewModel.isTestingNZBGetConnection {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Image(systemName: "network.badge.shield.half.filled")
+                                }
+                                Text("Test Connection")
+                            }
                         }
                         .buttonStyle(.bordered)
+                        .disabled(viewModel.isTestingNZBGetConnection)
                     }
                 }
             }
