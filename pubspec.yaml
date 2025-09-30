@@ -47,7 +47,6 @@ dependencies:
   url_launcher: ^6.1.12
   uuid: ^4.5.1
   wake_on_lan: ^4.1.0
-  window_manager: ^0.4.3
   xml: ^6.3.0
 dev_dependencies:
   # Generators
@@ -60,7 +59,6 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.3
   flutter_lints: ^5.0.0
   flutter_native_splash: ^2.3.2
-  msix: ^3.16.1
 dependency_overrides:
   intl: ^0.18.1
   http: ^1.0.0
@@ -75,22 +73,8 @@ flutter:
       fonts:
         - asset: assets/LunaBrandIcons.ttf
 flutter_icons:
-  android: true
   ios: true
   image_path: assets/icon/icon.png
-  adaptive_icon_background: "#32323E"
-  adaptive_icon_foreground: assets/icon/icon_adaptive.png
 flutter_native_splash:
   image: assets/images/branding_full.png
   color: "#32323E"
-msix_config:
-  architecture: x64
-  capabilities: internetClientServer,privateNetworkClientServer
-  display_name: LunaSea
-  enable_at_startup: false
-  execution_alias: lunasea
-  identity_name: app.lunasea.lunasea
-  install_certificate: false
-  logo_path: assets\icon\icon_windows.png
-  output_name: lunasea-windows-amd64
-  store: false

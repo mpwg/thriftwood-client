@@ -4,7 +4,6 @@ import 'package:lunasea/core.dart';
 import 'package:lunasea/database/tables/bios.dart';
 import 'package:lunasea/modules/settings.dart';
 import 'package:lunasea/system/network/network.dart';
-import 'package:lunasea/system/platform.dart';
 
 class ConfigurationGeneralRoute extends StatefulWidget {
   const ConfigurationGeneralRoute({
@@ -79,30 +78,8 @@ class _State extends State<ConfigurationGeneralRoute>
   }
 
   List<Widget> _platform() {
-    if (LunaPlatform.isAndroid) {
-      return [
-        LunaHeader(text: 'settings.Platform'.tr()),
-        _openDrawerOnBackAction(),
-      ];
-    }
-
+    // No platform-specific settings needed for iOS-only app
     return [];
-  }
-
-  Widget _openDrawerOnBackAction() {
-    const _db = LunaSeaDatabase.ANDROID_BACK_OPENS_DRAWER;
-    return _db.listenableBuilder(
-      builder: (context, _) => LunaBlock(
-        title: 'settings.OpenDrawerOnBackAction'.tr(),
-        body: [
-          TextSpan(text: 'settings.OpenDrawerOnBackActionDescription'.tr()),
-        ],
-        trailing: LunaSwitch(
-          value: _db.read(),
-          onChanged: _db.update,
-        ),
-      ),
-    );
   }
 
   Widget _amoledTheme() {

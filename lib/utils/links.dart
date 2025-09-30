@@ -1,6 +1,5 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/extensions/string/links.dart';
-import 'package:lunasea/system/platform.dart';
 
 enum LinkedContentType {
   MOVIE,
@@ -43,15 +42,10 @@ enum LunaLinkedContent {
     String plexIdentifier,
     int ratingKey,
   ) {
-    if (LunaPlatform.isAndroid) {
-      const base = 'plex://server://';
-      const path = '/com.plexapp.plugins.library/library/metadata/';
-      return '$base$plexIdentifier$path$ratingKey';
-    } else {
-      const base = 'plex://preplay/?server=';
-      const path = '&metadataKey=/library/metadata/';
-      return '$base$plexIdentifier$path$ratingKey';
-    }
+    // iOS-specific Plex mobile link
+    const base = 'plex://preplay/?server=';
+    const path = '&metadataKey=/library/metadata/';
+    return '$base$plexIdentifier$path$ratingKey';
   }
 
   static String plexWeb(
@@ -81,8 +75,6 @@ enum LunaLinkedContent {
         return '$baseImage/w185$id';
       case LinkedContentType.IMAGE_BACKDROP:
         return '$baseImage/w300$id';
-      default:
-        throw UnsupportedError('$type content type is not supported');
     }
   }
 

@@ -40,7 +40,8 @@ import Flutter
         self.flutterViewController = flutterViewController
         setupMethodChannel(with: flutterViewController)
         
-        print("FlutterSwiftUIBridge initialized successfully")
+        print("✅ FlutterSwiftUIBridge initialized successfully")
+        print("✅ Method channel established: com.thriftwood.bridge")
     }
     
     // MARK: - Native View Registration
@@ -192,6 +193,9 @@ import Flutter
             handleRegisterNativeView(arguments: arguments, result: result)
         case "getAllNativeViews":
             handleGetAllNativeViews(result: result)
+        // Dashboard-specific methods
+        case "getDashboardState", "updateDashboardState", "refreshDashboardServices", "triggerWakeOnLAN", "navigateToService":
+            handleDashboardMethodCall(call, result: result)
         default:
             print("Unknown method call: \(method)")
             result(FlutterMethodNotImplemented)
@@ -226,6 +230,7 @@ import Flutter
             return
         }
         
+        print("📱 Registering native view for route: \(route)")
         registerNativeView(route)
         result(true)
     }
@@ -319,8 +324,8 @@ import Flutter
         
         case "settings_all":
             return AnyView(SwiftUIAllSettingsView())
-        case "dashboard":
-            return AnyView(DashboardWrapperView(data: data))
+        case "/dashboard", "dashboard":
+            return AnyView(DashboardView())
         case "test":
             return AnyView(TestSwiftUIView(route: route, data: data))
         default:
@@ -426,6 +431,6 @@ struct DashboardWrapperView: View {
     let data: [String: Any]
     
     var body: some View {
-        PlaceholderSwiftUIView(route: "/dashboard", data: data)
+        DashboardView()
     }
 }

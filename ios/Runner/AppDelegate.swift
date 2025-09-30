@@ -10,6 +10,14 @@ import Flutter
     // Register Flutter plugins
     GeneratedPluginRegistrant.register(with: self)
     
+    // Handle Mac Catalyst specific setup
+    #if targetEnvironment(macCatalyst)
+    print("🖥️ Running in Mac Catalyst environment")
+    // Disable unsupported features for Mac Catalyst
+    #else
+    print("📱 Running in native iOS environment")
+    #endif
+    
     // Initialize the hybrid bridge system
     initializeHybridBridge()
     
@@ -22,11 +30,18 @@ import Flutter
       print("Error: Could not find Flutter view controller for bridge initialization")
       return
     }
-    
+
     // Initialize the bridge with the Flutter view controller
-      FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
+    FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
     
-    // Register settings routes for Phase 2 hybrid functionality
+    // Add a small delay to ensure Flutter is fully initialized
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      self.registerNativeViews()
+    }
+  }
+  
+  /// Register all native views after Flutter is fully initialized
+  private func registerNativeViews() {        // Register settings routes for Phase 2 hybrid functionality
     // Main settings route (root level)
     FlutterSwiftUIBridge.shared.registerNativeView("settings")
     
@@ -53,8 +68,12 @@ import Flutter
     FlutterSwiftUIBridge.shared.registerNativeView("settings_overseerr")
     
     FlutterSwiftUIBridge.shared.registerNativeView("settings_all")
+    
+    // Register Dashboard for Phase 3 hybrid functionality
+    FlutterSwiftUIBridge.shared.registerDashboardView()
+    FlutterSwiftUIBridge.shared.setupDashboardMethodHandlers()
 
-    print("Hybrid bridge system initialized successfully")
+    print("Native views registered successfully")
   }
   
   /// Handle URL schemes for deep linking

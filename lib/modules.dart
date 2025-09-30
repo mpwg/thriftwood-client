@@ -16,6 +16,7 @@ import 'package:lunasea/modules/nzbget.dart';
 import 'package:lunasea/modules/tautulli.dart';
 import 'package:lunasea/modules/dashboard/core/state.dart';
 import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
+import 'package:lunasea/system/bridge/hybrid_router.dart';
 
 part 'modules.g.dart';
 
@@ -409,7 +410,22 @@ extension LunaModuleRoutingExtension on LunaModule {
 
   Future<void> launch() async {
     if (homeRoute != null) {
-      LunaRouter.router.pushReplacement(homeRoute!);
+      // For Phase 3: Use hybrid router for dashboard navigation
+      if (this == LunaModule.DASHBOARD) {
+        final context =
+            LunaRouter.router.routerDelegate.navigatorKey.currentContext;
+        if (context != null) {
+          final success = await context.goToHybrid(homeRoute!);
+          if (!success) {
+            // Fallback to Flutter navigation if hybrid fails
+            LunaRouter.router.pushReplacement(homeRoute!);
+          }
+        } else {
+          LunaRouter.router.pushReplacement(homeRoute!);
+        }
+      } else {
+        LunaRouter.router.pushReplacement(homeRoute!);
+      }
     }
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lunasea/database/tables/lunasea.dart';
 import 'package:lunasea/modules.dart';
-import 'package:lunasea/system/platform.dart';
 
 class LunaScaffold extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -33,25 +32,8 @@ class LunaScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (LunaPlatform.isAndroid) return android;
+    // iOS-only: use standard scaffold without Android back button handling
     return scaffold;
-  }
-
-  Widget get android {
-    return WillPopScope(
-      onWillPop: () async {
-        if (!LunaSeaDatabase.ANDROID_BACK_OPENS_DRAWER.read()) return true;
-
-        final state = scaffoldKey.currentState;
-        if (state?.hasDrawer ?? false) {
-          if (state!.isDrawerOpen) return true;
-          state.openDrawer();
-          return false;
-        }
-        return true;
-      },
-      child: scaffold,
-    );
   }
 
   Widget get scaffold {
