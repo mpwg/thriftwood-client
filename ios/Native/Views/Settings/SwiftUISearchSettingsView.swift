@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SwiftUISearchSettingsView: View {
     @Bindable var viewModel: SettingsViewModel
+    @Environment(\.dismiss) private var dismiss
     @State private var showingAddIndexer = false
     @State private var newIndexerName = ""
     @State private var newIndexerHost = ""

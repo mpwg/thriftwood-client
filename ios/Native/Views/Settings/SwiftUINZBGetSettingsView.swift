@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SwiftUINZBGetSettingsView: View {
     @Bindable var viewModel: SettingsViewModel
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
