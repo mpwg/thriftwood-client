@@ -1,5 +1,6 @@
 import 'package:lunasea/system/bridge/native_bridge.dart';
 import 'package:lunasea/system/bridge/hybrid_router.dart';
+import 'package:lunasea/system/bridge/hive_bridge.dart';
 
 /// Bridge initialization for the hybrid Flutter/SwiftUI system
 class BridgeInitializer {
@@ -11,6 +12,9 @@ class BridgeInitializer {
   static Future<void> initialize() async {
     // Initialize the hybrid router
     await HybridRouter.initialize();
+
+    // Initialize the Hive data bridge for SwiftUI synchronization
+    HiveBridge.initialize();
 
     // Register any initial native views for Phase 1
     // This allows testing the bridge system immediately

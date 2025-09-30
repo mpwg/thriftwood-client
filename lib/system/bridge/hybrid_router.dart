@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -48,8 +49,12 @@ class HybridRouter {
         return _navigateInFlutter(context, route, data: data, replace: replace);
       }
     } catch (e) {
-      LunaLogger()
-          .error('HybridRouter: Navigation error', e, StackTrace.current);
+      LunaLogger().error('HybridRouter: Navigation error for route "$route"', e,
+          StackTrace.current);
+      // For development, we want to expose bridge errors to help debugging
+      if (kDebugMode) {
+        rethrow;
+      }
       return false;
     }
   }
@@ -97,8 +102,12 @@ class HybridRouter {
         return true;
       }
     } catch (e) {
-      LunaLogger()
-          .error('HybridRouter: Go navigation error', e, StackTrace.current);
+      LunaLogger().error('HybridRouter: Go navigation error for route "$route"',
+          e, StackTrace.current);
+      // For development, we want to expose bridge errors to help debugging
+      if (kDebugMode) {
+        rethrow;
+      }
       return false;
     }
   }

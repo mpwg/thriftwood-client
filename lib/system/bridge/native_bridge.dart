@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
+import 'package:lunasea/system/bridge/bridge_error.dart';
 
 /// Bridge for communicating with native SwiftUI views
 class NativeBridge {
@@ -30,10 +31,13 @@ class NativeBridge {
 
       return result == true;
     } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('NativeBridge: Navigation error - ${e.message}');
-      }
-      return false;
+      BridgeErrorReporter.reportPlatformException(
+        e,
+        'navigateToNativeView',
+        'NativeBridge',
+        context: {'route': route, 'hasData': data != null},
+      );
+      rethrow;
     }
   }
 
@@ -50,11 +54,13 @@ class NativeBridge {
 
       return result == true;
     } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print(
-            'NativeBridge: Error checking native view availability - ${e.message}');
-      }
-      return false;
+      BridgeErrorReporter.reportPlatformException(
+        e,
+        'isNativeViewAvailable',
+        'NativeBridge',
+        context: {'route': route},
+      );
+      rethrow;
     }
   }
 
@@ -75,10 +81,13 @@ class NativeBridge {
 
       return result == true;
     } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('NativeBridge: Error registering native view - ${e.message}');
-      }
-      return false;
+      BridgeErrorReporter.reportPlatformException(
+        e,
+        'registerNativeView',
+        'NativeBridge',
+        context: {'route': route},
+      );
+      rethrow;
     }
   }
 
@@ -95,10 +104,12 @@ class NativeBridge {
 
       return <String>[];
     } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('NativeBridge: Error getting native views - ${e.message}');
-      }
-      return <String>[];
+      BridgeErrorReporter.reportPlatformException(
+        e,
+        'getNativeViews',
+        'NativeBridge',
+      );
+      rethrow;
     }
   }
 
@@ -124,10 +135,13 @@ class NativeBridge {
 
       return true;
     } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('NativeBridge: Error saving to native storage - ${e.message}');
-      }
-      return false;
+      BridgeErrorReporter.reportPlatformException(
+        e,
+        'saveToNativeStorage',
+        'NativeBridge',
+        context: {'key': key, 'dataType': data.runtimeType.toString()},
+      );
+      rethrow;
     }
   }
 
@@ -148,10 +162,13 @@ class NativeBridge {
 
       return null;
     } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('NativeBridge: Error loading from native storage - ${e.message}');
-      }
-      return null;
+      BridgeErrorReporter.reportPlatformException(
+        e,
+        'loadFromNativeStorage',
+        'NativeBridge',
+        context: {'key': key},
+      );
+      rethrow;
     }
   }
 

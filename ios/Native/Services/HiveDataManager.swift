@@ -59,38 +59,79 @@ class HiveDataManager {
     // MARK: - Public Methods
     
     /// Sync settings to Flutter's Hive storage
-    func syncSettings(_ settings: ThriftwoodAppSettings) async {
-        do {
-            let settingsDict = try settings.toDictionary()
-            
-            await methodChannel?.invokeMethod("updateHiveSettings", arguments: [
-                "settings": settingsDict
-            ])
-        } catch {
-            print("Error syncing settings to Hive: \(error)")
+    func syncSettings(_ settings: ThriftwoodAppSettings) async throws {
+        guard let methodChannel = methodChannel else {
+            throw HiveDataError.channelNotInitialized
+        }
+        
+        let settingsDict = try settings.toDictionary()
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                methodChannel.invokeMethod("updateHiveSettings", arguments: [
+                    "settings": settingsDict
+                ]) { result in
+                    if let error = result as? FlutterError {
+                        continuation.resume(throwing: HiveDataError.flutterError(
+                            "Failed to sync settings to Hive: \(error.message ?? "Unknown error"). " +
+                            "Code: \(error.code), Details: \(error.details.map { "\($0)" } ?? "None")"
+                        ))
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
         }
     }
     
     /// Notify Flutter of profile change
-    func notifyProfileChange(_ profileName: String) async {
-        await methodChannel?.invokeMethod("profileChanged", arguments: [
-            "profile": profileName
-        ])
+    func notifyProfileChange(_ profileName: String) async throws {
+        guard let methodChannel = methodChannel else {
+            throw HiveDataError.channelNotInitialized
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                methodChannel.invokeMethod("profileChanged", arguments: [
+                    "profile": profileName
+                ]) { result in
+                    if let error = result as? FlutterError {
+                        continuation.resume(throwing: HiveDataError.flutterError(
+                            "Failed to notify Flutter of profile change '\(profileName)': \(error.message ?? "Unknown error"). " +
+                            "Code: \(error.code), Details: \(error.details.map { "\($0)" } ?? "None")"
+                        ))
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
+        }
     }
     
     /// Load settings from Flutter's Hive storage
     func loadSettingsFromHive() async throws -> ThriftwoodAppSettings? {
+        guard let methodChannel = methodChannel else {
+            print("Warning: Method channel not initialized, cannot load from Hive storage")
+            return nil
+        }
+        
         return try await withCheckedThrowingContinuation { continuation in
             Task { @MainActor in
-                methodChannel?.invokeMethod("getHiveSettings", arguments: nil) { result in
+                methodChannel.invokeMethod("getHiveSettings", arguments: nil) { result in
                     if let error = result as? FlutterError {
-                        continuation.resume(throwing: HiveDataError.flutterError(error.message ?? "Unknown error"))
+                        continuation.resume(throwing: HiveDataError.flutterError(
+                            "Failed to load settings from Hive: \(error.message ?? "Unknown error"). " +
+                            "Code: \(error.code), Details: \(error.details.map { "\($0)" } ?? "None")"
+                        ))
                     } else if let settingsDict = result as? [String: Any] {
                         do {
                             let settings = try ThriftwoodAppSettings.fromDictionary(settingsDict)
                             continuation.resume(returning: settings)
                         } catch {
-                            continuation.resume(throwing: error)
+                            continuation.resume(throwing: HiveDataError.decodingError(
+                                "Failed to decode settings from Hive data: \(error.localizedDescription). " +
+                                "Data keys: \(settingsDict.keys.sorted())"
+                            ))
                         }
                     } else {
                         continuation.resume(returning: nil)
@@ -101,16 +142,29 @@ class HiveDataManager {
     }
     
     /// Save specific profile to Hive
-    func saveProfileToHive(_ profile: ThriftwoodProfile) async {
-        do {
-            let profileDict = try profile.toDictionary()
-            
-            await methodChannel?.invokeMethod("updateHiveProfile", arguments: [
-                "profileName": profile.name,
-                "profile": profileDict
-            ])
-        } catch {
-            print("Error saving profile to Hive: \(error)")
+    func saveProfileToHive(_ profile: ThriftwoodProfile) async throws {
+        guard let methodChannel = methodChannel else {
+            throw HiveDataError.channelNotInitialized
+        }
+        
+        let profileDict = try profile.toDictionary()
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                methodChannel.invokeMethod("updateHiveProfile", arguments: [
+                    "profileName": profile.name,
+                    "profile": profileDict
+                ]) { result in
+                    if let error = result as? FlutterError {
+                        continuation.resume(throwing: HiveDataError.flutterError(
+                            "Failed to save profile '\(profile.name)' to Hive: \(error.message ?? "Unknown error"). " +
+                            "Code: \(error.code), Details: \(error.details.map { "\($0)" } ?? "None")"
+                        ))
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
         }
     }
     
@@ -255,23 +309,42 @@ class HiveDataManager {
                 if let error = result as? FlutterError {
                     continuation.resume(throwing: NSError(domain: error.code, code: 0, userInfo: [NSLocalizedDescriptionKey: error.message ?? "Get logs failed"]))
                 } else if let logsArray = result as? [[String: Any]] {
+                    // Debug: Print first log entry to see the actual structure
+                    if let firstLog = logsArray.first {
+                        print("HiveDataManager DEBUG - First log structure:")
+                        for (key, value) in firstLog {
+                            print("  \(key): \(value) (\(type(of: value)))")
+                        }
+                    }
+                    
                     do {
                         let logs = try logsArray.map { logDict -> LunaLogEntry in
-                            guard let timestamp = logDict["timestamp"] as? Int,
+                            // Handle timestamp: Flutter sends ISO8601 string, convert to milliseconds
+                            guard let timestampString = logDict["timestamp"] as? String,
+                                  let timestampDate = ISO8601DateFormatter().date(from: timestampString),
                                   let typeString = logDict["type"] as? String,
                                   let type = LunaLogType(rawValue: typeString),
                                   let message = logDict["message"] as? String else {
-                                throw HiveDataError.decodingError("Invalid log format")
+                                throw HiveDataError.decodingError("Invalid log format: missing required fields")
+                            }
+                            
+                            // Convert ISO8601 date back to milliseconds since epoch (to match Flutter format)
+                            let timestamp = Int(timestampDate.timeIntervalSince1970 * 1000)
+                            
+                            // Handle stack trace: Flutter sends as array, join to string
+                            var stackTraceString: String? = nil
+                            if let stackTraceArray = logDict["stack_trace"] as? [String] {
+                                stackTraceString = stackTraceArray.joined(separator: "\n")
                             }
                             
                             return LunaLogEntry(
                                 timestamp: timestamp,
                                 type: type,
-                                className: logDict["className"] as? String,
-                                methodName: logDict["methodName"] as? String,
+                                className: logDict["class_name"] as? String,  // Flutter uses "class_name"
+                                methodName: logDict["method_name"] as? String,  // Flutter uses "method_name"
                                 message: message,
                                 error: logDict["error"] as? String,
-                                stackTrace: logDict["stackTrace"] as? String
+                                stackTrace: stackTraceString
                             )
                         }
                         continuation.resume(returning: logs)
@@ -323,111 +396,5 @@ class HiveDataManager {
                 }
             }
         }
-    }
-}
-
-// MARK: - Storage Service Protocol
-
-protocol StorageService {
-    func save<T: Codable>(_ object: T, forKey key: String) async throws
-    func load<T: Codable>(_ type: T.Type, forKey key: String) async throws -> T?
-    func delete(forKey key: String) async throws
-}
-
-// MARK: - UserDefaults Storage Implementation
-
-class UserDefaultsStorageService: StorageService {
-    private let userDefaults = UserDefaults.standard
-    
-    func save<T: Codable>(_ object: T, forKey key: String) async throws {
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(object)
-        userDefaults.set(data, forKey: key)
-    }
-    
-    func load<T: Codable>(_ type: T.Type, forKey key: String) async throws -> T? {
-        guard let data = userDefaults.data(forKey: key) else { return nil }
-        
-        let decoder = JSONDecoder()
-        return try decoder.decode(type, from: data)
-    }
-    
-    func delete(forKey key: String) async throws {
-        userDefaults.removeObject(forKey: key)
-    }
-}
-
-// MARK: - Errors
-
-enum HiveDataError: LocalizedError {
-    case flutterError(String)
-    case encodingError(String)
-    case decodingError(String)
-    case notFound
-    case channelNotInitialized
-    case unknownError(String)
-    
-    var errorDescription: String? {
-        switch self {
-        case .flutterError(let message):
-            return "Flutter error: \(message)"
-        case .encodingError(let message):
-            return "Encoding error: \(message)"
-        case .decodingError(let message):
-            return "Decoding error: \(message)"
-        case .notFound:
-            return "Data not found"
-        case .channelNotInitialized:
-            return "Method channel not initialized"
-        case .unknownError(let message):
-            return "Unknown error: \(message)"
-        }
-    }
-}
-
-// MARK: - Notifications
-
-extension Notification.Name {
-    static let settingsDidUpdate = Notification.Name("settingsDidUpdate")
-    static let profileDidUpdate = Notification.Name("profileDidUpdate")
-}
-
-// MARK: - Model Extensions for Dictionary Conversion
-
-extension ThriftwoodAppSettings {
-    func toDictionary() throws -> [String: Any] {
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(self)
-        
-        guard let dictionary = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw HiveDataError.encodingError("Failed to convert to dictionary")
-        }
-        
-        return dictionary
-    }
-    
-    static func fromDictionary(_ dictionary: [String: Any]) throws -> ThriftwoodAppSettings {
-        let data = try JSONSerialization.data(withJSONObject: dictionary)
-        let decoder = JSONDecoder()
-        return try decoder.decode(ThriftwoodAppSettings.self, from: data)
-    }
-}
-
-extension ThriftwoodProfile {
-    func toDictionary() throws -> [String: Any] {
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(self)
-        
-        guard let dictionary = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw HiveDataError.encodingError("Failed to convert profile to dictionary")
-        }
-        
-        return dictionary
-    }
-    
-    static func fromDictionary(_ dictionary: [String: Any]) throws -> ThriftwoodProfile {
-        let data = try JSONSerialization.data(withJSONObject: dictionary)
-        let decoder = JSONDecoder()
-        return try decoder.decode(ThriftwoodProfile.self, from: data)
     }
 }

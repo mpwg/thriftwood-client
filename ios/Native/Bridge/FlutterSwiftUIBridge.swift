@@ -101,6 +101,33 @@ import Flutter
         }
     }
     
+    /// Present a SwiftUI view from another SwiftUI view (SwiftUI-to-SwiftUI navigation)
+    /// - Parameters:
+    ///   - route: The route identifier
+    ///   - data: Optional data to pass to the SwiftUI view
+    ///   - from: The current UIViewController to present from
+    func presentNativeViewFromSwiftUI(route: String, data: [String: Any] = [:], from presenter: UIViewController) {
+        guard shouldUseNativeView(for: route) else { 
+            print("Cannot present native view for route: \(route) - not registered")
+            return 
+        }
+        
+        print("Presenting native SwiftUI view for route: \(route) from SwiftUI context")
+        
+        let swiftUIView = createSwiftUIView(for: route, data: data)
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        
+        // Configure presentation style
+        hostingController.modalPresentationStyle = .fullScreen
+        
+        // Present the SwiftUI view from the current SwiftUI context
+        DispatchQueue.main.async {
+            presenter.present(hostingController, animated: true) {
+                print("Successfully presented SwiftUI view for route: \(route)")
+            }
+        }
+    }
+    
     /// Navigate back to Flutter from SwiftUI
     /// - Parameter data: Optional data to pass back to Flutter
     func navigateBackToFlutter(data: [String: Any] = [:]) {
@@ -137,7 +164,17 @@ import Flutter
             self?.handleMethodCall(call, result: result)
         }
         
+        // Set up Hive data synchronization channel
+        let hiveMethodChannel = FlutterMethodChannel(
+            name: "com.thriftwood.hive",
+            binaryMessenger: binaryMessenger
+        )
+        
+        // Initialize the HiveDataManager with the Hive-specific method channel
+        HiveDataManager.shared.initialize(with: hiveMethodChannel)
+        
         print("Method channel 'com.thriftwood.bridge' established")
+        print("Method channel 'com.thriftwood.hive' established for data synchronization")
     }
     
     private func handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -197,32 +234,94 @@ import Flutter
         result(getAllNativeViews())
     }
     
+    // MARK: - Shared ViewModels
+    private var sharedSettingsViewModel: SettingsViewModel?
+    
+    private func getSharedSettingsViewModel() -> SettingsViewModel {
+        if let existing = sharedSettingsViewModel {
+            return existing
+        }
+        
+        let viewModel = SettingsViewModel()
+        sharedSettingsViewModel = viewModel
+        return viewModel
+    }
+    
     // MARK: - SwiftUI View Factory
     
-    private func createSwiftUIView(for route: String, data: [String: Any]) -> AnyView {
-        print("Creating SwiftUI view for route: \(route)")
+    func createSwiftUIView(for route: String, data: [String: Any]) -> AnyView {
+        // Only log when creating non-settings views to reduce noise
+        if !route.hasPrefix("settings_") {
+            print("Creating SwiftUI view for route: \(route)")
+        }
         
         switch route {
-        case "/settings":
-            let settingsViewModel = SettingsViewModel()
+        case "settings":
+            let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUISettingsView(viewModel: settingsViewModel))
-        case "/settings/configuration":
-            let settingsViewModel = SettingsViewModel()
+        case "settings_configuration":
+            let settingsViewModel = getSharedSettingsViewModel()
             let configurationViewModel = ConfigurationViewModel(settingsViewModel: settingsViewModel)
             return AnyView(SwiftUIConfigurationView(viewModel: configurationViewModel))
-        case "/settings/profiles":
-            let settingsViewModel = SettingsViewModel()
-            let profilesViewModel = ProfilesViewModel(settingsViewModel: settingsViewModel)
-            return AnyView(SwiftUIProfilesView(viewModel: profilesViewModel))
-        case "/settings/system":
-            let settingsViewModel = SettingsViewModel()
-            return AnyView(SwiftUISettingsView(viewModel: settingsViewModel))
-        case "/settings/system/logs":
+        case "settings_profiles":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIProfilesView(viewModel: settingsViewModel))
+        case "settings_system":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUISystemView(viewModel: settingsViewModel))
+        case "settings_system_logs":
             let systemLogsViewModel = SystemLogsViewModel()
             return AnyView(SwiftUISystemLogsView(viewModel: systemLogsViewModel))
-        case "/dashboard":
+        case "settings_general":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIGeneralSettingsView(viewModel: settingsViewModel))
+        case "settings_dashboard":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIDashboardSettingsView(viewModel: settingsViewModel))
+        case "settings_wake_on_lan":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIWakeOnLANSettingsView(viewModel: settingsViewModel))
+        case "settings_search":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUISearchSettingsView(viewModel: settingsViewModel))
+        case "settings_external_modules":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIExternalModulesSettingsView(viewModel: settingsViewModel))
+        case "settings_drawer":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIDrawerSettingsView(viewModel: settingsViewModel))
+        case "settings_quick_actions":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIQuickActionsSettingsView(viewModel: settingsViewModel))
+        
+        // Service-specific settings views
+        case "settings_radarr":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIRadarrSettingsView(viewModel: settingsViewModel))
+        case "settings_sonarr":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUISonarrSettingsView(viewModel: settingsViewModel))
+        case "settings_lidarr":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUILidarrSettingsView(viewModel: settingsViewModel))
+        case "settings_sabnzbd":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUISABnzbdSettingsView(viewModel: settingsViewModel))
+        case "settings_nzbget":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUINZBGetSettingsView(viewModel: settingsViewModel))
+        case "settings_tautulli":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUITautulliSettingsView(viewModel: settingsViewModel))
+        case "settings_overseerr":
+            let settingsViewModel = getSharedSettingsViewModel()
+            return AnyView(SwiftUIOverseerrSettingsView(viewModel: settingsViewModel))
+        
+        case "settings_all":
+            return AnyView(SwiftUIAllSettingsView())
+        case "dashboard":
             return AnyView(DashboardWrapperView(data: data))
-        case "/test":
+        case "test":
             return AnyView(TestSwiftUIView(route: route, data: data))
         default:
             // Fallback view for unimplemented routes

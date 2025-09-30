@@ -28,14 +28,32 @@ import Flutter
     
     // Register settings routes for Phase 2 hybrid functionality
     // Main settings route (root level)
-    FlutterSwiftUIBridge.shared.registerNativeView("/settings")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings")
     
     // Sub-routes for settings sections
-    FlutterSwiftUIBridge.shared.registerNativeView("/settings/configuration")
-    FlutterSwiftUIBridge.shared.registerNativeView("/settings/profiles")
-    FlutterSwiftUIBridge.shared.registerNativeView("/settings/system")
-    FlutterSwiftUIBridge.shared.registerNativeView("/settings/system/logs")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_configuration")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_profiles")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_system")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_system_logs")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_general")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_dashboard")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_wake_on_lan")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_search")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_external_modules")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_drawer")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_quick_actions")
     
+    // Service-specific settings routes
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_radarr")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_sonarr")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_lidarr")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_sabnzbd")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_nzbget")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_tautulli")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_overseerr")
+    
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_all")
+
     print("Hybrid bridge system initialized successfully")
   }
   
