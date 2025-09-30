@@ -320,7 +320,7 @@ import Flutter
         case "settings_all":
             return AnyView(SwiftUIAllSettingsView())
         case "dashboard":
-            return AnyView(DashboardWrapperView(data: data))
+            return AnyView(DashboardView())
         case "test":
             return AnyView(TestSwiftUIView(route: route, data: data))
         default:
@@ -426,6 +426,6 @@ struct DashboardWrapperView: View {
     let data: [String: Any]
     
     var body: some View {
-        PlaceholderSwiftUIView(route: "/dashboard", data: data)
+        DashboardView()
     }
 }

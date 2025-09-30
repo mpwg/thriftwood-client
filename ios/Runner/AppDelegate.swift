@@ -53,6 +53,10 @@ import Flutter
     FlutterSwiftUIBridge.shared.registerNativeView("settings_overseerr")
     
     FlutterSwiftUIBridge.shared.registerNativeView("settings_all")
+    
+    // Register Dashboard for Phase 3 hybrid functionality
+    FlutterSwiftUIBridge.shared.registerDashboardView()
+    FlutterSwiftUIBridge.shared.setupDashboardMethodHandlers()
 
     print("Hybrid bridge system initialized successfully")
   }

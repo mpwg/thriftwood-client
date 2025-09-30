@@ -231,10 +231,44 @@ extension HybridNavigationCoordinator {
         // Extract parameters
         let parameters = extractParametersFromURL(url)
         
-        // Navigate to the deep link route
-        navigateFromFlutter(to: route, data: parameters)
+        // Special handling for dashboard routes
+        if route == "/dashboard" || route.hasPrefix("/dashboard/") {
+            handleDashboardDeepLink(route: route, parameters: parameters)
+        } else {
+            // Navigate to the deep link route
+            navigateFromFlutter(to: route, data: parameters)
+        }
         
         return true
+    }
+    
+    /// Handle dashboard-specific deep links
+    /// - Parameters:
+    ///   - route: Dashboard route
+    ///   - parameters: URL parameters
+    private func handleDashboardDeepLink(route: String, parameters: [String: Any]) {
+        // If dashboard is native, present it directly
+        if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: "/dashboard") {
+            var dashboardData = parameters
+            
+            // Handle specific dashboard deep link scenarios
+            if route == "/dashboard" {
+                // Main dashboard
+                dashboardData["selectedTab"] = 0
+            } else if route == "/dashboard/calendar" {
+                // Calendar tab
+                dashboardData["selectedTab"] = 1
+            } else if route.hasPrefix("/dashboard/service/") {
+                // Service-specific navigation
+                let serviceKey = String(route.dropFirst("/dashboard/service/".count))
+                dashboardData["navigateToService"] = serviceKey
+            }
+            
+            FlutterSwiftUIBridge.shared.presentNativeView(route: "/dashboard", data: dashboardData)
+        } else {
+            // Fallback to Flutter navigation
+            navigateFromFlutter(to: route, data: parameters)
+        }
     }
     
     private func extractRouteFromURL(_ url: URL) -> String? {
