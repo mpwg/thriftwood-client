@@ -15,16 +15,20 @@ struct ServiceToggleRow: View {
     
     var body: some View {
         HStack {
-            Text(name)
-                .font(.body)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(name)
+                    .font(.headline)
+                
+                Text(isEnabled ? "" : "Disabled")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
             
             Spacer()
             
-            Text(isEnabled ? "Enabled" : "Disabled")
-                .font(.caption)
-                .foregroundColor(isEnabled ? .green : .secondary)
-            
             Toggle("", isOn: $isEnabled)
+                .labelsHidden()
         }
+        .padding(.vertical, 2)
     }
 }
