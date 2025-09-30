@@ -283,486 +283,1353 @@ class DataMigrationManager {
 
 ```swift
 Tasks:
-1. Create base API client with URLSession
-2. Implement authentication interceptors
-3. Add error handling and retry logic
-4. Create response decoders for each service
-5. Implement API versioning support
+1. Obtain OpenAPI specifications for all services
+2. Set up OpenAPI Generator for Swift
+3. Generate type-safe API clients from specs
+4. Create service-specific wrappers for generated clients
+5. Implement authentication and error handling layers
+6. Add caching and offline support
 ```
 
-**Base API Client:**
+**OpenAPI-Based API Strategy:**
 
 ```swift
-// Base API client replacing Retrofit/Dio
-actor BaseAPIClient {
-    private let session: URLSession
-    private let decoder = JSONDecoder()
+// Using OpenAPI Generator for type-safe clients
+// Install: brew install openapi-generator
+// Generate: openapi-generator generate -i radarr-api.yaml -g swift5 -o ./Generated/RadarrAPI
 
-    init() {
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30
-        self.session = URLSession(configuration: config)
+// Service wrapper around generated OpenAPI client
+actor RadarrService {
+    private let apiClient: RadarrAPI  // Generated from OpenAPI spec
+    private let config: RadarrConfiguration
+
+    init(config: RadarrConfiguration) {
+        self.config = config
+
+        // Configure generated client with authentication
+        let configuration = Configuration()
+        configuration.basePath = config.baseURL
+        configuration.apiKeyPrefix["X-Api-Key"] = config.apiKey
+
+        self.apiClient = RadarrAPI(configuration: configuration)
     }
 
-    func request<T: Decodable>(
-        _ endpoint: APIEndpoint,
-        type: T.Type
-    ) async throws -> T {
-        var request = URLRequest(url: endpoint.url)
-        request.httpMethod = endpoint.method.rawValue
-
-        // Add authentication
-        if let apiKey = endpoint.apiKey {
-            request.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
+    // Wrap generated API calls with error handling and caching
+    func getMovies() async throws -> [Movie] {
+        do {
+            // Use generated type-safe API call
+            let response = try await apiClient.apiV3MovieGet()
+            return response
+        } catch {
+            // Handle errors consistently
+            throw ServiceError.apiError(error)
         }
+    }
 
-        let (data, response) = try await session.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
-            throw APIError.invalidResponse
-        }
-
-        return try decoder.decode(T.self, from: data)
+    func addMovie(_ movie: Movie, options: AddMovieOptions) async throws -> Movie {
+        // Use generated models and endpoints
+        let request = AddMovieRequest(
+            movie: movie,
+            addOptions: options
+        )
+        return try await apiClient.apiV3MoviePost(body: request)
     }
 }
+
+// Authentication interceptor for all services
+class APIAuthenticationHandler {
+    static func configure(for service: ServiceType, config: ServiceConfiguration) -> Configuration {
+        let configuration = Configuration()
+        configuration.basePath = config.baseURL
+
+        // Handle different authentication methods
+        switch service {
+        case .radarr, .sonarr, .lidarr:
+            configuration.apiKey["X-Api-Key"] = config.apiKey
+        case .sabnzbd:
+            configuration.apiKey["apikey"] = config.apiKey
+        case .nzbget:
+            // NZBGet uses basic auth
+            configuration.username = config.username
+            configuration.password = config.password
+        case .tautulli:
+            configuration.apiKey["apikey"] = config.apiKey
+        }
+
+        return configuration
+    }
+}
+```
+
+**OpenAPI Specification Management:**
+
+```yaml
+# ios/Native/OpenAPI/radarr-v3.yaml
+# Download from: https://radarr.video/docs/api/
+openapi: 3.0.0
+info:
+  title: Radarr API
+  version: 3.0.0
+# ... full OpenAPI spec
+
+# ios/Native/OpenAPI/sonarr-v3.yaml
+# Download from: https://sonarr.tv/docs/api/
+openapi: 3.0.0
+info:
+  title: Sonarr API
+  version: 3.0.0
+# ... full OpenAPI spec
+```
+
+**Build Phase Script for API Generation:**
+
+```bash
+#!/bin/bash
+# ios/Native/Scripts/generate-api-clients.sh
+
+# Generate API clients from OpenAPI specs
+OPENAPI_DIR="ios/Native/OpenAPI"
+OUTPUT_DIR="ios/Native/Generated"
+
+# Generate Radarr API client
+openapi-generator generate \
+  -i "$OPENAPI_DIR/radarr-v3.yaml" \
+  -g swift5 \
+  -o "$OUTPUT_DIR/RadarrAPI" \
+  --additional-properties=responseAs=AsyncAwait,projectName=RadarrAPI
+
+# Generate Sonarr API client
+openapi-generator generate \
+  -i "$OPENAPI_DIR/sonarr-v3.yaml" \
+  -g swift5 \
+  -o "$OUTPUT_DIR/SonarrAPI" \
+  --additional-properties=responseAs=AsyncAwait,projectName=SonarrAPI
+
+# Generate other service clients...
 ```
 
 ### Phase 5: Service API Clients Migration (Week 10-12)
 
-**Goal: Replace all Retrofit/Dio API clients with Swift implementations**
+**Goal: Integrate OpenAPI-generated clients with proper error handling and caching**
 
-#### 5.1 Radarr API Client
+#### 5.1 OpenAPI Integration Setup
 
 ```swift
 Tasks:
-1. Implement RadarrAPIClient with all endpoints
-2. Create Swift models for all Radarr responses
-3. Add movie management functions
-4. Implement queue and history endpoints
-5. Test against live Radarr instance
+1. Download OpenAPI specifications for all services:
+   - Radarr: https://radarr.video/docs/api/
+   - Sonarr: https://sonarr.tv/docs/api/
+   - Lidarr: https://lidarr.audio/docs/api/
+   - SABnzbd: API documentation to OpenAPI conversion
+   - NZBGet: API documentation to OpenAPI conversion
+   - Tautulli: API documentation to OpenAPI conversion
+2. Set up OpenAPI Generator in Xcode build pipeline
+3. Generate Swift clients with async/await support
+4. Create service wrappers with consistent error handling
+5. Add response caching layer
+6. Implement retry logic with exponential backoff
 ```
 
-**Swift Implementation:**
+#### 5.2 Service Client Architecture
 
 ```swift
-// Radarr API client replacing lib/api/radarr/
-actor RadarrAPIClient: BaseAPIClient {
-    private let baseURL: URL
-    private let apiKey: String
+// Base service protocol for consistency
+protocol MediaService {
+    associatedtype Configuration
+    associatedtype APIClient
 
-    func getMovies() async throws -> [RadarrMovie] {
-        let endpoint = APIEndpoint(
-            url: baseURL.appendingPathComponent("api/v3/movie"),
-            method: .get,
-            apiKey: apiKey
-        )
-        return try await request(endpoint, type: [RadarrMovie].self)
-    }
+    var config: Configuration { get }
+    var apiClient: APIClient { get }
 
-    func addMovie(_ movie: RadarrMovie) async throws {
-        let endpoint = APIEndpoint(
-            url: baseURL.appendingPathComponent("api/v3/movie"),
-            method: .post,
-            apiKey: apiKey,
-            body: movie
-        )
-        _ = try await request(endpoint, type: RadarrMovie.self)
-    }
-
-    func searchMovie(movieId: Int) async throws {
-        let endpoint = APIEndpoint(
-            url: baseURL.appendingPathComponent("api/v3/command"),
-            method: .post,
-            apiKey: apiKey,
-            body: ["name": "MoviesSearch", "movieIds": [movieId]]
-        )
-        _ = try await request(endpoint, type: CommandResponse.self)
-    }
+    func testConnection() async throws -> Bool
+    func getSystemStatus() async throws -> SystemStatus
 }
-```
 
-#### 5.2 Sonarr API Client
+// Radarr implementation using generated client
+actor RadarrService: MediaService {
+    typealias Configuration = RadarrConfiguration
+    typealias APIClient = RadarrAPI
 
-```swift
-Tasks:
-1. Implement SonarrAPIClient with series/episode endpoints
-2. Create Swift models for Sonarr responses
-3. Add calendar and queue management
-4. Implement episode file management
-5. Test against live Sonarr instance
-```
+    let config: RadarrConfiguration
+    let apiClient: RadarrAPI
+    private let cache = ResponseCache()
 
-#### 5.3 Other Service Clients (Lidarr, SABnzbd, NZBGet, Tautulli)
+    init(config: RadarrConfiguration) {
+        self.config = config
 
-```swift
-Tasks:
-1. Implement remaining API clients
-2. Create response models for each service
-3. Add service-specific functionality
-4. Test against live instances
-```
+        let apiConfig = APIAuthenticationHandler.configure(
+            for: .radarr,
+            config: config
+        )
+        self.apiClient = RadarrAPI(configuration: apiConfig)
+    }
 
-### Phase 6: Service Module UI Migration (Week 13-16)
+    // Cache frequently accessed data
+    func getMovies(useCache: Bool = true) async throws -> [Movie] {
+        let cacheKey = "movies_\(config.profileId)"
 
-**Goal: Migrate each service module UI one by one**
+        if useCache, let cached: [Movie] = cache.get(cacheKey) {
+            return cached
+        }
 
-#### Week 13: Radarr Module
+        let movies = try await withRetry {
+            try await apiClient.apiV3MovieGet()
+        }
 
-```swift
-Tasks:
-1. Create RadarrHomeView in SwiftUI
-2. Implement movie list with poster grid
-3. Create movie detail view with actions
-4. Add search and filtering
-5. Implement add movie workflow
-6. Connect to new Swift API client
-```
+        cache.set(movies, for: cacheKey, ttl: 300) // 5 min cache
+        return movies
+    }
 
-**SwiftUI Implementation:**
+    // Retry logic for network failures
+    private func withRetry<T>(
+        maxAttempts: Int = 3,
+        operation: () async throws -> T
+    ) async throws -> T {
+        var lastError: Error?
 
-```swift
-struct RadarrHomeView: View {
-    @State private var service = RadarrService()
-    @State private var searchText = ""
-
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: columns) {
-                    ForEach(service.filteredMovies(searchText)) { movie in
-                        MoviePosterCard(movie: movie)
-                            .onTapGesture {
-                                selectedMovie = movie
-                            }
-                    }
+        for attempt in 1...maxAttempts {
+            do {
+                return try await operation()
+            } catch {
+                lastError = error
+                if attempt < maxAttempts {
+                    // Exponential backoff
+                    let delay = pow(2.0, Double(attempt))
+                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
                 }
             }
-            .searchable(text: $searchText)
-            .navigationTitle("Movies")
-            .task {
-                await service.loadMovies()
-            }
         }
-    }
-}
 
-@Observable
-class RadarrService {
-    private let apiClient: RadarrAPIClient
-    private let profileManager: ProfileManager
-
-    var movies: [RadarrMovie] = []
-    var isLoading = false
-
-    init() {
-        let config = profileManager.activeProfile?.radarrConfig
-        self.apiClient = RadarrAPIClient(
-            baseURL: config?.baseURL ?? "",
-            apiKey: config?.apiKey ?? ""
-        )
+        throw lastError ?? ServiceError.unknown
     }
 
-    func loadMovies() async {
-        isLoading = true
+    func testConnection() async throws -> Bool {
         do {
-            movies = try await apiClient.getMovies()
+            _ = try await apiClient.apiV3SystemStatusGet()
+            return true
         } catch {
-            // Handle error
+            return false
         }
-        isLoading = false
     }
 }
 ```
 
-#### Week 14: Sonarr Module
+#### 5.3 Offline Support & Caching
 
 ```swift
 Tasks:
-1. Create SonarrHomeView with series grid
-2. Implement series detail with season/episode views
-3. Add calendar view for upcoming episodes
-4. Create episode management actions
-5. Connect to Swift API client
+1. Implement ResponseCache with SwiftData backing
+2. Add offline queue for actions (add/delete/update)
+3. Sync offline actions when connection restored
+4. Cache images and media artwork
+5. Implement smart cache invalidation
 ```
 
-#### Week 15: Download Clients (SABnzbd, NZBGet)
+**Caching Strategy:**
+
+```swift
+// Response caching with persistence
+actor ResponseCache {
+    private var memoryCache: [String: (data: Any, expiry: Date)] = [:]
+    private let diskCache: DiskCache
+
+    func get<T>(_ key: String) -> T? {
+        // Check memory cache first
+        if let cached = memoryCache[key],
+           cached.expiry > Date() {
+            return cached.data as? T
+        }
+
+        // Check disk cache
+        return diskCache.get(key)
+    }
+
+    func set<T>(_ value: T, for key: String, ttl: TimeInterval) {
+        let expiry = Date().addingTimeInterval(ttl)
+        memoryCache[key] = (value, expiry)
+        diskCache.set(value, for: key, expiry: expiry)
+    }
+}
+
+// Offline action queue
+@Model
+final class OfflineAction {
+    var id: UUID
+    var service: String
+    var action: String
+    var payload: Data
+    var createdAt: Date
+    var retryCount: Int
+
+    init(service: String, action: String, payload: Codable) {
+        self.id = UUID()
+        self.service = service
+        self.action = action
+        self.payload = try! JSONEncoder().encode(payload)
+        self.createdAt = Date()
+        self.retryCount = 0
+    }
+}
+
+actor OfflineQueueManager {
+    func enqueue(action: OfflineAction) async {
+        // Save to SwiftData
+        modelContext.insert(action)
+        try? modelContext.save()
+    }
+
+    func processQueue() async {
+        let actions = try? modelContext.fetch(
+            FetchDescriptor<OfflineAction>(
+                sortBy: [SortDescriptor(\.createdAt)]
+            )
+        )
+
+        for action in actions ?? [] {
+            if await processAction(action) {
+                modelContext.delete(action)
+            } else {
+                action.retryCount += 1
+            }
+        }
+
+        try? modelContext.save()
+    }
+}
+```
+
+#### 5.4 API Version Management
 
 ```swift
 Tasks:
-1. Create unified download queue view
-2. Implement queue management actions
-3. Add download history view
-4. Handle pause/resume/delete functionality
-5. Create download statistics dashboard
+1. Support multiple API versions per service
+2. Auto-detect server API version
+3. Graceful degradation for older servers
+4. Feature flags based on API capabilities
+5. Migration paths for breaking changes
 ```
 
-#### Week 16: Remaining Modules
+**Version Detection:**
+
+```swift
+protocol VersionedAPIService {
+    var supportedVersions: [String] { get }
+    var currentVersion: String? { get }
+
+    func detectVersion() async throws -> String
+    func isFeatureSupported(_ feature: String) -> Bool
+}
+
+extension RadarrService: VersionedAPIService {
+    var supportedVersions: [String] {
+        ["v3", "v4"]  // v4 is hypothetical future version
+    }
+
+    func detectVersion() async throws -> String {
+        let status = try await apiClient.apiV3SystemStatusGet()
+        // Parse version from response
+        return parseAPIVersion(from: status.version)
+    }
+
+    func isFeatureSupported(_ feature: String) -> Bool {
+        switch (feature, currentVersion) {
+        case ("massEditor", "v3"): return true
+        case ("manualImport", "v3"): return true
+        case ("customFormats", let v) where v >= "v3.2": return true
+        default: return false
+        }
+    }
+}
+```
+
+## Step-by-Step Migration Process
+
+### ✅ Phase 1: Setup Hybrid Infrastructure (Week 1-2) - COMPLETED
+
+**Status: COMPLETED**
+
+### ✅ Phase 2: First Hybrid View - Settings (Week 3-4) - COMPLETED
+
+**Status: COMPLETED**
+
+### ✅ Phase 3: Dashboard Migration (Week 5-6) - COMPLETED
+
+**Status: COMPLETED**
+
+### Phase 4: Core Infrastructure Migration (Week 7-9)
+
+**Goal: Migrate critical infrastructure components to Swift**
+
+#### 4.1 Data Persistence Migration
 
 ```swift
 Tasks:
-1. Lidarr: Artist and album management
-2. Tautulli: Analytics and statistics views
-3. Search: Cross-service search implementation
-4. Wake-on-LAN: Network utilities
+1. Create SwiftData models for all Hive boxes
+2. Implement bidirectional sync during transition
+3. Migrate profile configurations
+4. Migrate service settings
+5. Create data migration utilities
 ```
 
-### Phase 7: Infrastructure Cleanup (Week 17-18)
+**SwiftData Models:**
 
-**Goal: Remove Flutter dependencies and optimize for pure Swift**
+```swift
+// Profile model replacing Hive Box
+@Model
+final class Profile {
+    @Attribute(.unique) var id: UUID
+    var name: String
+    var isActive: Bool
 
-#### 7.1 Navigation System Migration
+    // Service configurations
+    var radarrConfig: RadarrConfiguration?
+    var sonarrConfig: SonarrConfiguration?
+    var lidarrConfig: LidarrConfiguration?
+    var sabConfig: SABnzbdConfiguration?
+    var nzbgetConfig: NZBGetConfiguration?
+    var tautulliConfig: TautulliConfiguration?
+
+    init(name: String) {
+        self.id = UUID()
+        self.name = name
+        self.isActive = false
+    }
+}
+
+@Model
+final class RadarrConfiguration {
+    var baseURL: String
+    var apiKey: String
+    var enabled: Bool
+    var defaultQualityProfile: Int?
+    var defaultRootFolder: String?
+
+    init(baseURL: String, apiKey: String) {
+        self.baseURL = baseURL
+        self.apiKey = apiKey
+        self.enabled = true
+    }
+}
+
+// Hive ↔ SwiftData sync during transition
+class DataMigrationManager {
+    func syncFromHive() async throws {
+        // Read from Hive boxes
+        let hiveProfiles = await readHiveProfiles()
+
+        // Convert and save to SwiftData
+        for hiveProfile in hiveProfiles {
+            let swiftDataProfile = convertToSwiftData(hiveProfile)
+            modelContext.insert(swiftDataProfile)
+        }
+
+        try modelContext.save()
+    }
+
+    func syncToHive(_ profile: Profile) async throws {
+        // Convert SwiftData to Hive format
+        // Write back to maintain Flutter compatibility
+    }
+}
+```
+
+#### 4.2 API Client Infrastructure
 
 ```swift
 Tasks:
-1. Replace FlutterSwiftUIBridge with pure SwiftUI navigation
-2. Implement deep linking with Universal Links
-3. Remove method channels
-4. Setup URL scheme handling
-5. Add state restoration
+1. Obtain OpenAPI specifications for all services
+2. Set up OpenAPI Generator for Swift
+3. Generate type-safe API clients from specs
+4. Create service-specific wrappers for generated clients
+5. Implement authentication and error handling layers
+6. Add caching and offline support
 ```
 
-**Pure SwiftUI Navigation:**
+**OpenAPI-Based API Strategy:**
 
 ```swift
-@main
-struct ThriftwoodApp: App {
-    @StateObject private var navigator = AppNavigator()
-    @StateObject private var profileManager = ProfileManager()
+// Using OpenAPI Generator for type-safe clients
+// Install: brew install openapi-generator
+// Generate: openapi-generator generate -i radarr-api.yaml -g swift5 -o ./Generated/RadarrAPI
 
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environmentObject(navigator)
-                .environmentObject(profileManager)
-                .onOpenURL { url in
-                    navigator.handleDeepLink(url)
+// Service wrapper around generated OpenAPI client
+actor RadarrService {
+    private let apiClient: RadarrAPI  // Generated from OpenAPI spec
+    private let config: RadarrConfiguration
+
+    init(config: RadarrConfiguration) {
+        self.config = config
+
+        // Configure generated client with authentication
+        let configuration = Configuration()
+        configuration.basePath = config.baseURL
+        configuration.apiKeyPrefix["X-Api-Key"] = config.apiKey
+
+        self.apiClient = RadarrAPI(configuration: configuration)
+    }
+
+    // Wrap generated API calls with error handling and caching
+    func getMovies() async throws -> [Movie] {
+        do {
+            // Use generated type-safe API call
+            let response = try await apiClient.apiV3MovieGet()
+            return response
+        } catch {
+            // Handle errors consistently
+            throw ServiceError.apiError(error)
+        }
+    }
+
+    func addMovie(_ movie: Movie, options: AddMovieOptions) async throws -> Movie {
+        // Use generated models and endpoints
+        let request = AddMovieRequest(
+            movie: movie,
+            addOptions: options
+        )
+        return try await apiClient.apiV3MoviePost(body: request)
+    }
+}
+
+// Authentication interceptor for all services
+class APIAuthenticationHandler {
+    static func configure(for service: ServiceType, config: ServiceConfiguration) -> Configuration {
+        let configuration = Configuration()
+        configuration.basePath = config.baseURL
+
+        // Handle different authentication methods
+        switch service {
+        case .radarr, .sonarr, .lidarr:
+            configuration.apiKey["X-Api-Key"] = config.apiKey
+        case .sabnzbd:
+            configuration.apiKey["apikey"] = config.apiKey
+        case .nzbget:
+            // NZBGet uses basic auth
+            configuration.username = config.username
+            configuration.password = config.password
+        case .tautulli:
+            configuration.apiKey["apikey"] = config.apiKey
+        }
+
+        return configuration
+    }
+}
+```
+
+**OpenAPI Specification Management:**
+
+```yaml
+# ios/Native/OpenAPI/radarr-v3.yaml
+# Download from: https://radarr.video/docs/api/
+openapi: 3.0.0
+info:
+  title: Radarr API
+  version: 3.0.0
+# ... full OpenAPI spec
+
+# ios/Native/OpenAPI/sonarr-v3.yaml
+# Download from: https://sonarr.tv/docs/api/
+openapi: 3.0.0
+info:
+  title: Sonarr API
+  version: 3.0.0
+# ... full OpenAPI spec
+```
+
+**Build Phase Script for API Generation:**
+
+```bash
+#!/bin/bash
+# ios/Native/Scripts/generate-api-clients.sh
+
+# Generate API clients from OpenAPI specs
+OPENAPI_DIR="ios/Native/OpenAPI"
+OUTPUT_DIR="ios/Native/Generated"
+
+# Generate Radarr API client
+openapi-generator generate \
+  -i "$OPENAPI_DIR/radarr-v3.yaml" \
+  -g swift5 \
+  -o "$OUTPUT_DIR/RadarrAPI" \
+  --additional-properties=responseAs=AsyncAwait,projectName=RadarrAPI
+
+# Generate Sonarr API client
+openapi-generator generate \
+  -i "$OPENAPI_DIR/sonarr-v3.yaml" \
+  -g swift5 \
+  -o "$OUTPUT_DIR/SonarrAPI" \
+  --additional-properties=responseAs=AsyncAwait,projectName=SonarrAPI
+
+# Generate other service clients...
+```
+
+### Phase 5: Service API Clients Migration (Week 10-12)
+
+**Goal: Integrate OpenAPI-generated clients with proper error handling and caching**
+
+#### 5.1 OpenAPI Integration Setup
+
+```swift
+Tasks:
+1. Download OpenAPI specifications for all services:
+   - Radarr: https://radarr.video/docs/api/
+   - Sonarr: https://sonarr.tv/docs/api/
+   - Lidarr: https://lidarr.audio/docs/api/
+   - SABnzbd: API documentation to OpenAPI conversion
+   - NZBGet: API documentation to OpenAPI conversion
+   - Tautulli: API documentation to OpenAPI conversion
+2. Set up OpenAPI Generator in Xcode build pipeline
+3. Generate Swift clients with async/await support
+4. Create service wrappers with consistent error handling
+5. Add response caching layer
+6. Implement retry logic with exponential backoff
+```
+
+#### 5.2 Service Client Architecture
+
+```swift
+// Base service protocol for consistency
+protocol MediaService {
+    associatedtype Configuration
+    associatedtype APIClient
+
+    var config: Configuration { get }
+    var apiClient: APIClient { get }
+
+    func testConnection() async throws -> Bool
+    func getSystemStatus() async throws -> SystemStatus
+}
+
+// Radarr implementation using generated client
+actor RadarrService: MediaService {
+    typealias Configuration = RadarrConfiguration
+    typealias APIClient = RadarrAPI
+
+    let config: RadarrConfiguration
+    let apiClient: RadarrAPI
+    private let cache = ResponseCache()
+
+    init(config: RadarrConfiguration) {
+        self.config = config
+
+        let apiConfig = APIAuthenticationHandler.configure(
+            for: .radarr,
+            config: config
+        )
+        self.apiClient = RadarrAPI(configuration: apiConfig)
+    }
+
+    // Cache frequently accessed data
+    func getMovies(useCache: Bool = true) async throws -> [Movie] {
+        let cacheKey = "movies_\(config.profileId)"
+
+        if useCache, let cached: [Movie] = cache.get(cacheKey) {
+            return cached
+        }
+
+        let movies = try await withRetry {
+            try await apiClient.apiV3MovieGet()
+        }
+
+        cache.set(movies, for: cacheKey, ttl: 300) // 5 min cache
+        return movies
+    }
+
+    // Retry logic for network failures
+    private func withRetry<T>(
+        maxAttempts: Int = 3,
+        operation: () async throws -> T
+    ) async throws -> T {
+        var lastError: Error?
+
+        for attempt in 1...maxAttempts {
+            do {
+                return try await operation()
+            } catch {
+                lastError = error
+                if attempt < maxAttempts {
+                    // Exponential backoff
+                    let delay = pow(2.0, Double(attempt))
+                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
                 }
+            }
+        }
+
+        throw lastError ?? ServiceError.unknown
+    }
+
+    func testConnection() async throws -> Bool {
+        do {
+            _ = try await apiClient.apiV3SystemStatusGet()
+            return true
+        } catch {
+            return false
         }
     }
 }
+```
 
-class AppNavigator: ObservableObject {
-    @Published var path = NavigationPath()
+#### 5.3 Offline Support & Caching
 
-    func handleDeepLink(_ url: URL) {
-        // Parse URL and navigate accordingly
-        if url.path.contains("radarr") {
-            path.append(RadarrDestination())
-        } else if url.path.contains("sonarr") {
-            path.append(SonarrDestination())
+```swift
+Tasks:
+1. Implement ResponseCache with SwiftData backing
+2. Add offline queue for actions (add/delete/update)
+3. Sync offline actions when connection restored
+4. Cache images and media artwork
+5. Implement smart cache invalidation
+```
+
+**Caching Strategy:**
+
+```swift
+// Response caching with persistence
+actor ResponseCache {
+    private var memoryCache: [String: (data: Any, expiry: Date)] = [:]
+    private let diskCache: DiskCache
+
+    func get<T>(_ key: String) -> T? {
+        // Check memory cache first
+        if let cached = memoryCache[key],
+           cached.expiry > Date() {
+            return cached.data as? T
+        }
+
+        // Check disk cache
+        return diskCache.get(key)
+    }
+
+    func set<T>(_ value: T, for key: String, ttl: TimeInterval) {
+        let expiry = Date().addingTimeInterval(ttl)
+        memoryCache[key] = (value, expiry)
+        diskCache.set(value, for: key, expiry: expiry)
+    }
+}
+
+// Offline action queue
+@Model
+final class OfflineAction {
+    var id: UUID
+    var service: String
+    var action: String
+    var payload: Data
+    var createdAt: Date
+    var retryCount: Int
+
+    init(service: String, action: String, payload: Codable) {
+        self.id = UUID()
+        self.service = service
+        self.action = action
+        self.payload = try! JSONEncoder().encode(payload)
+        self.createdAt = Date()
+        self.retryCount = 0
+    }
+}
+
+actor OfflineQueueManager {
+    func enqueue(action: OfflineAction) async {
+        // Save to SwiftData
+        modelContext.insert(action)
+        try? modelContext.save()
+    }
+
+    func processQueue() async {
+        let actions = try? modelContext.fetch(
+            FetchDescriptor<OfflineAction>(
+                sortBy: [SortDescriptor(\.createdAt)]
+            )
+        )
+
+        for action in actions ?? [] {
+            if await processAction(action) {
+                modelContext.delete(action)
+            } else {
+                action.retryCount += 1
+            }
+        }
+
+        try? modelContext.save()
+    }
+}
+```
+
+#### 5.4 API Version Management
+
+```swift
+Tasks:
+1. Support multiple API versions per service
+2. Auto-detect server API version
+3. Graceful degradation for older servers
+4. Feature flags based on API capabilities
+5. Migration paths for breaking changes
+```
+
+**Version Detection:**
+
+```swift
+protocol VersionedAPIService {
+    var supportedVersions: [String] { get }
+    var currentVersion: String? { get }
+
+    func detectVersion() async throws -> String
+    func isFeatureSupported(_ feature: String) -> Bool
+}
+
+extension RadarrService: VersionedAPIService {
+    var supportedVersions: [String] {
+        ["v3", "v4"]  // v4 is hypothetical future version
+    }
+
+    func detectVersion() async throws -> String {
+        let status = try await apiClient.apiV3SystemStatusGet()
+        // Parse version from response
+        return parseAPIVersion(from: status.version)
+    }
+
+    func isFeatureSupported(_ feature: String) -> Bool {
+        switch (feature, currentVersion) {
+        case ("massEditor", "v3"): return true
+        case ("manualImport", "v3"): return true
+        case ("customFormats", let v) where v >= "v3.2": return true
+        default: return false
         }
     }
 }
 ```
 
-#### 7.2 Background Tasks & Notifications
+## Step-by-Step Migration Process
+
+### ✅ Phase 1: Setup Hybrid Infrastructure (Week 1-2) - COMPLETED
+
+**Status: COMPLETED**
+
+### ✅ Phase 2: First Hybrid View - Settings (Week 3-4) - COMPLETED
+
+**Status: COMPLETED**
+
+### ✅ Phase 3: Dashboard Migration (Week 5-6) - COMPLETED
+
+**Status: COMPLETED**
+
+### Phase 4: Core Infrastructure Migration (Week 7-9)
+
+**Goal: Migrate critical infrastructure components to Swift**
+
+#### 4.1 Data Persistence Migration
 
 ```swift
 Tasks:
-1. Implement BackgroundTasks for periodic sync
-2. Setup UserNotifications for alerts
-3. Add widget support
-4. Implement App Clips for quick actions
-5. Remove Flutter background services
+1. Create SwiftData models for all Hive boxes
+2. Implement bidirectional sync during transition
+3. Migrate profile configurations
+4. Migrate service settings
+5. Create data migration utilities
 ```
 
-### Phase 8: Final Migration & Optimization (Week 19-20)
+**SwiftData Models:**
 
-**Goal: Complete transition to pure SwiftUI and optimize**
+```swift
+// Profile model replacing Hive Box
+@Model
+final class Profile {
+    @Attribute(.unique) var id: UUID
+    var name: String
+    var isActive: Bool
+
+    // Service configurations
+    var radarrConfig: RadarrConfiguration?
+    var sonarrConfig: SonarrConfiguration?
+    var lidarrConfig: LidarrConfiguration?
+    var sabConfig: SABnzbdConfiguration?
+    var nzbgetConfig: NZBGetConfiguration?
+    var tautulliConfig: TautulliConfiguration?
+
+    init(name: String) {
+        self.id = UUID()
+        self.name = name
+        self.isActive = false
+    }
+}
+
+@Model
+final class RadarrConfiguration {
+    var baseURL: String
+    var apiKey: String
+    var enabled: Bool
+    var defaultQualityProfile: Int?
+    var defaultRootFolder: String?
+
+    init(baseURL: String, apiKey: String) {
+        self.baseURL = baseURL
+        self.apiKey = apiKey
+        self.enabled = true
+    }
+}
+
+// Hive ↔ SwiftData sync during transition
+class DataMigrationManager {
+    func syncFromHive() async throws {
+        // Read from Hive boxes
+        let hiveProfiles = await readHiveProfiles()
+
+        // Convert and save to SwiftData
+        for hiveProfile in hiveProfiles {
+            let swiftDataProfile = convertToSwiftData(hiveProfile)
+            modelContext.insert(swiftDataProfile)
+        }
+
+        try modelContext.save()
+    }
+
+    func syncToHive(_ profile: Profile) async throws {
+        // Convert SwiftData to Hive format
+        // Write back to maintain Flutter compatibility
+    }
+}
+```
+
+#### 4.2 API Client Infrastructure
 
 ```swift
 Tasks:
-1. Remove all Flutter dependencies from Xcode project
-2. Delete Flutter framework and assets
-3. Clean up bridging code
-4. Optimize app size and performance
-5. Add iOS-exclusive features
+1. Obtain OpenAPI specifications for all services
+2. Set up OpenAPI Generator for Swift
+3. Generate type-safe API clients from specs
+4. Create service-specific wrappers for generated clients
+5. Implement authentication and error handling layers
+6. Add caching and offline support
 ```
 
-**Final Project Structure:**
+**OpenAPI-Based API Strategy:**
 
+```swift
+// Using OpenAPI Generator for type-safe clients
+// Install: brew install openapi-generator
+// Generate: openapi-generator generate -i radarr-api.yaml -g swift5 -o ./Generated/RadarrAPI
+
+// Service wrapper around generated OpenAPI client
+actor RadarrService {
+    private let apiClient: RadarrAPI  // Generated from OpenAPI spec
+    private let config: RadarrConfiguration
+
+    init(config: RadarrConfiguration) {
+        self.config = config
+
+        // Configure generated client with authentication
+        let configuration = Configuration()
+        configuration.basePath = config.baseURL
+        configuration.apiKeyPrefix["X-Api-Key"] = config.apiKey
+
+        self.apiClient = RadarrAPI(configuration: configuration)
+    }
+
+    // Wrap generated API calls with error handling and caching
+    func getMovies() async throws -> [Movie] {
+        do {
+            // Use generated type-safe API call
+            let response = try await apiClient.apiV3MovieGet()
+            return response
+        } catch {
+            // Handle errors consistently
+            throw ServiceError.apiError(error)
+        }
+    }
+
+    func addMovie(_ movie: Movie, options: AddMovieOptions) async throws -> Movie {
+        // Use generated models and endpoints
+        let request = AddMovieRequest(
+            movie: movie,
+            addOptions: options
+        )
+        return try await apiClient.apiV3MoviePost(body: request)
+    }
+}
+
+// Authentication interceptor for all services
+class APIAuthenticationHandler {
+    static func configure(for service: ServiceType, config: ServiceConfiguration) -> Configuration {
+        let configuration = Configuration()
+        configuration.basePath = config.baseURL
+
+        // Handle different authentication methods
+        switch service {
+        case .radarr, .sonarr, .lidarr:
+            configuration.apiKey["X-Api-Key"] = config.apiKey
+        case .sabnzbd:
+            configuration.apiKey["apikey"] = config.apiKey
+        case .nzbget:
+            // NZBGet uses basic auth
+            configuration.username = config.username
+            configuration.password = config.password
+        case .tautulli:
+            configuration.apiKey["apikey"] = config.apiKey
+        }
+
+        return configuration
+    }
+}
 ```
-ios/Native/
-├── App/
-│   ├── ThriftwoodApp.swift         # Main app entry
-│   └── ContentView.swift           # Root view
-├── Models/
-│   ├── Profile.swift               # SwiftData models
-│   ├── RadarrModels.swift
-│   ├── SonarrModels.swift
-│   └── ...
-├── Services/
-│   ├── API/
-│   │   ├── BaseAPIClient.swift
-│   │   ├── RadarrAPIClient.swift
-│   │   ├── SonarrAPIClient.swift
-│   │   └── ...
-│   ├── DataManager.swift          # SwiftData manager
-│   └── ProfileManager.swift       # Profile management
-├── Views/
-│   ├── Dashboard/
-│   │   └── DashboardView.swift
-│   ├── Radarr/
-│   │   ├── RadarrHomeView.swift
-│   │   └── MovieDetailView.swift
-│   ├── Sonarr/
-│   │   ├── SonarrHomeView.swift
-│   │   └── SeriesDetailView.swift
-│   └── ...
-└── Utilities/
-    ├── Extensions/
-    └── Helpers/
+
+**OpenAPI Specification Management:**
+
+```yaml
+# ios/Native/OpenAPI/radarr-v3.yaml
+# Download from: https://radarr.video/docs/api/
+openapi: 3.0.0
+info:
+  title: Radarr API
+  version: 3.0.0
+# ... full OpenAPI spec
+
+# ios/Native/OpenAPI/sonarr-v3.yaml
+# Download from: https://sonarr.tv/docs/api/
+openapi: 3.0.0
+info:
+  title: Sonarr API
+  version: 3.0.0
+# ... full OpenAPI spec
 ```
 
-## Critical Migration Dependencies
+**Build Phase Script for API Generation:**
 
-### Data Migration Path
+```bash
+#!/bin/bash
+# ios/Native/Scripts/generate-api-clients.sh
 
-```mermaid
-graph TD
-    A[Hive Boxes] -->|Week 7-8| B[Hybrid Storage]
-    B -->|Week 9| C[SwiftData Primary]
-    C -->|Week 19| D[SwiftData Only]
+# Generate API clients from OpenAPI specs
+OPENAPI_DIR="ios/Native/OpenAPI"
+OUTPUT_DIR="ios/Native/Generated"
 
-    E[Flutter Storage] -->|Sync| B
-    B -->|Sync| E
-    B -->|One-way| C
+# Generate Radarr API client
+openapi-generator generate \
+  -i "$OPENAPI_DIR/radarr-v3.yaml" \
+  -g swift5 \
+  -o "$OUTPUT_DIR/RadarrAPI" \
+  --additional-properties=responseAs=AsyncAwait,projectName=RadarrAPI
+
+# Generate Sonarr API client
+openapi-generator generate \
+  -i "$OPENAPI_DIR/sonarr-v3.yaml" \
+  -g swift5 \
+  -o "$OUTPUT_DIR/SonarrAPI" \
+  --additional-properties=responseAs=AsyncAwait,projectName=SonarrAPI
+
+# Generate other service clients...
 ```
 
-### API Client Migration Path
+### Phase 5: Service API Clients Migration (Week 10-12)
 
-```mermaid
-graph TD
-    A[Retrofit/Dio] -->|Week 10| B[Parallel Clients]
-    B -->|Week 11-12| C[Swift Clients Primary]
-    C -->|Week 19| D[Swift Only]
+**Goal: Integrate OpenAPI-generated clients with proper error handling and caching**
 
-    E[Flutter API] -->|Active| B
-    B -->|Deprecated| C
+#### 5.1 OpenAPI Integration Setup
+
+```swift
+Tasks:
+1. Download OpenAPI specifications for all services:
+   - Radarr: https://radarr.video/docs/api/
+   - Sonarr: https://sonarr.tv/docs/api/
+   - Lidarr: https://lidarr.audio/docs/api/
+   - SABnzbd: API documentation to OpenAPI conversion
+   - NZBGet: API documentation to OpenAPI conversion
+   - Tautulli: API documentation to OpenAPI conversion
+2. Set up OpenAPI Generator in Xcode build pipeline
+3. Generate Swift clients with async/await support
+4. Create service wrappers with consistent error handling
+5. Add response caching layer
+6. Implement retry logic with exponential backoff
+```
+
+#### 5.2 Service Client Architecture
+
+```swift
+// Base service protocol for consistency
+protocol MediaService {
+    associatedtype Configuration
+    associatedtype APIClient
+
+    var config: Configuration { get }
+    var apiClient: APIClient { get }
+
+    func testConnection() async throws -> Bool
+    func getSystemStatus() async throws -> SystemStatus
+}
+
+// Radarr implementation using generated client
+actor RadarrService: MediaService {
+    typealias Configuration = RadarrConfiguration
+    typealias APIClient = RadarrAPI
+
+    let config: RadarrConfiguration
+    let apiClient: RadarrAPI
+    private let cache = ResponseCache()
+
+    init(config: RadarrConfiguration) {
+        self.config = config
+
+        let apiConfig = APIAuthenticationHandler.configure(
+            for: .radarr,
+            config: config
+        )
+        self.apiClient = RadarrAPI(configuration: apiConfig)
+    }
+
+    // Cache frequently accessed data
+    func getMovies(useCache: Bool = true) async throws -> [Movie] {
+        let cacheKey = "movies_\(config.profileId)"
+
+        if useCache, let cached: [Movie] = cache.get(cacheKey) {
+            return cached
+        }
+
+        let movies = try await withRetry {
+            try await apiClient.apiV3MovieGet()
+        }
+
+        cache.set(movies, for: cacheKey, ttl: 300) // 5 min cache
+        return movies
+    }
+
+    // Retry logic for network failures
+    private func withRetry<T>(
+        maxAttempts: Int = 3,
+        operation: () async throws -> T
+    ) async throws -> T {
+        var lastError: Error?
+
+        for attempt in 1...maxAttempts {
+            do {
+                return try await operation()
+            } catch {
+                lastError = error
+                if attempt < maxAttempts {
+                    // Exponential backoff
+                    let delay = pow(2.0, Double(attempt))
+                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                }
+            }
+        }
+
+        throw lastError ?? ServiceError.unknown
+    }
+
+    func testConnection() async throws -> Bool {
+        do {
+            _ = try await apiClient.apiV3SystemStatusGet()
+            return true
+        } catch {
+            return false
+        }
+    }
+}
+```
+
+#### 5.3 Offline Support & Caching
+
+```swift
+Tasks:
+1. Implement ResponseCache with SwiftData backing
+2. Add offline queue for actions (add/delete/update)
+3. Sync offline actions when connection restored
+4. Cache images and media artwork
+5. Implement smart cache invalidation
+```
+
+**Caching Strategy:**
+
+```swift
+// Response caching with persistence
+actor ResponseCache {
+    private var memoryCache: [String: (data: Any, expiry: Date)] = [:]
+    private let diskCache: DiskCache
+
+    func get<T>(_ key: String) -> T? {
+        // Check memory cache first
+        if let cached = memoryCache[key],
+           cached.expiry > Date() {
+            return cached.data as? T
+        }
+
+        // Check disk cache
+        return diskCache.get(key)
+    }
+
+    func set<T>(_ value: T, for key: String, ttl: TimeInterval) {
+        let expiry = Date().addingTimeInterval(ttl)
+        memoryCache[key] = (value, expiry)
+        diskCache.set(value, for: key, expiry: expiry)
+    }
+}
+
+// Offline action queue
+@Model
+final class OfflineAction {
+    var id: UUID
+    var service: String
+    var action: String
+    var payload: Data
+    var createdAt: Date
+    var retryCount: Int
+
+    init(service: String, action: String, payload: Codable) {
+        self.id = UUID()
+        self.service = service
+        self.action = action
+        self.payload = try! JSONEncoder().encode(payload)
+        self.createdAt = Date()
+        self.retryCount = 0
+    }
+}
+
+actor OfflineQueueManager {
+    func enqueue(action: OfflineAction) async {
+        // Save to SwiftData
+        modelContext.insert(action)
+        try? modelContext.save()
+    }
+
+    func processQueue() async {
+        let actions = try? modelContext.fetch(
+            FetchDescriptor<OfflineAction>(
+                sortBy: [SortDescriptor(\.createdAt)]
+            )
+        )
+
+        for action in actions ?? [] {
+            if await processAction(action) {
+                modelContext.delete(action)
+            } else {
+                action.retryCount += 1
+            }
+        }
+
+        try? modelContext.save()
+    }
+}
+```
+
+#### 5.4 API Version Management
+
+```swift
+Tasks:
+1. Support multiple API versions per service
+2. Auto-detect server API version
+3. Graceful degradation for older servers
+4. Feature flags based on API capabilities
+5. Migration paths for breaking changes
+```
+
+**Version Detection:**
+
+```swift
+protocol VersionedAPIService {
+    var supportedVersions: [String] { get }
+    var currentVersion: String? { get }
+
+    func detectVersion() async throws -> String
+    func isFeatureSupported(_ feature: String) -> Bool
+}
+
+extension RadarrService: VersionedAPIService {
+    var supportedVersions: [String] {
+        ["v3", "v4"]  // v4 is hypothetical future version
+    }
+
+    func detectVersion() async throws -> String {
+        let status = try await apiClient.apiV3SystemStatusGet()
+        // Parse version from response
+        return parseAPIVersion(from: status.version)
+    }
+
+    func isFeatureSupported(_ feature: String) -> Bool {
+        switch (feature, currentVersion) {
+        case ("massEditor", "v3"): return true
+        case ("manualImport", "v3"): return true
+        case ("customFormats", let v) where v >= "v3.2": return true
+        default: return false
+        }
+    }
+}
 ```
 
 ## Testing Strategy for Infrastructure Migration
 
-### API Client Testing
+### OpenAPI Client Testing
 
 ```swift
-func testRadarrAPIClient() async throws {
-    // Test all endpoints
-    let client = RadarrAPIClient(baseURL: testURL, apiKey: testKey)
+func testOpenAPIRadarrClient() async throws {
+    // Test with mock server that implements OpenAPI spec
+    let mockServer = MockServer(specification: "radarr-v3.yaml")
+    mockServer.start()
 
-    // Test movie fetch
-    let movies = try await client.getMovies()
-    XCTAssertFalse(movies.isEmpty)
+    let config = RadarrConfiguration(
+        baseURL: mockServer.url,
+        apiKey: "test-key"
+    )
+    let service = RadarrService(config: config)
 
-    // Test search
-    try await client.searchMovie(movieId: movies.first!.id)
+    // Test all generated endpoints work correctly
+    let movies = try await service.getMovies()
+    XCTAssertNotNil(movies)
 
-    // Verify compatibility with Flutter API responses
-    let flutterResponse = await getFlutterAPIResponse()
-    let swiftResponse = try await client.getMovies()
-    XCTAssertEqual(flutterResponse.count, swiftResponse.count)
+    // Verify request matches OpenAPI spec
+    XCTAssertTrue(mockServer.validateLastRequest())
+
+    // Test error handling
+    mockServer.simulateError(.unauthorized)
+    do {
+        _ = try await service.getMovies()
+        XCTFail("Should throw unauthorized error")
+    } catch ServiceError.unauthorized {
+        // Expected
+    }
+}
+
+func testAPIVersionCompatibility() async throws {
+    // Test against different API versions
+    for version in ["3.0", "3.1", "3.2"] {
+        let service = createServiceForVersion(version)
+
+        // Core functionality should work across versions
+        XCTAssertNoThrow(try await service.getMovies())
+
+        // Version-specific features
+        if version >= "3.2" {
+            XCTAssertTrue(service.isFeatureSupported("customFormats"))
+        }
+    }
 }
 ```
 
-### Data Migration Testing
+## Critical Migration Dependencies
 
-```swift
-func testDataMigration() async throws {
-    // Test Hive to SwiftData migration
-    let migrator = DataMigrationManager()
+### API Migration Strategy
 
-    // Create test data in Hive
-    await createTestHiveData()
+```mermaid
+graph TD
+    A[Manual Flutter APIs] -->|Week 10| B[OpenAPI Specs]
+    B -->|Generate| C[Type-safe Swift Clients]
+    C -->|Week 11| D[Service Wrappers]
+    D -->|Week 12| E[Caching & Offline]
 
-    // Migrate to SwiftData
-    try await migrator.syncFromHive()
-
-    // Verify all data migrated correctly
-    let profiles = try modelContext.fetch(FetchDescriptor<Profile>())
-    XCTAssertEqual(profiles.count, expectedCount)
-
-    // Test bidirectional sync
-    profiles.first?.name = "Updated"
-    try await migrator.syncToHive(profiles.first!)
-
-    // Verify Flutter can read updated data
-    let hiveProfile = await readHiveProfile(id: profiles.first!.id)
-    XCTAssertEqual(hiveProfile.name, "Updated")
-}
+    F[Download Specs] -->|Radarr/Sonarr/Lidarr| B
+    G[Convert Docs] -->|SABnzbd/NZBGet| B
+    B -->|openapi-generator| C
 ```
-
-## Success Criteria
-
-**Infrastructure Migration Success:**
-
-- [ ] All Hive data successfully migrated to SwiftData
-- [ ] All API endpoints functioning with Swift clients
-- [ ] Background tasks running natively
-- [ ] Push notifications working
-- [ ] Deep linking functional
-- [ ] No Flutter dependencies remaining
-
-**Per-Phase Success Criteria:**
-
-- [ ] App builds and runs successfully
-- [ ] All existing functionality preserved
-- [ ] No crashes or navigation dead ends
-- [ ] Data consistency maintained across platforms
-- [ ] Performance equal or better than previous phase
-- [ ] All deep links and external integrations work
-
-**Final Success Criteria:**
-
-- [ ] 100% SwiftUI implementation
-- [ ] Zero Flutter dependencies
-- [ ] All features from original Flutter app
-- [ ] Improved performance and iOS integration
-- [ ] App Store ready for iOS 18+
-
-## Risk Mitigation
-
-### Infrastructure Risks
-
-- **Data Loss**: Implement backup before migration, maintain Hive until verified
-- **API Compatibility**: Test against multiple server versions
-- **Authentication**: Ensure API keys migrate correctly
-- **Performance**: Profile Swift API clients vs Retrofit
-- **Offline Support**: Implement caching in Swift clients
-
-### Technical Risks
-
-- **Navigation Complexity**: Maintain detailed navigation map, test all paths
-- **Data Synchronization**: Use shared storage layer, implement conflict resolution
-- **Performance**: Profile each phase, ensure no regressions
-- **State Management**: Careful coordination between Flutter and SwiftUI state
-
-### Process Risks
-
-- **User Experience**: Maintain visual consistency during transition
-- **Testing Complexity**: Automated testing for both platforms at each phase
-- **Rollback Strategy**: Each phase can be rolled back independently
-- **Timeline Delays**: 20% buffer built into each phase
 
 ## Migration Checklist Per Component
 
 **API Client Migration:**
 
-- [ ] Document all endpoints used by Flutter client
-- [ ] Create Swift models for all responses
-- [ ] Implement all endpoints in Swift
-- [ ] Add comprehensive error handling
-- [ ] Test against live services
+- [ ] Download/create OpenAPI specifications for all services
+- [ ] Set up OpenAPI Generator in build pipeline
+- [ ] Generate Swift clients with async/await
+- [ ] Create service wrappers with consistent interfaces
+- [ ] Implement authentication for each service type
+- [ ] Add comprehensive error handling and retry logic
+- [ ] Implement response caching strategy
+- [ ] Add offline action queue
+- [ ] Test against multiple server versions
 - [ ] Performance comparison with Flutter client
-
-**Data Migration:**
-
-- [ ] Map all Hive boxes to SwiftData models
-- [ ] Create migration utilities
-- [ ] Implement bidirectional sync
-- [ ] Test data integrity
-- [ ] Plan rollback strategy
-- [ ] Document data model changes
+- [ ] Document API version compatibility matrix
 
 ## Timeline Summary
 
