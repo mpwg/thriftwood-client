@@ -13,6 +13,8 @@ struct ServiceConfigMenuItem: View {
     let name: String
     let icon: String
     
+    @State private var isNavigating = false
+    
     var body: some View {
         HStack {
             Image(systemName: icon)
@@ -36,11 +38,13 @@ struct ServiceConfigMenuItem: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            Task {
-                await FlutterSwiftUIBridge.shared.presentNativeView(
-                    route: "settings_configuration_\(name.lowercased())"
-                )
-            }
+            isNavigating = true
+        }
+        .fullScreenCover(isPresented: $isNavigating) {
+            FlutterSwiftUIBridge.shared.createSwiftUIView(
+                for: "settings_configuration_\(name.lowercased())",
+                data: [:]
+            )
         }
     }
 }

@@ -16,6 +16,7 @@ import SwiftUI
 struct SwiftUISystemView: View {
     @Bindable var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var showingLogs = false
     
     var body: some View {
         NavigationStack {
@@ -74,6 +75,9 @@ struct SwiftUISystemView: View {
                 }
             } message: {
                 Text(viewModel.errorMessage ?? "Unknown error")
+            }
+            .fullScreenCover(isPresented: $showingLogs) {
+                FlutterSwiftUIBridge.shared.createSwiftUIView(for: "settings_system_logs", data: [:])
             }
         }
     }
@@ -140,11 +144,7 @@ struct SwiftUISystemView: View {
     
     private var logsTile: some View {
         Button(action: {
-            Task {
-                await FlutterSwiftUIBridge.shared.presentNativeView(
-                    route: "settings_system_logs"
-                )
-            }
+            showingLogs = true
         }) {
             HStack {
                 VStack(alignment: .leading) {

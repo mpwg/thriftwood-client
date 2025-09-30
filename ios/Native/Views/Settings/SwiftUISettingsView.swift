@@ -19,6 +19,7 @@ struct ConfigurationModule: Hashable {
 struct SwiftUISettingsView: View {
     @Bindable var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var showingProfiles = false
     
     var body: some View {
         NavigationStack {
@@ -64,11 +65,7 @@ struct SwiftUISettingsView: View {
                 // Profile selector in top right (matches Flutter)
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(viewModel.currentProfileName) {
-                        Task {
-                            await FlutterSwiftUIBridge.shared.presentNativeView(
-                                route: "settings_profiles"
-                            )
-                        }
+                        showingProfiles = true
                     }
                     .font(.caption)
                     .buttonStyle(.bordered)
@@ -80,6 +77,9 @@ struct SwiftUISettingsView: View {
                 }
             } message: {
                 Text(viewModel.errorMessage ?? "Unknown error")
+            }
+            .fullScreenCover(isPresented: $showingProfiles) {
+                FlutterSwiftUIBridge.shared.createSwiftUIView(for: "settings_profiles", data: [:])
             }
         }
     }

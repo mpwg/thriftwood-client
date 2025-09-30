@@ -16,38 +16,46 @@ struct SettingsMenuItem: View {
     let route: String
     var isEnabled: Bool = true
     
+    @State private var isNavigating = false
+    
     var body: some View {
-        HStack {
-            Image(systemName: icon)
-                .foregroundColor(isEnabled ? .blue : .gray)
-                .frame(width: 24, height: 24)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.headline)
-                    .foregroundColor(isEnabled ? .primary : .gray)
+        Button(action: {
+            if isEnabled {
+                isNavigating = true
+            }
+        }) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundColor(isEnabled ? .blue : .gray)
+                    .frame(width: 24, height: 24)
                 
-                Text(subtitle)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            
-            Spacer()
-            
-            if isEnabled {
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.secondary)
-                    .font(.caption)
-            }
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            if isEnabled {
-                Task {
-                    await FlutterSwiftUIBridge.shared.presentNativeView(route: route)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundColor(isEnabled ? .primary : .gray)
+                    
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                if isEnabled {
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
                 }
             }
         }
         .disabled(!isEnabled)
+        .fullScreenCover(isPresented: $isNavigating) {
+            destinationView
+        }
+    }
+    
+    @ViewBuilder
+    private var destinationView: some View {
+        FlutterSwiftUIBridge.shared.createSwiftUIView(for: route, data: [:])
     }
 }

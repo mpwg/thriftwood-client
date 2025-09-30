@@ -101,6 +101,33 @@ import Flutter
         }
     }
     
+    /// Present a SwiftUI view from another SwiftUI view (SwiftUI-to-SwiftUI navigation)
+    /// - Parameters:
+    ///   - route: The route identifier
+    ///   - data: Optional data to pass to the SwiftUI view
+    ///   - from: The current UIViewController to present from
+    func presentNativeViewFromSwiftUI(route: String, data: [String: Any] = [:], from presenter: UIViewController) {
+        guard shouldUseNativeView(for: route) else { 
+            print("Cannot present native view for route: \(route) - not registered")
+            return 
+        }
+        
+        print("Presenting native SwiftUI view for route: \(route) from SwiftUI context")
+        
+        let swiftUIView = createSwiftUIView(for: route, data: data)
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        
+        // Configure presentation style
+        hostingController.modalPresentationStyle = .fullScreen
+        
+        // Present the SwiftUI view from the current SwiftUI context
+        DispatchQueue.main.async {
+            presenter.present(hostingController, animated: true) {
+                print("Successfully presented SwiftUI view for route: \(route)")
+            }
+        }
+    }
+    
     /// Navigate back to Flutter from SwiftUI
     /// - Parameter data: Optional data to pass back to Flutter
     func navigateBackToFlutter(data: [String: Any] = [:]) {
@@ -209,7 +236,7 @@ import Flutter
     
     // MARK: - SwiftUI View Factory
     
-    private func createSwiftUIView(for route: String, data: [String: Any]) -> AnyView {
+    func createSwiftUIView(for route: String, data: [String: Any]) -> AnyView {
         print("Creating SwiftUI view for route: \(route)")
         
         switch route {
