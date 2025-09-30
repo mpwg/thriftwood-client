@@ -229,6 +229,18 @@ import Flutter
         case "settings_wake_on_lan":
             let settingsViewModel = SettingsViewModel()
             return AnyView(SwiftUIWakeOnLANSettingsView(viewModel: settingsViewModel))
+        case "settings_search":
+            let settingsViewModel = SettingsViewModel()
+            return AnyView(SwiftUISearchSettingsView(viewModel: settingsViewModel))
+        case "settings_external_modules":
+            let settingsViewModel = SettingsViewModel()
+            return AnyView(SwiftUIExternalModulesSettingsView(viewModel: settingsViewModel))
+        case "settings_drawer":
+            let settingsViewModel = SettingsViewModel()
+            return AnyView(SwiftUIDrawerSettingsView(viewModel: settingsViewModel))
+        case "settings_quick_actions":
+            let settingsViewModel = SettingsViewModel()
+            return AnyView(SwiftUIQuickActionsSettingsView(viewModel: settingsViewModel))
         case "settings_all":
             return AnyView(SwiftUIAllSettingsView())
         case "dashboard":

@@ -35,6 +35,14 @@ import Flutter
     FlutterSwiftUIBridge.shared.registerNativeView("settings_profiles")
     FlutterSwiftUIBridge.shared.registerNativeView("settings_system")
     FlutterSwiftUIBridge.shared.registerNativeView("settings_system_logs")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_general")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_dashboard")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_wake_on_lan")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_search")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_external_modules")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_drawer")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_quick_actions")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_all")
 
     print("Hybrid bridge system initialized successfully")
   }

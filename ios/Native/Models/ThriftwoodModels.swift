@@ -292,7 +292,8 @@ enum CalendarStartType: String, CaseIterable, Codable {
 
 // MARK: - Quick Actions
 
-struct QuickActionItem: Codable, Identifiable {
+@Observable
+class QuickActionItem: Codable, Identifiable {
     let id = UUID()
     var title: String
     var icon: String
@@ -309,7 +310,8 @@ struct QuickActionItem: Codable, Identifiable {
 
 // MARK: - External Modules
 
-struct ExternalModule: Codable, Identifiable {
+@Observable
+class ExternalModule: Codable, Identifiable {
     let id = UUID()
     var name: String
     var displayName: String
@@ -328,7 +330,8 @@ struct ExternalModule: Codable, Identifiable {
 
 // MARK: - Search Indexers
 
-struct SearchIndexer: Codable, Identifiable {
+@Observable
+class SearchIndexer: Codable, Identifiable {
     let id = UUID()
     var name: String
     var displayName: String
