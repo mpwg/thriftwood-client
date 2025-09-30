@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SwiftUISystemLogsView: View {
     @Bindable var viewModel: SystemLogsViewModel
+    @Environment(\.dismiss) private var dismiss
     
     init(viewModel: SystemLogsViewModel = SystemLogsViewModel()) {
         self.viewModel = viewModel
@@ -60,7 +61,7 @@ struct SwiftUISystemLogsView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                        dismiss()
                     }
                 }
                 

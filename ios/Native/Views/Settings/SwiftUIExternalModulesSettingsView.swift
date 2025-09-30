@@ -6,16 +6,16 @@
 //  Copyright © 2025 The Chromium Authors. All rights reserved.
 //
 
-
 import SwiftUI
 
 struct SwiftUIExternalModulesSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: SettingsViewModel
     @State private var showingAddModule = false
     @State private var newModuleName = ""
     @State private var newModuleDisplayName = ""
     @State private var newModuleHost = ""
-    
+
     var body: some View {
         NavigationStack {
             List {
@@ -67,7 +67,7 @@ struct SwiftUIExternalModulesSettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                        dismiss()
                     }
                 }
             }

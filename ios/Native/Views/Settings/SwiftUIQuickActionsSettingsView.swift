@@ -15,6 +15,7 @@ struct SwiftUIQuickActionsSettingsView: View {
     @State private var newActionTitle = ""
     @State private var newActionIcon = ""
     @State private var newActionRoute = ""
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -79,7 +80,7 @@ struct SwiftUIQuickActionsSettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                        dismiss()
                     }
                 }
             }

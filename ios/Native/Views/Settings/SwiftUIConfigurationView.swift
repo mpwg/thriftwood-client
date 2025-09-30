@@ -12,6 +12,7 @@ import SwiftUI
 struct SwiftUIConfigurationView: View {
     let viewModel: ConfigurationViewModel
     @State private var expandedServices: Set<String> = []
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -127,64 +128,7 @@ struct SwiftUIConfigurationView: View {
                         }
                     }
                     
-                    // Individual Service Configuration (matching Flutter's service list)
-                    Section("Configure Services") {
-                        SettingsMenuItem(
-                            title: "Lidarr",
-                            subtitle: "Configure Lidarr",
-                            icon: "music.note.list",
-                            route: "settings_lidarr"
-                        )
-                        
-                        SettingsMenuItem(
-                            title: "NZBGet",
-                            subtitle: "Configure NZBGet",
-                            icon: "arrow.down.circle",
-                            route: "settings_nzbget"
-                        )
-                        
-                        SettingsMenuItem(
-                            title: "Radarr",
-                            subtitle: "Configure Radarr",
-                            icon: "film",
-                            route: "settings_radarr"
-                        )
-                        
-                        SettingsMenuItem(
-                            title: "SABnzbd",
-                            subtitle: "Configure SABnzbd",
-                            icon: "arrow.down.square",
-                            route: "settings_sabnzbd"
-                        )
-                        
-                        SettingsMenuItem(
-                            title: "Search",
-                            subtitle: "Configure Search",
-                            icon: "magnifyingglass",
-                            route: "settings_search"
-                        )
-                        
-                        SettingsMenuItem(
-                            title: "Sonarr",
-                            subtitle: "Configure Sonarr",
-                            icon: "tv",
-                            route: "settings_sonarr"
-                        )
-                        
-                        SettingsMenuItem(
-                            title: "Tautulli",
-                            subtitle: "Configure Tautulli",
-                            icon: "chart.bar",
-                            route: "settings_tautulli"
-                        )
-                        
-                        SettingsMenuItem(
-                            title: "Wake on LAN",
-                            subtitle: "Configure Wake on LAN",
-                            icon: "wifi.router",
-                            route: "settings_wake_on_lan"
-                        )
-                    }
+                    
                 }
             }
             .navigationTitle("Configuration")
@@ -192,7 +136,7 @@ struct SwiftUIConfigurationView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                        dismiss()
                     }
                 }
             }

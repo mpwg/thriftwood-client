@@ -134,6 +134,7 @@ extension ThriftwoodProfile {
         lidarr.apiKey = lidarrApiKey
         lidarr.customHeaders = lidarrCustomHeaders
         lidarr.strictTLS = lidarrStrictTLS
+        lidarr.icon = "music.note.list"
         configs.append(lidarr)
         
         // Radarr
@@ -143,6 +144,7 @@ extension ThriftwoodProfile {
         radarr.apiKey = radarrApiKey
         radarr.customHeaders = radarrCustomHeaders
         radarr.strictTLS = radarrStrictTLS
+        radarr.icon = "film"
         configs.append(radarr)
         
         // Sonarr
@@ -152,6 +154,7 @@ extension ThriftwoodProfile {
         sonarr.apiKey = sonarrApiKey
         sonarr.customHeaders = sonarrCustomHeaders
         sonarr.strictTLS = sonarrStrictTLS
+        sonarr.icon = "play.tv"
         configs.append(sonarr)
         
         // Tautulli
@@ -161,6 +164,7 @@ extension ThriftwoodProfile {
         tautulli.apiKey = tautulliApiKey
         tautulli.customHeaders = tautulliCustomHeaders
         tautulli.strictTLS = tautulliStrictTLS
+        tautulli.icon = "chart.bar"
         configs.append(tautulli)
         
         // Overseerr
@@ -170,6 +174,7 @@ extension ThriftwoodProfile {
         overseerr.apiKey = overseerrApiKey
         overseerr.customHeaders = overseerrCustomHeaders
         overseerr.strictTLS = overseerrStrictTLS
+        overseerr.icon = "person.2"
         configs.append(overseerr)
         
         return configs
@@ -186,6 +191,7 @@ extension ThriftwoodProfile {
         sabnzbd.apiKey = sabnzbdApiKey
         sabnzbd.customHeaders = sabnzbdCustomHeaders
         sabnzbd.strictTLS = sabnzbdStrictTLS
+        sabnzbd.icon = "icloud.and.arrow.down"
         configs.append(sabnzbd)
         
         // NZBGet
@@ -195,6 +201,7 @@ extension ThriftwoodProfile {
         nzbget.username = nzbgetUser
         nzbget.password = nzbgetPass
         nzbget.customHeaders = nzbgetCustomHeaders
+        nzbget.icon = "icloud.and.arrow.down"
         nzbget.strictTLS = nzbgetStrictTLS
         configs.append(nzbget)
         

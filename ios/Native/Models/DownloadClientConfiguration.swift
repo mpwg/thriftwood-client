@@ -20,6 +20,7 @@ class DownloadClientConfiguration: Codable, Identifiable {
     var password: String
     var apiKey: String
     var customHeaders: [String: String]
+    var icon: String
     var strictTLS: Bool
     
     init(name: String) {
@@ -31,5 +32,6 @@ class DownloadClientConfiguration: Codable, Identifiable {
         self.apiKey = ""
         self.customHeaders = [:]
         self.strictTLS = true
+        self.icon = "gearshape.fill"
     }
 }

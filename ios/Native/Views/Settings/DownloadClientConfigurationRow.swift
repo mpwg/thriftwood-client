@@ -20,9 +20,11 @@ struct DownloadClientConfigurationRow: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading) {
-                    Text(client.name)
-                        .font(.headline)
-                    
+                    HStack {
+                        Image(systemName: client.icon)
+                        Text(client.name)
+                            .font(.headline)
+                    }
                     if client.enabled && !client.host.isEmpty {
                         Text(client.host)
                             .font(.caption)

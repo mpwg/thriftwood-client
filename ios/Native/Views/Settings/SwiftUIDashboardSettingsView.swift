@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SwiftUIDashboardSettingsView: View {
     @Bindable var viewModel: SettingsViewModel
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -97,7 +98,7 @@ struct SwiftUIDashboardSettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                        dismiss()
                     }
                 }
             }

@@ -10,6 +10,7 @@
 import SwiftUI
 
 struct SwiftUISonarrSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: SettingsViewModel
     
     var body: some View {
@@ -109,7 +110,7 @@ struct SwiftUISonarrSettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                        dismiss()
                     }
                 }
             }

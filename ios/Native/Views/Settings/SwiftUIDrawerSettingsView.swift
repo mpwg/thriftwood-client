@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SwiftUIDrawerSettingsView: View {
     @Bindable var viewModel: SettingsViewModel
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -50,7 +51,7 @@ struct SwiftUIDrawerSettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                        dismiss()
                     }
                 }
             }

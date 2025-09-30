@@ -20,9 +20,11 @@ struct ServiceConfigurationRow: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading) {
-                    Text(service.name)
-                        .font(.headline)
-                    
+                    HStack {
+                        Image(systemName: service.icon)
+                        Text(service.name)
+                            .font(.headline)
+                    }
                     if service.enabled && !service.host.isEmpty {
                         Text(service.host)
                             .font(.caption)
@@ -36,6 +38,7 @@ struct ServiceConfigurationRow: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
+                    
                 }
                 
                 Spacer()

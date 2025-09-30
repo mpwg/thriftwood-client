@@ -19,6 +19,7 @@ class ServiceConfiguration: Codable, Identifiable {
     var apiKey: String
     var customHeaders: [String: String]
     var strictTLS: Bool
+    var icon: String
     
     init(name: String) {
         self.name = name
@@ -27,5 +28,6 @@ class ServiceConfiguration: Codable, Identifiable {
         self.apiKey = ""
         self.customHeaders = [:]
         self.strictTLS = true
+        self.icon = "gearshape.fill"
     }
 }

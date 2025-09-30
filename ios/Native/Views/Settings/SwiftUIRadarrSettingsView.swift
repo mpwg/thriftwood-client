@@ -10,6 +10,7 @@
 import SwiftUI
 
 struct SwiftUIRadarrSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: SettingsViewModel
     
     var body: some View {
@@ -93,7 +94,7 @@ struct SwiftUIRadarrSettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                        dismiss()
                     }
                 }
             }
