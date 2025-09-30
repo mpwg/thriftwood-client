@@ -158,18 +158,18 @@ class ServiceStatusChecker {
     private func isServiceEnabled(_ serviceKey: String) async -> Bool {
         do {
             let enabledKey = "\(serviceKey)Enabled"
-            let isEnabled = try await sharedDataManager.loadData(type: Bool.self, forKey: enabledKey) ?? false
+            let isEnabled = try await sharedDataManager.loadData(Bool.self, forKey: enabledKey) ?? false
             
             // Special case for search service
             if serviceKey == "search" {
-                let indexersCount = try await sharedDataManager.loadData(type: Int.self, forKey: "indexers_count") ?? 0
+                let indexersCount = try await sharedDataManager.loadData(Int.self, forKey: "indexers_count") ?? 0
                 return indexersCount > 0
             }
             
             // Special case for wake_on_lan service  
             if serviceKey == "wake_on_lan" {
                 // Check if Wake on LAN is supported and enabled
-                let isSupported = try await sharedDataManager.loadData(type: Bool.self, forKey: "wake_on_lan_supported") ?? false
+                let isSupported = try await sharedDataManager.loadData(Bool.self, forKey: "wake_on_lan_supported") ?? false
                 return isEnabled && isSupported
             }
             
@@ -189,11 +189,11 @@ class ServiceStatusChecker {
         let hostKey = "\(serviceKey)Host"
         let keyKey = "\(serviceKey)Key"
         
-        if let host = try await sharedDataManager.loadData(type: String.self, forKey: hostKey) {
+        if let host = try await sharedDataManager.loadData(String.self, forKey: hostKey) {
             config["host"] = host
         }
         
-        if let apiKey = try await sharedDataManager.loadData(type: String.self, forKey: keyKey) {
+        if let apiKey = try await sharedDataManager.loadData(String.self, forKey: keyKey) {
             config["apiKey"] = apiKey
         }
         

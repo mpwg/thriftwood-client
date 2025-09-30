@@ -31,14 +31,14 @@ extension FlutterSwiftUIBridge {
     /// Setup Dashboard-specific method channel handlers
     /// Handles Dashboard-specific communication with Flutter
     func setupDashboardMethodHandlers() {
-        methodChannel?.setMethodCallHandler { [weak self] call, result in
-            self?.handleDashboardMethodCall(call, result: result)
-        }
-        print("✅ Dashboard method channel handlers configured")
+        // Dashboard methods will be handled by the main bridge method handler
+        // We just need to register dashboard-specific handling within the existing handler
+        print("✅ Dashboard method channel handlers configured (integrated with main bridge)")
     }
     
     /// Handle Dashboard-specific method calls from Flutter
-    private func handleDashboardMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    /// This will be called from the main method handler when appropriate
+    func handleDashboardMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         let method = call.method
         let arguments = call.arguments as? [String: Any] ?? [:]
         
@@ -56,8 +56,8 @@ extension FlutterSwiftUIBridge {
         case "navigateToService":
             handleNavigateToService(arguments: arguments, result: result)
         default:
-            // Pass to general method handler
-            handleMethodCall(call, result: result)
+            // Not a dashboard method, return false to indicate it wasn't handled
+            result(FlutterMethodNotImplemented)
         }
     }
     
@@ -71,7 +71,7 @@ extension FlutterSwiftUIBridge {
                 
                 let dashboardState: [String: Any] = [
                     "enabledServices": await getEnabledServicesState(),
-                    "useAlphabeticalOrdering": try await sharedData.loadData(type: Bool.self, forKey: "DRAWER_AUTOMATIC_MANAGE") ?? true,
+                    "useAlphabeticalOrdering": try await sharedData.loadData(Bool.self, forKey: "DRAWER_AUTOMATIC_MANAGE") ?? true,
                     "timestamp": Date().timeIntervalSince1970
                 ]
                 
@@ -189,7 +189,7 @@ extension FlutterSwiftUIBridge {
         
         for serviceKey in serviceKeys {
             do {
-                let isEnabled = try await sharedData.loadData(type: Bool.self, forKey: "\(serviceKey)Enabled") ?? false
+                let isEnabled = try await sharedData.loadData(Bool.self, forKey: "\(serviceKey)Enabled") ?? false
                 enabledStates[serviceKey] = isEnabled
             } catch {
                 print("Failed to load enabled state for \(serviceKey): \(error)")

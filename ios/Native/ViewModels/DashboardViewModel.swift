@@ -88,7 +88,7 @@ class DashboardViewModel {
             
             // Load drawer automatic manage setting (alphabetical ordering)
             if let alphabetical: Bool = try await sharedDataManager.loadData(
-                type: Bool.self, 
+                Bool.self, 
                 forKey: "DRAWER_AUTOMATIC_MANAGE"
             ) {
                 useAlphabeticalOrdering = alphabetical
@@ -112,7 +112,7 @@ class DashboardViewModel {
             for service in allServices {
                 let enabledKey = "\(service.key)Enabled"
                 if let isEnabled: Bool = try await sharedDataManager.loadData(
-                    type: Bool.self,
+                    Bool.self,
                     forKey: enabledKey
                 ) {
                     service.isEnabled = isEnabled
@@ -122,7 +122,7 @@ class DashboardViewModel {
             // Special handling for search service (based on indexers)
             if let searchService = allServices.first(where: { $0.key == "search" }) {
                 if let indexersCount: Int = try await sharedDataManager.loadData(
-                    type: Int.self,
+                    Int.self,
                     forKey: "indexers_count"
                 ) {
                     searchService.isEnabled = indexersCount > 0
