@@ -13,56 +13,47 @@ import SwiftUI
 struct SwiftUISettingsView: View {
     @Bindable var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var selectedTab = 0
     
     var body: some View {
         NavigationStack {
-            List {
-                // Profile Section
-                profileSection
+            TabView(selection: $selectedTab) {
+                // Configuration Tab (matching Flutter's primary interface)
+                configurationView
+                    .tabItem {
+                        Image(systemName: "gear")
+                        Text("Configuration")
+                    }
+                    .tag(0)
                 
-                // Appearance Section
-                appearanceSection
-                
-                // Security Section
-                securitySection
-                
-                // Notifications Section
-                notificationsSection
-                
-                // System Section
-                systemSection
-                
-                // About Section
-                aboutSection
+                // All Settings Tab (comprehensive menu)
+                allSettingsView
+                    .tabItem {
+                        Image(systemName: "list.bullet")
+                        Text("All Settings")
+                    }
+                    .tag(1)
             }
-            .navigationTitle("Settings")
+            .navigationTitle(selectedTab == 0 ? "Configuration" : "Settings")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
+                    Button("Back") {
                         FlutterSwiftUIBridge.shared.navigateBackToFlutter()
                     }
                 }
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button("All Settings") {
+                if selectedTab == 0 {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(viewModel.currentProfileName) {
                             Task {
                                 await FlutterSwiftUIBridge.shared.presentNativeView(
-                                    route: "settings_all"
+                                    route: "settings_profiles"
                                 )
                             }
                         }
-                        
-                        Button("System Logs") {
-                            Task {
-                                await FlutterSwiftUIBridge.shared.presentNativeView(
-                                    route: "settings_system_logs"
-                                )
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
+                        .font(.caption)
+                        .buttonStyle(.bordered)
                     }
                 }
             }
@@ -86,326 +77,135 @@ struct SwiftUISettingsView: View {
         }
     }
     
-    // MARK: - View Components
+    // MARK: - Configuration View (matches Flutter's main interface)
     
     @ViewBuilder
-    private var profileSection: some View {
-        Section("Profile") {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text("Current Profile")
-                        .font(.headline)
-                    Text(viewModel.currentProfileName)
-                        .foregroundStyle(.secondary)
-                }
-                
-                Spacer()
-                
-                if viewModel.hasValidServices {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.green)
-                } else {
-                    Image(systemName: "exclamationmark.circle.fill")
-                        .foregroundColor(.orange)
-                }
-            }
-            .onTapGesture {
-                Task {
-                    await FlutterSwiftUIBridge.shared.presentNativeView(
-                        route: "/settings/profiles"
-                    )
-                }
-            }
-            
-            if viewModel.hasValidServices {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Enabled Services")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    
-                    LazyVGrid(columns: [
-                        GridItem(.adaptive(minimum: 80, maximum: 120))
-                    ], spacing: 8) {
-                        ForEach(viewModel.enabledServices, id: \.self) { service in
-                            ServiceBadge(name: service)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private var appearanceSection: some View {
-        Section("Appearance") {
-            Picker("Theme", selection: Binding(
-                get: { viewModel.appSettings.selectedTheme },
-                set: { newValue in
-                    Task {
-                        await viewModel.updateTheme(newValue)
-                    }
-                }
-            )) {
-                ForEach(AppTheme.allCases, id: \.self) { theme in
-                    Label(theme.displayName, systemImage: theme.systemImage)
-                        .tag(theme)
-                }
-            }
-            .pickerStyle(.menu)
-            
-            Toggle("Image Headers", isOn: Binding(
-                get: { viewModel.appSettings.enableImageHeaders },
-                set: { newValue in
-                    viewModel.appSettings.enableImageHeaders = newValue
-                    Task { await viewModel.saveSettings() }
-                }
-            ))
-            
-            Toggle("Custom Headers", isOn: Binding(
-                get: { viewModel.appSettings.enableCustomHeaders },
-                set: { newValue in
-                    viewModel.appSettings.enableCustomHeaders = newValue
-                    Task { await viewModel.saveSettings() }
-                }
-            ))
-        }
-    }
-    
-    @ViewBuilder
-    private var securitySection: some View {
-        Section("Security") {
-            Toggle("Enable Biometrics", isOn: Binding(
-                get: { viewModel.appSettings.enableBiometrics },
-                set: { newValue in
-                    Task {
-                        await viewModel.toggleBiometrics(newValue)
-                    }
-                }
-            ))
-            
-            if viewModel.appSettings.enableBiometrics {
-                Toggle("Require on Launch", isOn: Binding(
-                    get: { viewModel.appSettings.requireBiometricsOnLaunch },
+    private var configurationView: some View {
+        List {
+            // Services Section (matching first Flutter image)
+            Section("Services") {
+                ServiceToggleRow(name: "Lidarr", isEnabled: Binding(
+                    get: { viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Lidarr" })?.enabled ?? false },
                     set: { newValue in
-                        viewModel.appSettings.requireBiometricsOnLaunch = newValue
-                        Task { await viewModel.saveSettings() }
+                        viewModel.updateServiceEnabled("Lidarr", enabled: newValue)
                     }
                 ))
                 
-                Toggle("Require on Unlock", isOn: Binding(
-                    get: { viewModel.appSettings.requireBiometricsOnUnlock },
+                ServiceToggleRow(name: "Radarr", isEnabled: Binding(
+                    get: { viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Radarr" })?.enabled ?? false },
                     set: { newValue in
-                        viewModel.appSettings.requireBiometricsOnUnlock = newValue
-                        Task { await viewModel.saveSettings() }
+                        viewModel.updateServiceEnabled("Radarr", enabled: newValue)
+                    }
+                ))
+                
+                ServiceToggleRow(name: "Sonarr", isEnabled: Binding(
+                    get: { viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Sonarr" })?.enabled ?? false },
+                    set: { newValue in
+                        viewModel.updateServiceEnabled("Sonarr", enabled: newValue)
+                    }
+                ))
+                
+                ServiceToggleRow(name: "Tautulli", isEnabled: Binding(
+                    get: { viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Tautulli" })?.enabled ?? false },
+                    set: { newValue in
+                        viewModel.updateServiceEnabled("Tautulli", enabled: newValue)
+                    }
+                ))
+                
+                ServiceToggleRow(name: "Overseerr", isEnabled: Binding(
+                    get: { viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Overseerr" })?.enabled ?? false },
+                    set: { newValue in
+                        viewModel.updateServiceEnabled("Overseerr", enabled: newValue)
+                    }
+                ))
+            }
+            
+            // Download Clients Section
+            Section("Download Clients") {
+                ServiceToggleRow(name: "SABnzbd", isEnabled: Binding(
+                    get: { viewModel.selectedProfile?.downloadClientConfigurations.first(where: { $0.name == "SABnzbd" })?.enabled ?? false },
+                    set: { newValue in
+                        viewModel.updateDownloadClientEnabled("SABnzbd", enabled: newValue)
+                    }
+                ))
+                
+                ServiceToggleRow(name: "NZBGet", isEnabled: Binding(
+                    get: { viewModel.selectedProfile?.downloadClientConfigurations.first(where: { $0.name == "NZBGet" })?.enabled ?? false },
+                    set: { newValue in
+                        viewModel.updateDownloadClientEnabled("NZBGet", enabled: newValue)
                     }
                 ))
             }
         }
+
     }
     
-    @ViewBuilder
-    private var notificationsSection: some View {
-        Section("Notifications") {
-            Toggle("Enable Notifications", isOn: Binding(
-                get: { viewModel.appSettings.enableNotifications },
-                set: { newValue in
-                    viewModel.appSettings.enableNotifications = newValue
-                    Task { await viewModel.saveSettings() }
-                }
-            ))
-            
-            Toggle("Broadcast Notifications", isOn: Binding(
-                get: { viewModel.appSettings.enableBroadcastNotifications },
-                set: { newValue in
-                    viewModel.appSettings.enableBroadcastNotifications = newValue
-                    Task { await viewModel.saveSettings() }
-                }
-            ))
-        }
-    }
+    // MARK: - All Settings View (matches Flutter's settings menu)
     
     @ViewBuilder
-    private var systemSection: some View {
-        Section("System") {
-            // Debug: Test Hive sync button (development only)
-            Button(action: {
-                Task {
-                    await viewModel.testReloadFromHive()
-                }
-            }) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("🔄 Test Hive Sync")
-                            .foregroundColor(.primary)
-                        Text("Debug: Reload profile data from Flutter storage")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "arrow.clockwise")
-                        .foregroundColor(.orange)
-                }
+    private var allSettingsView: some View {
+        List {
+            // Configuration Section (matching second Flutter image)
+            Section("Configuration") {
+                SettingsMenuItem(
+                    title: "General",
+                    subtitle: "Customize LunaSea",
+                    icon: "brush",
+                    route: "settings_general"
+                )
+                
+                SettingsMenuItem(
+                    title: "Drawer", 
+                    subtitle: "Customize the Drawer",
+                    icon: "sidebar.left",
+                    route: "settings_drawer"
+                )
+                
+                SettingsMenuItem(
+                    title: "Quick Actions",
+                    subtitle: "Quick Actions on the Home Screen", 
+                    icon: "bolt",
+                    route: "settings_quick_actions"
+                )
+                
+                SettingsMenuItem(
+                    title: "Dashboard",
+                    subtitle: "Configure Dashboard",
+                    icon: "house",
+                    route: "settings_dashboard"
+                )
+                
+                SettingsMenuItem(
+                    title: "External Modules",
+                    subtitle: "Configure External Modules",
+                    icon: "cube.box",
+                    route: "settings_external_modules"
+                )
             }
             
-            // Backup functionality
-            Button(action: {
-                Task {
-                    await viewModel.performBackup()
-                }
-            }) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Backup Configuration")
-                            .foregroundColor(.primary)
-                        Text("Create a backup of your current configuration")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    if viewModel.isBackingUp {
-                        ProgressView()
-                            .scaleEffect(0.8)
-                    } else {
-                        Image(systemName: "square.and.arrow.up")
-                            .foregroundColor(.blue)
-                    }
-                }
-            }
-            .disabled(viewModel.isBackingUp)
-            
-            // Restore functionality
-            Button(action: {
-                Task {
-                    await viewModel.performRestore()
-                }
-            }) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Restore Configuration")
-                            .foregroundColor(.primary)
-                        Text("Restore configuration from a backup file")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    if viewModel.isRestoring {
-                        ProgressView()
-                            .scaleEffect(0.8)
-                    } else {
-                        Image(systemName: "square.and.arrow.down")
-                            .foregroundColor(.blue)
-                    }
-                }
-            }
-            .disabled(viewModel.isRestoring)
-            
-            // System Logs
-            Button(action: {
-                Task {
-                    await FlutterSwiftUIBridge.shared.presentNativeView(
-                        route: "settings_system_logs"
-                    )
-                }
-            }) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("System Logs")
-                            .foregroundColor(.primary)
-                        Text("View application logs and debug information")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "doc.text")
-                        .foregroundColor(.blue)
-                }
-            }
-            
-            // Clear Image Cache
-            Button(action: {
-                Task {
-                    await viewModel.clearImageCache()
-                }
-            }) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Clear Image Cache")
-                            .foregroundColor(.primary)
-                        Text("Remove cached images to free up storage")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    if viewModel.isClearingCache {
-                        ProgressView()
-                            .scaleEffect(0.8)
-                    } else {
-                        Image(systemName: "trash")
-                            .foregroundColor(.red)
-                    }
-                }
-            }
-            .disabled(viewModel.isClearingCache)
-            
-            // Clear Configuration
-            Button(action: {
-                viewModel.showingClearConfigConfirmation = true
-            }) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Clear Configuration")
-                            .foregroundColor(.red)
-                        Text("Reset all settings to default (clean slate)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    if viewModel.isClearingConfig {
-                        ProgressView()
-                            .scaleEffect(0.8)
-                    } else {
-                        Image(systemName: "exclamationmark.triangle")
-                            .foregroundColor(.red)
-                    }
-                }
-            }
-            .disabled(viewModel.isClearingConfig)
-        }
-    }
-    
-    @ViewBuilder
-    private var aboutSection: some View {
-        Section("About") {
-            HStack {
-                Text("Version")
-                Spacer()
-                Text("1.0.0 (SwiftUI)")
-                    .foregroundStyle(.secondary)
-            }
-            
-            HStack {
-                Text("Build")
-                Spacer()
-                Text(Bundle.main.buildNumber)
-                    .foregroundStyle(.secondary)
-            }
-            
-            Button("View on GitHub") {
-                if let url = URL(string: "https://github.com/mpwg/thriftwood-client") {
-                    UIApplication.shared.open(url)
-                }
+            // Services Section
+            Section("Services") {
+                ServiceConfigMenuItem(name: "Lidarr", icon: "music.note.list")
+                ServiceConfigMenuItem(name: "NZBGet", icon: "arrow.down.circle")  
+                ServiceConfigMenuItem(name: "Radarr", icon: "film")
+                ServiceConfigMenuItem(name: "SABnzbd", icon: "arrow.down.square")
+                
+                SettingsMenuItem(
+                    title: "Search",
+                    subtitle: "Configure Search",
+                    icon: "magnifyingglass", 
+                    route: "settings_search"
+                )
+                
+                ServiceConfigMenuItem(name: "Sonarr", icon: "tv")
+                ServiceConfigMenuItem(name: "Tautulli", icon: "chart.bar")
+                
+                SettingsMenuItem(
+                    title: "Wake on LAN",
+                    subtitle: "Configure Wake on LAN",
+                    icon: "wifi.router",
+                    route: "settings_wake_on_lan"
+                )
             }
         }
     }
@@ -2029,6 +1829,684 @@ struct SettingsMenuItem: View {
             }
         }
         .disabled(!isEnabled)
+    }
+}
+
+// MARK: - Service Toggle Row
+
+struct ServiceToggleRow: View {
+    let name: String
+    @Binding var isEnabled: Bool
+    
+    var body: some View {
+        HStack {
+            Text(name)
+                .font(.body)
+            
+            Spacer()
+            
+            Text(isEnabled ? "Enabled" : "Disabled")
+                .font(.caption)
+                .foregroundColor(isEnabled ? .green : .secondary)
+            
+            Toggle("", isOn: $isEnabled)
+        }
+    }
+}
+
+// MARK: - Service Config Menu Item
+
+struct ServiceConfigMenuItem: View {
+    let name: String
+    let icon: String
+    
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .foregroundColor(.blue)
+                .frame(width: 24, height: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(name)
+                    .font(.headline)
+                
+                Text("Configure \(name)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .foregroundColor(.secondary)
+                .font(.caption)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            Task {
+                await FlutterSwiftUIBridge.shared.presentNativeView(
+                    route: "settings_configuration_\(name.lowercased())"
+                )
+            }
+        }
+    }
+}
+
+// MARK: - Individual Service Configuration Views
+
+struct SwiftUIRadarrSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Service") {
+                    Toggle("Enable Radarr", isOn: Binding(
+                        get: { viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Radarr" })?.enabled ?? false },
+                        set: { newValue in
+                            viewModel.updateServiceEnabled("Radarr", enabled: newValue)
+                        }
+                    ))
+                }
+                
+                if let radarrConfig = viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Radarr" }), radarrConfig.enabled {
+                    Section("Connection Details") {
+                        TextField("Host URL", text: Binding(
+                            get: { radarrConfig.host },
+                            set: { newValue in
+                                viewModel.updateServiceHost("Radarr", host: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                        
+                        SecureField("API Key", text: Binding(
+                            get: { radarrConfig.apiKey },
+                            set: { newValue in
+                                viewModel.updateServiceApiKey("Radarr", apiKey: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        
+                        Toggle("Strict TLS Validation", isOn: Binding(
+                            get: { radarrConfig.strictTLS },
+                            set: { newValue in
+                                viewModel.updateServiceStrictTLS("Radarr", strictTLS: newValue)
+                            }
+                        ))
+                    }
+                    
+                    Section("Default Options") {
+                        Picker("Default Quality Profile", selection: .constant("Any")) {
+                            Text("Any").tag("Any")
+                            Text("HD-720p").tag("HD-720p") 
+                            Text("HD-1080p").tag("HD-1080p")
+                            Text("Ultra-HD").tag("Ultra-HD")
+                        }
+                        .pickerStyle(.menu)
+                        
+                        Picker("Default Root Folder", selection: .constant("/movies")) {
+                            Text("/movies").tag("/movies")
+                            Text("/media/movies").tag("/media/movies")
+                        }
+                        .pickerStyle(.menu)
+                        
+                        Toggle("Monitor New Movies", isOn: .constant(true))
+                    }
+                    
+                    Section("Default Pages") {
+                        Picker("Home Page", selection: .constant("Calendar")) {
+                            Text("Calendar").tag("Calendar")
+                            Text("Activity").tag("Activity") 
+                            Text("History").tag("History")
+                            Text("Queue").tag("Queue")
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    Section("Connection Test") {
+                        Button("Test Connection") {
+                            // TODO: Implement connection test
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+            .navigationTitle("Radarr")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SwiftUISonarrSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Service") {
+                    Toggle("Enable Sonarr", isOn: Binding(
+                        get: { viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Sonarr" })?.enabled ?? false },
+                        set: { newValue in
+                            viewModel.updateServiceEnabled("Sonarr", enabled: newValue)
+                        }
+                    ))
+                }
+                
+                if let sonarrConfig = viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Sonarr" }), sonarrConfig.enabled {
+                    Section("Connection Details") {
+                        TextField("Host URL", text: Binding(
+                            get: { sonarrConfig.host },
+                            set: { newValue in
+                                viewModel.updateServiceHost("Sonarr", host: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                        
+                        SecureField("API Key", text: Binding(
+                            get: { sonarrConfig.apiKey },
+                            set: { newValue in
+                                viewModel.updateServiceApiKey("Sonarr", apiKey: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        
+                        Toggle("Strict TLS Validation", isOn: Binding(
+                            get: { sonarrConfig.strictTLS },
+                            set: { newValue in
+                                viewModel.updateServiceStrictTLS("Sonarr", strictTLS: newValue)
+                            }
+                        ))
+                    }
+                    
+                    Section("Default Options") {
+                        Picker("Default Quality Profile", selection: .constant("Any")) {
+                            Text("Any").tag("Any")
+                            Text("HD-720p").tag("HD-720p")
+                            Text("HD-1080p").tag("HD-1080p")
+                        }
+                        .pickerStyle(.menu)
+                        
+                        Picker("Default Root Folder", selection: .constant("/tv")) {
+                            Text("/tv").tag("/tv")
+                            Text("/media/tv").tag("/media/tv")
+                        }
+                        .pickerStyle(.menu)
+                        
+                        Picker("Default Series Type", selection: .constant("Standard")) {
+                            Text("Standard").tag("Standard")
+                            Text("Anime").tag("Anime")
+                            Text("Daily").tag("Daily")
+                        }
+                        .pickerStyle(.menu)
+                        
+                        Toggle("Monitor New Series", isOn: .constant(true))
+                        Toggle("Search for Missing Episodes", isOn: .constant(false))
+                    }
+                    
+                    Section("Default Pages") {
+                        Picker("Home Page", selection: .constant("Calendar")) {
+                            Text("Calendar").tag("Calendar")
+                            Text("Activity").tag("Activity")
+                            Text("History").tag("History")
+                            Text("Queue").tag("Queue")
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    Section("Queue Settings") {
+                        Picker("Queue Size", selection: .constant(25)) {
+                            Text("25").tag(25)
+                            Text("50").tag(50)
+                            Text("100").tag(100)
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    Section("Connection Test") {
+                        Button("Test Connection") {
+                            // TODO: Implement connection test
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+            .navigationTitle("Sonarr")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SwiftUILidarrSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Service") {
+                    Toggle("Enable Lidarr", isOn: Binding(
+                        get: { viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Lidarr" })?.enabled ?? false },
+                        set: { newValue in
+                            viewModel.updateServiceEnabled("Lidarr", enabled: newValue)
+                        }
+                    ))
+                }
+                
+                if let lidarrConfig = viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Lidarr" }), lidarrConfig.enabled {
+                    Section("Connection Details") {
+                        TextField("Host URL", text: Binding(
+                            get: { lidarrConfig.host },
+                            set: { newValue in
+                                viewModel.updateServiceHost("Lidarr", host: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                        
+                        SecureField("API Key", text: Binding(
+                            get: { lidarrConfig.apiKey },
+                            set: { newValue in
+                                viewModel.updateServiceApiKey("Lidarr", apiKey: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        
+                        Toggle("Strict TLS Validation", isOn: Binding(
+                            get: { lidarrConfig.strictTLS },
+                            set: { newValue in
+                                viewModel.updateServiceStrictTLS("Lidarr", strictTLS: newValue)
+                            }
+                        ))
+                    }
+                    
+                    Section("Default Options") {
+                        Picker("Default Quality Profile", selection: .constant("Any")) {
+                            Text("Any").tag("Any")
+                            Text("Lossless").tag("Lossless")
+                            Text("High Quality").tag("High Quality")
+                        }
+                        .pickerStyle(.menu)
+                        
+                        Picker("Default Root Folder", selection: .constant("/music")) {
+                            Text("/music").tag("/music")
+                            Text("/media/music").tag("/media/music")
+                        }
+                        .pickerStyle(.menu)
+                        
+                        Toggle("Monitor New Artists", isOn: .constant(true))
+                    }
+                    
+                    Section("Default Pages") {
+                        Picker("Home Page", selection: .constant("Calendar")) {
+                            Text("Calendar").tag("Calendar")
+                            Text("Activity").tag("Activity")
+                            Text("History").tag("History")
+                            Text("Queue").tag("Queue")
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    Section("Connection Test") {
+                        Button("Test Connection") {
+                            // TODO: Implement connection test
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+            .navigationTitle("Lidarr")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SwiftUITautulliSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Service") {
+                    Toggle("Enable Tautulli", isOn: Binding(
+                        get: { viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Tautulli" })?.enabled ?? false },
+                        set: { newValue in
+                            viewModel.updateServiceEnabled("Tautulli", enabled: newValue)
+                        }
+                    ))
+                }
+                
+                if let tautulliConfig = viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Tautulli" }), tautulliConfig.enabled {
+                    Section("Connection Details") {
+                        TextField("Host URL", text: Binding(
+                            get: { tautulliConfig.host },
+                            set: { newValue in
+                                viewModel.updateServiceHost("Tautulli", host: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                        
+                        SecureField("API Key", text: Binding(
+                            get: { tautulliConfig.apiKey },
+                            set: { newValue in
+                                viewModel.updateServiceApiKey("Tautulli", apiKey: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        
+                        Toggle("Strict TLS Validation", isOn: Binding(
+                            get: { tautulliConfig.strictTLS },
+                            set: { newValue in
+                                viewModel.updateServiceStrictTLS("Tautulli", strictTLS: newValue)
+                            }
+                        ))
+                    }
+                    
+                    Section("Default Pages") {
+                        Picker("Home Page", selection: .constant("Activity")) {
+                            Text("Activity").tag("Activity")
+                            Text("History").tag("History")
+                            Text("Statistics").tag("Statistics")
+                            Text("Users").tag("Users")
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    Section("Refresh Settings") {
+                        Picker("Activity Refresh Rate", selection: .constant(10)) {
+                            Text("5 seconds").tag(5)
+                            Text("10 seconds").tag(10)
+                            Text("15 seconds").tag(15)
+                            Text("30 seconds").tag(30)
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    Section("Statistics") {
+                        Picker("Statistics Item Count", selection: .constant(10)) {
+                            Text("5").tag(5)
+                            Text("10").tag(10)
+                            Text("25").tag(25)
+                            Text("50").tag(50)
+                        }
+                        .pickerStyle(.menu)
+                        
+                        TextField("Default Termination Message", text: .constant("Stream terminated"))
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    
+                    Section("Connection Test") {
+                        Button("Test Connection") {
+                            // TODO: Implement connection test
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+            .navigationTitle("Tautulli")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SwiftUISABnzbdSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Download Client") {
+                    Toggle("Enable SABnzbd", isOn: Binding(
+                        get: { viewModel.selectedProfile?.downloadClientConfigurations.first(where: { $0.name == "SABnzbd" })?.enabled ?? false },
+                        set: { newValue in
+                            viewModel.updateDownloadClientEnabled("SABnzbd", enabled: newValue)
+                        }
+                    ))
+                }
+                
+                if let sabnzbdConfig = viewModel.selectedProfile?.downloadClientConfigurations.first(where: { $0.name == "SABnzbd" }), sabnzbdConfig.enabled {
+                    Section("Connection Details") {
+                        TextField("Host URL", text: Binding(
+                            get: { sabnzbdConfig.host },
+                            set: { newValue in
+                                viewModel.updateDownloadClientHost("SABnzbd", host: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                        
+                        SecureField("API Key", text: Binding(
+                            get: { sabnzbdConfig.apiKey },
+                            set: { newValue in
+                                viewModel.updateDownloadClientApiKey("SABnzbd", apiKey: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        
+                        Toggle("Strict TLS Validation", isOn: Binding(
+                            get: { sabnzbdConfig.strictTLS },
+                            set: { newValue in
+                                viewModel.updateDownloadClientStrictTLS("SABnzbd", strictTLS: newValue)
+                            }
+                        ))
+                    }
+                    
+                    Section("Default Pages") {
+                        Picker("Home Page", selection: .constant("Queue")) {
+                            Text("Queue").tag("Queue")
+                            Text("History").tag("History")
+                            Text("Statistics").tag("Statistics")
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    Section("Connection Test") {
+                        Button("Test Connection") {
+                            // TODO: Implement connection test
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+            .navigationTitle("SABnzbd")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SwiftUINZBGetSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Download Client") {
+                    Toggle("Enable NZBGet", isOn: Binding(
+                        get: { viewModel.selectedProfile?.downloadClientConfigurations.first(where: { $0.name == "NZBGet" })?.enabled ?? false },
+                        set: { newValue in
+                            viewModel.updateDownloadClientEnabled("NZBGet", enabled: newValue)
+                        }
+                    ))
+                }
+                
+                if let nzbgetConfig = viewModel.selectedProfile?.downloadClientConfigurations.first(where: { $0.name == "NZBGet" }), nzbgetConfig.enabled {
+                    Section("Connection Details") {
+                        TextField("Host URL", text: Binding(
+                            get: { nzbgetConfig.host },
+                            set: { newValue in
+                                viewModel.updateDownloadClientHost("NZBGet", host: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                        
+                        TextField("Username", text: Binding(
+                            get: { nzbgetConfig.username },
+                            set: { newValue in
+                                viewModel.updateDownloadClientUsername("NZBGet", username: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .autocapitalization(.none)
+                        
+                        SecureField("Password", text: Binding(
+                            get: { nzbgetConfig.password },
+                            set: { newValue in
+                                viewModel.updateDownloadClientPassword("NZBGet", password: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        
+                        Toggle("Strict TLS Validation", isOn: Binding(
+                            get: { nzbgetConfig.strictTLS },
+                            set: { newValue in
+                                viewModel.updateDownloadClientStrictTLS("NZBGet", strictTLS: newValue)
+                            }
+                        ))
+                    }
+                    
+                    Section("Default Pages") {
+                        Picker("Home Page", selection: .constant("Queue")) {
+                            Text("Queue").tag("Queue")
+                            Text("History").tag("History")
+                            Text("Statistics").tag("Statistics")
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    Section("Connection Test") {
+                        Button("Test Connection") {
+                            // TODO: Implement connection test
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+            .navigationTitle("NZBGet")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SwiftUIOverseerrSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Service") {
+                    Toggle("Enable Overseerr", isOn: Binding(
+                        get: { viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Overseerr" })?.enabled ?? false },
+                        set: { newValue in
+                            viewModel.updateServiceEnabled("Overseerr", enabled: newValue)
+                        }
+                    ))
+                }
+                
+                if let overseerrConfig = viewModel.selectedProfile?.serviceConfigurations.first(where: { $0.name == "Overseerr" }), overseerrConfig.enabled {
+                    Section("Connection Details") {
+                        TextField("Host URL", text: Binding(
+                            get: { overseerrConfig.host },
+                            set: { newValue in
+                                viewModel.updateServiceHost("Overseerr", host: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                        
+                        SecureField("API Key", text: Binding(
+                            get: { overseerrConfig.apiKey },
+                            set: { newValue in
+                                viewModel.updateServiceApiKey("Overseerr", apiKey: newValue)
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        
+                        Toggle("Strict TLS Validation", isOn: Binding(
+                            get: { overseerrConfig.strictTLS },
+                            set: { newValue in
+                                viewModel.updateServiceStrictTLS("Overseerr", strictTLS: newValue)
+                            }
+                        ))
+                    }
+                    
+                    Section("Default Pages") {
+                        Picker("Home Page", selection: .constant("Discover")) {
+                            Text("Discover").tag("Discover")
+                            Text("Requests").tag("Requests")
+                            Text("Users").tag("Users")
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    Section("Connection Test") {
+                        Button("Test Connection") {
+                            // TODO: Implement connection test
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+            .navigationTitle("Overseerr")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
     }
 }
 

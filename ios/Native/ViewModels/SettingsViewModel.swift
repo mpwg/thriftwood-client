@@ -343,7 +343,7 @@ class SettingsViewModel {
             return
         }
         
-        guard var profile = appSettings.profiles[oldName] else {
+        guard let profile = appSettings.profiles[oldName] else {
             showError("Profile not found: \(oldName)")
             return
         }
@@ -500,6 +500,249 @@ class SettingsViewModel {
         selectedProfile = profile
         
         await saveSettings()
+    }
+    
+    // MARK: - Individual Service Update Methods
+    
+    /// Update service enabled state
+    @MainActor
+    func updateServiceEnabled(_ serviceName: String, enabled: Bool) {
+        guard var profile = selectedProfile else { return }
+        
+        switch serviceName.lowercased() {
+        case "lidarr":
+            profile.lidarrEnabled = enabled
+        case "radarr":
+            profile.radarrEnabled = enabled
+        case "sonarr":
+            profile.sonarrEnabled = enabled
+        case "tautulli":
+            profile.tautulliEnabled = enabled
+        case "overseerr":
+            profile.overseerrEnabled = enabled
+        default:
+            showError("Unknown service: \(serviceName)")
+            return
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        Task { await saveSettings() }
+    }
+    
+    /// Update service host
+    @MainActor
+    func updateServiceHost(_ serviceName: String, host: String) {
+        guard var profile = selectedProfile else { return }
+        
+        switch serviceName.lowercased() {
+        case "lidarr":
+            profile.lidarrHost = host
+        case "radarr":
+            profile.radarrHost = host
+        case "sonarr":
+            profile.sonarrHost = host
+        case "tautulli":
+            profile.tautulliHost = host
+        case "overseerr":
+            profile.overseerrHost = host
+        default:
+            showError("Unknown service: \(serviceName)")
+            return
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        Task { await saveSettings() }
+    }
+    
+    /// Update service API key
+    @MainActor
+    func updateServiceApiKey(_ serviceName: String, apiKey: String) {
+        guard var profile = selectedProfile else { return }
+        
+        switch serviceName.lowercased() {
+        case "lidarr":
+            profile.lidarrApiKey = apiKey
+        case "radarr":
+            profile.radarrApiKey = apiKey
+        case "sonarr":
+            profile.sonarrApiKey = apiKey
+        case "tautulli":
+            profile.tautulliApiKey = apiKey
+        case "overseerr":
+            profile.overseerrApiKey = apiKey
+        default:
+            showError("Unknown service: \(serviceName)")
+            return
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        Task { await saveSettings() }
+    }
+    
+    /// Update service strict TLS setting
+    @MainActor
+    func updateServiceStrictTLS(_ serviceName: String, strictTLS: Bool) {
+        guard var profile = selectedProfile else { return }
+        
+        // Update service-specific TLS setting
+        switch serviceName.lowercased() {
+        case "radarr":
+            profile.radarrStrictTLS = strictTLS
+        case "sonarr":
+            profile.sonarrStrictTLS = strictTLS
+        case "lidarr":
+            profile.lidarrStrictTLS = strictTLS
+        case "tautulli":
+            profile.tautulliStrictTLS = strictTLS
+        case "overseerr":
+            profile.overseerrStrictTLS = strictTLS
+        default:
+            break
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        Task { await saveSettings() }
+    }
+    
+    /// Update download client enabled state
+    @MainActor
+    func updateDownloadClientEnabled(_ clientName: String, enabled: Bool) {
+        guard var profile = selectedProfile else { return }
+        
+        switch clientName.lowercased() {
+        case "sabnzbd":
+            profile.sabnzbdEnabled = enabled
+        case "nzbget":
+            profile.nzbgetEnabled = enabled
+        default:
+            showError("Unknown download client: \(clientName)")
+            return
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        Task { await saveSettings() }
+    }
+    
+    /// Update download client host
+    @MainActor
+    func updateDownloadClientHost(_ clientName: String, host: String) {
+        guard var profile = selectedProfile else { return }
+        
+        switch clientName.lowercased() {
+        case "sabnzbd":
+            profile.sabnzbdHost = host
+        case "nzbget":
+            profile.nzbgetHost = host
+        default:
+            showError("Unknown download client: \(clientName)")
+            return
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        Task { await saveSettings() }
+    }
+    
+    /// Update download client API key
+    @MainActor
+    func updateDownloadClientApiKey(_ clientName: String, apiKey: String) {
+        guard var profile = selectedProfile else { return }
+        
+        switch clientName.lowercased() {
+        case "sabnzbd":
+            profile.sabnzbdApiKey = apiKey
+        case "nzbget":
+            // NZBGet doesn't use API key in the same way
+            break
+        default:
+            showError("Unknown download client: \(clientName)")
+            return
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        Task { await saveSettings() }
+    }
+    
+    /// Update download client username
+    @MainActor
+    func updateDownloadClientUsername(_ clientName: String, username: String) {
+        guard var profile = selectedProfile else { return }
+        
+        switch clientName.lowercased() {
+        case "nzbget":
+            profile.nzbgetUser = username
+        default:
+            showError("Unknown download client: \(clientName)")
+            return
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        Task { await saveSettings() }
+    }
+    
+    /// Update download client password
+    @MainActor
+    func updateDownloadClientPassword(_ clientName: String, password: String) {
+        guard var profile = selectedProfile else { return }
+        
+        switch clientName.lowercased() {
+        case "nzbget":
+            profile.nzbgetPass = password
+        default:
+            showError("Unknown download client: \(clientName)")
+            return
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        Task { await saveSettings() }
+    }
+    
+    /// Update download client strict TLS setting
+    @MainActor
+    func updateDownloadClientStrictTLS(_ clientName: String, strictTLS: Bool) {
+        guard var profile = selectedProfile else { return }
+        
+        // Update download client-specific TLS setting
+        switch clientName.lowercased() {
+        case "sabnzbd":
+            profile.sabnzbdStrictTLS = strictTLS
+        case "nzbget":
+            profile.nzbgetStrictTLS = strictTLS
+        default:
+            break
+        }
+        
+        // Update profile in storage
+        appSettings.profiles[profile.name] = profile
+        selectedProfile = profile
+        
+        Task { await saveSettings() }
     }
     
     /// Test Wake on LAN functionality
