@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:lunasea/database/models/profile.dart';
 import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
 import 'package:lunasea/system/logger.dart';
+import 'package:lunasea/system/bridge/hybrid_router.dart';
 
 /// Flutter service to handle Dashboard-specific method channel calls from SwiftUI
 /// Maintains bidirectional communication between SwiftUI Dashboard and Flutter services
@@ -31,6 +32,14 @@ class DashboardBridgeService {
           return await _handleUpdateDashboardState(call.arguments);
         case 'getDashboardState':
           return await _handleGetDashboardState();
+        case 'onReturnFromNative':
+          return await _handleReturnFromNative(call.arguments);
+        case 'navigateInFlutter':
+          return await _handleNavigateInFlutter(call.arguments);
+        case 'onDataChanged':
+          return await _handleDataChanged(call.arguments);
+        case 'onDataRemoved':
+          return await _handleDataRemoved(call.arguments);
         default:
           throw PlatformException(
             code: 'UNIMPLEMENTED',
@@ -219,5 +228,96 @@ class DashboardBridgeService {
 
   static bool _checkWakeOnLANAvailability() {
     return LunaWakeOnLAN.isSupported;
+  }
+
+  // MARK: - Navigation and Hybrid Bridge Methods
+
+  /// Handle return from native SwiftUI view
+  /// Delegates to HybridRouter to maintain consistency
+  static Future<void> _handleReturnFromNative(dynamic arguments) async {
+    if (arguments is Map) {
+      final navigateTo = arguments['navigateTo'] as String?;
+      final navigationData =
+          arguments['navigationData'] as Map<String, dynamic>?;
+
+      if (navigateTo != null) {
+        // Navigate to the specified route after returning from native
+        final context = navigatorKey.currentContext;
+        if (context != null) {
+          await HybridRouter.navigateTo(context, navigateTo,
+              data: navigationData);
+        } else {
+          LunaLogger().warning(
+              'No navigation context available for return navigation to $navigateTo');
+        }
+      }
+    }
+
+    LunaLogger().debug('Dashboard bridge: Returned from native view');
+  }
+
+  /// Handle navigation request from SwiftUI to Flutter
+  /// Delegates to HybridRouter for consistency
+  static Future<bool> _handleNavigateInFlutter(dynamic arguments) async {
+    if (arguments is! Map) {
+      LunaLogger().error(
+          'Dashboard bridge: Invalid arguments for navigateInFlutter',
+          'Invalid arguments',
+          StackTrace.current);
+      return false;
+    }
+
+    final route = arguments['route'] as String?;
+    final data = arguments['data'] as Map<String, dynamic>?;
+
+    if (route == null) {
+      LunaLogger().error('Dashboard bridge: No route specified for navigation',
+          'Missing route', StackTrace.current);
+      return false;
+    }
+
+    try {
+      final context = navigatorKey.currentContext;
+      if (context != null) {
+        return await HybridRouter.navigateTo(context, route, data: data);
+      } else {
+        LunaLogger().error('Dashboard bridge: No navigation context available',
+            'No context', StackTrace.current);
+        return false;
+      }
+    } catch (e) {
+      LunaLogger().error(
+          'Dashboard bridge: Error navigating in Flutter from native',
+          e,
+          StackTrace.current);
+      return false;
+    }
+  }
+
+  /// Handle data change notification from native side
+  static Future<void> _handleDataChanged(dynamic arguments) async {
+    if (arguments is Map) {
+      final key = arguments['key'] as String?;
+      final timestamp = arguments['timestamp'] as double?;
+
+      LunaLogger()
+          .debug('Dashboard bridge: Data changed for key: $key at $timestamp');
+
+      // Here you could notify any listeners about data changes
+      // For example, update providers or state management
+    }
+  }
+
+  /// Handle data removal notification from native side
+  static Future<void> _handleDataRemoved(dynamic arguments) async {
+    if (arguments is Map) {
+      final key = arguments['key'] as String?;
+      final timestamp = arguments['timestamp'] as double?;
+
+      LunaLogger()
+          .debug('Dashboard bridge: Data removed for key: $key at $timestamp');
+
+      // Here you could notify any listeners about data removal
+    }
   }
 }
