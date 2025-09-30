@@ -309,23 +309,42 @@ class HiveDataManager {
                 if let error = result as? FlutterError {
                     continuation.resume(throwing: NSError(domain: error.code, code: 0, userInfo: [NSLocalizedDescriptionKey: error.message ?? "Get logs failed"]))
                 } else if let logsArray = result as? [[String: Any]] {
+                    // Debug: Print first log entry to see the actual structure
+                    if let firstLog = logsArray.first {
+                        print("HiveDataManager DEBUG - First log structure:")
+                        for (key, value) in firstLog {
+                            print("  \(key): \(value) (\(type(of: value)))")
+                        }
+                    }
+                    
                     do {
                         let logs = try logsArray.map { logDict -> LunaLogEntry in
-                            guard let timestamp = logDict["timestamp"] as? Int,
+                            // Handle timestamp: Flutter sends ISO8601 string, convert to milliseconds
+                            guard let timestampString = logDict["timestamp"] as? String,
+                                  let timestampDate = ISO8601DateFormatter().date(from: timestampString),
                                   let typeString = logDict["type"] as? String,
                                   let type = LunaLogType(rawValue: typeString),
                                   let message = logDict["message"] as? String else {
-                                throw HiveDataError.decodingError("Invalid log format")
+                                throw HiveDataError.decodingError("Invalid log format: missing required fields")
+                            }
+                            
+                            // Convert ISO8601 date back to milliseconds since epoch (to match Flutter format)
+                            let timestamp = Int(timestampDate.timeIntervalSince1970 * 1000)
+                            
+                            // Handle stack trace: Flutter sends as array, join to string
+                            var stackTraceString: String? = nil
+                            if let stackTraceArray = logDict["stack_trace"] as? [String] {
+                                stackTraceString = stackTraceArray.joined(separator: "\n")
                             }
                             
                             return LunaLogEntry(
                                 timestamp: timestamp,
                                 type: type,
-                                className: logDict["className"] as? String,
-                                methodName: logDict["methodName"] as? String,
+                                className: logDict["class_name"] as? String,  // Flutter uses "class_name"
+                                methodName: logDict["method_name"] as? String,  // Flutter uses "method_name"
                                 message: message,
                                 error: logDict["error"] as? String,
-                                stackTrace: logDict["stackTrace"] as? String
+                                stackTrace: stackTraceString
                             )
                         }
                         continuation.resume(returning: logs)

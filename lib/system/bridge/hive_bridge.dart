@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:lunasea/database/database.dart';
 import 'package:lunasea/database/box.dart';
@@ -42,6 +43,13 @@ class HiveBridge {
           return await _importConfiguration(call.arguments);
         case 'clearConfiguration':
           return await _clearConfiguration();
+        case 'getLogs':
+          return await _getLogs(call.arguments);
+        case 'clearLogs':
+          await _clearLogs();
+          return true;
+        case 'exportLogs':
+          return await _exportLogs();
         case 'getSystemLogs':
           return await _getSystemLogs(call.arguments);
         case 'clearSystemLogs':
@@ -377,13 +385,33 @@ class HiveBridge {
     }
   }
 
+  /// Get logs (equivalent to LunaBox.logs.data access)
+  static Future<List<Map<String, dynamic>>> _getLogs(dynamic arguments) async {
+    try {
+      // Access logs from LunaBox.logs like Flutter implementation
+      final logs = LunaBox.logs.data.map((log) {
+        // Convert LunaLog to JSON but with consistent key format for SwiftUI
+        final json = log.toJson();
+        // Fix the type field to use key instead of title for SwiftUI compatibility
+        json['type'] =
+            log.type.key; // Use key ("warning") instead of title ("Warning")
+        return json;
+      }).toList();
+
+      LunaLogger().debug('HiveBridge: Retrieved ${logs.length} log entries');
+      return logs;
+    } catch (e, stackTrace) {
+      LunaLogger().error('HiveBridge: Error getting logs', e, stackTrace);
+      rethrow;
+    }
+  }
+
   /// Get system logs
   static Future<List<Map<String, dynamic>>> _getSystemLogs(
       dynamic arguments) async {
     try {
-      // Return placeholder logs for now
-      // This would read from LunaBox.logs in a real implementation
-      return [];
+      // Use the same implementation as _getLogs for backward compatibility
+      return await _getLogs(arguments);
     } catch (e, stackTrace) {
       LunaLogger()
           .error('HiveBridge: Error getting system logs', e, stackTrace);
@@ -391,12 +419,39 @@ class HiveBridge {
     }
   }
 
+  /// Clear logs (equivalent to LunaLogger().clear())
+  static Future<void> _clearLogs() async {
+    try {
+      // Clear logs box using Flutter implementation pattern
+      await LunaBox.logs.clear();
+
+      LunaLogger().debug('HiveBridge: Logs cleared');
+    } catch (e, stackTrace) {
+      LunaLogger().error('HiveBridge: Error clearing logs', e, stackTrace);
+      rethrow;
+    }
+  }
+
+  /// Export logs (equivalent to LunaLogger().export())
+  static Future<String> _exportLogs() async {
+    try {
+      // Use the same export logic as LunaLogger().export()
+      final logs = LunaBox.logs.data.map((log) => log.toJson()).toList();
+      final encoder = JsonEncoder.withIndent(' ' * 4);
+
+      LunaLogger().debug('HiveBridge: Exported ${logs.length} log entries');
+      return encoder.convert(logs);
+    } catch (e, stackTrace) {
+      LunaLogger().error('HiveBridge: Error exporting logs', e, stackTrace);
+      rethrow;
+    }
+  }
+
   /// Clear system logs
   static Future<bool> _clearSystemLogs() async {
     try {
-      // Clear logs box
-      // LunaBox.logs.clear() in a real implementation
-      LunaLogger().debug('HiveBridge: System logs cleared');
+      // Use the same implementation as _clearLogs for backward compatibility
+      await _clearLogs();
       return true;
     } catch (e, stackTrace) {
       LunaLogger()
