@@ -39,7 +39,7 @@ struct SwiftUIConfigurationView: View {
                         SettingsMenuItem(
                             title: "General",
                             subtitle: "Customize LunaSea",
-                            icon: "brush",
+                            icon: "paintbrush",
                             route: "settings_general"
                         )
                         
