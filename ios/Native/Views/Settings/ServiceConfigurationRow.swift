@@ -14,7 +14,7 @@ struct ServiceConfigurationRow: View {
     let isExpanded: Bool
     let onToggleExpanded: () -> Void
     let onUpdate: (ServiceConfiguration) -> Void
-    let onTestConnection: (ServiceConfiguration) -> Void
+    @Bindable var viewModel: ConfigurationViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -67,9 +67,15 @@ struct ServiceConfigurationRow: View {
                     
                     HStack {
                         Button("Test Connection") {
-                            onTestConnection(service)
+                            viewModel.testServiceConnection(service)
                         }
                         .buttonStyle(.bordered)
+                        .disabled(viewModel.isTestingConnection || service.host.isEmpty || service.apiKey.isEmpty)
+                        
+                        if viewModel.isTestingConnection {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        }
                         
                         Spacer()
                         
@@ -77,6 +83,16 @@ struct ServiceConfigurationRow: View {
                             onUpdate(service)
                         }
                         .buttonStyle(.borderedProminent)
+                    }
+                    
+                    if let result = viewModel.connectionTestResult {
+                        HStack {
+                            Image(systemName: result.contains("successful") ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                .foregroundColor(result.contains("successful") ? .green : .red)
+                            Text(result)
+                                .foregroundColor(result.contains("successful") ? .green : .red)
+                        }
+                        .font(.caption)
                     }
                 }
                 .padding(.leading)

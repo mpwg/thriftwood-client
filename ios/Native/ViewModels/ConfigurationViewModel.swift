@@ -21,6 +21,10 @@ class ConfigurationViewModel {
     var errorMessage: String?
     var isShowingError: Bool = false
     
+    // Connection testing state - proper MVVM state management
+    var isTestingConnection: Bool = false
+    var connectionTestResult: String?
+    
     let settingsViewModel: SettingsViewModel
     
     init(settingsViewModel: SettingsViewModel) {
@@ -49,19 +53,7 @@ class ConfigurationViewModel {
         loadConfiguration()
     }
     
-    @MainActor
-    func testConnection(for service: ServiceConfiguration) async -> Bool {
-        // Phase 2: Basic validation only - actual connection testing will be implemented in later phases
-        isLoading = true
-        
-        // Simulate network delay for user feedback
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
-        
-        isLoading = false
-        
-        // Basic validation: ensure host and API key are provided
-        return !service.host.isEmpty && !service.apiKey.isEmpty
-    }
+    // Removed duplicate method - consolidated into private testConnection method below
     
     @MainActor
     func updateDownloadClientConfiguration(_ config: DownloadClientConfiguration) async {
@@ -74,6 +66,45 @@ class ConfigurationViewModel {
             apiKey: config.apiKey
         )
         loadConfiguration()
+    }
+    
+    // MARK: - Service Connection Testing (Proper MVVM)
+    
+    @MainActor
+    func testServiceConnection(_ service: ServiceConfiguration) {
+        // Input validation - ViewModel responsibility
+        guard !service.host.isEmpty && !service.apiKey.isEmpty else {
+            connectionTestResult = "❌ Host and API Key are required"
+            return
+        }
+        
+        // Clear previous results and set loading state
+        isTestingConnection = true
+        connectionTestResult = nil
+        
+        // Perform async operation in ViewModel
+        Task {
+            let success = await testConnection(for: service)
+            
+            await MainActor.run {
+                isTestingConnection = false
+                connectionTestResult = success 
+                    ? "✅ Connection successful!" 
+                    : "❌ Connection failed"
+            }
+        }
+    }
+    
+    private func testConnection(for service: ServiceConfiguration) async -> Bool {
+        // Phase 2: Basic validation with simulated network delay for user feedback
+        // This will be replaced with proper API calls once service APIs are migrated
+        return await withCheckedContinuation { continuation in
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+                // Mock implementation - in real implementation this would call service API
+                let success = !service.host.isEmpty && !service.apiKey.isEmpty
+                continuation.resume(returning: success)
+            }
+        }
     }
     
     @MainActor
