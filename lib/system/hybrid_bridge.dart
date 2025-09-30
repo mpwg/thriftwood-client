@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:lunasea/system/bridge/bridge_error.dart';
 
 /// Bridge for communication between Flutter and SwiftUI
 class FlutterSwiftUIBridge {
@@ -16,9 +17,22 @@ class FlutterSwiftUIBridge {
         'data': data ?? <String, dynamic>{},
       });
       return result == true;
+    } on PlatformException catch (e) {
+      BridgeErrorReporter.reportPlatformException(
+        e,
+        'navigateToNativeView',
+        'FlutterSwiftUIBridge',
+        context: {'route': route, 'hasData': data != null},
+      );
+      rethrow;
     } catch (e) {
-      debugPrint('Error navigating to native view: $e');
-      return false;
+      BridgeErrorReporter.reportException(
+        e,
+        'navigateToNativeView',
+        'FlutterSwiftUIBridge',
+        context: {'route': route, 'hasData': data != null},
+      );
+      rethrow;
     }
   }
 
@@ -30,9 +44,22 @@ class FlutterSwiftUIBridge {
         'route': route,
       });
       return result == true;
+    } on PlatformException catch (e) {
+      BridgeErrorReporter.reportPlatformException(
+        e,
+        'isNativeViewAvailable',
+        'FlutterSwiftUIBridge',
+        context: {'route': route},
+      );
+      rethrow;
     } catch (e) {
-      debugPrint('Error checking native view availability: $e');
-      return false;
+      BridgeErrorReporter.reportException(
+        e,
+        'isNativeViewAvailable',
+        'FlutterSwiftUIBridge',
+        context: {'route': route},
+      );
+      rethrow;
     }
   }
 
@@ -46,9 +73,22 @@ class FlutterSwiftUIBridge {
         'data': data ?? <String, dynamic>{},
       });
       return result == true;
+    } on PlatformException catch (e) {
+      BridgeErrorReporter.reportPlatformException(
+        e,
+        'navigateBackToFlutter',
+        'FlutterSwiftUIBridge',
+        context: {'hasData': data != null},
+      );
+      rethrow;
     } catch (e) {
-      debugPrint('Error navigating back to Flutter: $e');
-      return false;
+      BridgeErrorReporter.reportException(
+        e,
+        'navigateBackToFlutter',
+        'FlutterSwiftUIBridge',
+        context: {'hasData': data != null},
+      );
+      rethrow;
     }
   }
 

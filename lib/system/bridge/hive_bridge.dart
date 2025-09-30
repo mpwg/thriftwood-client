@@ -4,6 +4,7 @@ import 'package:lunasea/database/box.dart';
 import 'package:lunasea/database/models/profile.dart';
 import 'package:lunasea/database/tables/lunasea.dart';
 import 'package:lunasea/system/logger.dart';
+import 'package:lunasea/system/bridge/bridge_error.dart';
 
 /// Bridge for synchronizing Hive data between Flutter and SwiftUI
 class HiveBridge {
@@ -27,11 +28,14 @@ class HiveBridge {
         case 'getHiveSettings':
           return await _getHiveSettings();
         case 'updateHiveSettings':
-          return await _updateHiveSettings(call.arguments);
+          await _updateHiveSettings(call.arguments);
+          return true;
         case 'profileChanged':
-          return await _handleProfileChange(call.arguments);
+          await _handleProfileChange(call.arguments);
+          return true;
         case 'updateHiveProfile':
-          return await _updateHiveProfile(call.arguments);
+          await _updateHiveProfile(call.arguments);
+          return true;
         case 'exportConfiguration':
           return await _exportConfiguration();
         case 'importConfiguration':
@@ -53,13 +57,27 @@ class HiveBridge {
           );
       }
     } catch (e, stackTrace) {
-      LunaLogger().error(
-          'HiveBridge: Error handling method call: ${call.method}',
-          e,
-          stackTrace);
+      // Use comprehensive error reporting
+      BridgeErrorReporter.reportException(
+        e,
+        call.method,
+        'HiveBridge',
+        context: {
+          'arguments': call.arguments?.toString(),
+          'methodName': call.method,
+        },
+        stackTrace: stackTrace,
+      );
+
+      // Still throw PlatformException for method channel compatibility
       throw PlatformException(
         code: 'OPERATION_FAILED',
-        message: 'Failed to execute ${call.method}: $e',
+        message: 'HiveBridge operation ${call.method} failed: $e',
+        details: {
+          'operation': call.method,
+          'component': 'HiveBridge',
+          'originalError': e.toString(),
+        },
       );
     }
   }
@@ -125,13 +143,38 @@ class HiveBridge {
   }
 
   /// Update Hive settings from SwiftUI
-  static Future<bool> _updateHiveSettings(dynamic arguments) async {
+  static Future<void> _updateHiveSettings(dynamic arguments) async {
     try {
       if (arguments is! Map) {
-        throw ArgumentError('Invalid arguments for updateHiveSettings');
+        throw ArgumentError(
+            'Invalid arguments for updateHiveSettings: Expected Map, got ${arguments.runtimeType}');
       }
 
-      final settingsMap = arguments['settings'] as Map<String, dynamic>;
+      if (!arguments.containsKey('settings')) {
+        throw ArgumentError(
+            'Missing required "settings" key in updateHiveSettings arguments');
+      }
+
+      final rawSettings = arguments['settings'];
+      if (rawSettings is! Map) {
+        throw ArgumentError(
+            'Invalid settings data for updateHiveSettings: Expected Map, got ${rawSettings.runtimeType}');
+      }
+
+      // Safely convert to Map<String, dynamic> with detailed error reporting
+      Map<String, dynamic> settingsMap;
+      try {
+        settingsMap = Map<String, dynamic>.from(rawSettings.map((key, value) {
+          if (key is! String) {
+            throw ArgumentError(
+                'Invalid settings key type: Expected String, got ${key.runtimeType} for key: $key');
+          }
+          return MapEntry(key.toString(), value);
+        }));
+      } catch (e) {
+        throw ArgumentError(
+            'Failed to convert settings map: $e. Raw data: $rawSettings');
+      }
 
       // Update enabled profile
       if (settingsMap.containsKey('enabledProfile')) {
@@ -140,9 +183,21 @@ class HiveBridge {
 
       // Update profiles
       if (settingsMap.containsKey('profiles')) {
-        final profiles = settingsMap['profiles'] as Map<String, dynamic>;
+        final rawProfiles = settingsMap['profiles'];
+        if (rawProfiles is! Map) {
+          throw ArgumentError(
+              'Invalid profiles data: Expected Map, got ${rawProfiles.runtimeType}');
+        }
+
+        final profiles = Map<String, dynamic>.from(rawProfiles);
         for (String profileKey in profiles.keys) {
-          final profileData = profiles[profileKey] as Map<String, dynamic>;
+          final rawProfileData = profiles[profileKey];
+          if (rawProfileData is! Map) {
+            throw ArgumentError(
+                'Invalid profile data for "$profileKey": Expected Map, got ${rawProfileData.runtimeType}');
+          }
+
+          final profileData = Map<String, dynamic>.from(rawProfileData);
           final profile = LunaProfile.fromJson(profileData);
           LunaBox.profiles.update(profileKey, profile);
         }
@@ -155,51 +210,112 @@ class HiveBridge {
       }
 
       LunaLogger().debug('HiveBridge: Updated Hive settings successfully');
-      return true;
     } catch (e, stackTrace) {
-      LunaLogger()
-          .error('HiveBridge: Error updating Hive settings', e, stackTrace);
-      return false;
+      BridgeErrorReporter.reportException(
+        e,
+        'updateHiveSettings',
+        'HiveBridge',
+        context: {
+          'arguments': arguments?.toString(),
+          'hasSettingsKey':
+              arguments is Map ? arguments.containsKey('settings') : false,
+        },
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
   }
 
   /// Handle profile change from SwiftUI
-  static Future<bool> _handleProfileChange(dynamic arguments) async {
+  static Future<void> _handleProfileChange(dynamic arguments) async {
     try {
       if (arguments is! Map) {
-        throw ArgumentError('Invalid arguments for profileChanged');
+        throw ArgumentError(
+            'Invalid arguments for profileChanged: Expected Map, got ${arguments.runtimeType}');
       }
 
-      final profileName = arguments['profile'] as String;
+      if (!arguments.containsKey('profile')) {
+        throw ArgumentError(
+            'Missing required "profile" key in profileChanged arguments');
+      }
+
+      final rawProfileName = arguments['profile'];
+      if (rawProfileName is! String) {
+        throw ArgumentError(
+            'Invalid profile name: Expected String, got ${rawProfileName.runtimeType}. Value: $rawProfileName');
+      }
+
+      final profileName = rawProfileName.toString();
       LunaSeaDatabase.ENABLED_PROFILE.update(profileName);
 
       LunaLogger().debug('HiveBridge: Profile changed to $profileName');
-      return true;
     } catch (e, stackTrace) {
-      LunaLogger()
-          .error('HiveBridge: Error handling profile change', e, stackTrace);
-      return false;
+      BridgeErrorReporter.reportException(
+        e,
+        'profileChanged',
+        'HiveBridge',
+        context: {
+          'arguments': arguments?.toString(),
+          'hasProfileKey':
+              arguments is Map ? arguments.containsKey('profile') : false,
+        },
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
   }
 
   /// Update specific profile in Hive
-  static Future<bool> _updateHiveProfile(dynamic arguments) async {
+  static Future<void> _updateHiveProfile(dynamic arguments) async {
     try {
       if (arguments is! Map) {
-        throw ArgumentError('Invalid arguments for updateHiveProfile');
+        throw ArgumentError(
+            'Invalid arguments for updateHiveProfile: Expected Map, got ${arguments.runtimeType}');
       }
 
-      final profileName = arguments['profileName'] as String;
-      final profileData = arguments['profile'] as Map<String, dynamic>;
+      if (!arguments.containsKey('profileName')) {
+        throw ArgumentError(
+            'Missing required "profileName" key in updateHiveProfile arguments');
+      }
+      if (!arguments.containsKey('profile')) {
+        throw ArgumentError(
+            'Missing required "profile" key in updateHiveProfile arguments');
+      }
+
+      final rawProfileName = arguments['profileName'];
+      if (rawProfileName is! String) {
+        throw ArgumentError(
+            'Invalid profileName: Expected String, got ${rawProfileName.runtimeType}. Value: $rawProfileName');
+      }
+
+      final rawProfileData = arguments['profile'];
+      if (rawProfileData is! Map) {
+        throw ArgumentError(
+            'Invalid profile data: Expected Map, got ${rawProfileData.runtimeType}');
+      }
+
+      final profileName = rawProfileName.toString();
+      final profileData = Map<String, dynamic>.from(rawProfileData);
 
       final profile = LunaProfile.fromJson(profileData);
       LunaBox.profiles.update(profileName, profile);
 
       LunaLogger().debug('HiveBridge: Updated profile $profileName');
-      return true;
     } catch (e, stackTrace) {
-      LunaLogger().error('HiveBridge: Error updating profile', e, stackTrace);
-      return false;
+      BridgeErrorReporter.reportException(
+        e,
+        'updateHiveProfile',
+        'HiveBridge',
+        context: {
+          'arguments': arguments?.toString(),
+          'hasProfileNameKey':
+              arguments is Map ? arguments.containsKey('profileName') : false,
+          'hasProfileKey':
+              arguments is Map ? arguments.containsKey('profile') : false,
+        },
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
   }
 

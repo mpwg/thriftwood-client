@@ -59,33 +59,53 @@ class HiveDataManager {
     // MARK: - Public Methods
     
     /// Sync settings to Flutter's Hive storage
-    func syncSettings(_ settings: ThriftwoodAppSettings) async {
+    func syncSettings(_ settings: ThriftwoodAppSettings) async throws {
         guard let methodChannel = methodChannel else {
-            print("Warning: Method channel not initialized, cannot sync settings to Hive storage")
-            return
+            throw HiveDataError.channelNotInitialized
         }
         
-        do {
-            let settingsDict = try settings.toDictionary()
-            
-            await methodChannel.invokeMethod("updateHiveSettings", arguments: [
-                "settings": settingsDict
-            ])
-        } catch {
-            print("Error syncing settings to Hive: \(error)")
+        let settingsDict = try settings.toDictionary()
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                methodChannel.invokeMethod("updateHiveSettings", arguments: [
+                    "settings": settingsDict
+                ]) { result in
+                    if let error = result as? FlutterError {
+                        continuation.resume(throwing: HiveDataError.flutterError(
+                            "Failed to sync settings to Hive: \(error.message ?? "Unknown error"). " +
+                            "Code: \(error.code), Details: \(error.details.map { "\($0)" } ?? "None")"
+                        ))
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
         }
     }
     
     /// Notify Flutter of profile change
-    func notifyProfileChange(_ profileName: String) async {
+    func notifyProfileChange(_ profileName: String) async throws {
         guard let methodChannel = methodChannel else {
-            print("Warning: Method channel not initialized, cannot notify Flutter of profile change")
-            return
+            throw HiveDataError.channelNotInitialized
         }
         
-        await methodChannel.invokeMethod("profileChanged", arguments: [
-            "profile": profileName
-        ])
+        return try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                methodChannel.invokeMethod("profileChanged", arguments: [
+                    "profile": profileName
+                ]) { result in
+                    if let error = result as? FlutterError {
+                        continuation.resume(throwing: HiveDataError.flutterError(
+                            "Failed to notify Flutter of profile change '\(profileName)': \(error.message ?? "Unknown error"). " +
+                            "Code: \(error.code), Details: \(error.details.map { "\($0)" } ?? "None")"
+                        ))
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
+        }
     }
     
     /// Load settings from Flutter's Hive storage
@@ -99,13 +119,19 @@ class HiveDataManager {
             Task { @MainActor in
                 methodChannel.invokeMethod("getHiveSettings", arguments: nil) { result in
                     if let error = result as? FlutterError {
-                        continuation.resume(throwing: HiveDataError.flutterError(error.message ?? "Unknown error"))
+                        continuation.resume(throwing: HiveDataError.flutterError(
+                            "Failed to load settings from Hive: \(error.message ?? "Unknown error"). " +
+                            "Code: \(error.code), Details: \(error.details.map { "\($0)" } ?? "None")"
+                        ))
                     } else if let settingsDict = result as? [String: Any] {
                         do {
                             let settings = try ThriftwoodAppSettings.fromDictionary(settingsDict)
                             continuation.resume(returning: settings)
                         } catch {
-                            continuation.resume(throwing: error)
+                            continuation.resume(throwing: HiveDataError.decodingError(
+                                "Failed to decode settings from Hive data: \(error.localizedDescription). " +
+                                "Data keys: \(settingsDict.keys.sorted())"
+                            ))
                         }
                     } else {
                         continuation.resume(returning: nil)
@@ -116,16 +142,29 @@ class HiveDataManager {
     }
     
     /// Save specific profile to Hive
-    func saveProfileToHive(_ profile: ThriftwoodProfile) async {
-        do {
-            let profileDict = try profile.toDictionary()
-            
-            await methodChannel?.invokeMethod("updateHiveProfile", arguments: [
-                "profileName": profile.name,
-                "profile": profileDict
-            ])
-        } catch {
-            print("Error saving profile to Hive: \(error)")
+    func saveProfileToHive(_ profile: ThriftwoodProfile) async throws {
+        guard let methodChannel = methodChannel else {
+            throw HiveDataError.channelNotInitialized
+        }
+        
+        let profileDict = try profile.toDictionary()
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                methodChannel.invokeMethod("updateHiveProfile", arguments: [
+                    "profileName": profile.name,
+                    "profile": profileDict
+                ]) { result in
+                    if let error = result as? FlutterError {
+                        continuation.resume(throwing: HiveDataError.flutterError(
+                            "Failed to save profile '\(profile.name)' to Hive: \(error.message ?? "Unknown error"). " +
+                            "Code: \(error.code), Details: \(error.details.map { "\($0)" } ?? "None")"
+                        ))
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
         }
     }
     

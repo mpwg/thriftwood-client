@@ -643,12 +643,28 @@ class SettingsViewModel {
     
     private func syncWithHiveStorage() async {
         // Sync settings with Flutter's Hive storage
-        await dataManager.syncSettings(appSettings)
+        do {
+            try await dataManager.syncSettings(appSettings)
+            print("✅ Settings synced to Hive successfully")
+        } catch {
+            print("❌ Failed to sync settings to Hive: \(error)")
+            await MainActor.run {
+                showError("Failed to sync settings to Flutter: \(error.localizedDescription)")
+            }
+        }
     }
     
     private func notifyFlutterOfProfileChange(_ profileName: String) async {
         // Notify Flutter of profile change through the bridge
-        await dataManager.notifyProfileChange(profileName)
+        do {
+            try await dataManager.notifyProfileChange(profileName)
+            print("✅ Profile change notification sent to Flutter: \(profileName)")
+        } catch {
+            print("❌ Failed to notify Flutter of profile change: \(error)")
+            await MainActor.run {
+                showError("Failed to notify Flutter of profile change: \(error.localizedDescription)")
+            }
+        }
     }
     
     // MARK: - System Functionality
