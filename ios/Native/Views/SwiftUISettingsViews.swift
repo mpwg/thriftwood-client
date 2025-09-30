@@ -1217,6 +1217,653 @@ struct SwiftUIWakeOnLANSettingsView: View {
     }
 }
 
+// MARK: - Search Settings View
+
+struct SwiftUISearchSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    @State private var showingAddIndexer = false
+    @State private var newIndexerName = ""
+    @State private var newIndexerHost = ""
+    @State private var newIndexerApiKey = ""
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Search Preferences") {
+                    Toggle("Search History", isOn: Binding(
+                        get: { viewModel.appSettings.enableSearchHistory },
+                        set: { newValue in
+                            viewModel.appSettings.enableSearchHistory = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                    
+                    if viewModel.appSettings.enableSearchHistory {
+                        HStack {
+                            Text("Max History Items")
+                            Spacer()
+                            Picker("", selection: Binding(
+                                get: { viewModel.appSettings.maxSearchHistory },
+                                set: { newValue in
+                                    viewModel.appSettings.maxSearchHistory = newValue
+                                    Task { await viewModel.saveSettings() }
+                                }
+                            )) {
+                                Text("25").tag(25)
+                                Text("50").tag(50)
+                                Text("100").tag(100)
+                                Text("200").tag(200)
+                            }
+                            .pickerStyle(.menu)
+                        }
+                    }
+                    
+                    Picker("Default Category", selection: Binding(
+                        get: { viewModel.appSettings.defaultSearchCategory },
+                        set: { newValue in
+                            viewModel.appSettings.defaultSearchCategory = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    )) {
+                        ForEach(SearchCategory.allCases, id: \.self) { category in
+                            Text(category.displayName).tag(category.rawValue)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
+                
+                Section("Search Types") {
+                    Toggle("Torrent Searching", isOn: Binding(
+                        get: { viewModel.appSettings.enableTorrentSearching },
+                        set: { newValue in
+                            viewModel.appSettings.enableTorrentSearching = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                    
+                    Toggle("Usenet Searching", isOn: Binding(
+                        get: { viewModel.appSettings.enableUsenetSearching },
+                        set: { newValue in
+                            viewModel.appSettings.enableUsenetSearching = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                }
+                
+                Section(header: HStack {
+                    Text("Search Indexers")
+                    Spacer()
+                    Button("Add") {
+                        showingAddIndexer = true
+                    }
+                    .font(.caption)
+                }) {
+                    if viewModel.appSettings.searchIndexers.isEmpty {
+                        Text("No indexers configured")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(viewModel.appSettings.searchIndexers) { indexer in
+                            SearchIndexerRow(
+                                indexer: indexer,
+                                onUpdate: { updatedIndexer in
+                                    if let index = viewModel.appSettings.searchIndexers.firstIndex(where: { $0.id == updatedIndexer.id }) {
+                                        viewModel.appSettings.searchIndexers[index] = updatedIndexer
+                                        Task { await viewModel.saveSettings() }
+                                    }
+                                },
+                                onDelete: { indexerToDelete in
+                                    viewModel.appSettings.searchIndexers.removeAll { $0.id == indexerToDelete.id }
+                                    Task { await viewModel.saveSettings() }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Search Settings")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+            .sheet(isPresented: $showingAddIndexer) {
+                NavigationStack {
+                    Form {
+                        Section("Indexer Details") {
+                            TextField("Name", text: $newIndexerName)
+                            TextField("Host URL", text: $newIndexerHost)
+                                .keyboardType(.URL)
+                                .autocapitalization(.none)
+                            SecureField("API Key", text: $newIndexerApiKey)
+                        }
+                    }
+                    .navigationTitle("Add Indexer")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Cancel") {
+                                showingAddIndexer = false
+                                newIndexerName = ""
+                                newIndexerHost = ""
+                                newIndexerApiKey = ""
+                            }
+                        }
+                        
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Add") {
+                                let newIndexer = SearchIndexer(
+                                    name: newIndexerName,
+                                    displayName: newIndexerName,
+                                    host: newIndexerHost,
+                                    apiKey: newIndexerApiKey
+                                )
+                                viewModel.appSettings.searchIndexers.append(newIndexer)
+                                Task { await viewModel.saveSettings() }
+                                
+                                showingAddIndexer = false
+                                newIndexerName = ""
+                                newIndexerHost = ""
+                                newIndexerApiKey = ""
+                            }
+                            .disabled(newIndexerName.isEmpty)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SearchIndexerRow: View {
+    @Bindable var indexer: SearchIndexer
+    let onUpdate: (SearchIndexer) -> Void
+    let onDelete: (SearchIndexer) -> Void
+    @State private var isExpanded = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(indexer.displayName)
+                        .font(.headline)
+                    
+                    if !indexer.host.isEmpty {
+                        Text(indexer.host)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                
+                Spacer()
+                
+                Toggle("", isOn: $indexer.isEnabled)
+                    .onChange(of: indexer.isEnabled) { _, _ in
+                        onUpdate(indexer)
+                    }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                isExpanded.toggle()
+            }
+            
+            if isExpanded {
+                VStack(spacing: 12) {
+                    TextField("Host URL", text: $indexer.host)
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                    
+                    SecureField("API Key", text: $indexer.apiKey)
+                        .textFieldStyle(.roundedBorder)
+                    
+                    HStack {
+                        Button("Delete", role: .destructive) {
+                            onDelete(indexer)
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Spacer()
+                        
+                        Button("Save") {
+                            onUpdate(indexer)
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                }
+                .padding(.leading)
+            }
+        }
+    }
+}
+
+// MARK: - External Modules Settings View
+
+struct SwiftUIExternalModulesSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    @State private var showingAddModule = false
+    @State private var newModuleName = ""
+    @State private var newModuleDisplayName = ""
+    @State private var newModuleHost = ""
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section(header: HStack {
+                    Text("External Modules")
+                    Spacer()
+                    Button("Add") {
+                        showingAddModule = true
+                    }
+                    .font(.caption)
+                }) {
+                    if viewModel.appSettings.externalModules.isEmpty {
+                        VStack(spacing: 16) {
+                            Image(systemName: "cube.box")
+                                .font(.system(size: 48))
+                                .foregroundStyle(.secondary)
+                            
+                            Text("No External Modules")
+                                .font(.headline)
+                            
+                            Text("Add external web applications to access them from the dashboard")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                    } else {
+                        ForEach(viewModel.appSettings.externalModules) { module in
+                            ExternalModuleRow(
+                                module: module,
+                                onUpdate: { updatedModule in
+                                    if let index = viewModel.appSettings.externalModules.firstIndex(where: { $0.id == updatedModule.id }) {
+                                        viewModel.appSettings.externalModules[index] = updatedModule
+                                        Task { await viewModel.saveSettings() }
+                                    }
+                                },
+                                onDelete: { moduleToDelete in
+                                    viewModel.appSettings.externalModules.removeAll { $0.id == moduleToDelete.id }
+                                    Task { await viewModel.saveSettings() }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            .navigationTitle("External Modules")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+            .sheet(isPresented: $showingAddModule) {
+                NavigationStack {
+                    Form {
+                        Section("Module Details") {
+                            TextField("Internal Name", text: $newModuleName)
+                                .autocapitalization(.none)
+                            TextField("Display Name", text: $newModuleDisplayName)
+                            TextField("Host URL", text: $newModuleHost)
+                                .keyboardType(.URL)
+                                .autocapitalization(.none)
+                        }
+                        
+                        Section(footer: Text("The internal name is used for identification, while the display name is shown in the UI")) {
+                            EmptyView()
+                        }
+                    }
+                    .navigationTitle("Add Module")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Cancel") {
+                                showingAddModule = false
+                                newModuleName = ""
+                                newModuleDisplayName = ""
+                                newModuleHost = ""
+                            }
+                        }
+                        
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Add") {
+                                let newModule = ExternalModule(
+                                    name: newModuleName,
+                                    displayName: newModuleDisplayName,
+                                    host: newModuleHost
+                                )
+                                viewModel.appSettings.externalModules.append(newModule)
+                                Task { await viewModel.saveSettings() }
+                                
+                                showingAddModule = false
+                                newModuleName = ""
+                                newModuleDisplayName = ""
+                                newModuleHost = ""
+                            }
+                            .disabled(newModuleName.isEmpty || newModuleDisplayName.isEmpty)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct ExternalModuleRow: View {
+    @Bindable var module: ExternalModule
+    let onUpdate: (ExternalModule) -> Void
+    let onDelete: (ExternalModule) -> Void
+    @State private var isExpanded = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(module.displayName)
+                        .font(.headline)
+                    
+                    if !module.host.isEmpty {
+                        Text(module.host)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                
+                Spacer()
+                
+                Toggle("", isOn: $module.isEnabled)
+                    .onChange(of: module.isEnabled) { _, _ in
+                        onUpdate(module)
+                    }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                isExpanded.toggle()
+            }
+            
+            if isExpanded {
+                VStack(spacing: 12) {
+                    TextField("Internal Name", text: $module.name)
+                        .textFieldStyle(.roundedBorder)
+                        .autocapitalization(.none)
+                    
+                    TextField("Display Name", text: $module.displayName)
+                        .textFieldStyle(.roundedBorder)
+                    
+                    TextField("Host URL", text: $module.host)
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                    
+                    HStack {
+                        Button("Delete", role: .destructive) {
+                            onDelete(module)
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Spacer()
+                        
+                        Button("Save") {
+                            onUpdate(module)
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                }
+                .padding(.leading)
+            }
+        }
+    }
+}
+
+// MARK: - Drawer Settings View
+
+struct SwiftUIDrawerSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Drawer Behavior") {
+                    Toggle("Auto Expand", isOn: Binding(
+                        get: { viewModel.appSettings.drawerAutoExpand },
+                        set: { newValue in
+                            viewModel.appSettings.drawerAutoExpand = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                    
+                    Toggle("Group Modules", isOn: Binding(
+                        get: { viewModel.appSettings.drawerGroupModules },
+                        set: { newValue in
+                            viewModel.appSettings.drawerGroupModules = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                    
+                    Toggle("Show Version", isOn: Binding(
+                        get: { viewModel.appSettings.drawerShowVersion },
+                        set: { newValue in
+                            viewModel.appSettings.drawerShowVersion = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                }
+                
+                Section(footer: Text("These settings customize how the navigation drawer behaves and what information it displays")) {
+                    EmptyView()
+                }
+            }
+            .navigationTitle("Drawer Settings")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Quick Actions Settings View
+
+struct SwiftUIQuickActionsSettingsView: View {
+    @Bindable var viewModel: SettingsViewModel
+    @State private var showingAddAction = false
+    @State private var newActionTitle = ""
+    @State private var newActionIcon = ""
+    @State private var newActionRoute = ""
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Quick Actions") {
+                    Toggle("Enable Quick Actions", isOn: Binding(
+                        get: { viewModel.appSettings.enableQuickActions },
+                        set: { newValue in
+                            viewModel.appSettings.enableQuickActions = newValue
+                            Task { await viewModel.saveSettings() }
+                        }
+                    ))
+                }
+                
+                if viewModel.appSettings.enableQuickActions {
+                    Section(header: HStack {
+                        Text("Home Screen Actions")
+                        Spacer()
+                        Button("Add") {
+                            showingAddAction = true
+                        }
+                        .font(.caption)
+                    }) {
+                        if viewModel.appSettings.quickActionItems.isEmpty {
+                            VStack(spacing: 16) {
+                                Image(systemName: "bolt")
+                                    .font(.system(size: 48))
+                                    .foregroundStyle(.secondary)
+                                
+                                Text("No Quick Actions")
+                                    .font(.headline)
+                                
+                                Text("Add shortcuts to quickly access features from the home screen")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                        } else {
+                            ForEach(viewModel.appSettings.quickActionItems) { action in
+                                QuickActionRow(
+                                    action: action,
+                                    onUpdate: { updatedAction in
+                                        if let index = viewModel.appSettings.quickActionItems.firstIndex(where: { $0.id == updatedAction.id }) {
+                                            viewModel.appSettings.quickActionItems[index] = updatedAction
+                                            Task { await viewModel.saveSettings() }
+                                        }
+                                    },
+                                    onDelete: { actionToDelete in
+                                        viewModel.appSettings.quickActionItems.removeAll { $0.id == actionToDelete.id }
+                                        Task { await viewModel.saveSettings() }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Quick Actions")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                    }
+                }
+            }
+            .sheet(isPresented: $showingAddAction) {
+                NavigationStack {
+                    Form {
+                        Section("Action Details") {
+                            TextField("Title", text: $newActionTitle)
+                            TextField("SF Symbol Name", text: $newActionIcon)
+                            TextField("Route", text: $newActionRoute)
+                                .autocapitalization(.none)
+                        }
+                        
+                        Section(footer: Text("Use SF Symbol names for icons (e.g., 'house', 'gear', 'magnifyingglass')")) {
+                            EmptyView()
+                        }
+                    }
+                    .navigationTitle("Add Quick Action")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Cancel") {
+                                showingAddAction = false
+                                newActionTitle = ""
+                                newActionIcon = ""
+                                newActionRoute = ""
+                            }
+                        }
+                        
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Add") {
+                                let newAction = QuickActionItem(
+                                    title: newActionTitle,
+                                    icon: newActionIcon,
+                                    route: newActionRoute
+                                )
+                                viewModel.appSettings.quickActionItems.append(newAction)
+                                Task { await viewModel.saveSettings() }
+                                
+                                showingAddAction = false
+                                newActionTitle = ""
+                                newActionIcon = ""
+                                newActionRoute = ""
+                            }
+                            .disabled(newActionTitle.isEmpty || newActionIcon.isEmpty || newActionRoute.isEmpty)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct QuickActionRow: View {
+    @Bindable var action: QuickActionItem
+    let onUpdate: (QuickActionItem) -> Void
+    let onDelete: (QuickActionItem) -> Void
+    @State private var isExpanded = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: action.icon)
+                    .foregroundColor(.blue)
+                    .frame(width: 24, height: 24)
+                
+                VStack(alignment: .leading) {
+                    Text(action.title)
+                        .font(.headline)
+                    
+                    Text(action.route)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                Toggle("", isOn: $action.isEnabled)
+                    .onChange(of: action.isEnabled) { _, _ in
+                        onUpdate(action)
+                    }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                isExpanded.toggle()
+            }
+            
+            if isExpanded {
+                VStack(spacing: 12) {
+                    TextField("Title", text: $action.title)
+                        .textFieldStyle(.roundedBorder)
+                    
+                    TextField("SF Symbol Name", text: $action.icon)
+                        .textFieldStyle(.roundedBorder)
+                    
+                    TextField("Route", text: $action.route)
+                        .textFieldStyle(.roundedBorder)
+                        .autocapitalization(.none)
+                    
+                    HStack {
+                        Button("Delete", role: .destructive) {
+                            onDelete(action)
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Spacer()
+                        
+                        Button("Save") {
+                            onUpdate(action)
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                }
+                .padding(.leading)
+            }
+        }
+    }
+}
+
 // MARK: - All Settings Menu View (Flutter-like hierarchy)
 
 struct SwiftUIAllSettingsView: View {
@@ -1260,18 +1907,16 @@ struct SwiftUIAllSettingsView: View {
                     
                     SettingsMenuItem(
                         title: "Search",
-                        subtitle: "Configure Search (Coming Soon)",
+                        subtitle: "Configure Search & Indexers",
                         icon: "magnifyingglass",
-                        route: "settings_search",
-                        isEnabled: false
+                        route: "settings_search"
                     )
                     
                     SettingsMenuItem(
                         title: "External Modules",
-                        subtitle: "Configure External Modules (Coming Soon)",
+                        subtitle: "Configure External Modules",
                         icon: "cube.box",
-                        route: "settings_external_modules",
-                        isEnabled: false
+                        route: "settings_external_modules"
                     )
                 }
                 
@@ -1279,18 +1924,16 @@ struct SwiftUIAllSettingsView: View {
                 Section("Interface") {
                     SettingsMenuItem(
                         title: "Drawer",
-                        subtitle: "Customize the Drawer (Coming Soon)",
+                        subtitle: "Customize the Drawer",
                         icon: "sidebar.left",
-                        route: "settings_drawer",
-                        isEnabled: false
+                        route: "settings_drawer"
                     )
                     
                     SettingsMenuItem(
                         title: "Quick Actions",
-                        subtitle: "Quick Actions on the Home Screen (Coming Soon)",
+                        subtitle: "Quick Actions on the Home Screen",
                         icon: "bolt",
-                        route: "settings_quick_actions",
-                        isEnabled: false
+                        route: "settings_quick_actions"
                     )
                 }
                 

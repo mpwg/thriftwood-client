@@ -177,6 +177,7 @@ class ThriftwoodAppSettings: Codable {
     var defaultSearchCategory: String
     var enableTorrentSearching: Bool
     var enableUsenetSearching: Bool
+    var searchIndexers: [SearchIndexer]
     
     // External Modules Settings
     var externalModules: [ExternalModule]
@@ -224,6 +225,7 @@ class ThriftwoodAppSettings: Codable {
         self.defaultSearchCategory = "all"
         self.enableTorrentSearching = true
         self.enableUsenetSearching = true
+        self.searchIndexers = []
         
         // External Modules defaults
         self.externalModules = []
@@ -321,6 +323,53 @@ struct ExternalModule: Codable, Identifiable {
         self.host = host
         self.icon = icon
         self.isEnabled = isEnabled
+    }
+}
+
+// MARK: - Search Indexers
+
+struct SearchIndexer: Codable, Identifiable {
+    let id = UUID()
+    var name: String
+    var displayName: String
+    var host: String
+    var apiKey: String
+    var isEnabled: Bool
+    var supportsCategories: [SearchCategory]
+    var priority: Int
+    
+    init(name: String, displayName: String, host: String = "", apiKey: String = "", isEnabled: Bool = true, supportsCategories: [SearchCategory] = [], priority: Int = 0) {
+        self.name = name
+        self.displayName = displayName
+        self.host = host
+        self.apiKey = apiKey
+        self.isEnabled = isEnabled
+        self.supportsCategories = supportsCategories
+        self.priority = priority
+    }
+}
+
+enum SearchCategory: String, CaseIterable, Codable {
+    case all = "all"
+    case movies = "movies"
+    case tv = "tv"
+    case music = "music"
+    case books = "books"
+    case games = "games"
+    case software = "software"
+    case other = "other"
+    
+    var displayName: String {
+        switch self {
+        case .all: return "All"
+        case .movies: return "Movies"
+        case .tv: return "TV Shows"
+        case .music: return "Music"
+        case .books: return "Books"
+        case .games: return "Games"
+        case .software: return "Software"
+        case .other: return "Other"
+        }
     }
 }
 
