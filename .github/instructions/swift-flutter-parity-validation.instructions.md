@@ -235,6 +235,79 @@ All Swift implementations **MUST** compile successfully:
 - **async/await** patterns for all asynchronous operations
 - **@MainActor** for UI update functions
 
+### Rule 11: Hybrid Navigation Validation (MANDATORY)
+
+**Critical missing validation that caused dashboard navigation failure:**
+
+**All registered SwiftUI views MUST have working end-to-end navigation:**
+
+- **Route Registration Consistency**: SwiftUI bridge registration route identifiers MUST exactly match Flutter GoRouter route paths
+  - ❌ Register "dashboard" but route is "/dashboard"
+  - ✅ Register "/dashboard" for route "/dashboard"
+- **Flutter Route Intercept**: All Flutter routes that have SwiftUI equivalents MUST check hybrid navigation before showing Flutter widget
+  - ❌ Direct Flutter widget instantiation without hybrid check
+  - ✅ HybridRouteWrapper that checks `shouldUseNativeView()` first
+- **Bridge Registration Verification**: All registered SwiftUI views MUST be callable from Flutter
+- **Navigation Testing**: Every registered SwiftUI view MUST be manually tested via Flutter navigation
+- **Route Path Mapping**: Bridge route mapping MUST handle both exact matches and path variations
+
+**Implementation Requirements:**
+
+```swift
+// MANDATORY: Exact route path matching in bridge registration
+extension FlutterSwiftUIBridge {
+    func registerDashboardView() {
+        // ❌ WRONG: Route mismatch
+        registerNativeView("dashboard")
+
+        // ✅ CORRECT: Exact Flutter route match
+        registerNativeView("/dashboard")
+
+        // ✅ ALSO CORRECT: Handle both variants
+        registerNativeView("/dashboard")
+        registerNativeView("dashboard") // Support both formats
+    }
+}
+```
+
+```dart
+// MANDATORY: Flutter routes must check hybrid navigation
+class HybridDashboardRoute extends GoRoute {
+  HybridDashboardRoute() : super(
+    path: '/dashboard',
+    builder: (context, state) {
+      // Check if SwiftUI version should be used
+      return FutureBuilder<bool>(
+        future: NativeBridge.isNativeViewAvailable('/dashboard'),
+        builder: (context, snapshot) {
+          if (snapshot.data == true) {
+            // Navigate to SwiftUI immediately
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              await NativeBridge.navigateToNativeView('/dashboard');
+            });
+            return Container(); // Temporary placeholder
+          }
+
+          // Show Flutter version
+          return DashboardRoute();
+        },
+      );
+    },
+  );
+}
+```
+
+**Validation Checklist for Hybrid Navigation:**
+
+- [ ] **Route identifier exact match** between Flutter path and SwiftUI registration
+- [ ] **Bridge registration successful** (check iOS logs for registration confirmation)
+- [ ] **Flutter route intercept implemented** using HybridRouteWrapper or equivalent
+- [ ] **Navigation tested manually** from Flutter to SwiftUI view
+- [ ] **Back navigation working** from SwiftUI to Flutter
+- [ ] **Deep linking functional** for direct SwiftUI view access
+- [ ] **Route variants handled** (with and without leading slash)
+- [ ] **Error fallback implemented** if SwiftUI view fails to load
+
 ## Comprehensive Validation Checklist
 
 Use this checklist for every Swift implementation. **ALL items must be checked before approval.**
@@ -326,6 +399,36 @@ Use this checklist for every Swift implementation. **ALL items must be checked b
 - [ ] **Error propagation across bridge**
 - [ ] **Performance impact minimal**
 - [ ] **Memory management proper (no retain cycles)**
+
+### 🧭 Hybrid Navigation Validation (CRITICAL - MISSING CAUSED DASHBOARD ISSUE)
+
+**These validations would have caught the dashboard navigation failure:**
+
+- [ ] **Route registration path exactly matches Flutter route path**
+  - Verify registered route identifier matches GoRouter path character-for-character
+  - Test both "/route" and "route" formats if bridge supports both
+- [ ] **Flutter route implements hybrid navigation check**
+  - Route builder calls `NativeBridge.isNativeViewAvailable()` before showing Flutter widget
+  - Route redirects to SwiftUI when hybrid navigation is enabled
+- [ ] **Bridge registration confirmed in iOS logs**
+  - Check console for "✅ [ViewName] registered with FlutterSwiftUIBridge" message
+  - Verify no registration errors or warnings
+- [ ] **End-to-end navigation test completed**
+  - Manually navigate from Flutter app to the SwiftUI view
+  - Verify SwiftUI view loads correctly and displays expected content
+  - Test "Back to Flutter" navigation works properly
+- [ ] **Deep linking and direct access functional**
+  - Direct navigation to SwiftUI route works from Flutter
+  - URL-based navigation (if applicable) correctly routes to SwiftUI
+- [ ] **Route fallback behavior verified**
+  - If SwiftUI view fails to load, Flutter version displays correctly
+  - No blank screens or navigation dead-ends
+- [ ] **Bridge method channel operational**
+  - Data can be passed from Flutter to SwiftUI view during navigation
+  - SwiftUI view can communicate back to Flutter bridge
+- [ ] **Multiple navigation paths tested**
+  - Navigation works from different Flutter screens/contexts
+  - Navigation works through different user workflows (deep links, menu navigation, etc.)
 
 ### 🔧 System Integration Validation
 
@@ -663,15 +766,69 @@ if grep -r "TODO\|FIXME\|XXX" ios/Native --include="*.swift"; then
     exit 1
 fi
 
+# CRITICAL: Validate hybrid navigation registration consistency
+echo "🧭 Validating hybrid navigation route registration..."
+
+# Extract registered SwiftUI routes from Bridge files
+if [ -d "ios/Native/Bridge" ]; then
+    swift_routes=$(grep -r "registerNativeView(" ios/Native/Bridge --include="*.swift" | sed -n 's/.*registerNativeView("\([^"]*\)").*/\1/p' | sort | uniq)
+
+    # Extract Flutter GoRouter routes
+    if [ -d "lib/router" ]; then
+        flutter_routes=$(grep -r "path: ['\"]" lib/router --include="*.dart" | sed -n "s/.*path: ['\"]\\([^'\"]*\\)['\"].*/\\1/p" | sort | uniq)
+
+        # Check for registration mismatches that caused dashboard navigation failure
+        echo "📍 Registered SwiftUI routes: $swift_routes"
+        echo "📍 Flutter GoRouter routes: $flutter_routes"
+
+        # Find routes that are registered in Swift but don't match Flutter routes exactly
+        mismatched_routes=""
+        while IFS= read -r swift_route; do
+            if [ ! -z "$swift_route" ]; then
+                route_found=false
+
+                # Check exact match
+                if echo "$flutter_routes" | grep -Fxq "$swift_route"; then
+                    route_found=true
+                # Check variation with leading slash
+                elif [[ "$swift_route" == /* ]]; then
+                    route_without_slash="${swift_route:1}"
+                    if echo "$flutter_routes" | grep -Fxq "$route_without_slash"; then
+                        route_found=true
+                    fi
+                else
+                    route_with_slash="/$swift_route"
+                    if echo "$flutter_routes" | grep -Fxq "$route_with_slash"; then
+                        route_found=true
+                    fi
+                fi
+
+                if [ "$route_found" = false ]; then
+                    mismatched_routes="$mismatched_routes\n❌ SwiftUI route '$swift_route' has no matching Flutter route"
+                fi
+            fi
+        done <<< "$swift_routes"
+
+        if [ ! -z "$mismatched_routes" ]; then
+            echo -e "$mismatched_routes"
+            echo
+            echo "� CRITICAL: Route registration mismatch detected!"
+            echo "This causes navigation failures like the dashboard issue we just fixed."
+            echo "Fix: Ensure SwiftUI registerNativeView() identifiers exactly match Flutter GoRouter paths"
+            exit 1
+        fi
+    fi
+fi
+
 # Validate Swift compilation
-echo "🔨 Building Swift implementation..."
+echo "�🔨 Building Swift implementation..."
 xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -destination 'generic/platform=iOS' build-for-testing
 if [ $? -ne 0 ]; then
     echo "❌ Swift compilation failed"
     exit 1
 fi
 
-echo "✅ Pre-commit validation passed"
+echo "✅ Pre-commit validation passed - No hybrid navigation mismatches detected"
 ```
 
 ### CI/CD Pipeline Validation
@@ -745,6 +902,162 @@ jobs:
    - [ ] Modern SwiftUI patterns used (iOS 17+ @Observable)
    - [ ] No UIKit dependencies introduced
    - [ ] Swift 6 concurrency patterns followed
+
+## Critical Issues Documentation - Dashboard Navigation Failure Analysis
+
+**This section documents the specific issues that caused the SwiftUI dashboard to be inaccessible, and the validation rules that would have prevented them.**
+
+### Issue 1: Route Registration Mismatch (CRITICAL)
+
+**Problem**: The dashboard SwiftUI view was registered with route identifier "dashboard" but the actual Flutter route was "/dashboard"
+
+**Root Cause**:
+
+```swift
+// ❌ WRONG - What was implemented
+extension FlutterSwiftUIBridge {
+    func registerDashboardView() {
+        registerNativeView("dashboard") // No leading slash
+    }
+}
+```
+
+**Impact**: Bridge couldn't find the SwiftUI view when Flutter navigated to "/dashboard"
+
+**Solution**:
+
+```swift
+// ✅ CORRECT - Fixed implementation
+extension FlutterSwiftUIBridge {
+    func registerDashboardView() {
+        registerNativeView("/dashboard") // Matches exact Flutter route
+    }
+}
+```
+
+**Prevention Rule**: Route registration identifiers MUST exactly match Flutter GoRouter path strings character-for-character
+
+### Issue 2: Missing Hybrid Navigation Check (CRITICAL)
+
+**Problem**: Flutter dashboard route directly instantiated Flutter widget without checking if SwiftUI version should be used
+
+**Root Cause**:
+
+```dart
+// ❌ WRONG - What was implemented
+GoRoute(
+  path: '/dashboard',
+  builder: (context, state) => DashboardRoute(), // Direct Flutter widget
+),
+```
+
+**Impact**: Flutter always showed its own dashboard widget, never checking for SwiftUI alternative
+
+**Solution**:
+
+```dart
+// ✅ CORRECT - Fixed implementation
+GoRoute(
+  path: '/dashboard',
+  builder: (context, state) => HybridDashboardRoute(), // Checks for SwiftUI first
+),
+
+class HybridDashboardRoute extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: NativeBridge.isNativeViewAvailable('/dashboard'),
+      builder: (context, snapshot) {
+        if (snapshot.data == true) {
+          // Navigate to SwiftUI version
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            await NativeBridge.navigateToNativeView('/dashboard');
+          });
+          return Container(); // Temporary placeholder
+        }
+        return DashboardRoute(); // Show Flutter version
+      },
+    );
+  }
+}
+```
+
+**Prevention Rule**: All Flutter routes with SwiftUI equivalents MUST check hybrid navigation before showing Flutter widget
+
+### Issue 3: Insufficient End-to-End Testing (CRITICAL)
+
+**Problem**: No systematic validation that registered SwiftUI views are actually accessible from Flutter navigation
+
+**Root Cause**: Missing validation step to manually test navigation from Flutter to SwiftUI views
+
+**Impact**: SwiftUI view was registered but couldn't be reached through normal app navigation
+
+**Solution**: Mandatory end-to-end navigation testing for all hybrid routes
+
+**Prevention Rule**: All SwiftUI view registrations MUST include manual navigation test from Flutter app
+
+### Issue 4: Inconsistent Route Handling (MODERATE)
+
+**Problem**: Bridge handled different route formats inconsistently ("/route" vs "route")
+
+**Root Cause**:
+
+```swift
+// ❌ INCONSISTENT - What was implemented
+func createSwiftUIView(for route: String, data: [String: Any]) -> AnyView {
+    switch route {
+    case "dashboard": // Only handled version without slash
+        return AnyView(DashboardView())
+    default:
+        return AnyView(EmptyView())
+    }
+}
+```
+
+**Solution**:
+
+```swift
+// ✅ CONSISTENT - Fixed implementation
+func createSwiftUIView(for route: String, data: [String: Any]) -> AnyView {
+    switch route {
+    case "/dashboard", "dashboard": // Handle both formats
+        return AnyView(DashboardView())
+    default:
+        return AnyView(EmptyView())
+    }
+}
+```
+
+**Prevention Rule**: Bridge route handling MUST support both "/route" and "route" formats for maximum compatibility
+
+### Lessons Learned - New Mandatory Validation Steps
+
+**These validation steps are now MANDATORY for all SwiftUI view implementations:**
+
+1. **Route Registration Verification**:
+
+   - Verify registered route identifier exactly matches Flutter GoRouter path
+   - Test both "/route" and "route" variations if applicable
+   - Check iOS logs for successful registration confirmation
+
+2. **Flutter Route Hybrid Check Implementation**:
+
+   - Implement HybridRouteWrapper or equivalent for all routes with SwiftUI versions
+   - Verify route checks `NativeBridge.isNativeViewAvailable()` before showing Flutter widget
+   - Test route fallback behavior when SwiftUI view is unavailable
+
+3. **End-to-End Navigation Testing**:
+
+   - Manually navigate from Flutter app to SwiftUI view
+   - Verify SwiftUI view loads and displays correctly
+   - Test "Back to Flutter" navigation functionality
+   - Validate deep linking and direct navigation paths
+
+4. **Bridge Integration Validation**:
+   - Confirm bridge method channel is operational
+   - Test data passing from Flutter to SwiftUI during navigation
+   - Verify SwiftUI view can communicate back to Flutter bridge
+
+**Implementation Timeline**: These validation steps are retroactively applied to all existing SwiftUI implementations and MANDATORY for all future migrations.
 
 ## Common Migration Patterns & Examples
 

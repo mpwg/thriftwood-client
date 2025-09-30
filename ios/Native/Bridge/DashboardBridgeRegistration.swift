@@ -24,7 +24,7 @@ extension FlutterSwiftUIBridge {
     /// Register Dashboard with the bridge system
     /// Called during Phase 3 initialization
     func registerDashboardView() {
-        registerNativeView("dashboard")
+        registerNativeView("/dashboard")
         print("✅ Dashboard view registered with FlutterSwiftUIBridge")
     }
     

@@ -324,7 +324,7 @@ import Flutter
         
         case "settings_all":
             return AnyView(SwiftUIAllSettingsView())
-        case "dashboard":
+        case "/dashboard", "dashboard":
             return AnyView(DashboardView())
         case "test":
             return AnyView(TestSwiftUIView(route: route, data: data))
