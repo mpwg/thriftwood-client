@@ -30,6 +30,7 @@
 - **`lib/core.dart`**: Deprecated central export (avoid using)
 - **`lib/database/database.dart`**: Hive initialization and profile bootstrapping
 - **`lib/router/router.dart`**: GoRouter configuration
+- **`lib/system/bridge/`**: Flutter ↔ SwiftUI bridge implementation
 
 ## Development Guidelines
 
@@ -75,6 +76,24 @@ lib/modules/{service}/
 - **Active profile**: Global state determines current configuration context
 - **Migration note**: Must maintain profile data consistency during SwiftUI transition
 
+### Hybrid Bridge System
+
+The bridge enables seamless Flutter ↔ SwiftUI navigation:
+
+```dart
+// Check if route uses SwiftUI
+final isNative = await NativeBridge.isNativeViewAvailable(route);
+
+// Navigate appropriately
+if (isNative) {
+  await NativeBridge.navigateToNativeView(route, data: data);
+} else {
+  context.go(route);
+}
+```
+
+Bridge initialization happens in `lib/main.dart` via `BridgeInitializer.initialize()`.
+
 ## Migration Development Workflow
 
 ### Phase-Based Implementation (See `migration.md` for full details)
@@ -91,6 +110,21 @@ lib/modules/{service}/
 - **Bridge registration**: Register migrated views with `FlutterSwiftUIBridge`
 - **Maintain functionality**: App must remain fully functional at each phase
 - **Performance monitoring**: No regressions during hybrid period
+
+### SwiftUI Code Organization
+
+All SwiftUI code goes in `ios/Native/` with this structure:
+
+```
+ios/Native/
+├── Bridge/             # Flutter ↔ SwiftUI integration
+├── Models/             # @Observable data models
+├── ViewModels/         # MVVM presentation logic
+├── Views/              # SwiftUI user interfaces
+└── Services/           # Business logic & data persistence
+```
+
+Files in `ios/Native/` are automatically included in Xcode project.
 
 ### SwiftUI Implementation Standards
 
@@ -169,10 +203,11 @@ xcodebuild -workspace Runner.xcworkspace -scheme Runner # Build iOS app
 ### ✅ Do
 
 - Follow the migration timeline in `migration.md` strictly
-- Use `FlutterSwiftUIBridge` for navigation during hybrid period
+- Use `HybridRouter.navigateTo()` for navigation during hybrid period
 - Maintain profile data consistency across platforms
 - Test navigation paths thoroughly after each migration phase
 - Follow Swift 6 concurrency patterns for new SwiftUI code
+- Place new SwiftUI files in `ios/Native/` directory structure
 
 ### ❌ Don't
 
@@ -181,6 +216,7 @@ xcodebuild -workspace Runner.xcworkspace -scheme Runner # Build iOS app
 - Use legacy UIKit patterns in new SwiftUI code
 - Ignore accessibility requirements in migrated views
 - Hardcode service configurations (use profile system)
+- Import `lib/core.dart` (deprecated central export)
 
 ## External Dependencies and APIs
 
@@ -197,5 +233,45 @@ xcodebuild -workspace Runner.xcworkspace -scheme Runner # Build iOS app
 - Base URL + API key authentication for most services
 - Retrofit interceptors handle authentication headers in Flutter
 - URLSession + async/await for SwiftUI implementations
+
+## State Management Patterns
+
+### Flutter Modules (Current)
+
+Each service module extends `LunaModuleState` with Provider pattern:
+
+```dart
+class RadarrState extends LunaModuleState {
+  RadarrAPI? _api;
+  List<RadarrMovie>? _movies;
+
+  void reset() {
+    // Reset data and refetch if enabled
+    resetProfile();
+    if (_enabled) {
+      fetchMovies();
+    }
+  }
+}
+```
+
+### SwiftUI Migration (Target)
+
+Use `@Observable` classes for automatic SwiftUI updates:
+
+```swift
+@Observable
+class RadarrService {
+    private let apiClient: RadarrAPIClient
+    var movies: [Movie] = []
+    var isLoading = false
+
+    func fetchMovies() async throws {
+        isLoading = true
+        defer { isLoading = false }
+        movies = try await apiClient.getMovies()
+    }
+}
+```
 
 This codebase prioritizes user workflow continuity during the migration while modernizing to SwiftUI and Swift 6 patterns. Always reference the migration plan and existing instruction files for implementation details.
