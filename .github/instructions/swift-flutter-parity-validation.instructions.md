@@ -383,6 +383,89 @@ class HybridDashboardRoute extends GoRoute {
 - [ ] **Route variants handled** (with and without leading slash)
 - [ ] **Error fallback implemented** if SwiftUI view fails to load
 
+### Rule 13: Source-Agnostic Bidirectional Navigation (MANDATORY)
+
+Navigation to and from any view MUST work regardless of the originating UI technology. It must not matter whether the current screen is a Flutter widget or a SwiftUI view—both directions must support navigating to the other and back again with identical behavior and data.
+
+- Every navigable destination that exists in Flutter MUST be reachable from SwiftUI, and vice versa.
+- Return navigation MUST work in both directions, preserving expected back-stack behavior and passing data results when applicable.
+- HybridRouter/Coordinator MUST expose symmetric APIs on both platforms:
+  - Flutter: `HybridRouter.navigateTo()`, `HybridRouter.goTo()`, `FlutterSwiftUIBridge.navigateBackToFlutter()`
+  - Swift: `FlutterSwiftUIBridge.presentNativeView(...)`, `HybridNavigationCoordinator.navigateInFlutter(...)`, `FlutterSwiftUIBridge.navigateBackToFlutter(...)`
+- Programmatic navigation helpers MUST NOT assume a single "source of truth" (e.g., only Flutter initiated) and MUST be callable from both sides.
+
+Implementation Requirements:
+
+```dart
+// Flutter: Always decide at runtime and work from both sources
+final ok = await HybridRouter.navigateTo(context, '/some/route', data: {...});
+if (!ok) {
+  // Show actionable error (see Rule 14)
+}
+```
+
+```swift
+// Swift: Present native or route to Flutter symmetrically
+if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) {
+    FlutterSwiftUIBridge.shared.presentNativeView(route: route, data: data)
+} else {
+    HybridNavigationCoordinator.shared.navigateInFlutter(route: route, data: data)
+}
+```
+
+Validation Checklist:
+
+- [ ] Can navigate Flutter → SwiftUI for every registered route
+- [ ] Can navigate SwiftUI → Flutter for the same route set
+- [ ] Return navigation works in both directions (Back to Flutter / Back to SwiftUI)
+- [ ] Data/results are passed equivalently in both directions
+- [ ] Deep links function from either technology as an entry point
+
+### Rule 14: Actionable Navigation Errors (NO SILENT FAILURES) (MANDATORY)
+
+Navigation errors MUST NEVER be silently ignored. Users MUST see an actionable error with clear next steps (Retry, Go Back, Open Logs). Debug output alone is insufficient.
+
+Acceptable UI patterns:
+
+- Flutter: `ErrorRoutePage`, `LunaMessage.error(...)`, `showLunaErrorSnackBar(...)`, or a modal dialog with Retry/Go Back.
+- SwiftUI: `Alert`/`confirmationDialog`, an error placeholder view with buttons (Retry / Back to Flutter), or banner/toast with accessible labels.
+
+Implementation Requirements:
+
+```dart
+// Wrap all bridge navigation calls
+try {
+  final ok = await NativeBridge.navigateToNativeView(route, data: data);
+  if (!ok) {
+    showLunaErrorSnackBar(title: 'Navigation failed', message: 'Could not open $route');
+  }
+} on PlatformException catch (e) {
+  // Report + show actionable UI
+  BridgeErrorReporter.reportPlatformException(e, 'navigateToNativeView', 'NativeBridge', context: {'route': route});
+  showLunaErrorSnackBar(title: 'Navigation error', error: e);
+}
+```
+
+```swift
+// Do not just print and return; surface an actionable error to the user
+guard FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) else {
+    HybridNavigationCoordinator.shared.presentError(
+        title: "Navigation not available",
+        message: "The native view for \(route) is not registered.",
+        actions: [.retry, .backToFlutter]
+    )
+    return
+}
+```
+
+Validation Checklist:
+
+- [ ] All navigation helpers return a success/failure signal
+- [ ] Call sites check the result and show user-facing errors on failure
+- [ ] Exceptions are caught and reported, then surfaced via accessible UI
+- [ ] No code path relies solely on `print`, `debugPrint`, or logs for navigation errors
+- [ ] Error UI includes at least one action (Retry / Go Back / Report / Open Logs)
+
 ## Comprehensive Validation Checklist
 
 Use this checklist for every Swift implementation. **ALL items must be checked before approval.**

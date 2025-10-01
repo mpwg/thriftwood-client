@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lunasea/system/bridge/native_bridge.dart';
 import 'package:lunasea/system/logger.dart';
+import 'package:lunasea/widgets/ui.dart';
 
 /// Hybrid router that coordinates navigation between Flutter and SwiftUI views
 class HybridRouter {
@@ -42,19 +43,36 @@ class HybridRouter {
       if (isNative) {
         // Navigate to SwiftUI view
         LunaLogger().debug('HybridRouter: Using native view for $route');
-        return await NativeBridge.navigateToNativeView(route, data: data);
+        final ok = await NativeBridge.navigateToNativeView(route, data: data);
+        if (!ok) {
+          showLunaErrorSnackBar(
+            title: 'Navigation failed',
+            message: 'Could not open $route',
+          );
+        }
+        return ok;
       } else {
         // Use Flutter navigation
         LunaLogger().debug('HybridRouter: Using Flutter navigation for $route');
-        return _navigateInFlutter(context, route, data: data, replace: replace);
+        final ok =
+            _navigateInFlutter(context, route, data: data, replace: replace);
+        if (!ok) {
+          showLunaErrorSnackBar(
+            title: 'Navigation failed',
+            message: 'Could not open $route',
+          );
+        }
+        return ok;
       }
     } catch (e) {
       LunaLogger().error('HybridRouter: Navigation error for route "$route"', e,
           StackTrace.current);
-      // For development, we want to expose bridge errors to help debugging
-      if (kDebugMode) {
-        rethrow;
-      }
+      showLunaErrorSnackBar(
+        title: 'Navigation error',
+        message: 'An error occurred while opening $route',
+      );
+      // For development, we still rethrow after surfacing the error
+      if (kDebugMode) rethrow;
       return false;
     }
   }
@@ -95,7 +113,14 @@ class HybridRouter {
       if (isNative) {
         // For native views, we still need to navigate through Flutter first
         // then let the native side handle the presentation
-        return await NativeBridge.navigateToNativeView(route, data: data);
+        final ok = await NativeBridge.navigateToNativeView(route, data: data);
+        if (!ok) {
+          showLunaErrorSnackBar(
+            title: 'Navigation failed',
+            message: 'Could not open $route',
+          );
+        }
+        return ok;
       } else {
         // Use Flutter's go method
         context.go(route, extra: data);
@@ -104,10 +129,11 @@ class HybridRouter {
     } catch (e) {
       LunaLogger().error('HybridRouter: Go navigation error for route "$route"',
           e, StackTrace.current);
-      // For development, we want to expose bridge errors to help debugging
-      if (kDebugMode) {
-        rethrow;
-      }
+      showLunaErrorSnackBar(
+        title: 'Navigation error',
+        message: 'An error occurred while opening $route',
+      );
+      if (kDebugMode) rethrow;
       return false;
     }
   }
@@ -157,6 +183,14 @@ class HybridRouter {
           'HybridRouter: Invalid arguments for navigateInFlutter',
           'Invalid arguments',
           StackTrace.current);
+      final ctx = navigatorKey.currentContext;
+      if (ctx != null) {
+        showLunaErrorSnackBar(
+          title: 'Navigation error',
+          message:
+              'Invalid arguments received from native for Flutter navigation',
+        );
+      }
       return false;
     }
 
@@ -166,6 +200,13 @@ class HybridRouter {
     if (route == null) {
       LunaLogger().error('HybridRouter: No route specified for navigation',
           'Missing route', StackTrace.current);
+      final ctx = navigatorKey.currentContext;
+      if (ctx != null) {
+        showLunaErrorSnackBar(
+          title: 'Navigation error',
+          message: 'Missing route name for Flutter navigation',
+        );
+      }
       return false;
     }
 
@@ -181,6 +222,13 @@ class HybridRouter {
           'HybridRouter: Error navigating in Flutter from native',
           e,
           StackTrace.current);
+      final ctx = navigatorKey.currentContext;
+      if (ctx != null) {
+        showLunaErrorSnackBar(
+          title: 'Navigation error',
+          message: 'Failed to navigate to $route',
+        );
+      }
       return false;
     }
   }

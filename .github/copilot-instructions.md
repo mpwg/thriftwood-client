@@ -130,12 +130,10 @@ Files in `ios/Native/` are automatically included in Xcode project.
 
 ### SwiftUI Implementation Standards
 
-```swift
+````instructions
 // Modern Swift 6 service implementation
 @Observable
 class RadarrService {
-    private let apiClient: RadarrAPIClient
-    var movies: [Movie] = []
     var isLoading = false
 
     func fetchMovies() async throws {
@@ -277,3 +275,20 @@ class RadarrService {
 ```
 
 This codebase prioritizes user workflow continuity during the migration while modernizing to SwiftUI and Swift 6 patterns. Always reference the migration plan and existing instruction files for implementation details.
+
+## New Mandatory Navigation Rules
+
+- Source-agnostic navigation: It must not matter whether you are currently on a Flutter widget or a SwiftUI view—routes must be reachable from both, and back navigation must work in both directions. Implement symmetric navigation APIs on both platforms and never assume a single origin.
+- No silent navigation errors: Never ignore failures. Catch exceptions, report via `BridgeErrorReporter`/logger equivalents, and show an actionable UI (Retry, Go Back, Open Logs). Debug prints alone are not sufficient.
+
+Swift symmetric decision pattern example:
+
+```swift
+let coordinator = HybridNavigationCoordinator.shared
+if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) {
+    FlutterSwiftUIBridge.shared.presentNativeView(route: route, data: data)
+} else {
+    coordinator.navigateInFlutter(route: route, data: data)
+}
+```
+````

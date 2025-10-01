@@ -139,6 +139,11 @@ class HybridNavigationCoordinator {
         // Use the method channel from the bridge
         guard let methodChannel = FlutterSwiftUIBridge.shared.methodChannel else {
             print("Error: Method channel not available for Flutter navigation")
+            presentError(
+                title: "Navigation not available",
+                message: "Unable to communicate with Flutter for route \(route).",
+                actions: [.backToFlutter]
+            )
             return
         }
         
@@ -148,6 +153,13 @@ class HybridNavigationCoordinator {
         ]) { result in
             if let error = result as? FlutterError {
                 print("Flutter navigation error: \(error.message ?? "Unknown error")")
+                self.presentError(
+                    title: "Navigation failed",
+                    message: "Could not open \(route) in Flutter.",
+                    actions: [.retry, .backToFlutter],
+                    retryRoute: route,
+                    data: data
+                )
             } else {
                 print("Flutter navigation successful to: \(route)")
             }
@@ -207,6 +219,37 @@ class HybridNavigationCoordinator {
     func getPreviousRoute() -> String? {
         guard navigationHistory.count > 1 else { return nil }
         return navigationHistory[navigationHistory.count - 2].route
+    }
+
+    // MARK: - Error Presentation
+
+    enum ErrorAction {
+        case retry
+        case backToFlutter
+    }
+
+    /// Present an actionable error to the user with optional retry/back actions
+    /// Falls back to Flutter with an instruction to show an error snackbar
+    func presentError(
+        title: String,
+        message: String,
+        actions: [ErrorAction] = [.backToFlutter],
+        retryRoute: String? = nil,
+        data: [String: Any] = [:]
+    ) {
+        var payload: [String: Any] = [
+            "showErrorSnackbar": true,
+            "errorTitle": title,
+            "errorMessage": message
+        ]
+
+        if let retry = retryRoute, actions.contains(.retry) {
+            payload["navigateTo"] = retry
+            payload["navigationData"] = data
+        }
+
+        // Return to Flutter with error context for user-facing UI
+        FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: payload)
     }
 }
 

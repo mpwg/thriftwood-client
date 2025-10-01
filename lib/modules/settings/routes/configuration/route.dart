@@ -3,8 +3,9 @@ import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/settings.dart';
 import 'package:lunasea/router/routes/settings.dart';
 import 'package:lunasea/system/quick_actions/quick_actions.dart';
-import 'package:lunasea/system/hybrid_bridge.dart';
+import 'package:lunasea/system/bridge/hybrid_router.dart';
 import 'package:lunasea/utils/profile_tools.dart';
+import 'package:lunasea/widgets/ui.dart';
 
 class ConfigurationRoute extends StatefulWidget {
   const ConfigurationRoute({
@@ -128,10 +129,22 @@ class _State extends State<ConfigurationRoute> with LunaScrollControllerMixin {
       // Map modules to their SwiftUI route names
       String? swiftUIRoute = _getSwiftUIRouteForModule(module);
       if (swiftUIRoute != null) {
-        FlutterSwiftUIBridge.navigateToNativeView(
-          swiftUIRoute,
-          data: {'module': module.key},
-        );
+        HybridRouter.navigateTo(context, swiftUIRoute,
+            data: {'module': module.key}).then((ok) {
+          if (ok != true) {
+            showLunaErrorSnackBar(
+              title: 'Navigation failed',
+              message: 'Could not open $swiftUIRoute',
+            );
+            module.settingsRoute!.go();
+          }
+        }).catchError((e) {
+          showLunaErrorSnackBar(
+            title: 'Navigation error',
+            message: 'Failed to open $swiftUIRoute',
+          );
+          module.settingsRoute!.go();
+        });
         return;
       }
     }

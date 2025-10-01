@@ -81,9 +81,17 @@ import Flutter
     ///   - data: Optional data to pass to the SwiftUI view
     func presentNativeView(route: String, data: [String: Any] = [:]) {
         guard let flutterVC = flutterViewController,
-              shouldUseNativeView(for: route) else { 
+              shouldUseNativeView(for: route) else {
             print("Cannot present native view for route: \(route)")
-            return 
+            // Show actionable error and fallback
+            navigationCoordinator.presentError(
+                title: "Navigation not available",
+                message: "The native view for \(route) is not registered.",
+                actions: [.retry, .backToFlutter],
+                retryRoute: route,
+                data: data
+            )
+            return
         }
         
         print("Presenting native SwiftUI view for route: \(route)")
@@ -108,9 +116,16 @@ import Flutter
     ///   - data: Optional data to pass to the SwiftUI view
     ///   - from: The current UIViewController to present from
     func presentNativeViewFromSwiftUI(route: String, data: [String: Any] = [:], from presenter: UIViewController) {
-        guard shouldUseNativeView(for: route) else { 
+        guard shouldUseNativeView(for: route) else {
             print("Cannot present native view for route: \(route) - not registered")
-            return 
+            navigationCoordinator.presentError(
+                title: "Navigation not available",
+                message: "The native view for \(route) is not registered.",
+                actions: [.retry, .backToFlutter],
+                retryRoute: route,
+                data: data
+            )
+            return
         }
         
         print("Presenting native SwiftUI view for route: \(route) from SwiftUI context")

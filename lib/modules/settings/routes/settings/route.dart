@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:lunasea/core.dart';
 import 'package:lunasea/router/routes/settings.dart';
-import 'package:lunasea/system/hybrid_bridge.dart';
+import 'package:lunasea/system/bridge/hybrid_router.dart';
+import 'package:lunasea/widgets/ui.dart';
 
 class SettingsRoute extends StatefulWidget {
   const SettingsRoute({
@@ -125,24 +126,41 @@ class _State extends State<SettingsRoute> with LunaScrollControllerMixin {
 
   void _handleSettingsNavigation(String section, bool useSwiftUISettings) {
     if (useSwiftUISettings) {
-      // Navigate to SwiftUI version
-      FlutterSwiftUIBridge.navigateToNativeView(
-        'settings_$section',
-        data: {'section': section},
-      );
+      // Attempt SwiftUI via centralized HybridRouter; fallback to Flutter on failure
+      final swiftRoute = 'settings_$section';
+      HybridRouter.navigateTo(context, swiftRoute, data: {'section': section})
+          .then((ok) {
+        if (ok != true) {
+          showLunaErrorSnackBar(
+            title: 'Navigation failed',
+            message: 'Could not open $swiftRoute',
+          );
+          _navigateToFlutterSettings(section);
+        }
+      }).catchError((e) {
+        showLunaErrorSnackBar(
+          title: 'Navigation error',
+          message: 'Failed to open $swiftRoute',
+        );
+        _navigateToFlutterSettings(section);
+      });
     } else {
-      // Navigate to Flutter version
-      switch (section) {
-        case 'configuration':
-          SettingsRoutes.CONFIGURATION.go();
-          break;
-        case 'profiles':
-          SettingsRoutes.PROFILES.go();
-          break;
-        case 'system':
-          SettingsRoutes.SYSTEM.go();
-          break;
-      }
+      _navigateToFlutterSettings(section);
+    }
+  }
+
+  void _navigateToFlutterSettings(String section) {
+    // Navigate to Flutter version
+    switch (section) {
+      case 'configuration':
+        SettingsRoutes.CONFIGURATION.go();
+        break;
+      case 'profiles':
+        SettingsRoutes.PROFILES.go();
+        break;
+      case 'system':
+        SettingsRoutes.SYSTEM.go();
+        break;
     }
   }
 }
