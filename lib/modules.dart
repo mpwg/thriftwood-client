@@ -14,7 +14,7 @@ import 'package:lunasea/modules/sonarr.dart';
 import 'package:lunasea/modules/sabnzbd.dart';
 import 'package:lunasea/modules/nzbget.dart';
 import 'package:lunasea/modules/tautulli.dart';
-import 'package:lunasea/modules/dashboard/core/state.dart';
+// NOTE: Dashboard state import removed per Swift-first migration (Phase 3)
 import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
 import 'package:lunasea/system/bridge/hybrid_router.dart';
 
@@ -380,31 +380,23 @@ extension LunaModuleRoutingExtension on LunaModule {
   }
 
   SettingsRoutes? get settingsRoute {
+    // SWIFT-FIRST MIGRATION: All detailed configuration routes eliminated
+    // Settings migrated to Swift in Phase 2 - all routes delegate to main configuration
     switch (this) {
       case LunaModule.DASHBOARD:
-        return SettingsRoutes.CONFIGURATION_DASHBOARD;
       case LunaModule.LIDARR:
-        return SettingsRoutes.CONFIGURATION_LIDARR;
       case LunaModule.NZBGET:
-        return SettingsRoutes.CONFIGURATION_NZBGET;
-      case LunaModule.OVERSEERR:
-        return null;
       case LunaModule.RADARR:
-        return SettingsRoutes.CONFIGURATION_RADARR;
       case LunaModule.SABNZBD:
-        return SettingsRoutes.CONFIGURATION_SABNZBD;
       case LunaModule.SEARCH:
-        return SettingsRoutes.CONFIGURATION_SEARCH;
+      case LunaModule.SONARR:
+      case LunaModule.TAUTULLI:
+      case LunaModule.WAKE_ON_LAN:
+      case LunaModule.EXTERNAL_MODULES:
+        return SettingsRoutes.CONFIGURATION; // All delegate to Swift settings
+      case LunaModule.OVERSEERR:
       case LunaModule.SETTINGS:
         return null;
-      case LunaModule.SONARR:
-        return SettingsRoutes.CONFIGURATION_SONARR;
-      case LunaModule.TAUTULLI:
-        return SettingsRoutes.CONFIGURATION_TAUTULLI;
-      case LunaModule.WAKE_ON_LAN:
-        return SettingsRoutes.CONFIGURATION_WAKE_ON_LAN;
-      case LunaModule.EXTERNAL_MODULES:
-        return SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES;
     }
   }
 
@@ -494,9 +486,9 @@ extension LunaModuleExtension on LunaModule {
       case LunaModule.WAKE_ON_LAN:
         return null;
       case LunaModule.DASHBOARD:
-        return context.read<DashboardState>();
+        return null; // SWIFT-FIRST: Dashboard migrated to Swift in Phase 3
       case LunaModule.SETTINGS:
-        return context.read<SettingsState>();
+        return null; // SWIFT-FIRST: Settings migrated to Swift in Phase 2
       case LunaModule.SEARCH:
         return context.read<SearchState>();
       case LunaModule.LIDARR:

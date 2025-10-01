@@ -1,129 +1,20 @@
-import 'package:flutter/material.dart';import 'package:flutter/material.dart';import 'package:flutter/material.dart';
-
+import 'package:flutter/material.dart';
 import 'package:lunasea/modules.dart';
-
-import 'package:lunasea/modules/settings/routes/settings/route.dart';import 'package:lunasea/modules.dart';import 'package:lunasea/modules.dart';
-
+import 'package:lunasea/modules/settings/routes/settings/route.dart';
 import 'package:lunasea/router/routes.dart';
+import 'package:lunasea/vendor.dart';
 
-import 'package:lunasea/vendor.dart';import 'package:lunasea/modules/settings/routes/settings/route.dart';import 'package:lunasea/modules/settings/routes/settings/route.dart';
+/// SWIFT-FIRST MIGRATION ENFORCEMENT: Settings routes delegate to Swift
+/// All Flutter settings implementations have been eliminated per migration rules
+enum SettingsRoutes with LunaRoutesMixin {
+  // Main settings route - delegates to Swift
+  HOME('/settings'),
 
-
-
-/// SWIFT-FIRST MIGRATION ENFORCEMENT: All settings routes delegate to Swiftimport 'package:lunasea/router/routes.dart';import 'package:lunasea/modules/settings/routes/system_logs/route.dart';
-
-/// Flutter settings implementation has been completely eliminated per migration rules
-
-enum SettingsRoutes with LunaRoutesMixin {import 'package:lunasea/vendor.dart';import 'package:lunasea/router/routes.dart';
-
-  HOME('/settings');
-
-import 'package:lunasea/types/log_type.dart';
-
-  @override
-
-  final String path;/// SWIFT-FIRST MIGRATION ENFORCEMENT: All settings routes delegate to Swiftimport 'package:lunasea/vendor.dart';
-
-
-
-  const SettingsRoutes(this.path);/// Flutter settings implementation has been completely eliminated per migration rules
-
-
-
-  @overrideenum SettingsRoutes with LunaRoutesMixin {enum SettingsRoutes with LunaRoutesMixin {
-
-  LunaModule get module => LunaModule.SETTINGS;
-
-  HOME('/settings');  HOME('/settings'),
-
-  @override
-
-  bool isModuleEnabled(BuildContext context) => true;  CONFIGURATION('configuration'),
-
-
-
-  @override  @override  CONFIGURATION_GENERAL('general'),
-
-  GoRoute get routes {
-
-    // ALL SETTINGS ROUTES DELEGATE TO SWIFT (Swift-first rule enforcement)  final String path;  CONFIGURATION_DASHBOARD('dashboard'),
-
-    // Flutter implementation code has been eliminated
-
-    switch (this) {  CONFIGURATION_DASHBOARD_CALENDAR('calendar'),
-
-      case SettingsRoutes.HOME:
-
-        // SWIFT-FIRST ENFORCEMENT: Settings implementation is Swift-only  const SettingsRoutes(this.path);  CONFIGURATION_DASHBOARD_DEFAULT_PAGES('default_pages'),
-
-        return route(builder: (context, state) => SettingsRoute(
-
-          initialRoute: path,  CONFIGURATION_DRAWER('drawer'),
-
-          routeData: state.extra as Map<String, dynamic>?,
-
-        ));  @override  CONFIGURATION_EXTERNAL_MODULES('external_modules'),
-
-    }
-
-  }  LunaModule get module => LunaModule.SETTINGS;  CONFIGURATION_EXTERNAL_MODULES_ADD('add'),
-
-}
-  CONFIGURATION_EXTERNAL_MODULES_EDIT('edit/:id'),
-
-  @override  CONFIGURATION_LIDARR('lidarr'),
-
-  bool isModuleEnabled(BuildContext context) => true;  CONFIGURATION_LIDARR_CONNECTION_DETAILS('connection_details'),
-
-  CONFIGURATION_LIDARR_CONNECTION_DETAILS_HEADERS('headers'),
-
-  @override  CONFIGURATION_LIDARR_DEFAULT_PAGES('default_pages'),
-
-  GoRoute get routes {  CONFIGURATION_NZBGET('nzbget'),
-
-    // ALL SETTINGS ROUTES DELEGATE TO SWIFT (Swift-first rule enforcement)  CONFIGURATION_NZBGET_CONNECTION_DETAILS('connection_details'),
-
-    // Flutter implementation code has been eliminated  CONFIGURATION_NZBGET_CONNECTION_DETAILS_HEADERS('headers'),
-
-    switch (this) {  CONFIGURATION_NZBGET_DEFAULT_PAGES('default_pages'),
-
-      case SettingsRoutes.HOME:  CONFIGURATION_QUICK_ACTIONS('quick_actions'),
-
-        // SWIFT-FIRST ENFORCEMENT: Settings implementation is Swift-only  CONFIGURATION_RADARR('radarr'),
-
-        return route(builder: (context, state) => SettingsRoute(  CONFIGURATION_RADARR_CONNECTION_DETAILS('connection_details'),
-
-          initialRoute: path,  CONFIGURATION_RADARR_CONNECTION_DETAILS_HEADERS('headers'),
-
-          routeData: state.extra as Map<String, dynamic>?,  CONFIGURATION_RADARR_DEFAULT_OPTIONS('default_options'),
-
-        ));  CONFIGURATION_RADARR_DEFAULT_PAGES('default_pages'),
-
-    }  CONFIGURATION_SABNZBD('sabnzbd'),
-
-  }  CONFIGURATION_SABNZBD_CONNECTION_DETAILS('connection_details'),
-
-}  CONFIGURATION_SABNZBD_CONNECTION_DETAILS_HEADERS('headers'),
-  CONFIGURATION_SABNZBD_DEFAULT_PAGES('default_pages'),
-  CONFIGURATION_SEARCH('search'),
-  CONFIGURATION_SEARCH_ADD_INDEXER('add_indexer'),
-  CONFIGURATION_SEARCH_ADD_INDEXER_HEADERS('headers'),
-  CONFIGURATION_SEARCH_EDIT_INDEXER('edit_indexer/:id'),
-  CONFIGURATION_SEARCH_EDIT_INDEXER_HEADERS('headers'),
-  CONFIGURATION_SONARR('sonarr'),
-  CONFIGURATION_SONARR_CONNECTION_DETAILS('connection_details'),
-  CONFIGURATION_SONARR_CONNECTION_DETAILS_HEADERS('headers'),
-  CONFIGURATION_SONARR_DEFAULT_OPTIONS('default_options'),
-  CONFIGURATION_SONARR_DEFAULT_PAGES('default_pages'),
-  CONFIGURATION_TAUTULLI('tautulli'),
-  CONFIGURATION_TAUTULLI_CONNECTION_DETAILS('connection_details'),
-  CONFIGURATION_TAUTULLI_CONNECTION_DETAILS_HEADERS('headers'),
-  CONFIGURATION_TAUTULLI_DEFAULT_PAGES('default_pages'),
-  CONFIGURATION_WAKE_ON_LAN('wake_on_lan'),
-  PROFILES('profiles'),
-  SYSTEM('system'),
-  SYSTEM_LOGS('logs'),
-  SYSTEM_LOGS_DETAILS('view/:type');
+  // All sub-routes delegate to Swift with path parameters
+  CONFIGURATION('/settings/configuration'),
+  PROFILES('/settings/profiles'),
+  SYSTEM('/settings/system'),
+  SYSTEM_LOGS('/settings/system/logs');
 
   @override
   final String path;
@@ -138,252 +29,20 @@ import 'package:lunasea/types/log_type.dart';
 
   @override
   GoRoute get routes {
+    // ALL SETTINGS ROUTES DELEGATE TO SWIFT (Swift-first rule enforcement)
+    // Flutter implementation code has been eliminated
     switch (this) {
       case SettingsRoutes.HOME:
-        // SWIFT-FIRST ENFORCEMENT: Settings implementation is Swift-only
-        return route(widget: const SettingsRoute());
       case SettingsRoutes.CONFIGURATION:
-        return route(widget: const ConfigurationRoute());
-      case SettingsRoutes.CONFIGURATION_GENERAL:
-        return route(widget: const ConfigurationGeneralRoute());
-      case SettingsRoutes.CONFIGURATION_DASHBOARD:
-        return route(widget: const ConfigurationDashboardRoute());
-      case SettingsRoutes.CONFIGURATION_DASHBOARD_CALENDAR:
-        return route(widget: const ConfigurationDashboardCalendarRoute());
-      case SettingsRoutes.CONFIGURATION_DASHBOARD_DEFAULT_PAGES:
-        return route(widget: const ConfigurationDashboardDefaultPagesRoute());
-      case SettingsRoutes.CONFIGURATION_DRAWER:
-        return route(widget: const ConfigurationDrawerRoute());
-      case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES:
-        return route(widget: const ConfigurationExternalModulesRoute());
-      case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_ADD:
-        return route(widget: const ConfigurationExternalModulesAddRoute());
-      case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_EDIT:
-        return route(builder: (_, state) {
-          final moduleId = int.tryParse(state.pathParameters['id']!) ?? -1;
-          return ConfigurationExternalModulesEditRoute(moduleId: moduleId);
-        });
-      case SettingsRoutes.CONFIGURATION_LIDARR:
-        return route(widget: const ConfigurationLidarrRoute());
-      case SettingsRoutes.CONFIGURATION_LIDARR_CONNECTION_DETAILS:
-        return route(widget: const ConfigurationLidarrConnectionDetailsRoute());
-      case SettingsRoutes.CONFIGURATION_LIDARR_CONNECTION_DETAILS_HEADERS:
-        return route(
-          widget: const ConfigurationLidarrConnectionDetailsHeadersRoute(),
-        );
-      case SettingsRoutes.CONFIGURATION_LIDARR_DEFAULT_PAGES:
-        return route(widget: const ConfigurationLidarrDefaultPagesRoute());
-      case SettingsRoutes.CONFIGURATION_NZBGET:
-        return route(widget: const ConfigurationNZBGetRoute());
-      case SettingsRoutes.CONFIGURATION_NZBGET_CONNECTION_DETAILS:
-        return route(widget: const ConfigurationNZBGetConnectionDetailsRoute());
-      case SettingsRoutes.CONFIGURATION_NZBGET_CONNECTION_DETAILS_HEADERS:
-        return route(
-          widget: const ConfigurationNZBGetConnectionDetailsHeadersRoute(),
-        );
-      case SettingsRoutes.CONFIGURATION_NZBGET_DEFAULT_PAGES:
-        return route(widget: const ConfigurationNZBGetDefaultPagesRoute());
-      case SettingsRoutes.CONFIGURATION_QUICK_ACTIONS:
-        return route(widget: const ConfigurationQuickActionsRoute());
-      case SettingsRoutes.CONFIGURATION_RADARR:
-        return route(widget: const ConfigurationRadarrRoute());
-      case SettingsRoutes.CONFIGURATION_RADARR_CONNECTION_DETAILS:
-        return route(widget: const ConfigurationRadarrConnectionDetailsRoute());
-      case SettingsRoutes.CONFIGURATION_RADARR_CONNECTION_DETAILS_HEADERS:
-        return route(
-          widget: const ConfigurationRadarrConnectionDetailsHeadersRoute(),
-        );
-      case SettingsRoutes.CONFIGURATION_RADARR_DEFAULT_OPTIONS:
-        return route(widget: const ConfigurationRadarrDefaultOptionsRoute());
-      case SettingsRoutes.CONFIGURATION_RADARR_DEFAULT_PAGES:
-        return route(widget: const ConfigurationRadarrDefaultPagesRoute());
-      case SettingsRoutes.CONFIGURATION_SABNZBD:
-        return route(widget: const ConfigurationSABnzbdRoute());
-      case SettingsRoutes.CONFIGURATION_SABNZBD_CONNECTION_DETAILS:
-        return route(
-          widget: const ConfigurationSABnzbdConnectionDetailsRoute(),
-        );
-      case SettingsRoutes.CONFIGURATION_SABNZBD_CONNECTION_DETAILS_HEADERS:
-        return route(
-          widget: const ConfigurationSABnzbdConnectionDetailsHeadersRoute(),
-        );
-      case SettingsRoutes.CONFIGURATION_SABNZBD_DEFAULT_PAGES:
-        return route(widget: const ConfigurationSABnzbdDefaultPagesRoute());
-      case SettingsRoutes.CONFIGURATION_SEARCH:
-        return route(widget: const ConfigurationSearchRoute());
-      case SettingsRoutes.CONFIGURATION_SEARCH_ADD_INDEXER:
-        return route(widget: const ConfigurationSearchAddIndexerRoute());
-      case SettingsRoutes.CONFIGURATION_SEARCH_ADD_INDEXER_HEADERS:
-        return route(builder: (_, state) {
-          final indexer = state.extra as LunaIndexer?;
-          return ConfigurationSearchAddIndexerHeadersRoute(indexer: indexer);
-        });
-      case SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER:
-        return route(builder: (_, state) {
-          final id = int.tryParse(state.pathParameters['id']!) ?? -1;
-          return ConfigurationSearchEditIndexerRoute(id: id);
-        });
-      case SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER_HEADERS:
-        return route(builder: (_, state) {
-          final id = int.tryParse(state.pathParameters['id']!) ?? -1;
-          return ConfigurationSearchEditIndexerHeadersRoute(id: id);
-        });
-      case SettingsRoutes.CONFIGURATION_SONARR:
-        return route(widget: const ConfigurationSonarrRoute());
-      case SettingsRoutes.CONFIGURATION_SONARR_CONNECTION_DETAILS:
-        return route(widget: const ConfigurationSonarrConnectionDetailsRoute());
-      case SettingsRoutes.CONFIGURATION_SONARR_CONNECTION_DETAILS_HEADERS:
-        return route(
-          widget: const ConfigurationSonarrConnectionDetailsHeadersRoute(),
-        );
-      case SettingsRoutes.CONFIGURATION_SONARR_DEFAULT_OPTIONS:
-        return route(widget: const ConfigurationSonarrDefaultOptionsRoute());
-      case SettingsRoutes.CONFIGURATION_SONARR_DEFAULT_PAGES:
-        return route(widget: const ConfigurationSonarrDefaultPagesRoute());
-      case SettingsRoutes.CONFIGURATION_TAUTULLI:
-        return route(widget: const ConfigurationTautulliRoute());
-      case SettingsRoutes.CONFIGURATION_TAUTULLI_CONNECTION_DETAILS:
-        return route(
-          widget: const ConfigurationTautulliConnectionDetailsRoute(),
-        );
-      case SettingsRoutes.CONFIGURATION_TAUTULLI_CONNECTION_DETAILS_HEADERS:
-        return route(
-          widget: const ConfigurationTautulliConnectionDetailsHeadersRoute(),
-        );
-      case SettingsRoutes.CONFIGURATION_TAUTULLI_DEFAULT_PAGES:
-        return route(widget: const ConfigurationTautulliDefaultPagesRoute());
-      case SettingsRoutes.CONFIGURATION_WAKE_ON_LAN:
-        return route(widget: const ConfigurationWakeOnLANRoute());
       case SettingsRoutes.PROFILES:
-        return route(widget: const ProfilesRoute());
       case SettingsRoutes.SYSTEM:
-        return route(widget: const SystemRoute());
       case SettingsRoutes.SYSTEM_LOGS:
-        return route(widget: const SystemLogsRoute());
-      case SettingsRoutes.SYSTEM_LOGS_DETAILS:
-        return route(builder: (_, state) {
-          final type = LunaLogType.fromKey(state.pathParameters['type']!);
-          return SystemLogsDetailsRoute(type: type);
-        });
-    }
-  }
-
-  @override
-  List<GoRoute> get subroutes {
-    switch (this) {
-      case SettingsRoutes.HOME:
-        return [
-          SettingsRoutes.CONFIGURATION.routes,
-          SettingsRoutes.PROFILES.routes,
-          SettingsRoutes.SYSTEM.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION:
-        return [
-          SettingsRoutes.CONFIGURATION_GENERAL.routes,
-          SettingsRoutes.CONFIGURATION_DASHBOARD.routes,
-          SettingsRoutes.CONFIGURATION_DRAWER.routes,
-          SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES.routes,
-          SettingsRoutes.CONFIGURATION_LIDARR.routes,
-          SettingsRoutes.CONFIGURATION_NZBGET.routes,
-          SettingsRoutes.CONFIGURATION_QUICK_ACTIONS.routes,
-          SettingsRoutes.CONFIGURATION_RADARR.routes,
-          SettingsRoutes.CONFIGURATION_SABNZBD.routes,
-          SettingsRoutes.CONFIGURATION_SEARCH.routes,
-          SettingsRoutes.CONFIGURATION_SONARR.routes,
-          SettingsRoutes.CONFIGURATION_TAUTULLI.routes,
-          SettingsRoutes.CONFIGURATION_WAKE_ON_LAN.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_DASHBOARD:
-        return [
-          SettingsRoutes.CONFIGURATION_DASHBOARD_CALENDAR.routes,
-          SettingsRoutes.CONFIGURATION_DASHBOARD_DEFAULT_PAGES.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_LIDARR:
-        return [
-          SettingsRoutes.CONFIGURATION_LIDARR_CONNECTION_DETAILS.routes,
-          SettingsRoutes.CONFIGURATION_LIDARR_DEFAULT_PAGES.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_LIDARR_CONNECTION_DETAILS:
-        return [
-          SettingsRoutes.CONFIGURATION_LIDARR_CONNECTION_DETAILS_HEADERS.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_NZBGET:
-        return [
-          SettingsRoutes.CONFIGURATION_NZBGET_CONNECTION_DETAILS.routes,
-          SettingsRoutes.CONFIGURATION_NZBGET_DEFAULT_PAGES.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_NZBGET_CONNECTION_DETAILS:
-        return [
-          SettingsRoutes.CONFIGURATION_NZBGET_CONNECTION_DETAILS_HEADERS.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_RADARR:
-        return [
-          SettingsRoutes.CONFIGURATION_RADARR_CONNECTION_DETAILS.routes,
-          SettingsRoutes.CONFIGURATION_RADARR_DEFAULT_OPTIONS.routes,
-          SettingsRoutes.CONFIGURATION_RADARR_DEFAULT_PAGES.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_RADARR_CONNECTION_DETAILS:
-        return [
-          SettingsRoutes.CONFIGURATION_RADARR_CONNECTION_DETAILS_HEADERS.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_SABNZBD:
-        return [
-          SettingsRoutes.CONFIGURATION_SABNZBD_CONNECTION_DETAILS.routes,
-          SettingsRoutes.CONFIGURATION_SABNZBD_DEFAULT_PAGES.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_SABNZBD_CONNECTION_DETAILS:
-        return [
-          SettingsRoutes
-              .CONFIGURATION_SABNZBD_CONNECTION_DETAILS_HEADERS.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_SEARCH:
-        return [
-          SettingsRoutes.CONFIGURATION_SEARCH_ADD_INDEXER.routes,
-          SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_SEARCH_ADD_INDEXER:
-        return [
-          SettingsRoutes.CONFIGURATION_SEARCH_ADD_INDEXER_HEADERS.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER:
-        return [
-          SettingsRoutes.CONFIGURATION_SEARCH_EDIT_INDEXER_HEADERS.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_SONARR:
-        return [
-          SettingsRoutes.CONFIGURATION_SONARR_CONNECTION_DETAILS.routes,
-          SettingsRoutes.CONFIGURATION_SONARR_DEFAULT_OPTIONS.routes,
-          SettingsRoutes.CONFIGURATION_SONARR_DEFAULT_PAGES.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_SONARR_CONNECTION_DETAILS:
-        return [
-          SettingsRoutes.CONFIGURATION_SONARR_CONNECTION_DETAILS_HEADERS.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_TAUTULLI:
-        return [
-          SettingsRoutes.CONFIGURATION_TAUTULLI_CONNECTION_DETAILS.routes,
-          SettingsRoutes.CONFIGURATION_TAUTULLI_DEFAULT_PAGES.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_TAUTULLI_CONNECTION_DETAILS:
-        return [
-          SettingsRoutes
-              .CONFIGURATION_TAUTULLI_CONNECTION_DETAILS_HEADERS.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES:
-        return [
-          SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_ADD.routes,
-          SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_EDIT.routes,
-        ];
-      case SettingsRoutes.SYSTEM:
-        return [
-          SettingsRoutes.SYSTEM_LOGS.routes,
-        ];
-      case SettingsRoutes.SYSTEM_LOGS:
-        return [
-          SettingsRoutes.SYSTEM_LOGS_DETAILS.routes,
-        ];
-      default:
-        return const <GoRoute>[];
+        return route(
+            builder: (context, state) => SettingsRoute(
+                  // Pass the specific route to Swift
+                  initialRoute: path,
+                  routeData: state.extra as Map<String, dynamic>?,
+                ));
     }
   }
 }

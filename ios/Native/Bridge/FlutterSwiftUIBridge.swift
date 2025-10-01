@@ -36,6 +36,7 @@ import Flutter
     
     /// Initialize the bridge with the Flutter view controller
     /// - Parameter flutterViewController: The main Flutter view controller
+    @MainActor
     func initialize(with flutterViewController: FlutterViewController) {
         self.flutterViewController = flutterViewController
         

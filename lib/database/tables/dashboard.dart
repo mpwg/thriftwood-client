@@ -2,7 +2,6 @@ import 'package:lunasea/database/table.dart';
 import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_day.dart';
 import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_size.dart';
 import 'package:lunasea/modules/dashboard/core/adapters/calendar_starting_type.dart';
-import 'package:lunasea/vendor.dart';
 
 enum DashboardDatabase<T> with LunaTableMixin<T> {
   NAVIGATION_INDEX<int>(0),
@@ -25,9 +24,8 @@ enum DashboardDatabase<T> with LunaTableMixin<T> {
 
   @override
   void register() {
-    Hive.registerAdapter(CalendarStartingDayAdapter());
-    Hive.registerAdapter(CalendarStartingSizeAdapter());
-    Hive.registerAdapter(CalendarStartingTypeAdapter());
+    // SWIFT-FIRST MIGRATION: Calendar adapters removed - data comes from Swift
+    // Dashboard migrated to Swift in Phase 3, these adapters no longer needed
   }
 
   @override
@@ -52,13 +50,13 @@ enum DashboardDatabase<T> with LunaTableMixin<T> {
 
     switch (db) {
       case DashboardDatabase.CALENDAR_STARTING_DAY:
-        result = CalendarStartingDay.MONDAY.fromKey(value.toString());
+        result = CalendarStartingDay.fromKey(value.toString());
         break;
       case DashboardDatabase.CALENDAR_STARTING_SIZE:
-        result = CalendarStartingSize.ONE_WEEK.fromKey(value.toString());
+        result = CalendarStartingSize.fromKey(value.toString());
         break;
       case DashboardDatabase.CALENDAR_STARTING_TYPE:
-        result = CalendarStartingType.CALENDAR.fromKey(value.toString());
+        result = CalendarStartingType.fromKey(value.toString());
         break;
       default:
         result = value;
