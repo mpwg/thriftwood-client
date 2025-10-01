@@ -38,10 +38,19 @@ import Flutter
     /// - Parameter flutterViewController: The main Flutter view controller
     func initialize(with flutterViewController: FlutterViewController) {
         self.flutterViewController = flutterViewController
-        setupMethodChannel(with: flutterViewController)
         
-        print("✅ FlutterSwiftUIBridge initialized successfully")
-        print("✅ Method channel established: com.thriftwood.bridge")
+        // Initialize central dispatcher to prevent method channel conflicts (Rule 13)
+        BridgeMethodDispatcher.shared.initialize(with: flutterViewController)
+        BridgeMethodDispatcher.shared.registerCoreBridgeMethods()
+        
+        // Register Swift-completed features (Swift-first rule enforcement)
+        registerCompletedSwiftFeatures()
+        
+        // Initialize data bridge for Flutter access to Swift models
+        SwiftDataBridge.shared.initialize(with: flutterViewController)
+        
+        print("✅ FlutterSwiftUIBridge initialized with Swift-first enforcement")
+        print("✅ Method channel conflicts prevented via BridgeMethodDispatcher")
     }
     
     // MARK: - Native View Registration
@@ -167,54 +176,44 @@ import Flutter
         }
     }
     
-    // MARK: - Method Channel Setup
+    // MARK: - Swift-First Feature Registration
     
-    private func setupMethodChannel(with flutterViewController: FlutterViewController) {
-        let binaryMessenger = flutterViewController.binaryMessenger
-        methodChannel = FlutterMethodChannel(
-            name: "com.thriftwood.bridge",
-            binaryMessenger: binaryMessenger
-        )
+    /// Register all Swift-completed features (enforces Swift-first migration rules)
+    private func registerCompletedSwiftFeatures() {
+        // Phase 2 Complete: Settings fully implemented in Swift
+        registerNativeView("/settings")
+        registerNativeView("/settings/general")
+        registerNativeView("/settings/profiles")
+        registerNativeView("/settings/system")
+        registerNativeView("/settings/dashboard")
+        registerNativeView("/settings/radarr")
+        registerNativeView("/settings/sonarr")
+        registerNativeView("/settings/lidarr")
+        registerNativeView("/settings/sabnzbd")
+        registerNativeView("/settings/nzbget")
+        registerNativeView("/settings/tautulli")
+        registerNativeView("/settings/overseerr")
+        registerNativeView("/settings/wake_on_lan")
+        registerNativeView("/settings/search")
+        registerNativeView("/settings/external_modules")
+        registerNativeView("/settings/drawer")
+        registerNativeView("/settings/quick_actions")
         
-        methodChannel?.setMethodCallHandler { [weak self] (call, result) in
-            self?.handleMethodCall(call, result: result)
-        }
+        // Phase 3 Complete: Dashboard fully implemented in Swift
+        registerNativeView("/dashboard")
         
-        // Set up Hive data synchronization channel
-        let hiveMethodChannel = FlutterMethodChannel(
-            name: "com.thriftwood.hive",
-            binaryMessenger: binaryMessenger
-        )
-        
-        // Initialize the HiveDataManager with the Hive-specific method channel
-        HiveDataManager.shared.initialize(with: hiveMethodChannel)
-        
-        print("Method channel 'com.thriftwood.bridge' established")
-        print("Method channel 'com.thriftwood.hive' established for data synchronization")
+        print("✅ Swift-completed features registered (Settings + Dashboard)")
     }
     
+    // MARK: - Method Channel Handling (Deprecated - Using BridgeMethodDispatcher)
+    
+    /// Legacy method call handler - now delegated to BridgeMethodDispatcher
+    /// This ensures no method channel handler conflicts (Rule 13 enforcement)
     private func handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let method = call.method
-        let arguments = call.arguments as? [String: Any] ?? [:]
-        
-        print("Received method call: \(method) with arguments: \(arguments)")
-        
-        switch method {
-        case "navigateToNative":
-            handleNavigateToNative(arguments: arguments, result: result)
-        case "isNativeViewAvailable":
-            handleIsNativeViewAvailable(arguments: arguments, result: result)
-        case "registerNativeView":
-            handleRegisterNativeView(arguments: arguments, result: result)
-        case "getAllNativeViews":
-            handleGetAllNativeViews(result: result)
-        // Dashboard-specific methods
-        case "getDashboardState", "updateDashboardState", "refreshDashboardServices", "triggerWakeOnLAN", "navigateToService":
-            handleDashboardMethodCall(call, result: result)
-        default:
-            print("Unknown method call: \(method)")
-            result(FlutterMethodNotImplemented)
-        }
+        // This method should not be called directly anymore
+        // All method calls are routed through BridgeMethodDispatcher
+        print("⚠️ WARNING: Direct method call received - should use BridgeMethodDispatcher")
+        result(FlutterError(code: "DEPRECATED", message: "Use BridgeMethodDispatcher", details: nil))
     }
     
     // MARK: - Method Call Handlers

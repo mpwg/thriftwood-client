@@ -4,16 +4,25 @@ import 'package:lunasea/system/bridge/hybrid_router.dart';
 /// Immediate Swift delegation route for Settings
 /// Enforces Swift-first migration rules - no Flutter implementation
 class SettingsRoute extends StatelessWidget {
-  const SettingsRoute({Key? key}) : super(key: key);
+  final String? initialRoute;
+  final Map<String, dynamic>? routeData;
+
+  const SettingsRoute({
+    Key? key,
+    this.initialRoute,
+    this.routeData,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // SWIFT-FIRST RULE ENFORCEMENT:
     // Settings Swift implementation is complete - delegate immediately
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final success = await HybridRouter.navigateTo(context, '/settings');
+      final route = initialRoute ?? '/settings';
+      final success =
+          await HybridRouter.navigateTo(context, route, data: routeData);
       if (!success) {
-        _showSettingsUnavailableError(context);
+        _showSettingsUnavailableError(context, route);
       }
     });
 
@@ -32,13 +41,13 @@ class SettingsRoute extends StatelessWidget {
     );
   }
 
-  void _showSettingsUnavailableError(BuildContext context) {
+  void _showSettingsUnavailableError(BuildContext context, String route) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Settings Unavailable'),
-        content: const Text(
-          'The native iOS settings implementation is not available. '
+        content: Text(
+          'The native iOS settings implementation for "$route" is not available. '
           'Please ensure you are running on iOS with the latest app version.',
         ),
         actions: [

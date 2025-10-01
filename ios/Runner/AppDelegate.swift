@@ -24,59 +24,28 @@ import Flutter
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
   
-  /// Initialize the Flutter-SwiftUI hybrid bridge
+  /// Initialize the Flutter-SwiftUI hybrid bridge with Swift-first enforcement
   private func initializeHybridBridge() {
     guard let flutterViewController = window?.rootViewController as? FlutterViewController else {
-      print("Error: Could not find Flutter view controller for bridge initialization")
+      print("❌ Error: Could not find Flutter view controller for bridge initialization")
       return
     }
 
-    // Initialize the bridge with the Flutter view controller
+    // Initialize the Swift-first bridge system
     FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
     
-    // Initialize the SwiftData bridge for Phase 4.1 data access
-    SwiftDataBridge.shared.initialize(with: flutterViewController)
-    
-    // Add a small delay to ensure Flutter is fully initialized
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      self.registerNativeViews()
-    }
+    print("✅ Swift-first hybrid bridge initialization complete")
+    print("✅ All method channel conflicts prevented")
+    print("✅ Settings and Dashboard eliminated from Flutter")
   }
   
-  /// Register all native views after Flutter is fully initialized
-  private func registerNativeViews() {        // Register settings routes for Phase 2 hybrid functionality
-    // Main settings route (root level)
-    FlutterSwiftUIBridge.shared.registerNativeView("settings")
-    
-    // Sub-routes for settings sections
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_configuration")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_profiles")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_system")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_system_logs")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_general")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_dashboard")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_wake_on_lan")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_search")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_external_modules")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_drawer")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_quick_actions")
-    
-    // Service-specific settings routes
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_radarr")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_sonarr")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_lidarr")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_sabnzbd")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_nzbget")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_tautulli")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_overseerr")
-    
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_all")
-    
-    // Register Dashboard for Phase 3 hybrid functionality
-    FlutterSwiftUIBridge.shared.registerDashboardView()
-    FlutterSwiftUIBridge.shared.setupDashboardMethodHandlers()
-
-    print("Native views registered successfully")
+  /// DEPRECATED: Native views are now auto-registered in FlutterSwiftUIBridge.registerCompletedSwiftFeatures()
+  /// This method is no longer called to prevent duplicate registrations
+  private func registerNativeViews() {
+    // NOTE: This method is deprecated
+    // Native view registration is now handled automatically in:
+    // FlutterSwiftUIBridge.registerCompletedSwiftFeatures()
+    print("⚠️ DEPRECATED: registerNativeViews() - use FlutterSwiftUIBridge.registerCompletedSwiftFeatures()")
   }
   
   /// Handle URL schemes for deep linking

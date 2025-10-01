@@ -4,8 +4,8 @@ import 'package:lunasea/system/logger.dart';
 /// Client for accessing Swift SwiftData models from Flutter
 /// Implements Phase 4.1 Swift-first migration strategy
 class SwiftDataClient {
-  /// Method channel for communicating with Swift
-  static const _channel = MethodChannel('com.thriftwood.swift_data');
+  /// Method channel for communicating with Swift (via BridgeMethodDispatcher)
+  static const _channel = MethodChannel('com.thriftwood.bridge');
 
   /// Private constructor
   SwiftDataClient._();
@@ -19,7 +19,7 @@ class SwiftDataClient {
   /// Get all profiles from Swift SwiftData
   Future<List<Map<String, dynamic>>> getAllProfiles() async {
     try {
-      final result = await _channel.invokeMethod('profile.getAllProfiles');
+      final result = await _channel.invokeMethod('profile.getAll');
       if (result is List) {
         return List<Map<String, dynamic>>.from(
             result.map((item) => Map<String, dynamic>.from(item)));

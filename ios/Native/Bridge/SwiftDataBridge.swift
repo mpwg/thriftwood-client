@@ -33,18 +33,59 @@ class SwiftDataBridge: NSObject {
     
     /// Initialize the bridge with Flutter method channel
     func initialize(with flutterViewController: FlutterViewController) {
-        methodChannel = FlutterMethodChannel(
-            name: "com.thriftwood.swift_data",
-            binaryMessenger: flutterViewController.binaryMessenger
-        )
+        // Register data methods with central dispatcher (prevents conflicts)
+        registerDataMethods()
         
-        methodChannel?.setMethodCallHandler { [weak self] call, result in
+        print("✅ SwiftDataBridge initialized and registered with dispatcher")
+    }
+    
+    /// Register data access methods with BridgeMethodDispatcher
+    private func registerDataMethods() {
+        // Profile data methods
+        BridgeMethodDispatcher.shared.registerHandler(for: "profile.getAll") { call, result in
             Task { @MainActor in
-                await self?.handleFlutterMethodCall(call, result: result)
+                await self.handleGetAllProfiles(result: result)
             }
         }
         
-        print("✅ SwiftDataBridge initialized and ready for Flutter access")
+        BridgeMethodDispatcher.shared.registerHandler(for: "profile.get") { call, result in
+            Task { @MainActor in
+                await self.handleGetProfile(call: call, result: result)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "profile.create") { call, result in
+            Task { @MainActor in
+                await self.handleCreateProfile(call: call, result: result)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "profile.update") { call, result in
+            Task { @MainActor in
+                await self.handleUpdateProfile(call: call, result: result)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "profile.delete") { call, result in
+            Task { @MainActor in
+                await self.handleDeleteProfile(call: call, result: result)
+            }
+        }
+        
+        // Settings data methods
+        BridgeMethodDispatcher.shared.registerHandler(for: "settings.get") { call, result in
+            Task { @MainActor in
+                await self.handleGetSettings(result: result)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "settings.update") { call, result in
+            Task { @MainActor in
+                await self.handleUpdateSettings(call: call, result: result)
+            }
+        }
+        
+        print("✅ Data bridge methods registered with BridgeMethodDispatcher")
     }
     
     /// Setup SwiftData model context
@@ -62,27 +103,165 @@ class SwiftDataBridge: NSObject {
     
     // MARK: - Flutter Method Call Handler
     
-    /// Handle method calls from Flutter
-    private func handleFlutterMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) async {
+    // MARK: - Profile Data Handlers
+    
+    private func handleGetAllProfiles(result: @escaping FlutterResult) async {
         guard let modelContext = modelContext else {
             result(FlutterError(code: "NO_CONTEXT", message: "SwiftData context not initialized", details: nil))
             return
         }
         
-        let components = call.method.split(separator: ".")
-        guard components.count >= 2 else {
-            result(FlutterError(code: "INVALID_METHOD", message: "Method format should be 'service.action'", details: nil))
+        do {
+            let profiles = try modelContext.fetch(FetchDescriptor<ProfileSwiftData>())
+            let profileDicts = profiles.map { $0.toDictionary() }
+            result(profileDicts)
+        } catch {
+            result(FlutterError(code: "FETCH_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    private func handleGetProfile(call: FlutterMethodCall, result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext,
+              let args = call.arguments as? [String: Any],
+              let idString = args["id"] as? String,
+              let id = UUID(uuidString: idString) else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Profile ID required", details: nil))
             return
         }
         
-        let service = String(components[0])
-        let action = String(components[1])
+        do {
+            let descriptor = FetchDescriptor<ProfileSwiftData>(
+                predicate: #Predicate<ProfileSwiftData> { $0.id == id }
+            )
+            let profiles = try modelContext.fetch(descriptor)
+            
+            if let profile = profiles.first {
+                result(profile.toDictionary())
+            } else {
+                result(nil)
+            }
+        } catch {
+            result(FlutterError(code: "FETCH_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    private func handleCreateProfile(call: FlutterMethodCall, result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext,
+              let args = call.arguments as? [String: Any] else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Profile data required", details: nil))
+            return
+        }
         
         do {
-            let response = try await handleServiceCall(service: service, action: action, arguments: call.arguments, context: modelContext)
-            result(response)
+            let profile = try ProfileSwiftData.fromDictionary(args)
+            modelContext.insert(profile)
+            try modelContext.save()
+            result(profile.toDictionary())
         } catch {
-            result(FlutterError(code: "BRIDGE_ERROR", message: error.localizedDescription, details: nil))
+            result(FlutterError(code: "CREATE_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    private func handleUpdateProfile(call: FlutterMethodCall, result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext,
+              let args = call.arguments as? [String: Any],
+              let idString = args["id"] as? String,
+              let id = UUID(uuidString: idString) else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Profile ID and data required", details: nil))
+            return
+        }
+        
+        do {
+            let descriptor = FetchDescriptor<ProfileSwiftData>(
+                predicate: #Predicate<ProfileSwiftData> { $0.id == id }
+            )
+            let profiles = try modelContext.fetch(descriptor)
+            
+            guard let profile = profiles.first else {
+                result(FlutterError(code: "NOT_FOUND", message: "Profile not found", details: nil))
+                return
+            }
+            
+            try profile.updateFromDictionary(args)
+            try modelContext.save()
+            result(profile.toDictionary())
+        } catch {
+            result(FlutterError(code: "UPDATE_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    private func handleDeleteProfile(call: FlutterMethodCall, result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext,
+              let args = call.arguments as? [String: Any],
+              let idString = args["id"] as? String,
+              let id = UUID(uuidString: idString) else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Profile ID required", details: nil))
+            return
+        }
+        
+        do {
+            let descriptor = FetchDescriptor<ProfileSwiftData>(
+                predicate: #Predicate<ProfileSwiftData> { $0.id == id }
+            )
+            let profiles = try modelContext.fetch(descriptor)
+            
+            guard let profile = profiles.first else {
+                result(FlutterError(code: "NOT_FOUND", message: "Profile not found", details: nil))
+                return
+            }
+            
+            modelContext.delete(profile)
+            try modelContext.save()
+            result(true)
+        } catch {
+            result(FlutterError(code: "DELETE_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    // MARK: - Settings Data Handlers
+    
+    private func handleGetSettings(result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext else {
+            result(FlutterError(code: "NO_CONTEXT", message: "SwiftData context not initialized", details: nil))
+            return
+        }
+        
+        do {
+            let settings = try modelContext.fetch(FetchDescriptor<AppSettingsSwiftData>())
+            if let appSettings = settings.first {
+                result(appSettings.toDictionary())
+            } else {
+                // Create default settings if none exist
+                let defaultSettings = AppSettingsSwiftData()
+                modelContext.insert(defaultSettings)
+                try modelContext.save()
+                result(defaultSettings.toDictionary())
+            }
+        } catch {
+            result(FlutterError(code: "FETCH_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    private func handleUpdateSettings(call: FlutterMethodCall, result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext,
+              let args = call.arguments as? [String: Any] else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Settings data required", details: nil))
+            return
+        }
+        
+        do {
+            let settings = try modelContext.fetch(FetchDescriptor<AppSettingsSwiftData>())
+            let appSettings = settings.first ?? AppSettingsSwiftData()
+            
+            if settings.isEmpty {
+                modelContext.insert(appSettings)
+            }
+            
+            try appSettings.updateFromDictionary(args)
+            try modelContext.save()
+            result(appSettings.toDictionary())
+        } catch {
+            result(FlutterError(code: "UPDATE_ERROR", message: error.localizedDescription, details: nil))
         }
     }
     

@@ -1,109 +1,39 @@
-import 'package:flutter/material.dart';import 'package:flutter/material.dart';import 'package:flutter/material.dart';
-
+import 'package:flutter/material.dart';
 import 'package:lunasea/modules.dart';
-
-import 'package:lunasea/modules/settings/routes/settings/route.dart';import 'package:lunasea/modules.dart';import 'package:lunasea/modules.dart';
-
+import 'package:lunasea/modules/settings/routes/settings/route.dart';
+import 'package:lunasea/modules/settings/routes/system_logs/route.dart';
 import 'package:lunasea/router/routes.dart';
-
-import 'package:lunasea/vendor.dart';import 'package:lunasea/modules/settings/routes/settings/route.dart';import 'package:lunasea/modules/settings/routes/settings/route.dart';
-
-
-
-/// SWIFT-FIRST MIGRATION ENFORCEMENT: All settings routes delegate to Swiftimport 'package:lunasea/router/routes.dart';import 'package:lunasea/modules/settings/routes/system_logs/route.dart';
-
-/// Flutter settings implementation has been completely eliminated per migration rules
-
-enum SettingsRoutes with LunaRoutesMixin {import 'package:lunasea/vendor.dart';import 'package:lunasea/router/routes.dart';
-
-  HOME('/settings');
-
 import 'package:lunasea/types/log_type.dart';
+import 'package:lunasea/vendor.dart';
 
-  @override
-
-  final String path;/// SWIFT-FIRST MIGRATION ENFORCEMENT: All settings routes delegate to Swiftimport 'package:lunasea/vendor.dart';
-
-
-
-  const SettingsRoutes(this.path);/// Flutter settings implementation has been completely eliminated per migration rules
-
-
-
-  @overrideenum SettingsRoutes with LunaRoutesMixin {enum SettingsRoutes with LunaRoutesMixin {
-
-  LunaModule get module => LunaModule.SETTINGS;
-
-  HOME('/settings');  HOME('/settings'),
-
-  @override
-
-  bool isModuleEnabled(BuildContext context) => true;  CONFIGURATION('configuration'),
-
-
-
-  @override  @override  CONFIGURATION_GENERAL('general'),
-
-  GoRoute get routes {
-
-    // ALL SETTINGS ROUTES DELEGATE TO SWIFT (Swift-first rule enforcement)  final String path;  CONFIGURATION_DASHBOARD('dashboard'),
-
-    // Flutter implementation code has been eliminated
-
-    switch (this) {  CONFIGURATION_DASHBOARD_CALENDAR('calendar'),
-
-      case SettingsRoutes.HOME:
-
-        // SWIFT-FIRST ENFORCEMENT: Settings implementation is Swift-only  const SettingsRoutes(this.path);  CONFIGURATION_DASHBOARD_DEFAULT_PAGES('default_pages'),
-
-        return route(builder: (context, state) => SettingsRoute(
-
-          initialRoute: path,  CONFIGURATION_DRAWER('drawer'),
-
-          routeData: state.extra as Map<String, dynamic>?,
-
-        ));  @override  CONFIGURATION_EXTERNAL_MODULES('external_modules'),
-
-    }
-
-  }  LunaModule get module => LunaModule.SETTINGS;  CONFIGURATION_EXTERNAL_MODULES_ADD('add'),
-
-}
+enum SettingsRoutes with LunaRoutesMixin {
+  HOME('/settings'),
+  CONFIGURATION('configuration'),
+  CONFIGURATION_GENERAL('general'),
+  CONFIGURATION_DASHBOARD('dashboard'),
+  CONFIGURATION_DASHBOARD_CALENDAR('calendar'),
+  CONFIGURATION_DASHBOARD_DEFAULT_PAGES('default_pages'),
+  CONFIGURATION_DRAWER('drawer'),
+  CONFIGURATION_EXTERNAL_MODULES('external_modules'),
+  CONFIGURATION_EXTERNAL_MODULES_ADD('add'),
   CONFIGURATION_EXTERNAL_MODULES_EDIT('edit/:id'),
-
-  @override  CONFIGURATION_LIDARR('lidarr'),
-
-  bool isModuleEnabled(BuildContext context) => true;  CONFIGURATION_LIDARR_CONNECTION_DETAILS('connection_details'),
-
+  CONFIGURATION_LIDARR('lidarr'),
+  CONFIGURATION_LIDARR_CONNECTION_DETAILS('connection_details'),
   CONFIGURATION_LIDARR_CONNECTION_DETAILS_HEADERS('headers'),
-
-  @override  CONFIGURATION_LIDARR_DEFAULT_PAGES('default_pages'),
-
-  GoRoute get routes {  CONFIGURATION_NZBGET('nzbget'),
-
-    // ALL SETTINGS ROUTES DELEGATE TO SWIFT (Swift-first rule enforcement)  CONFIGURATION_NZBGET_CONNECTION_DETAILS('connection_details'),
-
-    // Flutter implementation code has been eliminated  CONFIGURATION_NZBGET_CONNECTION_DETAILS_HEADERS('headers'),
-
-    switch (this) {  CONFIGURATION_NZBGET_DEFAULT_PAGES('default_pages'),
-
-      case SettingsRoutes.HOME:  CONFIGURATION_QUICK_ACTIONS('quick_actions'),
-
-        // SWIFT-FIRST ENFORCEMENT: Settings implementation is Swift-only  CONFIGURATION_RADARR('radarr'),
-
-        return route(builder: (context, state) => SettingsRoute(  CONFIGURATION_RADARR_CONNECTION_DETAILS('connection_details'),
-
-          initialRoute: path,  CONFIGURATION_RADARR_CONNECTION_DETAILS_HEADERS('headers'),
-
-          routeData: state.extra as Map<String, dynamic>?,  CONFIGURATION_RADARR_DEFAULT_OPTIONS('default_options'),
-
-        ));  CONFIGURATION_RADARR_DEFAULT_PAGES('default_pages'),
-
-    }  CONFIGURATION_SABNZBD('sabnzbd'),
-
-  }  CONFIGURATION_SABNZBD_CONNECTION_DETAILS('connection_details'),
-
-}  CONFIGURATION_SABNZBD_CONNECTION_DETAILS_HEADERS('headers'),
+  CONFIGURATION_LIDARR_DEFAULT_PAGES('default_pages'),
+  CONFIGURATION_NZBGET('nzbget'),
+  CONFIGURATION_NZBGET_CONNECTION_DETAILS('connection_details'),
+  CONFIGURATION_NZBGET_CONNECTION_DETAILS_HEADERS('headers'),
+  CONFIGURATION_NZBGET_DEFAULT_PAGES('default_pages'),
+  CONFIGURATION_QUICK_ACTIONS('quick_actions'),
+  CONFIGURATION_RADARR('radarr'),
+  CONFIGURATION_RADARR_CONNECTION_DETAILS('connection_details'),
+  CONFIGURATION_RADARR_CONNECTION_DETAILS_HEADERS('headers'),
+  CONFIGURATION_RADARR_DEFAULT_OPTIONS('default_options'),
+  CONFIGURATION_RADARR_DEFAULT_PAGES('default_pages'),
+  CONFIGURATION_SABNZBD('sabnzbd'),
+  CONFIGURATION_SABNZBD_CONNECTION_DETAILS('connection_details'),
+  CONFIGURATION_SABNZBD_CONNECTION_DETAILS_HEADERS('headers'),
   CONFIGURATION_SABNZBD_DEFAULT_PAGES('default_pages'),
   CONFIGURATION_SEARCH('search'),
   CONFIGURATION_SEARCH_ADD_INDEXER('add_indexer'),
