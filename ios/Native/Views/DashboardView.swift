@@ -323,20 +323,406 @@ struct NoModulesEnabledView: View {
     }
 }
 
-// MARK: - Calendar View Placeholder
+// MARK: - Calendar View
 
-/// Placeholder for Calendar view - full implementation in Phase 4
+/// Swift equivalent of Flutter's CalendarPage
+/// Full calendar implementation with event display
 struct CalendarView: View {
+    @State private var viewModel: CalendarViewModel
+    
+    init() {
+        // Initialize with method channel from FlutterSwiftUIBridge
+        let bridge = FlutterSwiftUIBridge.shared
+        self._viewModel = State(initialValue: CalendarViewModel(methodChannel: bridge.methodChannel))
+    }
+    
     var body: some View {
-        VStack {
-            Text("Calendar View")
-                .font(.title)
-            Text("Calendar functionality will be implemented in Phase 4")
-                .font(.body)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
+        Group {
+            if viewModel.calendarStartingType == .calendar {
+                CalendarMonthView(viewModel: viewModel)
+            } else {
+                CalendarScheduleView(viewModel: viewModel)
+            }
         }
-        .padding()
+        .refreshable {
+            await viewModel.refresh()
+        }
+    }
+}
+
+// MARK: - Calendar Month View
+
+/// Calendar view with month/week display and event markers
+/// Swift equivalent of Flutter's CalendarView widget
+struct CalendarMonthView: View {
+    @Bindable var viewModel: CalendarViewModel
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Calendar header and grid
+            CalendarGridView(viewModel: viewModel)
+            
+            Divider()
+                .padding(.vertical, 8)
+            
+            // Event list for selected date
+            SelectedDateEventsView(viewModel: viewModel)
+        }
+        .padding(.top, 8)
+    }
+}
+
+// MARK: - Calendar Grid View
+
+/// Month/week calendar grid with event markers
+struct CalendarGridView: View {
+    @Bindable var viewModel: CalendarViewModel
+    
+    private let calendar = Calendar.current
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 7)
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            // Month/Year header
+            Text(monthYearString)
+                .font(.title2)
+                .fontWeight(.bold)
+                .padding(.vertical, 8)
+            
+            // Weekday headers
+            LazyVGrid(columns: columns, spacing: 8) {
+                ForEach(weekdaySymbols, id: \.self) { symbol in
+                    Text(symbol)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.accentColor)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            
+            // Calendar days
+            LazyVGrid(columns: columns, spacing: 8) {
+                ForEach(daysInMonth, id: \.self) { date in
+                    if let date = date {
+                        CalendarDayCell(
+                            date: date,
+                            isSelected: calendar.isDate(date, inSameDayAs: viewModel.selectedDate),
+                            isToday: calendar.isDate(date, inSameDayAs: viewModel.today),
+                            markerColor: viewModel.getMarkerColor(for: date),
+                            onTap: {
+                                viewModel.selectDate(date)
+                            }
+                        )
+                    } else {
+                        Color.clear
+                            .frame(height: 48)
+                    }
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+    }
+    
+    private var monthYearString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+        return formatter.string(from: viewModel.selectedDate)
+    }
+    
+    private var weekdaySymbols: [String] {
+        let formatter = DateFormatter()
+        return formatter.shortWeekdaySymbols
+    }
+    
+    private var daysInMonth: [Date?] {
+        guard let monthInterval = calendar.dateInterval(of: .month, for: viewModel.selectedDate) else {
+            return []
+        }
+        
+        let firstDayOfMonth = monthInterval.start
+        let firstWeekday = calendar.component(.weekday, from: firstDayOfMonth)
+        
+        // Calculate offset for first day
+        let offset = firstWeekday - calendar.firstWeekday
+        let adjustedOffset = offset < 0 ? offset + 7 : offset
+        
+        // Get number of days in month
+        guard let daysInMonth = calendar.range(of: .day, in: .month, for: firstDayOfMonth)?.count else {
+            return []
+        }
+        
+        var days: [Date?] = []
+        
+        // Add empty cells for offset
+        for _ in 0..<adjustedOffset {
+            days.append(nil)
+        }
+        
+        // Add days of month
+        for day in 0..<daysInMonth {
+            if let date = calendar.date(byAdding: .day, value: day, to: firstDayOfMonth) {
+                days.append(date)
+            }
+        }
+        
+        return days
+    }
+}
+
+// MARK: - Calendar Day Cell
+
+/// Individual day cell in calendar grid
+struct CalendarDayCell: View {
+    let date: Date
+    let isSelected: Bool
+    let isToday: Bool
+    let markerColor: Color
+    let onTap: () -> Void
+    
+    private let calendar = Calendar.current
+    
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 4) {
+                Text("\(calendar.component(.day, from: date))")
+                    .font(.body)
+                    .fontWeight(isToday ? .bold : .regular)
+                    .foregroundColor(textColor)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 40)
+                    .background(backgroundColor)
+                    .clipShape(Circle())
+                
+                // Event marker dot
+                Circle()
+                    .fill(markerColor)
+                    .frame(width: 6, height: 6)
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var textColor: Color {
+        if isSelected {
+            return .accentColor
+        } else if isToday {
+            return .primary
+        } else {
+            return .primary
+        }
+    }
+    
+    private var backgroundColor: Color {
+        if isSelected {
+            return Color.accentColor.opacity(0.1)
+        } else if isToday {
+            return Color.secondary.opacity(0.1)
+        } else {
+            return .clear
+        }
+    }
+}
+
+// MARK: - Selected Date Events View
+
+/// List of events for selected date
+struct SelectedDateEventsView: View {
+    @Bindable var viewModel: CalendarViewModel
+    
+    var body: some View {
+        if viewModel.isLoading {
+            VStack {
+                ProgressView()
+                    .padding()
+                Text("Loading events...")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if let error = viewModel.error {
+            VStack(spacing: 16) {
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.system(size: 48))
+                    .foregroundColor(.orange)
+                Text("Failed to load events")
+                    .font(.headline)
+                Text(error)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                Button("Retry") {
+                    Task {
+                        await viewModel.loadEvents()
+                    }
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if viewModel.selectedDateEvents.isEmpty {
+            VStack(spacing: 16) {
+                Image(systemName: "calendar.badge.exclamationmark")
+                    .font(.system(size: 48))
+                    .foregroundColor(.secondary)
+                Text("No New Content")
+                    .font(.headline)
+                Text("No upcoming releases for this date")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(Array(viewModel.selectedDateEvents.enumerated()), id: \.offset) { _, event in
+                        CalendarEventRow(event: event)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Calendar Event Row
+
+/// Single event row in calendar list
+struct CalendarEventRow: View {
+    let event: any CalendarData
+    
+    var body: some View {
+        Button {
+            event.enterContent()
+        } label: {
+            HStack(spacing: 16) {
+                // Poster placeholder
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(width: 60, height: 90)
+                    .overlay(
+                        Image(systemName: "photo")
+                            .foregroundColor(.secondary)
+                    )
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(event.title)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
+                    
+                    ForEach(event.body, id: \.self) { line in
+                        Text(line)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+                
+                Spacer()
+                
+                event.trailing()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .background(Color.clear)
+    }
+}
+
+// MARK: - Calendar Schedule View
+
+/// Schedule/list view of calendar events
+/// Swift equivalent of Flutter's ScheduleView widget
+struct CalendarScheduleView: View {
+    @Bindable var viewModel: CalendarViewModel
+    
+    var body: some View {
+        if viewModel.isLoading {
+            VStack {
+                ProgressView()
+                    .padding()
+                Text("Loading schedule...")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if let error = viewModel.error {
+            VStack(spacing: 16) {
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.system(size: 48))
+                    .foregroundColor(.orange)
+                Text("Failed to load schedule")
+                    .font(.headline)
+                Text(error)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                Button("Retry") {
+                    Task {
+                        await viewModel.loadEvents()
+                    }
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding()
+        } else if viewModel.events.isEmpty {
+            VStack(spacing: 16) {
+                Image(systemName: "calendar.badge.exclamationmark")
+                    .font(.system(size: 48))
+                    .foregroundColor(.secondary)
+                Text("No New Content")
+                    .font(.headline)
+                Text("No upcoming releases scheduled")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            .padding()
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                    ForEach(sortedDates, id: \.self) { date in
+                        Section {
+                            ForEach(Array(viewModel.getEvents(for: date).enumerated()), id: \.offset) { _, event in
+                                CalendarEventRow(event: event)
+                            }
+                        } header: {
+                            ScheduleDateHeader(date: date)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private var sortedDates: [Date] {
+        return viewModel.events.keys.sorted()
+    }
+}
+
+// MARK: - Schedule Date Header
+
+/// Date header for schedule view sections
+struct ScheduleDateHeader: View {
+    let date: Date
+    
+    var body: some View {
+        HStack {
+            Text(formattedDate)
+                .font(.headline)
+                .foregroundColor(.primary)
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(UIColor.systemGroupedBackground))
+    }
+    
+    private var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE / MMMM dd, y"
+        return formatter.string(from: date)
     }
 }
 
