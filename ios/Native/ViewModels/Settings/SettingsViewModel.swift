@@ -61,12 +61,12 @@ class SettingsViewModel {
     private var hasLoadedInitialSettings: Bool = false
     
     // MARK: - Services
-    private let dataManager: HiveDataManager
+    private let dataLayerManager: DataLayerManager
     private let storageService: StorageService
     
     // MARK: - Initialization
-    init(dataManager: HiveDataManager = .shared, storageService: StorageService = UserDefaultsStorageService()) {
-        self.dataManager = dataManager
+    init(dataLayerManager: DataLayerManager = .shared, storageService: StorageService = UserDefaultsStorageService()) {
+        self.dataLayerManager = dataLayerManager
         self.storageService = storageService
         
         // Initialize with default settings that include a default profile
@@ -100,24 +100,19 @@ class SettingsViewModel {
         defer { isLoading = false }
         
         do {
-            // First, try to load from SwiftUI's local storage
-            var loadedFromLocal = false
-            if let loadedSettings = try await storageService.load(ThriftwoodAppSettings.self, forKey: "app_settings") {
-                appSettings = loadedSettings
-                loadedFromLocal = true
-            }
+            // Use DataLayerManager which automatically selects SwiftData or Hive based on toggle
+            appSettings = try await dataLayerManager.getAppSettings()
             
-            // If no local data exists, try to load from Flutter's Hive storage
-            if !loadedFromLocal {
-                print("No SwiftUI settings found, attempting to load from Flutter Hive storage...")
-                
-                if let hiveSettings = try await dataManager.loadSettingsFromHive() {
-                    appSettings = hiveSettings
-                    // Save to local storage for future loads
-                    try await storageService.save(appSettings, forKey: "app_settings")
-                    print("Successfully loaded settings from Flutter Hive storage")
-                } else {
-                    print("No Hive settings found, using default settings")
+            // Update profile state
+            selectedProfile = appSettings.profiles[appSettings.enabledProfile]
+            availableProfiles = Array(appSettings.profiles.keys).sorted()
+            
+            print("✅ SettingsViewModel: Successfully loaded settings via DataLayerManager (useSwiftData: \(dataLayerManager.useSwiftData))")
+        } catch {
+            print("⚠️ SettingsViewModel: Failed to load settings: \(error)")
+            // Keep default settings
+        }
+    }
                     // Keep the default appSettings initialized in init()
                 }
             }
@@ -161,10 +156,9 @@ class SettingsViewModel {
     @MainActor
     func saveSettings() async {
         do {
-            try await storageService.save(appSettings, forKey: "app_settings")
-            print("💾 Explicitly saving settings to storage")
-            await syncWithHiveStorage()
-            print("✅ Settings synced to Hive successfully")
+            // Use DataLayerManager which automatically saves to SwiftData or Hive based on toggle
+            try await dataLayerManager.saveAppSettings(appSettings)
+            print("✅ Settings saved via DataLayerManager (useSwiftData: \(dataLayerManager.useSwiftData))")
         } catch {
             showError("Failed to save settings: \(error.localizedDescription)")
         }
@@ -181,8 +175,8 @@ class SettingsViewModel {
         appSettings.enabledProfile = profileName
         selectedProfile = profile
         
+        // Save automatically handles sync via DataLayerManager
         await saveSettings()
-        await notifyFlutterOfProfileChange(profileName)
     }
     
     /// Create new profile
@@ -643,58 +637,24 @@ class SettingsViewModel {
         print("✅ \(title): \(message)")
     }
     
-    /// Test method to manually force a reload from Hive storage
+    /// Test method to manually force a reload from DataLayerManager
     @MainActor
     func testReloadFromHive() async {
-        print("🔄 Testing profile reload from Hive storage...")
+        print("🔄 Testing profile reload via DataLayerManager...")
         
         do {
-            if let hiveSettings = try await dataManager.loadSettingsFromHive() {
-                appSettings = hiveSettings
-                availableProfiles = Array(appSettings.profiles.keys).sorted()
-                
-                if let currentProfile = appSettings.profiles[appSettings.enabledProfile] {
-                    selectedProfile = currentProfile
-                    print("✅ Successfully loaded profile '\(currentProfile.name)' from Hive storage")
-                } else {
-                    print("⚠️ No current profile found, enabled profile: '\(appSettings.enabledProfile)'")
-                }
-                
-                // Save to local storage
-                try await storageService.save(appSettings, forKey: "app_settings")
+            appSettings = try await dataLayerManager.getAppSettings()
+            availableProfiles = Array(appSettings.profiles.keys).sorted()
+            
+            if let currentProfile = appSettings.profiles[appSettings.enabledProfile] {
+                selectedProfile = currentProfile
+                print("✅ Successfully loaded profile '\(currentProfile.name)' via DataLayerManager")
             } else {
-                print("⚠️ No settings found in Hive storage")
+                print("⚠️ No current profile found, enabled profile: '\(appSettings.enabledProfile)'")
             }
         } catch {
-            print("❌ Error loading from Hive storage: \(error)")
-            showError("Failed to reload from Hive: \(error.localizedDescription)")
-        }
-    }
-    
-    private func syncWithHiveStorage() async {
-        // Sync settings with Flutter's Hive storage
-        do {
-            try await dataManager.syncSettings(appSettings)
-            // Reduce debug noise - only log during explicit save operations
-            // print("✅ Settings synced to Hive successfully")
-        } catch {
-            print("❌ Failed to sync settings to Hive: \(error)")
-            await MainActor.run {
-                showError("Failed to sync settings to Flutter: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    private func notifyFlutterOfProfileChange(_ profileName: String) async {
-        // Notify Flutter of profile change through the bridge
-        do {
-            try await dataManager.notifyProfileChange(profileName)
-            print("✅ Profile change notification sent to Flutter: \(profileName)")
-        } catch {
-            print("❌ Failed to notify Flutter of profile change: \(error)")
-            await MainActor.run {
-                showError("Failed to notify Flutter of profile change: \(error.localizedDescription)")
-            }
+            print("❌ Error loading via DataLayerManager: \(error)")
+            showError("Failed to reload: \(error.localizedDescription)")
         }
     }
     
