@@ -10,6 +10,42 @@ import Foundation
 import SwiftUI
 import Combine
 import UniformTypeIdentifiers
+import Network
+
+/// Wake on LAN specific errors
+enum WakeOnLANError: LocalizedError {
+    case invalidMACAddress
+    case networkError(String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidMACAddress:
+            return "Invalid MAC address format"
+        case .networkError(let message):
+            return "Network error: \(message)"
+        }
+    }
+}
+
+/// Extension to create Data from hex string
+extension Data {
+    init?(hexString: String) {
+        let cleanString = hexString.replacingOccurrences(of: " ", with: "")
+        guard cleanString.count % 2 == 0 else { return nil }
+        
+        var data = Data(capacity: cleanString.count / 2)
+        var index = cleanString.startIndex
+        
+        while index < cleanString.endIndex {
+            let nextIndex = cleanString.index(index, offsetBy: 2)
+            guard let byte = UInt8(cleanString[index..<nextIndex], radix: 16) else { return nil }
+            data.append(byte)
+            index = nextIndex
+        }
+        
+        self = data
+    }
+}
 
 @Observable
 class SettingsViewModel {
@@ -582,9 +618,53 @@ class SettingsViewModel {
             return
         }
         
-        // TODO: Implement actual Wake on LAN packet sending
-        // For now, just show success message
-        showSuccessSnackBar(title: "Wake Signal Sent", message: "Sent wake packet to \(profile.wakeOnLanMACAddress)")
+        // Send Wake on LAN magic packet
+        do {
+            try await sendWakeOnLANPacket(
+                macAddress: profile.wakeOnLanMACAddress,
+                broadcastAddress: profile.wakeOnLanBroadcastAddress
+            )
+            showSuccessSnackBar(title: "Wake Signal Sent", message: "Sent wake packet to \(profile.wakeOnLanMACAddress)")
+        } catch {
+            showError("Failed to send wake packet: \(error.localizedDescription)")
+        }
+    }
+    
+    /// Send Wake on LAN magic packet using Network framework
+    private func sendWakeOnLANPacket(macAddress: String, broadcastAddress: String) async throws {
+        // Parse MAC address (remove separators and convert to bytes)
+        let cleanMac = macAddress.replacingOccurrences(of: ":", with: "")
+                                 .replacingOccurrences(of: "-", with: "")
+        
+        guard cleanMac.count == 12,
+              let macData = Data(hexString: cleanMac) else {
+            throw WakeOnLANError.invalidMACAddress
+        }
+        
+        // Create magic packet (6 bytes of 0xFF followed by 16 repetitions of MAC)
+        var packet = Data(repeating: 0xFF, count: 6)
+        for _ in 0..<16 {
+            packet.append(macData)
+        }
+        
+        // Use Network framework to send UDP packet
+        let connection = NWConnection(
+            to: NWEndpoint.hostPort(host: NWEndpoint.Host(broadcastAddress), port: 9),
+            using: .udp
+        )
+        
+        connection.start(queue: .global())
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            connection.send(content: packet, completion: .contentProcessed { error in
+                connection.cancel()
+                if let error = error {
+                    continuation.resume(throwing: WakeOnLANError.networkError(error.localizedDescription))
+                } else {
+                    continuation.resume()
+                }
+            })
+        }
     }
     
     // MARK: - Private Methods

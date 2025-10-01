@@ -50,13 +50,13 @@ enum DashboardDatabase<T> with LunaTableMixin<T> {
 
     switch (db) {
       case DashboardDatabase.CALENDAR_STARTING_DAY:
-        result = CalendarStartingDay.fromKey(value.toString());
+        result = CalendarStartingDay.MONDAY.fromKey(value.toString());
         break;
       case DashboardDatabase.CALENDAR_STARTING_SIZE:
-        result = CalendarStartingSize.fromKey(value.toString());
+        result = CalendarStartingSize.ONE_WEEK.fromKey(value.toString());
         break;
       case DashboardDatabase.CALENDAR_STARTING_TYPE:
-        result = CalendarStartingType.fromKey(value.toString());
+        result = CalendarStartingType.CALENDAR.fromKey(value.toString());
         break;
       default:
         result = value;

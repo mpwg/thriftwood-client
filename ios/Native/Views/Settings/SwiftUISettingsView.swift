@@ -36,6 +36,8 @@ struct SwiftUISettingsView: View {
                     icon: "gear",
                     route: "settings_configuration"
                 )
+                .accessibilityLabel("Configuration")
+                .accessibilityHint("Configure application and module settings")
                 
                 // Profiles Section (matches _profilesBlock)  
                 SettingsMenuItem(
@@ -44,6 +46,8 @@ struct SwiftUISettingsView: View {
                     icon: "person.2",
                     route: "settings_profiles"
                 )
+                .accessibilityLabel("Profiles")
+                .accessibilityHint("Switch between profiles or add new ones")
                 
                 // System Section (matches _systemBlock)
                 SettingsMenuItem(
@@ -52,6 +56,8 @@ struct SwiftUISettingsView: View {
                     icon: "gear.badge",
                     route: "settings_system"
                 )
+                .accessibilityLabel("System")
+                .accessibilityHint("Access system utilities and logs")
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
@@ -60,6 +66,8 @@ struct SwiftUISettingsView: View {
                     Button("Back") {
                         FlutterSwiftUIBridge.shared.navigateBackToFlutter()
                     }
+                    .accessibilityLabel("Back to Flutter")
+                    .accessibilityHint("Return to the previous screen in Flutter")
                 }
                 
                 // Profile selector in top right (matches Flutter)
@@ -69,6 +77,8 @@ struct SwiftUISettingsView: View {
                     }
                     .font(.caption)
                     .buttonStyle(.bordered)
+                    .accessibilityLabel("Current profile: \(viewModel.currentProfileName)")
+                    .accessibilityHint("Tap to switch profiles")
                 }
             }
             .alert("Error", isPresented: $viewModel.isShowingError) {

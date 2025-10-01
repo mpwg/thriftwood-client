@@ -85,6 +85,8 @@ struct DashboardView: View {
                             "timestamp": Date().timeIntervalSince1970
                         ])
                     }
+                    .accessibilityLabel("Back to Flutter")
+                    .accessibilityHint("Return to the previous screen in Flutter")
                 }
                 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {

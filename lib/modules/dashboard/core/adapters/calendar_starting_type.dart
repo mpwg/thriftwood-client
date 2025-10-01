@@ -1,22 +1,52 @@
-// SWIFT-FIRST MIGRATION: Temporary compatibility enum
-// This file provides minimal compatibility for remaining Flutter code
-// Dashboard has been migrated to Swift in Phase 3 - this is transitional only
+import 'package:flutter/material.dart';
+import 'package:lunasea/vendor.dart';
 
+part 'calendar_starting_type.g.dart';
+
+@HiveType(typeId: 15, adapterName: 'CalendarStartingTypeAdapter')
 enum CalendarStartingType {
+  @HiveField(0)
   CALENDAR,
-  SCHEDULE;
-
-  String get key => name.toLowerCase();
-
-  static CalendarStartingType fromKey(String key) {
-    return CalendarStartingType.values.firstWhere(
-      (e) => e.key == key.toLowerCase(),
-      orElse: () => CalendarStartingType.CALENDAR,
-    );
-  }
+  @HiveField(1)
+  SCHEDULE,
 }
 
-// Minimal Hive adapter for compatibility
-class CalendarStartingTypeAdapter {
-  // Empty implementation - data will come from Swift
+extension CalendarStartingTypeExtension on CalendarStartingType {
+  String get name {
+    switch (this) {
+      case CalendarStartingType.SCHEDULE:
+        return 'dashboard.Schedule'.tr();
+      case CalendarStartingType.CALENDAR:
+        return 'dashboard.Calendar'.tr();
+    }
+  }
+
+  String get key {
+    switch (this) {
+      case CalendarStartingType.SCHEDULE:
+        return 'schedule';
+      case CalendarStartingType.CALENDAR:
+        return 'calendar';
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case CalendarStartingType.SCHEDULE:
+        return Icons.calendar_today_rounded;
+      case CalendarStartingType.CALENDAR:
+        return Icons.calendar_view_day_rounded;
+    }
+  }
+
+  CalendarStartingType? fromKey(String? key) {
+    switch (key) {
+      case 'schedule':
+        return CalendarStartingType.SCHEDULE;
+      case 'calendar':
+        return CalendarStartingType.CALENDAR;
+      default:
+        return null;
+    }
+  }
 }
