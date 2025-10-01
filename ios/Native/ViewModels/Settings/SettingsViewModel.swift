@@ -113,44 +113,6 @@ class SettingsViewModel {
             // Keep default settings
         }
     }
-                    // Keep the default appSettings initialized in init()
-                }
-            }
-            
-            // Load available profiles
-            availableProfiles = Array(appSettings.profiles.keys).sorted()
-            
-            // Set selected profile
-            if let currentProfile = appSettings.profiles[appSettings.enabledProfile] {
-                selectedProfile = currentProfile
-                // Reduce debug noise - only log during explicit profile switches
-                // print("Selected profile: \(currentProfile.name)")
-            } else {
-                print("Warning: No profile found for enabled profile key: \(appSettings.enabledProfile)")
-                // Try to find any available profile or create default
-                if let firstProfile = appSettings.profiles.first {
-                    appSettings.enabledProfile = firstProfile.key
-                    selectedProfile = firstProfile.value
-                    print("Switched to first available profile: \(firstProfile.key)")
-                } else {
-                    // Create default profile if none exist
-                    let defaultProfile = ThriftwoodProfile(name: "default")
-                    appSettings.profiles["default"] = defaultProfile
-                    appSettings.enabledProfile = "default" 
-                    selectedProfile = defaultProfile
-                    availableProfiles = ["default"]
-                    print("Created default profile")
-                }
-            }
-            
-            // Sync with Hive storage to ensure consistency
-            await syncWithHiveStorage()
-            
-        } catch {
-            showError(error.localizedDescription)
-            print("Error loading settings: \(error)")
-        }
-    }
     
     /// Save settings to storage
     @MainActor

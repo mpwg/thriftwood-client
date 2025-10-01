@@ -247,8 +247,11 @@ class DataLayerManager {
         }
         
         // Get the active profile
+        let enabledProfileName = appSettings.enabledProfile
         let profileDescriptor = FetchDescriptor<ProfileSwiftData>(
-            predicate: #Predicate { $0.name == appSettings.enabledProfile }
+            predicate: #Predicate<ProfileSwiftData> { profile in
+                profile.name == enabledProfileName
+            }
         )
         let profiles = try modelContext.fetch(profileDescriptor)
         guard let profile = profiles.first else {
@@ -277,8 +280,11 @@ class DataLayerManager {
         }
         
         // Find existing profile or create new one
+        let profileName = profile.name
         let descriptor = FetchDescriptor<ProfileSwiftData>(
-            predicate: #Predicate { $0.name == profile.name }
+            predicate: #Predicate<ProfileSwiftData> { swiftDataProfile in
+                swiftDataProfile.name == profileName
+            }
         )
         let existing = try modelContext.fetch(descriptor)
         
