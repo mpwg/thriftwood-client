@@ -34,6 +34,9 @@ import Flutter
     // Initialize the bridge with the Flutter view controller
     FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
     
+    // Initialize the SwiftData bridge for Phase 4.1 data access
+    SwiftDataBridge.shared.initialize(with: flutterViewController)
+    
     // Add a small delay to ensure Flutter is fully initialized
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
       self.registerNativeViews()

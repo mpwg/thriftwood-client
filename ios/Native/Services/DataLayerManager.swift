@@ -23,14 +23,14 @@ import Flutter
 
 // MARK: - Data Layer Manager
 
-/// Manages switching between Flutter's Hive storage and SwiftData based on user toggle
+/// Manages SwiftData as the primary data layer with Flutter bridge access
 /// Provides unified data access API that maintains 100% functional parity with Flutter's database layer
 ///
-/// **Bidirectional Integration:**
-/// - Listens for HYBRID_SETTINGS_USE_SWIFTUI toggle changes via NotificationCenter
-/// - Automatically triggers migration when toggle changes
-/// - Routes data access to Hive or SwiftData transparently
-/// - Ensures bidirectional sync to maintain data consistency
+/// **Swift-First Integration:**
+/// - SwiftData is the single source of truth for all data
+/// - Flutter accesses Swift data via SwiftDataBridge method channel
+/// - Automatic migration from Flutter Hive to SwiftData on first launch
+/// - No user toggles - Swift implementation is always used when available
 ///
 /// **Flutter Equivalent Functions:**
 /// - getActiveProfile() -> LunaDatabase.ENABLED_PROFILE.read() + LunaBox.profiles.read()
@@ -40,10 +40,10 @@ import Flutter
 /// - saveAppSettings() -> LunaSeaDatabase enum updates
 ///
 /// **Responsibilities:**
-/// - Detect changes to HYBRID_SETTINGS_USE_SWIFTUI toggle
-/// - Automatically trigger migration when toggle changes
-/// - Provide unified data access regardless of underlying storage
-/// - Ensure data consistency during transitions
+/// - Provide unified SwiftData access for Swift and Flutter
+/// - Handle one-time migration from Flutter Hive to SwiftData
+/// - Maintain data consistency across platform boundaries
+/// - Support Flutter bridge operations via SwiftDataBridge
 ///
 /// **Usage:**
 /// ```swift

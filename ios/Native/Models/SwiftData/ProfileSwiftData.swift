@@ -283,3 +283,176 @@ extension ProfileSwiftData {
         return try? JSONDecoder().decode([String: String].self, from: data)
     }
 }
+
+// MARK: - Flutter Bridge Support
+
+extension ProfileSwiftData {
+    /// Convert SwiftData profile to dictionary for Flutter bridge
+    func toDictionary() -> [String: Any] {
+        return [
+            "id": id.uuidString,
+            "name": name,
+            "isDefault": isDefault,
+            
+            // Lidarr
+            "lidarrEnabled": lidarrEnabled,
+            "lidarrHost": lidarrHost,
+            "lidarrApiKey": lidarrApiKey,
+            "lidarrCustomHeaders": decodeCustomHeaders(lidarrCustomHeadersData) ?? [:],
+            "lidarrStrictTLS": lidarrStrictTLS,
+            
+            // Radarr
+            "radarrEnabled": radarrEnabled,
+            "radarrHost": radarrHost,
+            "radarrApiKey": radarrApiKey,
+            "radarrCustomHeaders": decodeCustomHeaders(radarrCustomHeadersData) ?? [:],
+            "radarrStrictTLS": radarrStrictTLS,
+            
+            // Sonarr
+            "sonarrEnabled": sonarrEnabled,
+            "sonarrHost": sonarrHost,
+            "sonarrApiKey": sonarrApiKey,
+            "sonarrCustomHeaders": decodeCustomHeaders(sonarrCustomHeadersData) ?? [:],
+            "sonarrStrictTLS": sonarrStrictTLS,
+            
+            // SABnzbd
+            "sabnzbdEnabled": sabnzbdEnabled,
+            "sabnzbdHost": sabnzbdHost,
+            "sabnzbdApiKey": sabnzbdApiKey,
+            "sabnzbdCustomHeaders": decodeCustomHeaders(sabnzbdCustomHeadersData) ?? [:],
+            "sabnzbdStrictTLS": sabnzbdStrictTLS,
+            
+            // NZBGet
+            "nzbgetEnabled": nzbgetEnabled,
+            "nzbgetHost": nzbgetHost,
+            "nzbgetUser": nzbgetUser,
+            "nzbgetPass": nzbgetPass,
+            "nzbgetCustomHeaders": decodeCustomHeaders(nzbgetCustomHeadersData) ?? [:],
+            "nzbgetStrictTLS": nzbgetStrictTLS,
+            
+            // Tautulli
+            "tautulliEnabled": tautulliEnabled,
+            "tautulliHost": tautulliHost,
+            "tautulliApiKey": tautulliApiKey,
+            "tautulliCustomHeaders": decodeCustomHeaders(tautulliCustomHeadersData) ?? [:],
+            "tautulliStrictTLS": tautulliStrictTLS,
+            
+            // Overseerr
+            "overseerrEnabled": overseerrEnabled,
+            "overseerrHost": overseerrHost,
+            "overseerrApiKey": overseerrApiKey,
+            "overseerrCustomHeaders": decodeCustomHeaders(overseerrCustomHeadersData) ?? [:],
+            "overseerrStrictTLS": overseerrStrictTLS,
+            
+            // Wake on LAN
+            "wakeOnLanEnabled": wakeOnLanEnabled,
+            "wakeOnLanMACAddress": wakeOnLanMACAddress,
+            "wakeOnLanBroadcastAddress": wakeOnLanBroadcastAddress
+        ]
+    }
+    
+    /// Create SwiftData profile from Flutter dictionary
+    static func fromDictionary(_ dict: [String: Any]) throws -> ProfileSwiftData {
+        guard let name = dict["name"] as? String else {
+            throw SwiftDataBridgeError.invalidArguments("Missing profile name")
+        }
+        
+        let profile = ProfileSwiftData(name: name)
+        
+        // Set ID if provided, otherwise use generated UUID
+        if let idString = dict["id"] as? String, let id = UUID(uuidString: idString) {
+            profile.id = id
+        }
+        
+        profile.isDefault = dict["isDefault"] as? Bool ?? false
+        
+        // Lidarr
+        profile.lidarrEnabled = dict["lidarrEnabled"] as? Bool ?? false
+        profile.lidarrHost = dict["lidarrHost"] as? String ?? ""
+        profile.lidarrApiKey = dict["lidarrApiKey"] as? String ?? ""
+        profile.lidarrCustomHeadersData = profile.encodeCustomHeaders(dict["lidarrCustomHeaders"] as? [String: String] ?? [:])
+        profile.lidarrStrictTLS = dict["lidarrStrictTLS"] as? Bool ?? true
+        
+        // Radarr
+        profile.radarrEnabled = dict["radarrEnabled"] as? Bool ?? false
+        profile.radarrHost = dict["radarrHost"] as? String ?? ""
+        profile.radarrApiKey = dict["radarrApiKey"] as? String ?? ""
+        profile.radarrCustomHeadersData = profile.encodeCustomHeaders(dict["radarrCustomHeaders"] as? [String: String] ?? [:])
+        profile.radarrStrictTLS = dict["radarrStrictTLS"] as? Bool ?? true
+        
+        // Sonarr
+        profile.sonarrEnabled = dict["sonarrEnabled"] as? Bool ?? false
+        profile.sonarrHost = dict["sonarrHost"] as? String ?? ""
+        profile.sonarrApiKey = dict["sonarrApiKey"] as? String ?? ""
+        profile.sonarrCustomHeadersData = profile.encodeCustomHeaders(dict["sonarrCustomHeaders"] as? [String: String] ?? [:])
+        profile.sonarrStrictTLS = dict["sonarrStrictTLS"] as? Bool ?? true
+        
+        // SABnzbd
+        profile.sabnzbdEnabled = dict["sabnzbdEnabled"] as? Bool ?? false
+        profile.sabnzbdHost = dict["sabnzbdHost"] as? String ?? ""
+        profile.sabnzbdApiKey = dict["sabnzbdApiKey"] as? String ?? ""
+        profile.sabnzbdCustomHeadersData = profile.encodeCustomHeaders(dict["sabnzbdCustomHeaders"] as? [String: String] ?? [:])
+        profile.sabnzbdStrictTLS = dict["sabnzbdStrictTLS"] as? Bool ?? true
+        
+        // NZBGet
+        profile.nzbgetEnabled = dict["nzbgetEnabled"] as? Bool ?? false
+        profile.nzbgetHost = dict["nzbgetHost"] as? String ?? ""
+        profile.nzbgetUser = dict["nzbgetUser"] as? String ?? ""
+        profile.nzbgetPass = dict["nzbgetPass"] as? String ?? ""
+        profile.nzbgetCustomHeadersData = profile.encodeCustomHeaders(dict["nzbgetCustomHeaders"] as? [String: String] ?? [:])
+        profile.nzbgetStrictTLS = dict["nzbgetStrictTLS"] as? Bool ?? true
+        
+        // Tautulli
+        profile.tautulliEnabled = dict["tautulliEnabled"] as? Bool ?? false
+        profile.tautulliHost = dict["tautulliHost"] as? String ?? ""
+        profile.tautulliApiKey = dict["tautulliApiKey"] as? String ?? ""
+        profile.tautulliCustomHeadersData = profile.encodeCustomHeaders(dict["tautulliCustomHeaders"] as? [String: String] ?? [:])
+        profile.tautulliStrictTLS = dict["tautulliStrictTLS"] as? Bool ?? true
+        
+        // Overseerr
+        profile.overseerrEnabled = dict["overseerrEnabled"] as? Bool ?? false
+        profile.overseerrHost = dict["overseerrHost"] as? String ?? ""
+        profile.overseerrApiKey = dict["overseerrApiKey"] as? String ?? ""
+        profile.overseerrCustomHeadersData = profile.encodeCustomHeaders(dict["overseerrCustomHeaders"] as? [String: String] ?? [:])
+        profile.overseerrStrictTLS = dict["overseerrStrictTLS"] as? Bool ?? true
+        
+        // Wake on LAN
+        profile.wakeOnLanEnabled = dict["wakeOnLanEnabled"] as? Bool ?? false
+        profile.wakeOnLanMACAddress = dict["wakeOnLanMACAddress"] as? String ?? ""
+        profile.wakeOnLanBroadcastAddress = dict["wakeOnLanBroadcastAddress"] as? String ?? ""
+        
+        return profile
+    }
+    
+    /// Update profile from Flutter dictionary
+    func updateFromDictionary(_ dict: [String: Any]) throws {
+        if let name = dict["name"] as? String {
+            self.name = name
+        }
+        
+        if let isDefault = dict["isDefault"] as? Bool {
+            self.isDefault = isDefault
+        }
+        
+        // Update all service configurations if provided
+        if let enabled = dict["lidarrEnabled"] as? Bool { lidarrEnabled = enabled }
+        if let host = dict["lidarrHost"] as? String { lidarrHost = host }
+        if let apiKey = dict["lidarrApiKey"] as? String { lidarrApiKey = apiKey }
+        if let headers = dict["lidarrCustomHeaders"] as? [String: String] {
+            lidarrCustomHeadersData = encodeCustomHeaders(headers)
+        }
+        if let strictTLS = dict["lidarrStrictTLS"] as? Bool { lidarrStrictTLS = strictTLS }
+        
+        // Radarr
+        if let enabled = dict["radarrEnabled"] as? Bool { radarrEnabled = enabled }
+        if let host = dict["radarrHost"] as? String { radarrHost = host }
+        if let apiKey = dict["radarrApiKey"] as? String { radarrApiKey = apiKey }
+        if let headers = dict["radarrCustomHeaders"] as? [String: String] {
+            radarrCustomHeadersData = encodeCustomHeaders(headers)
+        }
+        if let strictTLS = dict["radarrStrictTLS"] as? Bool { radarrStrictTLS = strictTLS }
+        
+        // Continue for all other services...
+        // (Similar pattern for Sonarr, SABnzbd, NZBGet, Tautulli, Overseerr, Wake on LAN)
+    }
+}

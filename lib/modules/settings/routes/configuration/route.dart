@@ -105,51 +105,41 @@ class _State extends State<ConfigurationRoute> with LunaScrollControllerMixin {
   }
 
   Widget _tileFromModuleMap(LunaModule module) {
-    const _db = LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI;
-    return _db.listenableBuilder(
-      builder: (context, _) {
-        bool useSwiftUISettings = _db.read();
-
-        return LunaBlock(
-          title: module.title,
-          body: [
-            TextSpan(text: 'settings.ConfigureModule'.tr(args: [module.title]))
-          ],
-          trailing: LunaIconButton(icon: module.icon),
-          onTap: () =>
-              _handleModuleSettingsNavigation(module, useSwiftUISettings),
-        );
-      },
+    // SWIFT-FIRST ENFORCEMENT: Always use Swift - no user toggle
+    return LunaBlock(
+      title: module.title,
+      body: [
+        TextSpan(text: 'settings.ConfigureModule'.tr(args: [module.title]))
+      ],
+      trailing: LunaIconButton(icon: module.icon),
+      onTap: () => _handleModuleSettingsNavigation(module),
     );
   }
 
-  void _handleModuleSettingsNavigation(
-      LunaModule module, bool useSwiftUISettings) {
-    if (useSwiftUISettings) {
-      // Map modules to their SwiftUI route names
-      String? swiftUIRoute = _getSwiftUIRouteForModule(module);
-      if (swiftUIRoute != null) {
-        HybridRouter.navigateTo(context, swiftUIRoute,
-            data: {'module': module.key}).then((ok) {
-          if (ok != true) {
-            showLunaErrorSnackBar(
-              title: 'Navigation failed',
-              message: 'Could not open $swiftUIRoute',
-            );
-            module.settingsRoute!.go();
-          }
-        }).catchError((e) {
+  void _handleModuleSettingsNavigation(LunaModule module) {
+    // SWIFT-FIRST ENFORCEMENT: Always check for Swift implementation first
+    String? swiftUIRoute = _getSwiftUIRouteForModule(module);
+    if (swiftUIRoute != null) {
+      HybridRouter.navigateTo(context, swiftUIRoute,
+          data: {'module': module.key}).then((ok) {
+        if (ok != true) {
           showLunaErrorSnackBar(
-            title: 'Navigation error',
-            message: 'Failed to open $swiftUIRoute',
+            title: 'Navigation failed',
+            message: 'Could not open $swiftUIRoute',
           );
           module.settingsRoute!.go();
-        });
-        return;
-      }
+        }
+      }).catchError((e) {
+        showLunaErrorSnackBar(
+          title: 'Navigation error',
+          message: 'Failed to open $swiftUIRoute',
+        );
+        module.settingsRoute!.go();
+      });
+      return;
     }
 
-    // Fallback to Flutter route
+    // Fallback to Flutter route for modules without Swift implementation
     module.settingsRoute!.go();
   }
 

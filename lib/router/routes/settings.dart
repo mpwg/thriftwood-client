@@ -117,6 +117,7 @@ enum SettingsRoutes with LunaRoutesMixin {
   GoRoute get routes {
     switch (this) {
       case SettingsRoutes.HOME:
+        // SWIFT-FIRST ENFORCEMENT: Settings implementation is Swift-only
         return route(widget: const SettingsRoute());
       case SettingsRoutes.CONFIGURATION:
         return route(widget: const ConfigurationRoute());

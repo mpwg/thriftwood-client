@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:lunasea/system/bridge/hybrid_router.dart';
 
-/// Immediate Swift delegation route for Dashboard
+/// Immediate Swift delegation route for Settings
 /// Enforces Swift-first migration rules - no Flutter implementation
-class DashboardRoute extends StatelessWidget {
-  const DashboardRoute({Key? key}) : super(key: key);
+class SettingsRoute extends StatelessWidget {
+  const SettingsRoute({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // SWIFT-FIRST RULE ENFORCEMENT:
-    // Dashboard Swift implementation is complete - delegate immediately
+    // Settings Swift implementation is complete - delegate immediately
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final success = await HybridRouter.navigateTo(context, '/dashboard');
+      final success = await HybridRouter.navigateTo(context, '/settings');
       if (!success) {
-        _showDashboardUnavailableError(context);
+        _showSettingsUnavailableError(context);
       }
     });
 
@@ -25,20 +25,20 @@ class DashboardRoute extends StatelessWidget {
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 16),
-            Text('Loading native dashboard...'),
+            Text('Loading native settings...'),
           ],
         ),
       ),
     );
   }
 
-  void _showDashboardUnavailableError(BuildContext context) {
+  void _showSettingsUnavailableError(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Dashboard Unavailable'),
+        title: const Text('Settings Unavailable'),
         content: const Text(
-          'The native iOS dashboard implementation is not available. '
+          'The native iOS settings implementation is not available. '
           'Please ensure you are running on iOS with the latest app version.',
         ),
         actions: [
