@@ -184,6 +184,9 @@ class HiveBridge {
             'Failed to convert settings map: $e. Raw data: $rawSettings');
       }
 
+      // Check if hybrid settings toggle changed
+      final oldHybridValue = LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI.read();
+      
       // Update enabled profile
       if (settingsMap.containsKey('enabledProfile')) {
         LunaSeaDatabase.ENABLED_PROFILE.update(settingsMap['enabledProfile']);
@@ -217,6 +220,17 @@ class HiveBridge {
             .update(settingsMap['drawerAutoExpand']);
       }
 
+      // Update hybrid settings toggle and notify if changed
+      if (settingsMap.containsKey('hybridSettingsUseSwiftUI')) {
+        final newHybridValue = settingsMap['hybridSettingsUseSwiftUI'] as bool;
+        LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI.update(newHybridValue);
+        
+        // Notify about toggle change for data layer switching
+        if (oldHybridValue != newHybridValue) {
+          _notifyToggleChange(newHybridValue);
+        }
+      }
+
       LunaLogger().debug('HiveBridge: Updated Hive settings successfully');
     } catch (e, stackTrace) {
       BridgeErrorReporter.reportException(
@@ -231,6 +245,20 @@ class HiveBridge {
         stackTrace: stackTrace,
       );
       rethrow;
+    }
+  }
+  
+  /// Notify native side about toggle change
+  static void _notifyToggleChange(bool newValue) {
+    try {
+      // Notify via method channel
+      const MethodChannel('com.thriftwood.hive')
+          .invokeMethod('hybridSettingsToggleChanged', {'value': newValue});
+      
+      LunaLogger().debug('HiveBridge: Notified toggle change to $newValue');
+    } catch (e, stackTrace) {
+      LunaLogger().error(
+          'HiveBridge: Failed to notify toggle change', e, stackTrace);
     }
   }
 
