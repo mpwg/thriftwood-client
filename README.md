@@ -26,9 +26,3 @@ Thriftwood is a SwiftUI rewrite of LunaSea, bringing native iOS performance and 
 - ✅ Phase 1-3: Hybrid infrastructure, Settings, and Dashboard completed
 - 🔄 In Progress: Core infrastructure and service modules migration
 - 📅 See [migration.md](./migration.md) for detailed timeline and progress
-
-## Contact
-
-- Original LunaSea:
-  - [Email](mailto:hello@lunasea.app)
-  - [Website](https://www.lunasea.app)
