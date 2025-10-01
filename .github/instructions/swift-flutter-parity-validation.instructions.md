@@ -1,408 +1,421 @@
 ---
-description: "Swift-Flutter functionality parity validation rules"
+description: "Swift-Flutter migration rules with code elimination and Swift data model access"
 applyTo: "ios/Native/**/*.swift"
 ---
 
-# Swift-Flutter Functionality Parity Validation
+# Swift-Flutter Migration Rules with Code Elimination
 
-This document establishes **mandatory validation rules** to ensure that Swift implementations maintain 100% functional parity with their Flutter counterparts during the hybrid migration period, with proper bidirectional ViewModel integration and comprehensive migration tracking.
+This document establishes **mandatory migration rules** for eliminating Flutter code duplication during the hybrid migration, with Swift-first architecture and Flutter access to migrated Swift data models.
 
-## Critical Validation Rules
+## CRITICAL RULE CHANGE: Swift-First Migration with Code Elimination
 
-### Rule 1: Complete Functional Parity (MANDATORY)
+### Rule 1: Complete Swift Migration Eliminates Flutter Code (MANDATORY)
 
-The Swift version **MUST** implement every feature that exists in the Flutter implementation:
+**When a feature is fully implemented in Swift, the Flutter implementation MUST be removed:**
 
-- **Cannot miss any existing functionality**
-- **Cannot change behavior of existing functionality**
-- **Cannot remove features that exist in Flutter**
-- **Cannot alter data structures or API contracts**
-- **Must maintain identical user workflows and navigation patterns**
-- **Must preserve all error handling and edge case behaviors**
+- **Swift becomes the single source of truth** for that feature
+- **Flutter accesses Swift data models** via bridge layer for read/write operations
+- **No code duplication allowed** - Swift implementation replaces Flutter entirely
+- **Flutter UI delegates to Swift** via bridge when Swift implementation available
+- **Progressive elimination** - migrate feature-by-feature, removing Flutter code as Swift completes
 
-### Rule 2: Pure SwiftUI Implementation (MANDATORY)
+### Rule 2: Flutter-Swift Data Model Bridge (MANDATORY)
 
-Swift implementations **MUST** be pure SwiftUI without UIKit dependencies:
+**Flutter MUST have direct access to Swift data models once migrated:**
 
-- **No UIKit imports or usage** (UIViewController, UIView, etc.)
-- **No AppKit usage** for macOS compatibility
-- **Use SwiftUI native components only** (NavigationStack, Sheet, etc.)
-- **SwiftUI-native file operations** (fileImporter, fileExporter)
-- **SwiftUI-native dialogs** (confirmationDialog, alert)
-- **Must use iOS 17+ @Observable pattern** instead of legacy ObservableObject
-- **Must follow MVVM architecture** with proper ViewModels
+- **Swift @Model classes** become the primary data persistence layer
+- **Flutter reads Swift data** via method channel bridge
+- **Flutter writes Swift data** via method channel bridge
+- **No data duplication** between Flutter Hive and Swift SwiftData
+- **Bidirectional sync eliminated** - Swift is single source, Flutter is accessor
 
-### Rule 3: Hybrid Migration Toggle (MANDATORY)
+### Rule 3: Migration Progression Pattern (MANDATORY)
 
-**During the migration period, users MUST have the ability to switch between Flutter and SwiftUI implementations:**
+**Migration follows strict progression with immediate Flutter code removal:**
 
-- **Toggle Location**: Main settings screen (`lib/modules/settings/routes/settings/route.dart`)
-- **Database Key**: `LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI`
-- **Default State**: Flutter implementation (for stability during migration)
-- **Behavior**: Toggle affects all settings navigation, with individual features respecting this choice
-- **User Experience**: Clear labeling indicating which version is currently active
-- **Data Consistency**: Both implementations must access the same underlying data store
-- **Migration Transparency**: Users can switch back to Flutter if SwiftUI version has issues
+1. **Phase 1**: Implement Swift feature with complete functional parity
+2. **Phase 2**: Create Flutter-Swift data bridge for the feature
+3. **Phase 3**: Update Flutter to use Swift data via bridge
+4. **Phase 4**: Remove Flutter implementation completely
+5. **Phase 5**: Flutter UI either delegates to Swift or uses Swift data directly
 
-**Implementation Requirements:**
+### Rule 4: Flutter Delegation Pattern (MANDATORY)
+
+**Flutter UI must check for Swift availability and delegate appropriately:**
 
 ```dart
-// Flutter: Settings version selector widget (REQUIRED)
-Widget _settingsVersionSelector() {
-  const _db = LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI;
-  return _db.listenableBuilder(
-    builder: (context, _) {
-      bool useSwiftUISettings = _db.read();
-
-      return LunaBlock(
-        title: 'Settings Version',
-        body: [
-          TextSpan(
-            text: useSwiftUISettings
-                ? 'Currently using SwiftUI settings (iOS native experience)'
-                : 'Currently using Flutter settings (cross-platform experience)',
-          )
-        ],
-        trailing: LunaSwitch(
-          value: useSwiftUISettings,
-          onChanged: _db.update,
-        ),
-      );
-    },
-  );
-}
-
-// Navigation handler that respects the toggle (REQUIRED)
-void _handleSettingsNavigation(String section, bool useSwiftUISettings) {
-  if (useSwiftUISettings) {
-    // Navigate to SwiftUI version via bridge
-    FlutterSwiftUIBridge.navigateToNativeView(
-      'settings_$section',
-      data: {'section': section},
-    );
-  } else {
-    // Navigate to Flutter version using existing routes
-    _navigateToFlutterSettings(section);
-  }
-}
-```
-
-**Bridge Registration Requirements:**
-
-```swift
-// Swift: All migrated views must be registered with the bridge
-extension FlutterSwiftUIBridge {
-    func registerMigratedViews() {
-        // Register each SwiftUI view that replaces a Flutter equivalent
-        registerNativeView("settings")
-        registerNativeView("settings_configuration")
-        registerNativeView("settings_profiles")
-        registerNativeView("settings_system")
-        // Add more as migration progresses
-    }
-
-    // Bridge must respect user choice and gracefully fallback
-    func createSwiftUIView(for route: String, data: [String: Any]) -> AnyView {
-        guard shouldUseNativeView(for: route) else {
-            // Fallback to Flutter for unimplemented views
-            return AnyView(EmptyView())
+// MANDATORY: Flutter checks Swift availability and delegates
+class SettingsRoute extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: SwiftBridge.isFeatureAvailable('settings'),
+      builder: (context, snapshot) {
+        if (snapshot.data == true) {
+          // Swift implementation available - delegate immediately
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            await SwiftBridge.navigateToSwiftFeature('settings');
+          });
+          return Container(); // Temporary placeholder during navigation
         }
-        // Create appropriate SwiftUI view
+
+        // Swift not available - show fallback message (no Flutter implementation)
+        return FeatureNotAvailableView(
+          feature: 'Settings',
+          message: 'This feature requires iOS native implementation',
+        );
+      },
+    );
+  }
+}
+```
+
+### Rule 5: Swift Data Model Access Layer (MANDATORY)
+
+**Swift data models must be accessible from Flutter with full read/write capability:**
+
+```swift
+// Swift: Expose data models to Flutter via method channel bridge
+@Model
+class RadarrMovie {
+    var id: Int
+    var title: String
+    var year: Int
+    // ... other properties
+
+    // MANDATORY: Flutter bridge access methods
+    func toDictionary() -> [String: Any] {
+        return [
+            "id": id,
+            "title": title,
+            "year": year,
+            // ... all properties
+        ]
+    }
+
+    static func fromDictionary(_ dict: [String: Any]) -> RadarrMovie? {
+        guard let id = dict["id"] as? Int,
+              let title = dict["title"] as? String,
+              let year = dict["year"] as? Int else {
+            return nil
+        }
+
+        let movie = RadarrMovie()
+        movie.id = id
+        movie.title = title
+        movie.year = year
+        return movie
+    }
+}
+
+// MANDATORY: Data access bridge for Flutter
+class SwiftDataBridge {
+    @MainActor
+    func handleFlutterDataRequest(_ call: FlutterMethodCall) async -> Any? {
+        switch call.method {
+        case "radarr.getMovies":
+            return await getRadarrMovies()
+        case "radarr.addMovie":
+            return await addRadarrMovie(call.arguments)
+        case "radarr.updateMovie":
+            return await updateRadarrMovie(call.arguments)
+        case "radarr.deleteMovie":
+            return await deleteRadarrMovie(call.arguments)
+        default:
+            return nil
+        }
+    }
+
+    @MainActor
+    private func getRadarrMovies() async -> [[String: Any]] {
+        // Query SwiftData for all RadarrMovie objects
+        let movies = await SwiftDataManager.shared.fetchAll(RadarrMovie.self)
+        return movies.map { $0.toDictionary() }
+    }
+
+    @MainActor
+    private func addRadarrMovie(_ arguments: Any?) async -> [String: Any]? {
+        guard let dict = arguments as? [String: Any],
+              let movie = RadarrMovie.fromDictionary(dict) else {
+            return nil
+        }
+
+        await SwiftDataManager.shared.insert(movie)
+        return movie.toDictionary()
     }
 }
 ```
 
-### Rule 4: Mandatory Migration Documentation (MANDATORY)
+### Rule 6: Flutter Code Elimination Timeline (MANDATORY)
 
-**Every ported function, class, and view MUST include migration tracking comments:**
+**Flutter code MUST be removed immediately upon Swift feature completion:**
 
-```swift
-// MARK: - Flutter Parity Implementation
-// Flutter equivalent: lib/modules/[module]/[file].dart:[line_range]
-// Original Flutter class: [FlutterClassName]
-// Migration date: YYYY-MM-DD
-// Migrated by: [Developer Name]
-// Validation status: ✅ Complete | ⚠️ Partial | ❌ Missing features
-// Features ported: [list of specific features/methods ported]
-// Data sync: [description of bidirectional sync implementation]
-// Testing: [test coverage status and validation approach]
+- **No grace period** - Swift completion triggers immediate Flutter removal
+- **Feature flags removed** - no toggle between Swift/Flutter implementations
+- **Database migration** - Flutter Hive data migrated to Swift SwiftData once
+- **Dependency cleanup** - Remove Flutter dependencies no longer needed
+- **Dead code elimination** - Remove all related Flutter state management, APIs, UI
 
-/// Swift implementation of Flutter's [FlutterClassName]
-/// Maintains 100% functional parity with Flutter counterpart
-///
-/// **Bidirectional Integration:**
-/// - Reads from Flutter storage via SharedDataManager
-/// - Writes changes back to Flutter via method channels
-/// - Notifies Flutter of state changes via bridge system
-///
-/// **Flutter Equivalent Functions:**
-/// - flutterMethod1() -> swiftMethod1()
-/// - flutterMethod2() -> swiftMethod2()
-/// - [list all equivalent functions]
-```
+### Rule 7: Swift-Flutter Bridge Architecture (MANDATORY)
 
-### Rule 5: Bidirectional ViewModel Integration (MANDATORY)
-
-**All ViewModels MUST implement proper Flutter ↔ Swift data synchronization:**
-
-```swift
-@Observable
-class SwiftViewModel {
-    // MARK: - Flutter Data Sync Properties
-    private let sharedDataManager = SharedDataManager.shared
-    private let methodChannel: FlutterMethodChannel?
-
-    /// Initialize with Flutter bridge connection
-    /// - Parameter methodChannel: Flutter method channel for bidirectional communication
-    init(methodChannel: FlutterMethodChannel? = nil) {
-        self.methodChannel = methodChannel
-        Task { await loadFromFlutterStorage() }
-        setupFlutterNotifications()
-    }
-
-    /// Load initial state from Flutter storage
-    /// Must mirror Flutter state exactly
-    @MainActor
-    private func loadFromFlutterStorage() async {
-        // Implementation required
-    }
-
-    /// Save changes back to Flutter
-    /// Must trigger Flutter state updates
-    @MainActor
-    private func syncToFlutter() async {
-        // Implementation required
-    }
-
-    /// Listen for Flutter state changes
-    /// Must update Swift state when Flutter changes
-    private func setupFlutterNotifications() {
-        // Implementation required
-    }
-}
-```
-
-### Rule 6: Method Channel Integration (MANDATORY)
-
-**All SwiftUI views MUST properly integrate with Flutter method channels:**
-
-- **Incoming navigation** from Flutter must be handled via FlutterSwiftUIBridge
-- **Outgoing navigation** to Flutter must use navigateBackToFlutter()
-- **Data changes** must be synced bidirectionally via SharedDataManager
-- **State updates** must notify both platforms immediately
-- **Error states** must be consistent across platforms
-
-### Rule 7: Zero TODOs Policy (MANDATORY)
-
-Swift implementations **MUST** be 100% complete:
-
-- **No TODO comments allowed** in production code
-- **No placeholder implementations**
-- **No commented-out functionality**
-- **All error handling must be implemented**
-- **All edge cases must be handled**
-- **All Flutter features must be documented as ported**
-
-### Rule 8: Data Model Consistency (MANDATORY)
-
-Swift data models **MUST** exactly mirror Flutter models:
-
-- Same property names and types (converted to Swift equivalents)
-- Same validation rules and constraints
-- Same default values and initialization
-- Same JSON serialization format for bridge compatibility
-- **Must implement SharedDataProtocol** for cross-platform sync
-- **Must include Flutter model mapping documentation**
-
-### Rule 9: Compilation Requirement (MANDATORY)
-
-All Swift implementations **MUST** compile successfully:
-
-- **Zero compilation errors** in the Swift implementation
-- **All dependencies resolved** and properly linked
-- **Valid syntax and type safety** throughout
-- **Successful Xcode build** before validation approval
-- **Swift 6 strict concurrency compliance**
-
-### Rule 10: Modern SwiftUI Patterns (MANDATORY)
-
-**Must follow iOS 17+ best practices:**
-
-- **@Observable** instead of ObservableObject (no @Published properties)
-- **@State** instead of @StateObject for owned ViewModels
-- **@Bindable** for child views requiring two-way binding
-- **@Environment(Type.self)** instead of @EnvironmentObject
-- **async/await** patterns for all asynchronous operations
-- **@MainActor** for UI update functions
-
-### Rule 11: Method Channel Management (MANDATORY)
-
-**Critical missing validation that caused dashboard navigation failure:**
-
-**PROBLEM ANALYSIS**: The dashboard navigation issue occurred because multiple Flutter services were calling `setMethodCallHandler` on the same method channel (`com.thriftwood.bridge`), causing only the last registered handler to receive method calls. When SwiftUI attempted to navigate back to Flutter with `onReturnFromNative`, the call went to `DashboardBridgeService` instead of `HybridRouter`.
-
-**METHOD CHANNEL EXCLUSIVE OWNERSHIP RULE**:
-
-- **Only ONE service can call `setMethodCallHandler` per channel** - subsequent calls override previous handlers
-- **All services sharing a channel MUST coordinate through a central dispatcher**
-- **Bridge services MUST either use unique channels OR delegate unhandled methods**
-
-**Implementation Requirements:**
+**Architecture ensures Flutter can access Swift without code duplication:**
 
 ```dart
-// ❌ WRONG: Multiple services calling setMethodCallHandler on same channel
-class HybridRouter {
-  void initialize() {
-    bridgeChannel.setMethodCallHandler(_handleMethodCall); // This gets overridden!
+// Flutter: Access Swift data models via bridge
+class RadarrService {
+  static const _bridge = MethodChannel('com.thriftwood.swift_data');
+
+  // Flutter accesses Swift data models directly
+  Future<List<RadarrMovie>> getMovies() async {
+    final result = await _bridge.invokeMethod('radarr.getMovies');
+    return (result as List).map((dict) => RadarrMovie.fromJson(dict)).toList();
+  }
+
+  Future<RadarrMovie?> addMovie(RadarrMovie movie) async {
+    final result = await _bridge.invokeMethod('radarr.addMovie', movie.toJson());
+    return result != null ? RadarrMovie.fromJson(result) : null;
+  }
+
+  Future<bool> updateMovie(RadarrMovie movie) async {
+    final result = await _bridge.invokeMethod('radarr.updateMovie', movie.toJson());
+    return result == true;
+  }
+
+  Future<bool> deleteMovie(int movieId) async {
+    final result = await _bridge.invokeMethod('radarr.deleteMovie', {'id': movieId});
+    return result == true;
   }
 }
 
-class DashboardBridgeService {
-  void initialize() {
-    bridgeChannel.setMethodCallHandler(_handleMethodCall); // This overrides HybridRouter!
+// Flutter data model becomes bridge accessor (no local storage)
+class RadarrMovie {
+  final int id;
+  final String title;
+  final int year;
+
+  RadarrMovie({required this.id, required this.title, required this.year});
+
+  // Bridge serialization methods
+  factory RadarrMovie.fromJson(Map<String, dynamic> json) {
+    return RadarrMovie(
+      id: json['id'],
+      title: json['title'],
+      year: json['year'],
+    );
   }
-}
 
-// ✅ CORRECT: Central dispatcher pattern
-class BridgeMethodDispatcher {
-  final Map<String, Function> _methodHandlers = {};
-
-  void initialize() {
-    bridgeChannel.setMethodCallHandler(_centralDispatch); // Single handler
-  }
-
-  void registerMethodHandler(String method, Function handler) {
-    _methodHandlers[method] = handler;
-  }
-
-  Future<dynamic> _centralDispatch(MethodCall call) async {
-    final handler = _methodHandlers[call.method];
-    if (handler != null) {
-      return await handler(call);
-    }
-    throw PlatformException(code: 'UNIMPLEMENTED', message: 'Method ${call.method} not implemented');
-  }
-}
-
-// ✅ ALSO CORRECT: Service delegation pattern
-class DashboardBridgeService {
-  final HybridRouter _hybridRouter;
-
-  Future<dynamic> _handleMethodCall(MethodCall call) async {
-    switch (call.method) {
-      case 'dashboardSpecificMethod':
-        return await _handleDashboardMethod(call);
-      default:
-        // Delegate unhandled methods to HybridRouter
-        return await _hybridRouter.handleMethodCall(call);
-    }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'year': year,
+    };
   }
 }
 ```
 
-**MANDATORY Method Channel Validation Checklist:**
+## Migration Validation Rules
 
-- [ ] **Channel ownership documented**: Each method channel has exactly one `setMethodCallHandler` call
-- [ ] **Method routing verified**: All expected method calls reach correct handlers
-- [ ] **Handler delegation implemented**: Services delegate unknown methods to appropriate handlers
-- [ ] **Method coverage tested**: All bridge methods manually tested end-to-end
-- [ ] **Channel conflict detection**: Build-time or runtime detection of multiple handlers on same channel
-- [ ] **Method call logging**: Debug logging shows which service handles each method call
+### Rule 8: Swift Implementation Completeness (MANDATORY)
 
-### Rule 12: Hybrid Navigation Validation (MANDATORY)
+**Before Flutter code elimination, Swift implementation MUST be 100% complete:**
 
-**Navigation flow validation that would have caught the dashboard issue:**
+- [ ] **All Flutter functionality implemented** in Swift
+- [ ] **Data bridge fully functional** for Flutter access
+- [ ] **Error handling implemented** for all Swift operations
+- [ ] **Performance equals or exceeds** Flutter implementation
+- [ ] **Full test coverage** for Swift implementation and bridge
+- [ ] **No functional regressions** compared to Flutter version
 
-**All registered SwiftUI views MUST have working end-to-end navigation:**
+### Rule 9: Flutter Code Removal Process (MANDATORY)
 
-- **Route Registration Consistency**: SwiftUI bridge registration route identifiers MUST exactly match Flutter GoRouter route paths
-  - ❌ Register "dashboard" but route is "/dashboard"
-  - ✅ Register "/dashboard" for route "/dashboard"
-- **Flutter Route Intercept**: All Flutter routes that have SwiftUI equivalents MUST check hybrid navigation before showing Flutter widget
-  - ❌ Direct Flutter widget instantiation without hybrid check
-  - ✅ HybridRouteWrapper that checks `shouldUseNativeView()` first
-- **Bridge Registration Verification**: All registered SwiftUI views MUST be callable from Flutter
-- **Navigation Testing**: Every registered SwiftUI view MUST be manually tested via Flutter navigation
-- **Route Path Mapping**: Bridge route mapping MUST handle both exact matches and path variations
-- **Return Navigation Testing**: All SwiftUI views MUST successfully navigate back to Flutter
+**Systematic removal of Flutter code once Swift is complete:**
 
-**Implementation Requirements:**
+1. **Update Flutter routes** to delegate to Swift immediately
+2. **Remove Flutter UI widgets** for the migrated feature
+3. **Remove Flutter state management** (Provider, ChangeNotifier, etc.)
+4. **Remove Flutter API clients** for the feature
+5. **Remove Flutter data models** (local storage, Hive boxes)
+6. **Update Flutter dependencies** (remove unused packages)
+7. **Clean up Flutter navigation** (remove obsolete routes)
+8. **Update documentation** to reflect Swift-only implementation
+
+### Rule 10: Data Migration Strategy (MANDATORY)
+
+**One-time migration from Flutter Hive to Swift SwiftData:**
 
 ```swift
-// MANDATORY: Exact route path matching in bridge registration
-extension FlutterSwiftUIBridge {
-    func registerDashboardView() {
-        // ❌ WRONG: Route mismatch
-        registerNativeView("dashboard")
+// Swift: One-time data migration from Flutter storage
+class FlutterToSwiftDataMigrator {
+    @MainActor
+    func migrateRadarrData() async throws {
+        // Read existing Flutter Hive data
+        let flutterData = try await readFlutterHiveData("radarr_movies")
 
-        // ✅ CORRECT: Exact Flutter route match
-        registerNativeView("/dashboard")
+        // Convert to Swift data models
+        let swiftMovies = flutterData.compactMap { RadarrMovie.fromDictionary($0) }
 
-        // ✅ ALSO CORRECT: Handle both variants
-        registerNativeView("/dashboard")
-        registerNativeView("dashboard") // Support both formats
+        // Save to SwiftData
+        for movie in swiftMovies {
+            await SwiftDataManager.shared.insert(movie)
+        }
+
+        // Clear Flutter storage to prevent confusion
+        try await clearFlutterHiveData("radarr_movies")
+
+        // Mark migration complete
+        UserDefaults.standard.set(true, forKey: "radarr_data_migrated")
     }
 }
 ```
 
-```dart
-// MANDATORY: Flutter routes must check hybrid navigation
-class HybridDashboardRoute extends GoRoute {
-  HybridDashboardRoute() : super(
-    path: '/dashboard',
-    builder: (context, state) {
-      // Check if SwiftUI version should be used
-      return FutureBuilder<bool>(
-        future: NativeBridge.isNativeViewAvailable('/dashboard'),
-        builder: (context, snapshot) {
-          if (snapshot.data == true) {
-            // Navigate to SwiftUI immediately
-            WidgetsBinding.instance.addPostFrameCallback((_) async {
-              await NativeBridge.navigateToNativeView('/dashboard');
-            });
-            return Container(); // Temporary placeholder
-          }
+### Rule 11: Bridge Error Handling (MANDATORY)
 
-          // Show Flutter version
-          return DashboardRoute();
-        },
+**Flutter-Swift bridge must handle all error scenarios gracefully:**
+
+```dart
+// Flutter: Robust error handling for Swift bridge calls
+class SwiftBridgeWrapper {
+  static const _channel = MethodChannel('com.thriftwood.swift_data');
+
+  static Future<T?> callSwiftMethod<T>(String method, [dynamic arguments]) async {
+    try {
+      final result = await _channel.invokeMethod(method, arguments);
+      return result as T?;
+    } on PlatformException catch (e) {
+      // Log detailed error information
+      Logger.error('Swift bridge call failed', error: e, context: {
+        'method': method,
+        'arguments': arguments,
+      });
+
+      // Show user-friendly error
+      BridgeErrorReporter.showErrorToUser(
+        title: 'Feature Unavailable',
+        message: 'This feature requires the latest iOS native implementation.',
+        actions: [
+          ErrorAction.retry(() => callSwiftMethod<T>(method, arguments)),
+          ErrorAction.reportBug(e),
+        ],
       );
-    },
-  );
+
+      return null;
+    } catch (e) {
+      Logger.error('Unexpected bridge error', error: e);
+      return null;
+    }
+  }
 }
 ```
 
-**Validation Checklist for Hybrid Navigation:**
+## Updated Migration Timeline
 
-- [ ] **Route identifier exact match** between Flutter path and SwiftUI registration
-- [ ] **Bridge registration successful** (check iOS logs for registration confirmation)
-- [ ] **Flutter route intercept implemented** using HybridRouteWrapper or equivalent
-- [ ] **Navigation tested manually** from Flutter to SwiftUI view
-- [ ] **Back navigation working** from SwiftUI to Flutter
-- [ ] **Deep linking functional** for direct SwiftUI view access
-- [ ] **Route variants handled** (with and without leading slash)
-- [ ] **Error fallback implemented** if SwiftUI view fails to load
+### Phase 1: Swift Implementation (2 weeks per feature)
 
-### Rule 13: Source-Agnostic Bidirectional Navigation (MANDATORY)
+- Implement complete Swift feature with SwiftUI
+- Create comprehensive test suite
+- Implement Flutter-Swift data bridge
+- Validate 100% feature parity
 
-Navigation to and from any view MUST work regardless of the originating UI technology. It must not matter whether the current screen is a Flutter widget or a SwiftUI view—both directions must support navigating to the other and back again with identical behavior and data.
+### Phase 2: Flutter Delegation (1 week per feature)
 
-- Every navigable destination that exists in Flutter MUST be reachable from SwiftUI, and vice versa.
-- Return navigation MUST work in both directions, preserving expected back-stack behavior and passing data results when applicable.
-- HybridRouter/Coordinator MUST expose symmetric APIs on both platforms:
-  - Flutter: `HybridRouter.navigateTo()`, `HybridRouter.goTo()`, `FlutterSwiftUIBridge.navigateBackToFlutter()`
-  - Swift: `FlutterSwiftUIBridge.presentNativeView(...)`, `HybridNavigationCoordinator.navigateInFlutter(...)`, `FlutterSwiftUIBridge.navigateBackToFlutter(...)`
-- Programmatic navigation helpers MUST NOT assume a single "source of truth" (e.g., only Flutter initiated) and MUST be callable from both sides.
+- Update Flutter routes to check Swift availability
+- Implement immediate delegation to Swift
+- Create fallback UI for unavailable features
+- Test end-to-end user workflows
 
-Implementation Requirements:
+### Phase 3: Data Migration (1 week per feature)
 
-```dart
+- Implement one-time Flutter → Swift data migration
+- Migrate existing user data to SwiftData
+- Validate data integrity and completeness
+- Clear Flutter storage to prevent conflicts
+
+### Phase 4: Flutter Code Elimination (1 week per feature)
+
+- Remove Flutter UI implementation completely
+- Remove Flutter state management
+- Remove Flutter API clients and data models
+- Clean up dependencies and navigation
+- Update documentation
+
+### Phase 5: Validation & Optimization (1 week per feature)
+
+- Full regression testing
+- Performance validation
+- User acceptance testing
+- Documentation updates
+- Release preparation
+
+## Benefits of Swift-First Migration
+
+### Code Quality Benefits
+
+- **Single source of truth** eliminates data synchronization complexity
+- **Reduced maintenance burden** - one implementation instead of two
+- **Better performance** - native Swift performance without bridge overhead
+- **Simplified architecture** - clear separation of concerns
+
+### User Experience Benefits
+
+- **Consistent behavior** - no discrepancies between Flutter/Swift versions
+- **Better iOS integration** - native iOS patterns and performance
+- **Faster feature delivery** - no need to maintain parallel implementations
+- **Smaller app size** - eliminated Flutter code reduces bundle size
+
+### Development Benefits
+
+- **Faster development** - single implementation path
+- **Easier testing** - one codebase to test and validate
+- **Simplified debugging** - no cross-platform synchronization issues
+- **Modern architecture** - Swift 6 + SwiftUI best practices
+
+## Validation Checklist for Swift-First Migration
+
+### Pre-Migration Validation
+
+- [ ] **Swift implementation 100% complete** with full feature parity
+- [ ] **Flutter-Swift data bridge implemented** and tested
+- [ ] **Data migration strategy defined** and tested
+- [ ] **Error handling comprehensive** for all bridge operations
+- [ ] **Performance benchmarks meet or exceed** Flutter version
+
+### Migration Execution Validation
+
+- [ ] **Flutter delegation implemented** correctly
+- [ ] **Data migration executed** successfully without loss
+- [ ] **Flutter code removed** completely (UI, state, API, data)
+- [ ] **Dependencies cleaned up** (unused packages removed)
+- [ ] **Navigation updated** to reflect Swift-only implementation
+
+### Post-Migration Validation
+
+- [ ] **Full feature functionality** confirmed in production
+- [ ] **No user-facing regressions** identified
+- [ ] **Performance improvement** measured and documented
+- [ ] **Code coverage maintained** or improved
+- [ ] **Documentation updated** to reflect new architecture
+
+---
+
+**🎯 Migration Success Criteria for Swift-First Approach:**
+
+A feature migration is complete when:
+
+- ✅ Swift implementation provides 100% of original Flutter functionality
+- ✅ Flutter can access Swift data models with full read/write capability
+- ✅ No Flutter code remains for the migrated feature
+- ✅ User experience is identical or improved
+- ✅ Performance equals or exceeds the original Flutter implementation
+- ✅ Single source of truth eliminates data synchronization complexity
+
+**The goal: Native iOS performance with Swift as the single source of truth, accessible to Flutter when needed, with zero code duplication.**
 // Flutter: Always decide at runtime and work from both sources
 final ok = await HybridRouter.navigateTo(context, '/some/route', data: {...});
 if (!ok) {
-  // Show actionable error (see Rule 14)
+// Show actionable error (see Rule 14)
 }
-```
+
+````
 
 ```swift
 // Swift: Present native or route to Flutter symmetrically
@@ -411,7 +424,7 @@ if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) {
 } else {
     HybridNavigationCoordinator.shared.navigateInFlutter(route: route, data: data)
 }
-```
+````
 
 Validation Checklist:
 

@@ -1,53 +1,67 @@
-# Thriftwood Flutter to SwiftUI Hybrid Migration Plan
+# Thriftwood Flutter to SwiftUI Swift-First Migration Plan
 
 ## Executive Summary
 
-This document outlines a hybrid migration strategy to gradually transition Thriftwood from Flutter to pure SwiftUI on iOS. The approach maintains a fully functional app at every step, allowing Flutter and SwiftUI views to coexist seamlessly while transitioning one view at a time.
+This document outlines a **Swift-first migration strategy** to transition Thriftwood from Flutter to pure SwiftUI on iOS. The approach eliminates code duplication by removing Flutter implementations completely once Swift equivalents are ready, with Flutter accessing Swift data models via bridge during the transition period.
 
 ## Migration Philosophy
 
-**Hybrid Coexistence Strategy:**
+**Swift-First Architecture with Code Elimination:**
 
 - Start with 100% Flutter app
-- Gradually replace individual views with SwiftUI equivalents
-- Migrate infrastructure components in parallel with UI
-- Maintain seamless navigation between Flutter and SwiftUI views
-- End with 100% SwiftUI app with pure Swift infrastructure
-- App remains fully functional at every step of the migration
+- Implement complete Swift features with SwiftUI
+- **Remove Flutter code immediately upon Swift completion**
+- Flutter accesses Swift data models via bridge (no duplication)
+- Progressive elimination until 100% native iOS app
+- **Single source of truth**: Swift implementations replace Flutter entirely
 
-## User Migration Control
+## CRITICAL RULE: No Code Duplication
 
-**User Choice During Migration:**
+**When a feature is fully implemented in Swift:**
 
-During the hybrid migration period, users have complete control over which implementation they use through a settings toggle. This ensures users can:
+1. Flutter implementation MUST be removed completely
+2. Flutter accesses Swift data via method channel bridge
+3. No parallel implementations or feature toggles
+4. Swift becomes the single source of truth
+5. One-time data migration from Flutter Hive to Swift SwiftData
 
-- **Fallback to stability**: If a SwiftUI implementation has issues, users can instantly switch back to the proven Flutter version
-- **Test new features**: Users can opt into SwiftUI implementations to test new iOS-native features and performance improvements
-- **Gradual adoption**: Users comfortable with the current Flutter experience can delay migration until SwiftUI versions are fully mature
+## User Experience During Migration
 
-**Implementation Details:**
+**No User Toggle - Automatic Swift Usage:**
 
-- **Toggle Location**: Main Settings screen (`Settings > Settings Version`)
-- **Database Storage**: `LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI`
-- **Default State**: Flutter (for maximum stability)
-- **Scope**: Affects all settings navigation and related features
-- **Data Consistency**: Both implementations read from the same data store
-- **Real-time Switching**: Changes take effect immediately without app restart
+During migration, the app automatically uses Swift implementations when available:
 
-**User Experience:**
+- **Transparent to users**: Swift views used automatically when ready
+- **No configuration needed**: Seamless experience without user intervention
+- **Immediate delegation**: Flutter routes delegate to Swift when available
+- **Progressive enhancement**: Each Swift feature immediately replaces Flutter
 
-```text
-Settings Version
-┌─────────────────────────────────────────────────────────┐
-│ Currently using SwiftUI settings (iOS native experience) │
-│                                               [Toggle ON] │
-└─────────────────────────────────────────────────────────┘
+**Implementation Pattern:**
 
-Settings Version
-┌──────────────────────────────────────────────────────────┐
-│ Currently using Flutter settings (cross-platform experience) │
-│                                               [Toggle OFF] │
-└──────────────────────────────────────────────────────────┘
+```dart
+// Flutter automatically delegates to Swift when available
+class SettingsRoute extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: SwiftBridge.isFeatureAvailable('settings'),
+      builder: (context, snapshot) {
+        if (snapshot.data == true) {
+          // Swift implementation available - delegate immediately
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            await SwiftBridge.navigateToSwiftFeature('settings');
+          });
+          return Container(); // Temporary placeholder
+        }
+
+        // Swift not ready - show migration notice
+        return MigrationPlaceholderView(
+          feature: 'Settings',
+          message: 'This feature is being upgraded to native iOS',
+        );
+      },
+    );
+  }
+}
 ```
 
 ## Current State Analysis
@@ -101,484 +115,477 @@ Settings Version
 
 ## Hybrid Architecture Design
 
-### 1. Flutter-SwiftUI Bridge System
+### 1. Flutter-SwiftUI Bridge System (Updated for Swift-First)
 
 ```swift
-// Core bridge for seamless navigation between Flutter and SwiftUI
+// Bridge enables Flutter to access Swift data without duplication
 class FlutterSwiftUIBridge: NSObject {
     static let shared = FlutterSwiftUIBridge()
 
-    private var nativeViews: Set<String> = []
+    private var completedFeatures: Set<String> = []
     private weak var flutterViewController: FlutterViewController?
 
-    // Register which views are now native
-    func registerNativeView(_ route: String) {
-        nativeViews.insert(route)
+    // Mark feature as complete in Swift (Flutter code should be removed)
+    func markFeatureComplete(_ feature: String) {
+        completedFeatures.insert(feature)
+        notifyFlutterToRemoveImplementation(feature)
     }
 
-    // Check if view should be native
-    func shouldUseNativeView(for route: String) -> Bool {
-        return nativeViews.contains(route)
+    // Check if feature is Swift-complete
+    func isFeatureComplete(_ feature: String) -> Bool {
+        return completedFeatures.contains(feature)
     }
 
-    // Present SwiftUI view from Flutter
-    func presentNativeView(route: String, data: [String: Any] = [:]) {
-        guard let flutterVC = flutterViewController,
-              shouldUseNativeView(for: route) else { return }
-
-        let swiftUIView = createSwiftUIView(for: route, data: data)
-        let hostingController = UIHostingController(rootView: swiftUIView)
-
-        flutterVC.present(hostingController, animated: true)
-    }
-
-    // Navigate back to Flutter
-    func navigateBackToFlutter(data: [String: Any] = [:]) {
-        // Send data back to Flutter and dismiss SwiftUI view
-        flutterViewController?.dismiss(animated: true)
-    }
-}
-```
-
-### 2. Shared Data Layer
-
-```swift
-// Shared data models that work with both Flutter and SwiftUI
-protocol SharedDataProtocol {
-    func saveToFlutterStorage()
-    func loadFromFlutterStorage()
-    func notifyFlutterOfChanges()
-}
-
-// Profile system that works with both platforms
-class SharedProfileManager: ObservableObject {
-    @Published var activeProfile: Profile?
-
-    // Read/write to Flutter's existing Hive storage
-    func syncWithFlutterStorage() async {
-        // Bidirectional sync with Flutter's database
-    }
-}
-```
-
-### 3. Navigation Coordination
-
-```swift
-// Coordinate navigation between Flutter and SwiftUI
-class HybridNavigationCoordinator {
-    func navigateFromFlutter(to route: String, data: [String: Any]) {
-        if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) {
-            // Show SwiftUI view
-            FlutterSwiftUIBridge.shared.presentNativeView(route: route, data: data)
-        } else {
-            // Continue with Flutter navigation
-            // Send navigation command back to Flutter
+    // Handle Flutter data requests to Swift models
+    @MainActor
+    func handleDataRequest(_ call: FlutterMethodCall) async -> Any? {
+        switch call.method {
+        case "radarr.getMovies":
+            return await RadarrService.shared.getMovies().map { $0.toDictionary() }
+        case "radarr.addMovie":
+            return await RadarrService.shared.addMovie(fromDict: call.arguments)
+        // ... other data access methods
+        default:
+            return nil
         }
     }
 
-    func navigateFromSwiftUI(to route: String, data: [String: Any]) {
-        if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) {
-            // Show another SwiftUI view
-        } else {
-            // Navigate back to Flutter for this view
-            FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: data)
-            // Then navigate in Flutter
-        }
+    // Notify Flutter to remove its implementation
+    private func notifyFlutterToRemoveImplementation(_ feature: String) {
+        let channel = FlutterMethodChannel(
+            name: "com.thriftwood.migration",
+            binaryMessenger: flutterViewController!.binaryMessenger
+        )
+        channel.invokeMethod("removeFeature", arguments: ["feature": feature])
     }
 }
 ```
 
-## Step-by-Step Migration Process
+### 2. Swift Data Models with Flutter Bridge Access
+
+```swift
+// Swift data models that Flutter can access via bridge
+@Model
+final class RadarrMovie {
+    @Attribute(.unique) var id: Int
+    var title: String
+    var year: Int
+    var hasFile: Bool
+
+    // Bridge serialization for Flutter access
+    func toDictionary() -> [String: Any] {
+        return [
+            "id": id,
+            "title": title,
+            "year": year,
+            "hasFile": hasFile
+        ]
+    }
+
+    static func fromDictionary(_ dict: [String: Any]) -> RadarrMovie? {
+        guard let id = dict["id"] as? Int,
+              let title = dict["title"] as? String,
+              let year = dict["year"] as? Int else { return nil }
+
+        let movie = RadarrMovie()
+        movie.id = id
+        movie.title = title
+        movie.year = year
+        movie.hasFile = dict["hasFile"] as? Bool ?? false
+        return movie
+    }
+}
+
+// Service that handles both Swift UI and Flutter bridge requests
+@Observable
+class RadarrService {
+    static let shared = RadarrService()
+    private let modelContext: ModelContext
+
+    // CRUD operations accessible from both Swift and Flutter
+    @MainActor
+    func getMovies() async -> [RadarrMovie] {
+        let descriptor = FetchDescriptor<RadarrMovie>()
+        return (try? modelContext.fetch(descriptor)) ?? []
+    }
+
+    @MainActor
+    func addMovie(fromDict: Any?) async -> [String: Any]? {
+        guard let dict = fromDict as? [String: Any],
+              let movie = RadarrMovie.fromDictionary(dict) else { return nil }
+
+        modelContext.insert(movie)
+        try? modelContext.save()
+        return movie.toDictionary()
+    }
+
+    @MainActor
+    func deleteMovie(id: Int) async -> Bool {
+        guard let movie = try? modelContext.fetch(
+            FetchDescriptor<RadarrMovie>(
+                predicate: #Predicate { $0.id == id }
+            )
+        ).first else { return false }
+
+        modelContext.delete(movie)
+        try? modelContext.save()
+        return true
+    }
+}
+```
+
+### 3. Flutter Bridge Client (Replaces Local Implementation)
+
+```dart
+// Flutter service becomes a bridge client - no local data storage
+class RadarrService {
+  static const _bridge = MethodChannel('com.thriftwood.swift_data');
+
+  // Access Swift data models directly
+  Future<List<RadarrMovie>> getMovies() async {
+    final result = await _bridge.invokeMethod('radarr.getMovies');
+    return (result as List).map((dict) => RadarrMovie.fromJson(dict)).toList();
+  }
+
+  Future<RadarrMovie?> addMovie(RadarrMovie movie) async {
+    final result = await _bridge.invokeMethod('radarr.addMovie', movie.toJson());
+    return result != null ? RadarrMovie.fromJson(result) : null;
+  }
+
+  Future<bool> deleteMovie(int movieId) async {
+    final result = await _bridge.invokeMethod('radarr.deleteMovie', {'id': movieId});
+    return result == true;
+  }
+}
+
+// Flutter model becomes a simple data transfer object
+class RadarrMovie {
+  final int id;
+  final String title;
+  final int year;
+  final bool hasFile;
+
+  RadarrMovie({
+    required this.id,
+    required this.title,
+    required this.year,
+    this.hasFile = false,
+  });
+
+  // Bridge serialization only - no Hive storage
+  factory RadarrMovie.fromJson(Map<String, dynamic> json) => RadarrMovie(
+    id: json['id'],
+    title: json['title'],
+    year: json['year'],
+    hasFile: json['hasFile'] ?? false,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'year': year,
+    'hasFile': hasFile,
+  };
+}
+```
+
+## Step-by-Step Migration Process (Swift-First)
 
 ### ✅ Phase 1: Setup Hybrid Infrastructure (Week 1-2) - COMPLETED
 
 **Status: COMPLETED**
 
-### ✅ Phase 2: First Hybrid View - Settings (Week 3-4) - COMPLETED
+### ✅ Phase 2: First Swift Implementation - Settings (Week 3-4) - COMPLETED
 
 **Status: COMPLETED**
 
-### ✅ Phase 3: Dashboard Migration (Week 5-6) - COMPLETED
+- ✅ Settings fully implemented in Swift
+- ⚠️ Flutter settings code needs removal
+- ⚠️ Bridge access needs implementation
+
+### ✅ Phase 3: Dashboard Swift Implementation (Week 5-6) - COMPLETED
 
 **Status: COMPLETED**
 
-### Phase 4: Core Infrastructure Migration (Week 7-9)
+- ✅ Dashboard fully implemented in Swift
+- ⚠️ Flutter dashboard code needs removal
+- ⚠️ Bridge data access needs implementation
 
-**Goal: Migrate critical infrastructure components to Swift**
+### Phase 4: Swift-First Data Migration (Week 7-9)
 
-#### 4.1 Data Persistence Migration
+**Goal: Migrate data persistence to Swift with Flutter bridge access**
+
+#### 4.1 SwiftData Implementation with Bridge
 
 ```swift
 Tasks:
-1. Create SwiftData models for all Hive boxes
-2. Implement bidirectional sync during transition
-3. Migrate profile configurations
-4. Migrate service settings
-5. Create data migration utilities
+1. Create SwiftData models for all entities
+2. Implement Flutter bridge for data access
+3. One-time migration from Hive to SwiftData
+4. Remove Flutter Hive implementations
+5. Update Flutter to use Swift data via bridge
 ```
 
-**SwiftData Models:**
+**Migration Implementation:**
 
 ```swift
-// Profile model replacing Hive Box
-@Model
-final class Profile {
-    @Attribute(.unique) var id: UUID
-    var name: String
-    var isActive: Bool
-
-    // Service configurations
-    var radarrConfig: RadarrConfiguration?
-    var sonarrConfig: SonarrConfiguration?
-    var lidarrConfig: LidarrConfiguration?
-    var sabConfig: SABnzbdConfiguration?
-    var nzbgetConfig: NZBGetConfiguration?
-    var tautulliConfig: TautulliConfiguration?
-
-    init(name: String) {
-        self.id = UUID()
-        self.name = name
-        self.isActive = false
-    }
-}
-
-@Model
-final class RadarrConfiguration {
-    var baseURL: String
-    var apiKey: String
-    var enabled: Bool
-    var defaultQualityProfile: Int?
-    var defaultRootFolder: String?
-
-    init(baseURL: String, apiKey: String) {
-        self.baseURL = baseURL
-        self.apiKey = apiKey
-        self.enabled = true
-    }
-}
-
-// Hive ↔ SwiftData sync during transition
-class DataMigrationManager {
-    func syncFromHive() async throws {
-        // Read from Hive boxes
-        let hiveProfiles = await readHiveProfiles()
-
-        // Convert and save to SwiftData
-        for hiveProfile in hiveProfiles {
-            let swiftDataProfile = convertToSwiftData(hiveProfile)
-            modelContext.insert(swiftDataProfile)
+// One-time data migration from Flutter Hive to SwiftData
+class FlutterToSwiftDataMigrator {
+    @MainActor
+    func migrateAllData() async throws {
+        // Check if migration already completed
+        if UserDefaults.standard.bool(forKey: "data_migration_complete") {
+            return
         }
 
+        // Migrate each data type
+        try await migrateProfiles()
+        try await migrateRadarrData()
+        try await migrateSonarrData()
+        // ... other migrations
+
+        // Mark migration complete
+        UserDefaults.standard.set(true, forKey: "data_migration_complete")
+
+        // Notify Flutter to clear Hive storage
+        FlutterSwiftUIBridge.shared.notifyFlutterToClearStorage()
+    }
+
+    private func migrateRadarrData() async throws {
+        // Read from Flutter Hive
+        let hiveData = try await readFlutterHiveData("radarr_movies")
+
+        // Convert to Swift models
+        let movies = hiveData.compactMap { RadarrMovie.fromDictionary($0) }
+
+        // Save to SwiftData
+        for movie in movies {
+            modelContext.insert(movie)
+        }
         try modelContext.save()
     }
+}
+```
 
-    func syncToHive(_ profile: Profile) async throws {
-        // Convert SwiftData to Hive format
-        // Write back to maintain Flutter compatibility
+#### 4.2 Flutter Code Elimination Process
+
+```dart
+// Step 1: Update Flutter routes to delegate to Swift
+class RadarrRoute extends StatelessWidget {
+  Widget build(BuildContext context) {
+    // Always delegate to Swift if available
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (await SwiftBridge.isFeatureAvailable('radarr')) {
+        await SwiftBridge.navigateToSwiftFeature('radarr');
+      } else {
+        // Show placeholder during migration
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => MigrationPlaceholderView(feature: 'Radarr'),
+        ));
+      }
+    });
+    return Container();
+  }
+}
+
+// Step 2: Remove Flutter implementation files
+// DELETE: lib/modules/radarr/core/
+// DELETE: lib/modules/radarr/routes/
+// DELETE: lib/api/radarr/
+// DELETE: lib/database/models/radarr/
+
+// Step 3: Update pubspec.yaml - remove unused dependencies
+// Remove: hive_generator, retrofit_generator (if no longer needed)
+```
+
+### Phase 5: API Client Swift-First Implementation (Week 10-12)
+
+**Goal: Implement Swift API clients with Flutter bridge access**
+
+```swift
+// Swift API implementation with bridge support
+actor RadarrAPIService {
+    private let apiClient: RadarrAPI  // OpenAPI generated
+
+    // Handle requests from both SwiftUI and Flutter
+    @MainActor
+    func handleRequest(_ method: String, arguments: Any?) async -> Any? {
+        switch method {
+        case "testConnection":
+            return await testConnection()
+        case "getSystemStatus":
+            return await getSystemStatus()?.toDictionary()
+        case "searchMovies":
+            guard let query = arguments as? String else { return nil }
+            return await searchMovies(query).map { $0.toDictionary() }
+        default:
+            return nil
+        }
     }
 }
 ```
 
-**✅ IMPLEMENTATION COMPLETE**: See [`PHASE_4_1_IMPLEMENTATION.md`](./PHASE_4_1_IMPLEMENTATION.md) for detailed documentation.
+### Phase 6: Progressive Feature Elimination (Week 13-16)
 
-#### 4.2 API Client Infrastructure
+**For each service module (Radarr, Sonarr, Lidarr, etc.):**
+
+1. **Implement complete Swift version** with all features
+2. **Create Flutter bridge** for data and API access
+3. **Migrate user data** from Hive to SwiftData
+4. **Remove Flutter implementation** completely
+5. **Update Flutter routes** to delegate to Swift
+6. **Clean up dependencies** in pubspec.yaml
+
+### Phase 7: Final Flutter Removal (Week 17-18)
 
 ```swift
 Tasks:
-1. Obtain OpenAPI specifications for all services
-2. Set up OpenAPI Generator for Swift
-3. Generate type-safe API clients from specs
-4. Create service-specific wrappers for generated clients
-5. Implement authentication and error handling layers
-6. Add caching and offline support
+1. Remove all Flutter UI code
+2. Remove Flutter state management
+3. Remove Flutter API clients
+4. Remove Hive and all Flutter storage
+5. Clean up pubspec.yaml to minimal bridge-only deps
+6. Convert to pure iOS app with Swift Package Manager
 ```
 
-**OpenAPI-Based API Strategy:**
+## Testing Strategy for Infrastructure Migration
+
+### OpenAPI Client Testing
 
 ```swift
-// Using OpenAPI Generator for type-safe clients
-// Install: brew install openapi-generator
-// Generate: openapi-generator generate -i radarr-api.yaml -g swift5 -o ./Generated/RadarrAPI
+func testOpenAPIRadarrClient() async throws {
+    // Test with mock server that implements OpenAPI spec
+    let mockServer = MockServer(specification: "radarr-v3.yaml")
+    mockServer.start()
 
-// Service wrapper around generated OpenAPI client
-actor RadarrService {
-    private let apiClient: RadarrAPI  // Generated from OpenAPI spec
-    private let config: RadarrConfiguration
+    let config = RadarrConfiguration(
+        baseURL: mockServer.url,
+        apiKey: "test-key"
+    )
+    let service = RadarrService(config: config)
 
-    init(config: RadarrConfiguration) {
-        self.config = config
+    // Test all generated endpoints work correctly
+    let movies = try await service.getMovies()
+    XCTAssertNotNil(movies)
 
-        // Configure generated client with authentication
-        let configuration = Configuration()
-        configuration.basePath = config.baseURL
-        configuration.apiKeyPrefix["X-Api-Key"] = config.apiKey
+    // Verify request matches OpenAPI spec
+    XCTAssertTrue(mockServer.validateLastRequest())
 
-        self.apiClient = RadarrAPI(configuration: configuration)
-    }
-
-    // Wrap generated API calls with error handling and caching
-    func getMovies() async throws -> [Movie] {
-        do {
-            // Use generated type-safe API call
-            let response = try await apiClient.apiV3MovieGet()
-            return response
-        } catch {
-            // Handle errors consistently
-            throw ServiceError.apiError(error)
-        }
-    }
-
-    func addMovie(_ movie: Movie, options: AddMovieOptions) async throws -> Movie {
-        // Use generated models and endpoints
-        let request = AddMovieRequest(
-            movie: movie,
-            addOptions: options
-        )
-        return try await apiClient.apiV3MoviePost(body: request)
+    // Test error handling
+    mockServer.simulateError(.unauthorized)
+    do {
+        _ = try await service.getMovies()
+        XCTFail("Should throw unauthorized error")
+    } catch ServiceError.unauthorized {
+        // Expected
     }
 }
 
-// Authentication interceptor for all services
-class APIAuthenticationHandler {
-    static func configure(for service: ServiceType, config: ServiceConfiguration) -> Configuration {
-        let configuration = Configuration()
-        configuration.basePath = config.baseURL
+func testAPIVersionCompatibility() async throws {
+    // Test against different API versions
+    for version in ["3.0", "3.1", "3.2"] {
+        let service = createServiceForVersion(version)
 
-        // Handle different authentication methods
-        switch service {
-        case .radarr, .sonarr, .lidarr:
-            configuration.apiKey["X-Api-Key"] = config.apiKey
-        case .sabnzbd:
-            configuration.apiKey["apikey"] = config.apiKey
-        case .nzbget:
-            // NZBGet uses basic auth
-            configuration.username = config.username
-            configuration.password = config.password
-        case .tautulli:
-            configuration.apiKey["apikey"] = config.apiKey
-        }
+        // Core functionality should work across versions
+        XCTAssertNoThrow(try await service.getMovies())
 
-        return configuration
-    }
-}
-```
-
-**OpenAPI Specification Management:**
-
-```yaml
-# ios/Native/OpenAPI/radarr-v3.yaml
-# Download from: https://radarr.video/docs/api/
-openapi: 3.0.0
-info:
-  title: Radarr API
-  version: 3.0.0
-# ... full OpenAPI spec
-
-# ios/Native/OpenAPI/sonarr-v3.yaml
-# Download from: https://sonarr.tv/docs/api/
-openapi: 3.0.0
-info:
-  title: Sonarr API
-  version: 3.0.0
-# ... full OpenAPI spec
-```
-
-**Build Phase Script for API Generation:**
-
-```bash
-#!/bin/bash
-# ios/Native/Scripts/generate-api-clients.sh
-
-# Generate API clients from OpenAPI specs
-OPENAPI_DIR="ios/Native/OpenAPI"
-OUTPUT_DIR="ios/Native/Generated"
-
-# Generate Radarr API client
-openapi-generator generate \
-  -i "$OPENAPI_DIR/radarr-v3.yaml" \
-  -g swift5 \
-  -o "$OUTPUT_DIR/RadarrAPI" \
-  --additional-properties=responseAs=AsyncAwait,projectName=RadarrAPI
-
-# Generate Sonarr API client
-openapi-generator generate \
-  -i "$OPENAPI_DIR/sonarr-v3.yaml" \
-  -g swift5 \
-  -o "$OUTPUT_DIR/SonarrAPI" \
-  --additional-properties=responseAs=AsyncAwait,projectName=SonarrAPI
-
-# Generate other service clients...
-```
-
-### Phase 5: Service API Clients Migration (Week 10-12)
-
-**Goal: Integrate OpenAPI-generated clients with proper error handling and caching**
-
-#### 5.1 OpenAPI Integration Setup
-
-```swift
-Tasks:
-1. Download OpenAPI specifications for all services:
-   - Radarr: https://radarr.video/docs/api/
-   - Sonarr: https://sonarr.tv/docs/api/
-   - Lidarr: https://lidarr.audio/docs/api/
-   - SABnzbd: API documentation to OpenAPI conversion
-   - NZBGet: API documentation to OpenAPI conversion
-   - Tautulli: API documentation to OpenAPI conversion
-2. Set up OpenAPI Generator in Xcode build pipeline
-3. Generate Swift clients with async/await support
-4. Create service wrappers with consistent error handling
-5. Add response caching layer
-6. Implement retry logic with exponential backoff
-```
-
-#### 5.2 Service Client Architecture
-
-```swift
-// Base service protocol for consistency
-protocol MediaService {
-    associatedtype Configuration
-    associatedtype APIClient
-
-    var config: Configuration { get }
-    var apiClient: APIClient { get }
-
-    func testConnection() async throws -> Bool
-    func getSystemStatus() async throws -> SystemStatus
-}
-
-// Radarr implementation using generated client
-actor RadarrService: MediaService {
-    typealias Configuration = RadarrConfiguration
-    typealias APIClient = RadarrAPI
-
-    let config: RadarrConfiguration
-    let apiClient: RadarrAPI
-    private let cache = ResponseCache()
-
-    init(config: RadarrConfiguration) {
-        self.config = config
-
-        let apiConfig = APIAuthenticationHandler.configure(
-            for: .radarr,
-            config: config
-        )
-        self.apiClient = RadarrAPI(configuration: apiConfig)
-    }
-
-    // Cache frequently accessed data
-    func getMovies(useCache: Bool = true) async throws -> [Movie] {
-        let cacheKey = "movies_\(config.profileId)"
-
-        if useCache, let cached: [Movie] = cache.get(cacheKey) {
-            return cached
-        }
-
-        let movies = try await withRetry {
-            try await apiClient.apiV3MovieGet()
-        }
-
-        cache.set(movies, for: cacheKey, ttl: 300) // 5 min cache
-        return movies
-    }
-
-    // Retry logic for network failures
-    private func withRetry<T>(
-        maxAttempts: Int = 3,
-        operation: () async throws -> T
-    ) async throws -> T {
-        var lastError: Error?
-
-        for attempt in 1...maxAttempts {
-            do {
-                return try await operation()
-            } catch {
-                lastError = error
-                if attempt < maxAttempts {
-                    // Exponential backoff
-                    let delay = pow(2.0, Double(attempt))
-                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
-                }
-            }
-        }
-
-        throw lastError ?? ServiceError.unknown
-    }
-
-    func testConnection() async throws -> Bool {
-        do {
-            _ = try await apiClient.apiV3SystemStatusGet()
-            return true
-        } catch {
-            return false
+        // Version-specific features
+        if version >= "3.2" {
+            XCTAssertTrue(service.isFeatureSupported("customFormats"))
         }
     }
 }
 ```
 
-#### 5.3 Offline Support & Caching
+## Critical Migration Dependencies
 
-```swift
-Tasks:
-1. Implement ResponseCache with SwiftData backing
-2. Add offline queue for actions (add/delete/update)
-3. Sync offline actions when connection restored
-4. Cache images and media artwork
-5. Implement smart cache invalidation
+### API Migration Strategy
+
+```mermaid
+graph TD
+    A[Manual Flutter APIs] -->|Week 10| B[OpenAPI Specs]
+    B -->|Generate| C[Type-safe Swift Clients]
+    C -->|Week 11| D[Service Wrappers]
+    D -->|Week 12| E[Caching & Offline]
+
+    F[Download Specs] -->|Radarr/Sonarr/Lidarr| B
+    G[Convert Docs] -->|SABnzbd/NZBGet| B
+    B -->|openapi-generator| C
 ```
 
-**Caching Strategy:**
+## Migration Checklist Per Component (Swift-First)
 
-```swift
-// Response caching with persistence
-actor ResponseCache {
-    private var memoryCache: [String: (data: Any, expiry: Date)] = [:]
-    private let diskCache: DiskCache
+**Feature Migration:**
 
-    func get<T>(_ key: String) -> T? {
-        // Check memory cache first
-        if let cached = memoryCache[key],
-           cached.expiry > Date() {
-            return cached.data as? T
-        }
+- [ ] Implement complete Swift/SwiftUI version
+- [ ] Create Flutter-Swift data bridge
+- [ ] Test Swift implementation thoroughly
+- [ ] Migrate existing user data to SwiftData
+- [ ] **Remove Flutter implementation completely**
+- [ ] Update Flutter routes to delegate to Swift
+- [ ] Remove unused Flutter dependencies
+- [ ] Document which features are Swift-complete
+- [ ] Verify no functional regressions
+- [ ] Performance validation
 
-        // Check disk cache
-        return diskCache.get(key)
-    }
+## Timeline Summary (Swift-First Approach)
 
-    func set<T>(_ value: T, for key: String, ttl: TimeInterval) {
-        let expiry = Date().addingTimeInterval(ttl)
-        memoryCache[key] = (value, expiry)
-        diskCache.set(value, for: key, expiry: expiry)
-    }
+| Phase | Duration | Deliverable              | Flutter Code Status              |
+| ----- | -------- | ------------------------ | -------------------------------- |
+| 1     | 2 weeks  | ✅ Hybrid infrastructure | 100% Flutter                     |
+| 2     | 2 weeks  | ✅ Settings in Swift     | Settings removed from Flutter    |
+| 3     | 2 weeks  | ✅ Dashboard in Swift    | Dashboard removed from Flutter   |
+| 4     | 3 weeks  | Data layer in Swift      | Hive removed, bridge active      |
+| 5     | 3 weeks  | API layer in Swift       | Flutter API clients removed      |
+| 6     | 4 weeks  | Service modules in Swift | Service UIs removed from Flutter |
+| 7     | 2 weeks  | Final cleanup            | All Flutter code removed         |
+| 8     | 2 weeks  | Pure iOS optimization    | 100% Swift/SwiftUI               |
+
+**Total: 20 weeks to pure Swift/SwiftUI app with zero code duplication**
+
+## Benefits of Swift-First Migration
+
+### Code Quality
+
+- **Single source of truth** - No synchronization complexity
+- **Reduced maintenance** - One implementation per feature
+- **Better performance** - Native Swift without bridge overhead
+- **Smaller app size** - Progressive Flutter code elimination
+
+### Development Velocity
+
+- **Faster development** - No parallel implementations
+- **Easier testing** - Single codebase to validate
+- **Clear progress** - Each feature either Flutter or Swift, never both
+- **Modern architecture** - Latest Swift 6 and SwiftUI patterns
+
+## Success Criteria
+
+A feature migration is complete when:
+
+- ✅ Swift implementation provides 100% functionality
+- ✅ Flutter code for that feature is completely removed
+- ✅ Flutter can access Swift data via bridge
+- ✅ User experience is unchanged or improved
+- ✅ No data loss during migration
+- ✅ Performance meets or exceeds Flutter version
+
+---
+
+_This Swift-first migration plan eliminates code duplication by progressively replacing Flutter implementations with Swift, maintaining a single source of truth while providing bridge access during the transition period._
+self.action = action
+self.payload = try! JSONEncoder().encode(payload)
+self.createdAt = Date()
+self.retryCount = 0
 }
-
-// Offline action queue
-@Model
-final class OfflineAction {
-    var id: UUID
-    var service: String
-    var action: String
-    var payload: Data
-    var createdAt: Date
-    var retryCount: Int
-
-    init(service: String, action: String, payload: Codable) {
-        self.id = UUID()
-        self.service = service
-        self.action = action
-        self.payload = try! JSONEncoder().encode(payload)
-        self.createdAt = Date()
-        self.retryCount = 0
-    }
 }
 
 actor OfflineQueueManager {
-    func enqueue(action: OfflineAction) async {
-        // Save to SwiftData
-        modelContext.insert(action)
-        try? modelContext.save()
-    }
+func enqueue(action: OfflineAction) async {
+// Save to SwiftData
+modelContext.insert(action)
+try? modelContext.save()
+}
 
     func processQueue() async {
         let actions = try? modelContext.fetch(
@@ -597,8 +604,10 @@ actor OfflineQueueManager {
 
         try? modelContext.save()
     }
+
 }
-```
+
+````
 
 #### 5.4 API Version Management
 
@@ -609,7 +618,7 @@ Tasks:
 3. Graceful degradation for older servers
 4. Feature flags based on API capabilities
 5. Migration paths for breaking changes
-```
+````
 
 **Version Detection:**
 

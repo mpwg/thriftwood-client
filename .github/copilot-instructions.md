@@ -18,11 +18,23 @@
 - **`lib/router/`**: GoRouter-based navigation system
 - **`lib/widgets/`**: Shared UI components
 
-### Migration Architecture (Reference `migration.md`)
+### Migration Architecture (Swift-First with Code Elimination)
 
-- **FlutterSwiftUIBridge**: Seamless navigation between Flutter/SwiftUI views
-- **Shared data layer**: Bidirectional sync between Hive (Flutter) and SwiftData (SwiftUI)
-- **Hybrid navigation**: Route registration system to determine platform per view
+**CRITICAL CHANGE**: Migration now follows Swift-first architecture with immediate Flutter code elimination:
+
+- **Swift becomes single source of truth** for each migrated feature
+- **Flutter code is removed** once Swift implementation is complete
+- **Flutter accesses Swift data models** via bridge layer (no data duplication)
+- **Progressive feature elimination** - migrate and remove Flutter code iteratively
+- **Bridge-based data access** - Flutter reads/writes Swift SwiftData models directly
+
+### Key Migration Principles
+
+- **No Code Duplication**: Swift replaces Flutter entirely, no parallel implementations
+- **Bridge-Based Access**: Flutter accesses Swift data via method channel bridge
+- **Immediate Elimination**: Flutter code removed as soon as Swift implementation complete
+- **Single Source of Truth**: Swift SwiftData becomes primary data persistence
+- **Progressive Migration**: Feature-by-feature elimination of Flutter components
 
 ### Key Files
 
@@ -31,6 +43,8 @@
 - **`lib/database/database.dart`**: Hive initialization and profile bootstrapping
 - **`lib/router/router.dart`**: GoRouter configuration
 - **`lib/system/bridge/`**: Flutter ↔ SwiftUI bridge implementation
+- **`ios/Native/Bridge/SwiftDataBridge.swift`**: Flutter access to Swift data models
+- **`lib/bridge/swift_data_accessor.dart`**: Flutter client for Swift data access
 
 ## Development Guidelines
 
@@ -106,53 +120,36 @@ Bridge initialization happens in `lib/main.dart` via `BridgeInitializer.initiali
 
 ### During Migration Period
 
-- **User Migration Control**: Maintain the settings toggle (`LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI`) that allows users to switch between Flutter and SwiftUI implementations
-- **Test both platforms**: Ensure data consistency and navigation flow
-- **Bridge registration**: Register migrated views with `FlutterSwiftUIBridge`
-- **Maintain functionality**: App must remain fully functional at each phase
-- **Performance monitoring**: No regressions during hybrid period
-- **Fallback capability**: Users can instantly revert to Flutter if SwiftUI version has issues
+- **No User Toggle**: Users don't choose between Flutter/Swift - Swift always used when available
+- **Immediate Delegation**: Flutter routes immediately delegate to Swift when implemented
+- **Data Migration**: One-time migration from Flutter Hive to Swift SwiftData
+- **Code Elimination**: Flutter implementation removed upon Swift completion
+- **Bridge Access**: Flutter maintains access to Swift data for remaining Flutter features
 
-### SwiftUI Code Organization
+### Swift-First Implementation Standards
 
-All SwiftUI code goes in `ios/Native/` with this structure:
+```swift
+// Modern Swift 6 service with Flutter bridge access
+@Model
+class RadarrMovie {
+    var id: Int
+    var title: String
+    // ...properties
 
-```
-ios/Native/
-├── Bridge/             # Flutter ↔ SwiftUI integration
-├── Models/             # @Observable data models
-├── ViewModels/         # MVVM presentation logic
-├── Views/              # SwiftUI user interfaces
-└── Services/           # Business logic & data persistence
-```
-
-Files in `ios/Native/` are automatically included in Xcode project.
-
-### SwiftUI Implementation Standards
-
-````instructions
-// Modern Swift 6 service implementation
-@Observable
-class RadarrService {
-    var isLoading = false
-
-    func fetchMovies() async throws {
-        isLoading = true
-        defer { isLoading = false }
-        movies = try await apiClient.getMovies()
-    }
+    // MANDATORY: Flutter bridge serialization
+    func toDictionary() -> [String: Any] { /* implementation */ }
+    static func fromDictionary(_ dict: [String: Any]) -> RadarrMovie? { /* implementation */ }
 }
 
-// SwiftUI view with proper state management
-struct RadarrMoviesView: View {
-    @State private var service = RadarrService()
-
-    var body: some View {
-        NavigationStack {
-            List(service.movies) { movie in
-                MovieRow(movie: movie)
-            }
-            .task { try? await service.fetchMovies() }
+@Observable
+class RadarrService {
+    // MANDATORY: Flutter data access methods
+    @MainActor
+    func handleFlutterRequest(_ method: String, arguments: Any?) async -> Any? {
+        switch method {
+        case "getMovies": return await getMovies().map { $0.toDictionary() }
+        case "addMovie": return await addMovie(fromDict: arguments)
+        // ... all CRUD operations
         }
     }
 }
@@ -202,21 +199,21 @@ xcodebuild -workspace Runner.xcworkspace -scheme Runner # Build iOS app
 
 ### ✅ Do
 
-- Follow the migration timeline in `migration.md` strictly
-- Use `HybridRouter.navigateTo()` for navigation during hybrid period
-- Maintain profile data consistency across platforms
-- Test navigation paths thoroughly after each migration phase
-- Follow Swift 6 concurrency patterns for new SwiftUI code
-- Place new SwiftUI files in `ios/Native/` directory structure
+- Implement complete Swift feature before removing Flutter code
+- Create comprehensive Flutter-Swift data bridge
+- Remove Flutter implementation immediately upon Swift completion
+- Migrate user data from Flutter Hive to Swift SwiftData once
+- Test Swift implementation thoroughly before Flutter code elimination
+- Document which features are Swift-only vs. Flutter-accessible
 
 ### ❌ Don't
 
-- Skip hybrid infrastructure setup before migrating views
-- Break existing Flutter functionality during migration
-- Use legacy UIKit patterns in new SwiftUI code
-- Ignore accessibility requirements in migrated views
-- Hardcode service configurations (use profile system)
-- Import `lib/core.dart` (deprecated central export)
+- Maintain parallel Flutter and Swift implementations
+- Keep Flutter code after Swift implementation is complete
+- Create user toggles between Flutter and Swift versions
+- Duplicate data between Flutter Hive and Swift SwiftData
+- Skip data migration when eliminating Flutter storage
+- Remove Flutter code before Swift implementation is 100% complete and tested
 
 ## External Dependencies and APIs
 
@@ -291,4 +288,11 @@ if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) {
     coordinator.navigateInFlutter(route: route, data: data)
 }
 ```
-````
+
+    coordinator.navigateInFlutter(route: route, data: data)
+
+}
+
+```
+
+```
