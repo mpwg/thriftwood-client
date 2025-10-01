@@ -1,8 +1,8 @@
-# <img width="40px" src="./assets/images/branding_logo.png" alt="LunaSea"></img>&nbsp;&nbsp;LunaSea
+# <img width="40px" src="./assets/images/branding_logo.png" alt="Thriftwood"></img>&nbsp;&nbsp;Thriftwood
 
-> :warning: **This project is no longer being actively maintained and this repository is archived.** :warning:
+> **⚠️ Project Status:** This is an active SwiftUI rewrite of [LunaSea](https://github.com/JagandeepBrar/LunaSea). The app is currently in development as we migrate from Flutter to native iOS SwiftUI. See [migration.md](./migration.md) for detailed progress.
 
-LunaSea is a fully featured, open source self-hosted controller focused on giving you a seamless experience between all of your self-hosted media software remotely on your devices. LunaSea currently supports:
+**Thriftwood** is a fully featured, open source self-hosted controller focused on giving you a seamless experience between all of your self-hosted media software remotely on your devices. Based on LunaSea, Thriftwood currently supports:
 
 - [Lidarr](https://github.com/lidarr/lidarr)
 - [Radarr](https://github.com/radarr/radarr)
@@ -14,9 +14,15 @@ LunaSea is a fully featured, open source self-hosted controller focused on givin
 - [Tautulli](https://github.com/Tautulli/Tautulli)
 - [Wake on LAN](https://en.wikipedia.org/wiki/Wake-on-LAN)
 
-LunaSea even comes with support for webhook-based push notifications, multiple instances of applications using profiles, backup and restore functionality for your configuration, an AMOLED black theme, and more!
+Thriftwood includes support for webhook-based push notifications, multiple instances of applications using profiles, backup and restore functionality for your configuration, an AMOLED black theme, and more!
 
-> Please note that LunaSea is purely a remote control application, it does not offer any functionality without software installed on a server/computer.
+> Please note that Thriftwood is purely a remote control application, it does not offer any functionality without software installed on a server/computer.
 
-- [Email](mailto:hello@lunasea.app)
-- [Website](https://www.lunasea.app)
+## About This Project
+
+Thriftwood is a SwiftUI rewrite of LunaSea, bringing native iOS performance and modern Swift architecture to the self-hosted media management experience. The project is currently in active development, with a hybrid Flutter-SwiftUI approach that allows gradual migration while maintaining full functionality.
+
+**Migration Status:**
+- ✅ Phase 1-3: Hybrid infrastructure, Settings, and Dashboard completed
+- 🔄 In Progress: Core infrastructure and service modules migration
+- 📅 See [migration.md](./migration.md) for detailed timeline and progress

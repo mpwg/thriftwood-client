@@ -10,6 +10,14 @@ import Flutter
     // Register Flutter plugins
     GeneratedPluginRegistrant.register(with: self)
     
+    // Handle Mac Catalyst specific setup
+    #if targetEnvironment(macCatalyst)
+    print("🖥️ Running in Mac Catalyst environment")
+    // Disable unsupported features for Mac Catalyst
+    #else
+    print("📱 Running in native iOS environment")
+    #endif
+    
     // Initialize the hybrid bridge system
     initializeHybridBridge()
     
@@ -22,21 +30,50 @@ import Flutter
       print("Error: Could not find Flutter view controller for bridge initialization")
       return
     }
-    
+
     // Initialize the bridge with the Flutter view controller
     FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
     
-    // Initialize shared data manager
-    let methodChannel = FlutterMethodChannel(
-      name: "com.thriftwood.bridge",
-      binaryMessenger: flutterViewController.binaryMessenger
-    )
-    SharedDataManager.shared.initialize(with: methodChannel)
+    // Add a small delay to ensure Flutter is fully initialized
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      self.registerNativeViews()
+    }
+  }
+  
+  /// Register all native views after Flutter is fully initialized
+  private func registerNativeViews() {        // Register settings routes for Phase 2 hybrid functionality
+    // Main settings route (root level)
+    FlutterSwiftUIBridge.shared.registerNativeView("settings")
     
-    // Register test route for Phase 1 testing
-    FlutterSwiftUIBridge.shared.registerNativeView("/test")
+    // Sub-routes for settings sections
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_configuration")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_profiles")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_system")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_system_logs")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_general")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_dashboard")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_wake_on_lan")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_search")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_external_modules")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_drawer")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_quick_actions")
     
-    print("Hybrid bridge system initialized successfully")
+    // Service-specific settings routes
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_radarr")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_sonarr")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_lidarr")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_sabnzbd")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_nzbget")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_tautulli")
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_overseerr")
+    
+    FlutterSwiftUIBridge.shared.registerNativeView("settings_all")
+    
+    // Register Dashboard for Phase 3 hybrid functionality
+    FlutterSwiftUIBridge.shared.registerDashboardView()
+    FlutterSwiftUIBridge.shared.setupDashboardMethodHandlers()
+
+    print("Native views registered successfully")
   }
   
   /// Handle URL schemes for deep linking

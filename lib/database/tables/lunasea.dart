@@ -29,7 +29,8 @@ enum LunaSeaDatabase<T> with LunaTableMixin<T> {
   QUICK_ACTIONS_SEARCH<bool>(false),
   USE_24_HOUR_TIME<bool>(false),
   ENABLE_IN_APP_NOTIFICATIONS<bool>(true),
-  CHANGELOG_LAST_BUILD_VERSION<int>(0);
+  CHANGELOG_LAST_BUILD_VERSION<int>(0),
+  HYBRID_SETTINGS_USE_SWIFTUI<bool>(false);
 
   @override
   LunaTable get table => LunaTable.lunasea;

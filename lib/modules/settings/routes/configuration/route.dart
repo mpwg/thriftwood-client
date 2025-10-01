@@ -3,6 +3,7 @@ import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/settings.dart';
 import 'package:lunasea/router/routes/settings.dart';
 import 'package:lunasea/system/quick_actions/quick_actions.dart';
+import 'package:lunasea/system/hybrid_bridge.dart';
 import 'package:lunasea/utils/profile_tools.dart';
 
 class ConfigurationRoute extends StatefulWidget {
@@ -103,13 +104,60 @@ class _State extends State<ConfigurationRoute> with LunaScrollControllerMixin {
   }
 
   Widget _tileFromModuleMap(LunaModule module) {
-    return LunaBlock(
-      title: module.title,
-      body: [
-        TextSpan(text: 'settings.ConfigureModule'.tr(args: [module.title]))
-      ],
-      trailing: LunaIconButton(icon: module.icon),
-      onTap: module.settingsRoute!.go,
+    const _db = LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI;
+    return _db.listenableBuilder(
+      builder: (context, _) {
+        bool useSwiftUISettings = _db.read();
+
+        return LunaBlock(
+          title: module.title,
+          body: [
+            TextSpan(text: 'settings.ConfigureModule'.tr(args: [module.title]))
+          ],
+          trailing: LunaIconButton(icon: module.icon),
+          onTap: () =>
+              _handleModuleSettingsNavigation(module, useSwiftUISettings),
+        );
+      },
     );
+  }
+
+  void _handleModuleSettingsNavigation(
+      LunaModule module, bool useSwiftUISettings) {
+    if (useSwiftUISettings) {
+      // Map modules to their SwiftUI route names
+      String? swiftUIRoute = _getSwiftUIRouteForModule(module);
+      if (swiftUIRoute != null) {
+        FlutterSwiftUIBridge.navigateToNativeView(
+          swiftUIRoute,
+          data: {'module': module.key},
+        );
+        return;
+      }
+    }
+
+    // Fallback to Flutter route
+    module.settingsRoute!.go();
+  }
+
+  String? _getSwiftUIRouteForModule(LunaModule module) {
+    switch (module) {
+      case LunaModule.RADARR:
+        return 'settings_radarr';
+      case LunaModule.SONARR:
+        return 'settings_sonarr';
+      case LunaModule.LIDARR:
+        return 'settings_lidarr';
+      case LunaModule.SABNZBD:
+        return 'settings_sabnzbd';
+      case LunaModule.NZBGET:
+        return 'settings_nzbget';
+      case LunaModule.TAUTULLI:
+        return 'settings_tautulli';
+      case LunaModule.OVERSEERR:
+        return 'settings_overseerr';
+      default:
+        return null; // Fall back to Flutter for unsupported modules
+    }
   }
 }
