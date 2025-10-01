@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lunasea/router/router.dart';
 import 'package:lunasea/system/bridge/native_bridge.dart';
 import 'package:lunasea/system/logger.dart';
 import 'package:lunasea/widgets/ui.dart';
@@ -183,7 +184,7 @@ class HybridRouter {
           'HybridRouter: Invalid arguments for navigateInFlutter',
           'Invalid arguments',
           StackTrace.current);
-      final ctx = navigatorKey.currentContext;
+      final ctx = LunaRouter.navigator.currentContext;
       if (ctx != null) {
         showLunaErrorSnackBar(
           title: 'Navigation error',
@@ -200,7 +201,7 @@ class HybridRouter {
     if (route == null) {
       LunaLogger().error('HybridRouter: No route specified for navigation',
           'Missing route', StackTrace.current);
-      final ctx = navigatorKey.currentContext;
+      final ctx = LunaRouter.navigator.currentContext;
       if (ctx != null) {
         showLunaErrorSnackBar(
           title: 'Navigation error',
@@ -210,19 +211,25 @@ class HybridRouter {
       return false;
     }
 
-    // Since we don't have a BuildContext here, we'll use the router directly
-    // This assumes GoRouter is set up as a global router
+    // Use the LunaRouter's context for navigation
     try {
-      // Get the current GoRouter instance
-      // Note: This might need adjustment based on your app's GoRouter setup
-      GoRouter.of(navigatorKey.currentContext!).go(route, extra: data);
-      return true;
+      final context = LunaRouter.navigator.currentContext;
+      if (context != null) {
+        context.go(route, extra: data);
+        return true;
+      } else {
+        LunaLogger().error(
+            'HybridRouter: No context available for Flutter navigation to $route',
+            'No context',
+            StackTrace.current);
+        return false;
+      }
     } catch (e) {
       LunaLogger().error(
           'HybridRouter: Error navigating in Flutter from native',
           e,
           StackTrace.current);
-      final ctx = navigatorKey.currentContext;
+      final ctx = LunaRouter.navigator.currentContext;
       if (ctx != null) {
         showLunaErrorSnackBar(
           title: 'Navigation error',
@@ -241,11 +248,45 @@ class HybridRouter {
           arguments['navigationData'] as Map<String, dynamic>?;
 
       if (navigateTo != null) {
-        // Navigate to the specified route after returning from native
-        final context = navigatorKey.currentContext;
+        LunaLogger().debug(
+            'HybridRouter: Navigating to $navigateTo after returning from native');
+
+        // Get the correct context from LunaRouter's navigator
+        final context = LunaRouter.navigator.currentContext;
         if (context != null) {
-          await HybridRouter.navigateTo(context, navigateTo,
-              data: navigationData);
+          // Use GoRouter directly for Flutter routes
+          try {
+            // Check if this should be native first
+            final isNative =
+                await NativeBridge.isNativeViewAvailable(navigateTo);
+
+            if (isNative) {
+              // This shouldn't happen when returning from native, but handle it
+              LunaLogger().warning(
+                  'HybridRouter: Route $navigateTo is native but returning from native view');
+              await NativeBridge.navigateToNativeView(navigateTo,
+                  data: navigationData);
+            } else {
+              // Use Flutter navigation directly
+              LunaLogger().debug(
+                  'HybridRouter: Using Flutter navigation for $navigateTo');
+              context.go(navigateTo, extra: navigationData);
+            }
+          } catch (e) {
+            LunaLogger().error(
+                'HybridRouter: Error navigating to $navigateTo after return from native',
+                e,
+                StackTrace.current);
+            showLunaErrorSnackBar(
+              title: 'Navigation Error',
+              message: 'Failed to navigate to $navigateTo',
+            );
+          }
+        } else {
+          LunaLogger().error(
+              'HybridRouter: No context available for navigation to $navigateTo',
+              'No context',
+              StackTrace.current);
         }
       }
     }
@@ -282,8 +323,8 @@ class HybridRouter {
 }
 
 /// Global navigator key for accessing navigation context
-/// This should be set in your app's main widget
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+/// Note: We now use LunaRouter.navigator instead of this deprecated key
+// final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// Extension on BuildContext for convenient hybrid navigation
 extension HybridNavigation on BuildContext {

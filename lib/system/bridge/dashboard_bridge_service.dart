@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:lunasea/database/models/profile.dart';
 import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
+import 'package:lunasea/router/router.dart';
 import 'package:lunasea/system/logger.dart';
 import 'package:lunasea/system/bridge/hybrid_router.dart';
 
@@ -242,7 +243,7 @@ class DashboardBridgeService {
 
       if (navigateTo != null) {
         // Navigate to the specified route after returning from native
-        final context = navigatorKey.currentContext;
+        final context = LunaRouter.navigator.currentContext;
         if (context != null) {
           await HybridRouter.navigateTo(context, navigateTo,
               data: navigationData);
@@ -277,7 +278,7 @@ class DashboardBridgeService {
     }
 
     try {
-      final context = navigatorKey.currentContext;
+      final context = LunaRouter.navigator.currentContext;
       if (context != null) {
         return await HybridRouter.navigateTo(context, route, data: data);
       } else {
