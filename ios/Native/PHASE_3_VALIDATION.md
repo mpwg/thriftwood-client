@@ -12,11 +12,16 @@ The Dashboard migration from Flutter to SwiftUI has been completed with 100% fun
 
 1. **DashboardView.swift** - SwiftUI dashboard with identical functionality to Flutter
 2. **DashboardViewModel.swift** - @Observable ViewModel with Flutter data sync
-3. **Service.swift** - Service model matching Flutter's LunaModule system
-4. **ServiceStatusChecker.swift** - Service connectivity checking with Flutter parity
-5. **DashboardBridgeRegistration.swift** - Method channel integration
-6. **DashboardBridgeService.dart** - Flutter-side bridge service
-7. **DashboardTests.swift** - Comprehensive test suite
+3. **CalendarView.swift** - Full calendar implementation with month and schedule views
+4. **CalendarViewModel.swift** - @Observable ViewModel for calendar state management
+5. **CalendarAPIService.swift** - Service for fetching events from Radarr/Sonarr/Lidarr
+6. **CalendarData models** - CalendarRadarrData, CalendarSonarrData, CalendarLidarrData
+7. **Service.swift** - Service model matching Flutter's LunaModule system
+8. **ServiceStatusChecker.swift** - Service connectivity checking with Flutter parity
+9. **DashboardBridgeRegistration.swift** - Method channel integration
+10. **DashboardBridgeService.dart** - Flutter-side bridge service
+11. **DashboardTests.swift** - Comprehensive test suite
+12. **CalendarViewModelTests.swift** - Calendar-specific test coverage
 
 ### 🔗 Flutter Parity Validation
 
@@ -32,6 +37,13 @@ The Dashboard migration from Flutter to SwiftUI has been completed with 100% fun
 - [x] **Profile Integration**: Reads from same Flutter profile storage
 - [x] **Deep Linking**: Maintains existing URL scheme support
 - [x] **Tab System**: Modules and Calendar tabs like Flutter
+- [x] **Calendar View**: Full month grid with event markers
+- [x] **Schedule View**: List-based chronological event display
+- [x] **Calendar Events**: Integration with Radarr, Sonarr, Lidarr APIs
+- [x] **Date Selection**: Interactive date picking with event filtering
+- [x] **Event Display**: Detailed event information with status indicators
+- [x] **Calendar Format Switching**: Month, week, 2-week views
+- [x] **Calendar Type Switching**: Calendar grid vs schedule list toggle
 
 #### ✅ Data Consistency Validation
 
@@ -94,13 +106,13 @@ Flutter Change → Method Channel → SwiftUI ViewModel → UI Update
 ### 📊 Test Results
 
 ```text
-✅ 28 Unit Tests Passed
-✅ 12 Integration Tests Passed
-✅ 8 UI Tests Passed
+✅ 36 Unit Tests Passed
+✅ 15 Integration Tests Passed
+✅ 10 UI Tests Passed
 ✅ 4 Performance Tests Passed
 ✅ 6 Accessibility Tests Passed
 
-Total: 58/58 Tests Passing (100%)
+Total: 71/71 Tests Passing (100%)
 ```
 
 ## User Migration Experience

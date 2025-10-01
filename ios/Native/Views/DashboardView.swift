@@ -67,7 +67,7 @@ struct DashboardView: View {
                     .tag(0)
                 
                 // Calendar tab - Swift equivalent of CalendarPage  
-                CalendarView()
+                CalendarView(selectedTab: $selectedTab)
                     .tabItem {
                         Image(systemName: "calendar")
                         Text("Calendar")
@@ -87,11 +87,22 @@ struct DashboardView: View {
                     }
                 }
                 
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Quick Actions Menu - Swift equivalent of Flutter's quick actions
-                    QuickActionsMenu(viewModel: viewModel)
-                    
-                    SwitchViewButton(selectedTab: $selectedTab)
+                // Only show dashboard actions when on Modules tab
+                if selectedTab == 0 {
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        // Quick Actions Menu - Swift equivalent of Flutter's quick actions
+                        QuickActionsMenu(viewModel: viewModel)
+                        
+                        // Tab switcher - show calendar icon
+                        Button {
+                            withAnimation {
+                                selectedTab = 1
+                            }
+                        } label: {
+                            Image(systemName: "calendar")
+                                .font(.title3)
+                        }
+                    }
                 }
             }
         }
@@ -329,11 +340,13 @@ struct NoModulesEnabledView: View {
 /// Full calendar implementation with event display
 struct CalendarView: View {
     @State private var viewModel: CalendarViewModel
+    @Binding var selectedTab: Int
     
-    init() {
+    init(selectedTab: Binding<Int>) {
         // Initialize with method channel from FlutterSwiftUIBridge
         let bridge = FlutterSwiftUIBridge.shared
         self._viewModel = State(initialValue: CalendarViewModel(methodChannel: bridge.methodChannel))
+        self._selectedTab = selectedTab
     }
     
     var body: some View {
@@ -346,6 +359,31 @@ struct CalendarView: View {
         }
         .refreshable {
             await viewModel.refresh()
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                // Calendar type switcher
+                Button {
+                    withAnimation {
+                        viewModel.setCalendarStartingType(
+                            viewModel.calendarStartingType == .calendar ? .schedule : .calendar
+                        )
+                    }
+                } label: {
+                    Image(systemName: viewModel.calendarStartingType == .calendar ? "list.bullet" : "calendar")
+                        .font(.title3)
+                }
+                
+                // Tab switcher
+                Button {
+                    withAnimation {
+                        selectedTab = 0
+                    }
+                } label: {
+                    Image(systemName: "square.grid.2x2")
+                        .font(.title3)
+                }
+            }
         }
     }
 }
@@ -797,24 +835,6 @@ struct QuickActionsMenu: View {
                 "navigateTo": settingsRoute,
                 "from": "dashboard_quick_actions"
             ])
-        }
-    }
-}
-
-// MARK: - Switch View Button
-
-/// Swift equivalent of Flutter's SwitchViewAction
-struct SwitchViewButton: View {
-    @Binding var selectedTab: Int
-    
-    var body: some View {
-        Button {
-            withAnimation {
-                selectedTab = selectedTab == 0 ? 1 : 0
-            }
-        } label: {
-            Image(systemName: selectedTab == 0 ? "calendar" : "square.grid.2x2")
-                .font(.title3)
         }
     }
 }
