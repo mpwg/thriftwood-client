@@ -22,6 +22,13 @@ import SwiftData
 /// SwiftData App Settings model that replaces Flutter's Hive-based settings
 /// Maintains 100% functional parity with Flutter counterpart
 ///
+/// **Architecture Compliance:**
+/// ✅ SwiftData @Model macro (not Core Data NSManagedObject)
+/// ✅ Swift value types (String, Bool, Int, Data) not Objective-C types
+/// ✅ @Attribute for uniqueness constraints (not manual Core Data setup)
+/// ✅ Codable for serialization (not NSCoding)
+/// ✅ Pure Swift - No UIKit/AppKit dependencies
+///
 /// **Bidirectional Integration:**
 /// - Initial state loaded from Flutter Hive storage via DataMigrationManager
 /// - All state changes synced back to Hive for Flutter compatibility

@@ -26,6 +26,14 @@ import Flutter
 /// Manages bidirectional synchronization between Flutter's Hive storage and SwiftData
 /// Maintains 100% functional parity with Flutter's HiveBridge data operations
 ///
+/// **Architecture Compliance:**
+/// ✅ Pure SwiftUI - No UIKit/AppKit imports
+/// ✅ iOS 17+ @Observable pattern (not deprecated @ObservableObject)
+/// ✅ Swift 6 strict concurrency with @MainActor for Flutter bridge calls
+/// ✅ async/await throughout (no legacy GCD/DispatchQueue)
+/// ✅ SwiftData @Model classes (not Core Data NSManagedObject)
+/// ✅ Native Swift error handling with typed errors
+///
 /// **Bidirectional Integration:**
 /// - Reads from Flutter Hive storage via method channel (getHiveSettings)
 /// - Writes changes back to Flutter via method channel (updateHiveSettings)
