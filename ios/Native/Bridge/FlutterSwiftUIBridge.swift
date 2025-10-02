@@ -50,8 +50,38 @@ import Flutter
         // Initialize data bridge for Flutter access to Swift models
         SwiftDataBridge.shared.initialize(with: flutterViewController)
         
+        // Initialize data layer manager with proper method channel
+        Task {
+            await initializeDataLayerManager(with: flutterViewController)
+        }
+        
         print("✅ FlutterSwiftUIBridge initialized with Swift-first enforcement")
         print("✅ Method channel conflicts prevented via BridgeMethodDispatcher")
+    }
+    
+    /// Initialize DataLayerManager with proper SwiftData context and method channel
+    @MainActor
+    private func initializeDataLayerManager(with flutterViewController: FlutterViewController) async {
+        // Get SwiftData context from SwiftDataBridge
+        let swiftDataBridge = SwiftDataBridge.shared
+        guard let modelContext = swiftDataBridge.modelContext else {
+            print("❌ Cannot initialize DataLayerManager: SwiftData context not available")
+            return
+        }
+        
+        // Create method channel for DataLayerManager (uses same channel as HiveBridge)
+        let methodChannel = FlutterMethodChannel(
+            name: "com.thriftwood.hive",
+            binaryMessenger: flutterViewController.binaryMessenger
+        )
+        
+        // Initialize DataLayerManager
+        await DataLayerManager.shared.initialize(
+            modelContext: modelContext,
+            methodChannel: methodChannel
+        )
+        
+        print("✅ DataLayerManager initialized with SwiftData context and method channel")
     }
     
     // MARK: - Native View Registration
@@ -112,10 +142,29 @@ import Flutter
         // Configure presentation style
         hostingController.modalPresentationStyle = .fullScreen
         
-        // Present the SwiftUI view
+        // Present the SwiftUI view with robust error handling
         DispatchQueue.main.async {
-            flutterVC.present(hostingController, animated: true) {
-                print("Successfully presented SwiftUI view for route: \(route)")
+            // Find the topmost view controller that can present
+            guard let topVC = self.findTopViewController(from: flutterVC) else {
+                print("⚠️ Cannot present \(route): No suitable view controller found")
+                return
+            }
+            
+            // If there's already a presented view, handle it gracefully
+            if let presentedVC = topVC.presentedViewController {
+                print("⚠️ Dismissing existing view to present \(route)")
+                presentedVC.dismiss(animated: false) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        topVC.present(hostingController, animated: true) {
+                            print("Successfully presented SwiftUI view for route: \(route) after dismissal")
+                        }
+                    }
+                }
+            } else {
+                // Direct presentation
+                topVC.present(hostingController, animated: true) {
+                    print("Successfully presented SwiftUI view for route: \(route)")
+                }
             }
         }
     }
@@ -252,6 +301,26 @@ import Flutter
     
     private func handleGetAllNativeViews(result: @escaping FlutterResult) {
         result(getAllNativeViews())
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// Find the topmost view controller that can present modally
+    private func findTopViewController(from viewController: UIViewController) -> UIViewController? {
+        // Start with the provided view controller
+        var current = viewController
+        
+        // Keep going up until we find the topmost presented view controller
+        while let presented = current.presentedViewController {
+            current = presented
+        }
+        
+        // Make sure the view controller is in the window hierarchy
+        guard current.view.window != nil else {
+            return nil
+        }
+        
+        return current
     }
     
     // MARK: - Shared ViewModels

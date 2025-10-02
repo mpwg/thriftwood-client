@@ -19,7 +19,7 @@ class SwiftDataBridge: NSObject {
     // MARK: - Properties
     
     /// SwiftData model context for database operations
-    private var modelContext: ModelContext?
+    private(set) var modelContext: ModelContext?
     
     /// Method channel for Flutter communication
     private var methodChannel: FlutterMethodChannel?
