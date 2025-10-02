@@ -34,7 +34,7 @@ struct SwiftUISettingsView: View {
                     title: "Configuration",
                     subtitle: "Configure application and modules", 
                     icon: "gear",
-                    route: "settings_configuration"
+                    route: "/settings/configuration"
                 )
                 .accessibilityLabel("Configuration")
                 .accessibilityHint("Configure application and module settings")
@@ -44,7 +44,7 @@ struct SwiftUISettingsView: View {
                     title: "Profiles",
                     subtitle: "Switch profiles and add new ones",
                     icon: "person.2",
-                    route: "settings_profiles"
+                    route: "/settings/profiles"
                 )
                 .accessibilityLabel("Profiles")
                 .accessibilityHint("Switch between profiles or add new ones")
@@ -54,7 +54,7 @@ struct SwiftUISettingsView: View {
                     title: "System", 
                     subtitle: "System utilities and logs",
                     icon: "gear.badge",
-                    route: "settings_system"
+                    route: "/settings/system"
                 )
                 .accessibilityLabel("System")
                 .accessibilityHint("Access system utilities and logs")
@@ -89,7 +89,7 @@ struct SwiftUISettingsView: View {
                 Text(viewModel.errorMessage ?? "Unknown error")
             }
             .fullScreenCover(isPresented: $showingProfiles) {
-                FlutterSwiftUIBridge.shared.createSwiftUIView(for: "settings_profiles", data: [:])
+                FlutterSwiftUIBridge.shared.createSwiftUIView(for: "/settings/profiles", data: [:])
             }
         }
     }

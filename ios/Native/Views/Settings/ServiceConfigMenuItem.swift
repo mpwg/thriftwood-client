@@ -42,7 +42,7 @@ struct ServiceConfigMenuItem: View {
         }
         .fullScreenCover(isPresented: $isNavigating) {
             FlutterSwiftUIBridge.shared.createSwiftUIView(
-                for: "settings_configuration_\(name.lowercased())",
+                for: "/settings/\(name.lowercased())",
                 data: [:]
             )
         }

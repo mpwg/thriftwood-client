@@ -243,11 +243,15 @@ class DashboardViewModel {
     /// Swift equivalent of Flutter's module.launch
     @MainActor
     func navigateToService(_ service: Service) async {
+        print("DashboardViewModel: Navigating to service - Route: \(service.route), Key: \(service.key)")
         do {
             await navigationCoordinator.navigateFromSwiftUI(to: service.route, data: [
                 "serviceKey": service.key,
                 "title": service.title
             ])
+            print("DashboardViewModel: Navigation request completed")
+        } catch {
+            print("DashboardViewModel: Navigation failed with error: \(error)")
         }
     }
     

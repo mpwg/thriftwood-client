@@ -167,10 +167,14 @@ class HybridNavigationCoordinator {
     }
     
     private func navigateInSwiftUI(to route: String, data: [String: Any]) {
-        // Handle SwiftUI-to-SwiftUI navigation
+        // Handle SwiftUI-to-SwiftUI navigation by presenting the new view
+        print("Presenting SwiftUI view for route: \(route)")
+        
+        // Use the bridge to present the native view
+        FlutterSwiftUIBridge.shared.presentNativeView(route: route, data: data)
+        
+        // Update navigation path for history tracking
         DispatchQueue.main.async { [weak self] in
-            // For now, we'll handle this by updating the navigation path
-            // In a real implementation, this would integrate with SwiftUI's NavigationStack
             self?.navigationPath.append(route)
         }
     }

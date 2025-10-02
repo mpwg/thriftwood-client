@@ -67,14 +67,17 @@ struct QuickActionsMenu: View {
     }
     
     private func navigateToSettings() async {
+        print("QuickActionsMenu: Settings navigation initiated")
         let bridge = FlutterSwiftUIBridge.shared
         let settingsRoute = "/settings"
         
         if bridge.shouldUseNativeView(for: settingsRoute) {
             // Navigate to SwiftUI settings view
+            print("QuickActionsMenu: Using SwiftUI navigation for settings")
             await viewModel.navigateToService(Service.createSettingsService())
         } else {
             // Navigate back to Flutter for settings view
+            print("QuickActionsMenu: Using Flutter navigation for settings")
             bridge.navigateBackToFlutter(data: [
                 "navigateTo": settingsRoute,
                 "from": "dashboard_quick_actions"

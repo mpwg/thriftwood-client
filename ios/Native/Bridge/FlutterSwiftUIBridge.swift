@@ -270,78 +270,79 @@ import Flutter
     // MARK: - SwiftUI View Factory
     
     func createSwiftUIView(for route: String, data: [String: Any]) -> AnyView {
-        // Only log when creating non-settings views to reduce noise
-        if !route.hasPrefix("settings_") {
-            print("Creating SwiftUI view for route: \(route)")
-        }
+        print("Creating SwiftUI view for route: \(route)")
+        
+        // STANDARD RULE: All routes MUST use Flutter format: "/path/subpath"
+        // NO underscore variants allowed (settings_general -> /settings/general)
+        // This ensures 100% consistency between Flutter and SwiftUI navigation
         
         switch route {
-        case "settings":
+        case "/settings":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUISettingsView(viewModel: settingsViewModel))
-        case "settings_configuration":
+        case "/settings/configuration":
             let settingsViewModel = getSharedSettingsViewModel()
             let configurationViewModel = ConfigurationViewModel(settingsViewModel: settingsViewModel)
             return AnyView(SwiftUIConfigurationView(viewModel: configurationViewModel))
-        case "settings_profiles":
+        case "/settings/profiles":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIProfilesView(viewModel: settingsViewModel))
-        case "settings_system":
+        case "/settings/system":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUISystemView(viewModel: settingsViewModel))
-        case "settings_system_logs":
+        case "/settings/system/logs":
             let systemLogsViewModel = SystemLogsViewModel()
             return AnyView(SwiftUISystemLogsView(viewModel: systemLogsViewModel))
-        case "settings_general":
+        case "/settings/general":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIGeneralSettingsView(viewModel: settingsViewModel))
-        case "settings_dashboard":
+        case "/settings/dashboard":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIDashboardSettingsView(viewModel: settingsViewModel))
-        case "settings_wake_on_lan":
+        case "/settings/wake_on_lan":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIWakeOnLANSettingsView(viewModel: settingsViewModel))
-        case "settings_search":
+        case "/settings/search":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUISearchSettingsView(viewModel: settingsViewModel))
-        case "settings_external_modules":
+        case "/settings/external_modules":
             let settingsViewModel = getSharedSettingsViewModel()
-            return AnyView(SwiftUIExternalModulesSettingsView(viewModel: settingsViewModel))
-        case "settings_drawer":
+            return AnyView(SwiftUIExternalModulesSettingsView(viewModel: settingsViewModel))  
+        case "/settings/drawer":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIDrawerSettingsView(viewModel: settingsViewModel))
-        case "settings_quick_actions":
+        case "/settings/quick_actions":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIQuickActionsSettingsView(viewModel: settingsViewModel))
         
         // Service-specific settings views
-        case "settings_radarr":
+        case "/settings/radarr":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIRadarrSettingsView(viewModel: settingsViewModel))
-        case "settings_sonarr":
+        case "/settings/sonarr":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUISonarrSettingsView(viewModel: settingsViewModel))
-        case "settings_lidarr":
+        case "/settings/lidarr":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUILidarrSettingsView(viewModel: settingsViewModel))
-        case "settings_sabnzbd":
+        case "/settings/sabnzbd":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUISABnzbdSettingsView(viewModel: settingsViewModel))
-        case "settings_nzbget":
+        case "/settings/nzbget":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUINZBGetSettingsView(viewModel: settingsViewModel))
-        case "settings_tautulli":
+        case "/settings/tautulli":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUITautulliSettingsView(viewModel: settingsViewModel))
-        case "settings_overseerr":
+        case "/settings/overseerr":
             let settingsViewModel = getSharedSettingsViewModel()
             return AnyView(SwiftUIOverseerrSettingsView(viewModel: settingsViewModel))
         
-        case "settings_all":
+        case "/settings/all":
             return AnyView(SwiftUIAllSettingsView())
-        case "/dashboard", "dashboard":
+        case "/dashboard":
             return AnyView(DashboardView())
-        case "test":
+        case "/test":
             return AnyView(TestSwiftUIView(route: route, data: data))
         default:
             // Fallback view for unimplemented routes
