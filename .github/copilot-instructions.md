@@ -289,10 +289,145 @@ if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) {
 }
 ```
 
-    coordinator.navigateInFlutter(route: route, data: data)
+## Method Channel Initialization Patterns - CRITICAL
 
+### Bridge Architecture Overview
+
+The app uses a centralized bridge system to prevent method channel conflicts and ensure proper initialization:
+
+1. **BridgeMethodDispatcher**: Central dispatcher that prevents handler conflicts
+2. **SwiftDataBridge**: Handles SwiftData model access from Flutter
+3. **DataLayerManager**: Unified data access API with automatic storage selection
+4. **HiveBridge**: Flutter-side handler for Hive data operations
+
+### MANDATORY Initialization Sequence
+
+**CRITICAL**: All data-dependent services must follow this exact initialization pattern to prevent "Flutter method channel not initialized" errors.
+
+#### 1. Swift Side Initialization (AppDelegate.swift)
+
+```swift
+private func initializeHybridBridge() {
+    guard let flutterViewController = window?.rootViewController as? FlutterViewController else {
+        print("❌ Error: Could not find Flutter view controller for bridge initialization")
+        return
+    }
+
+    // Initialize the Swift-first bridge system
+    FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
 }
-
 ```
 
+#### 2. FlutterSwiftUIBridge.initialize Implementation
+
+```swift
+@MainActor
+func initialize(with flutterViewController: FlutterViewController) {
+    // 1. Initialize central dispatcher (prevents conflicts)
+    BridgeMethodDispatcher.shared.initialize(with: flutterViewController)
+    BridgeMethodDispatcher.shared.registerCoreBridgeMethods()
+
+    // 2. Initialize data bridge for SwiftData access
+    SwiftDataBridge.shared.initialize(with: flutterViewController)
+
+    // 3. CRITICAL: Initialize DataLayerManager with proper context and channel
+    Task {
+        await initializeDataLayerManager(with: flutterViewController)
+    }
+}
+
+private func initializeDataLayerManager(with flutterViewController: FlutterViewController) async {
+    // Get SwiftData context from SwiftDataBridge
+    guard let modelContext = SwiftDataBridge.shared.modelContext else {
+        print("❌ Cannot initialize DataLayerManager: SwiftData context not available")
+        return
+    }
+
+    // CRITICAL: Use same channel name as Flutter HiveBridge
+    let methodChannel = FlutterMethodChannel(
+        name: "com.thriftwood.hive",  // Must match HiveBridge channel name
+        binaryMessenger: flutterViewController.binaryMessenger
+    )
+
+    // Initialize with both SwiftData context and method channel
+    await DataLayerManager.shared.initialize(
+        modelContext: modelContext,
+        methodChannel: methodChannel
+    )
+}
+```
+
+#### 3. Flutter Side Initialization (BridgeInitializer.dart)
+
+```dart
+static Future<void> initialize() async {
+    await HybridRouter.initialize();
+
+    // CRITICAL: Initialize HiveBridge to handle method calls from DataLayerManager
+    HiveBridge.initialize();  // Registers handler for 'com.thriftwood.hive' channel
+}
+```
+
+### Common Error Patterns and Fixes
+
+#### Error: "Flutter method channel not initialized"
+
+**Root Cause**: DataLayerManager or other Swift services trying to use method channels before proper initialization.
+
+**Fix Checklist**:
+
+1. ✅ Verify BridgeInitializer.initialize() is called in Flutter main()
+2. ✅ Ensure HiveBridge.initialize() is included in BridgeInitializer
+3. ✅ Confirm DataLayerManager.initialize() is called with proper method channel
+4. ✅ Check method channel names match between Swift and Flutter sides
+5. ✅ Verify SwiftDataBridge exposes modelContext as private(set)
+
+#### Error: Method channel handler conflicts
+
+**Root Cause**: Multiple services registering handlers for the same method channel.
+
+**Fix**: Use BridgeMethodDispatcher for all method channel operations:
+
+```swift
+// ✅ CORRECT - Use centralized dispatcher
+BridgeMethodDispatcher.shared.registerHandler(for: "myMethod") { call, result in
+    // Handle method call
+}
+
+// ❌ INCORRECT - Direct method channel registration
+methodChannel?.setMethodCallHandler { call, result in
+    // This can cause conflicts
+}
+```
+
+### Required Method Channel Mappings
+
+| Swift Service          | Method Channel Name     | Flutter Handler        | Required Methods                                             |
+| ---------------------- | ----------------------- | ---------------------- | ------------------------------------------------------------ |
+| DataLayerManager       | `com.thriftwood.hive`   | HiveBridge             | `getHiveSettings`, `updateHiveProfile`, `updateHiveSettings` |
+| BridgeMethodDispatcher | `com.thriftwood.bridge` | HybridRouter           | `navigateToNative`, `isNativeViewAvailable`                  |
+| SwiftDataBridge        | `com.thriftwood.bridge` | BridgeMethodDispatcher | `profile.*`, `settings.*`                                    |
+
+### Debugging Method Channel Issues
+
+1. **Check initialization logs**: Look for "✅ [Service] initialized" messages
+2. **Verify channel registration**: Ensure Flutter and Swift use identical channel names
+3. **Test method availability**: Use BridgeMethodDispatcher.getRegisteredMethods() for debugging
+4. **Validate call sequence**: DataLayerManager requires SwiftDataBridge to be initialized first
+
+### Integration Testing Pattern
+
+```swift
+// Test that all required services are properly initialized
+func testBridgeInitialization() async {
+    // 1. Verify BridgeMethodDispatcher is ready
+    XCTAssertTrue(BridgeMethodDispatcher.shared.isInitialized)
+
+    // 2. Verify SwiftDataBridge has context
+    XCTAssertNotNil(SwiftDataBridge.shared.modelContext)
+
+    // 3. Verify DataLayerManager is initialized
+    let settings = try await DataLayerManager.shared.getAppSettings()
+    XCTAssertNotNil(settings)
+}
 ```
