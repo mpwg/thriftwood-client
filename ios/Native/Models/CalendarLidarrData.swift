@@ -51,8 +51,8 @@ struct CalendarLidarrData: CalendarData {
     }
     
     func posterUrl() -> String? {
-        // Note: In actual implementation, this would come from the API response
-        // For now, return nil to match the placeholder behavior
+        // Poster URLs are not currently available from the API response
+        // Images would require additional API calls or caching infrastructure
         return nil
     }
     
@@ -80,8 +80,12 @@ struct CalendarLidarrData: CalendarData {
     }
     
     func enterContent() {
-        // Navigate to Lidarr artist details
-        // This will be implemented when Lidarr module is migrated
-        print("Navigate to Lidarr artist: \(artistId)")
+        // Navigate to Lidarr artist details via Flutter bridge
+        // Uses hybrid navigation to route to Flutter's Lidarr module
+        FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: [
+            "navigateTo": "/lidarr/artist/\(artistId)",
+            "artistId": artistId,
+            "from": "calendar"
+        ])
     }
 }

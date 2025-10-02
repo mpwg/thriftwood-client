@@ -59,8 +59,8 @@ struct CalendarRadarrData: CalendarData {
     }
     
     func posterUrl() -> String? {
-        // Note: In actual implementation, this would come from the API response
-        // For now, return nil to match the placeholder behavior
+        // Poster URLs are not currently available from the API response
+        // Images would require additional API calls or caching infrastructure
         return nil
     }
     
@@ -88,8 +88,12 @@ struct CalendarRadarrData: CalendarData {
     }
     
     func enterContent() {
-        // Navigate to Radarr movie details
-        // This will be implemented when Radarr module is migrated
-        print("Navigate to Radarr movie: \(id)")
+        // Navigate to Radarr movie details via Flutter bridge
+        // Uses hybrid navigation to route to Flutter's Radarr module
+        FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: [
+            "navigateTo": "/radarr/movie/\(id)",
+            "movieId": id,
+            "from": "calendar"
+        ])
     }
 }

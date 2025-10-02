@@ -83,8 +83,8 @@ struct CalendarSonarrData: CalendarData {
     }
     
     func posterUrl() -> String? {
-        // Note: In actual implementation, this would come from the API response
-        // For now, return nil to match the placeholder behavior
+        // Poster URLs are not currently available from the API response
+        // Images would require additional API calls or caching infrastructure
         return nil
     }
     
@@ -115,8 +115,12 @@ struct CalendarSonarrData: CalendarData {
     }
     
     func enterContent() {
-        // Navigate to Sonarr series details
-        // This will be implemented when Sonarr module is migrated
-        print("Navigate to Sonarr series: \(seriesID)")
+        // Navigate to Sonarr series details via Flutter bridge
+        // Uses hybrid navigation to route to Flutter's Sonarr module
+        FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: [
+            "navigateTo": "/sonarr/series/\(seriesID)",
+            "seriesId": seriesID,
+            "from": "calendar"
+        ])
     }
 }
