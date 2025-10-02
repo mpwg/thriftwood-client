@@ -1,55 +1,79 @@
 import UIKit
+import SwiftUI
 import Flutter
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
-  override func application(
+@objc class AppDelegate: UIResponder, UIApplicationDelegate {
+  var window: UIWindow?
+  private var flutterEngine: FlutterEngine?
+  
+  func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // Register Flutter plugins
-    GeneratedPluginRegistrant.register(with: self)
     
     // Handle Mac Catalyst specific setup
     #if targetEnvironment(macCatalyst)
     print("🖥️ Running in Mac Catalyst environment")
-    // Disable unsupported features for Mac Catalyst
     #else
     print("📱 Running in native iOS environment")
     #endif
     
-    // Initialize the hybrid bridge system
+    // Initialize Flutter engine for hybrid functionality
+    initializeFlutterEngine()
+    
+    // Create SwiftUI-first window
+    setupSwiftUIWindow()
+    
+    return true
+  }
+  
+  /// Initialize Flutter engine for embedding Flutter views when needed
+  private func initializeFlutterEngine() {
+    flutterEngine = FlutterEngine(name: "thriftwood_flutter_engine")
+    flutterEngine?.run()
+    
+    // Register Flutter plugins
+    GeneratedPluginRegistrant.register(with: flutterEngine!)
+    
+    print("✅ Flutter engine initialized for hybrid functionality")
+  }
+  
+  /// Setup SwiftUI as the root view controller with native navigation
+  private func setupSwiftUIWindow() {
+    window = UIWindow(frame: UIScreen.main.bounds)
+    
+    // Create SwiftUI root view with native NavigationStack
+    let rootView = NavigationStack {
+      DashboardView()
+    }
+    let hostingController = UIHostingController(rootView: rootView)
+    
+    window?.rootViewController = hostingController
+    window?.makeKeyAndVisible()
+    
+    // Initialize the Flutter bridge for hybrid functionality
     initializeHybridBridge()
     
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    print("✅ SwiftUI window setup complete - Native NavigationStack enabled")
   }
   
-  /// Initialize the Flutter-SwiftUI hybrid bridge with Swift-first enforcement
+  /// Initialize the Flutter-SwiftUI hybrid bridge for embedded Flutter views
   private func initializeHybridBridge() {
-    guard let flutterViewController = window?.rootViewController as? FlutterViewController else {
-      print("❌ Error: Could not find Flutter view controller for bridge initialization")
+    guard let engine = flutterEngine else {
+      print("❌ Error: Flutter engine not initialized")
       return
     }
-
-    // Initialize the Swift-first bridge system
+    
+    // Initialize the hybrid bridge with the Flutter engine  
+    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
     FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
     
-    print("✅ Swift-first hybrid bridge initialization complete")
-    print("✅ All method channel conflicts prevented")
-    print("✅ Settings and Dashboard eliminated from Flutter")
-  }
-  
-  /// DEPRECATED: Native views are now auto-registered in FlutterSwiftUIBridge.registerCompletedSwiftFeatures()
-  /// This method is no longer called to prevent duplicate registrations
-  private func registerNativeViews() {
-    // NOTE: This method is deprecated
-    // Native view registration is now handled automatically in:
-    // FlutterSwiftUIBridge.registerCompletedSwiftFeatures()
-    print("⚠️ DEPRECATED: registerNativeViews() - use FlutterSwiftUIBridge.registerCompletedSwiftFeatures()")
+    print("✅ Hybrid bridge initialized - SwiftUI primary, Flutter embedded")
   }
   
   /// Handle URL schemes for deep linking
-  override func application(
+  func application(
     _ app: UIApplication,
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey : Any] = [:]
@@ -60,7 +84,7 @@ import Flutter
       return true
     }
     
-    // Fallback to Flutter's URL handling
-    return super.application(app, open: url, options: options)
+    // For SwiftUI-first architecture, we handle URLs directly
+    return false
   }
 }

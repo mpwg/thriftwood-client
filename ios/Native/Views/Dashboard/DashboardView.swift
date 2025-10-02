@@ -56,41 +56,31 @@ struct DashboardView: View {
     // MARK: - Body
     
     var body: some View {
-        NavigationStack {
-            TabView(selection: $selectedTab) {
-                // Modules tab - Swift equivalent of ModulesPage
-                ModulesView(viewModel: viewModel)
-                    .tabItem {
-                        Image(systemName: "square.grid.2x2")
-                        Text("Modules")
-                    }
-                    .tag(0)
-                
-                // Calendar tab - Swift equivalent of CalendarPage  
-                CalendarView()
-                    .tabItem {
-                        Image(systemName: "calendar")
-                        Text("Calendar")
-                    }
-                    .tag(1)
-            }
-            .navigationTitle("LunaSea")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Back") {
-                        dismiss()
-                    }
-                    .accessibilityLabel("Back")
-                    .accessibilityHint("Return to the previous screen")
+        TabView(selection: $selectedTab) {
+            // Modules tab - Swift equivalent of ModulesPage
+            ModulesView(viewModel: viewModel)
+                .tabItem {
+                    Image(systemName: "square.grid.2x2")
+                    Text("Modules")
                 }
-                
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Quick Actions Menu - Swift equivalent of Flutter's quick actions
-                    QuickActionsMenu(viewModel: viewModel)
-                    
-                    SwitchViewButton(selectedTab: $selectedTab)
+                .tag(0)
+            
+            // Calendar tab - Swift equivalent of CalendarPage  
+            CalendarView()
+                .tabItem {
+                    Image(systemName: "calendar")
+                    Text("Calendar")
                 }
+                .tag(1)
+        }
+        .navigationTitle("LunaSea")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                // Quick Actions Menu - Swift equivalent of Flutter's quick actions
+                QuickActionsMenu(viewModel: viewModel)
+                
+                SwitchViewButton(selectedTab: $selectedTab)
             }
         }
         .refreshable {

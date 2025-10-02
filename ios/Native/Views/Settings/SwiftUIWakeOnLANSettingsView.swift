@@ -14,8 +14,8 @@ struct SwiftUIWakeOnLANSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationStack {
-            List {
+
+        List {
                 Section("Wake on LAN Configuration") {
                     Toggle("Enable Wake on LAN", isOn: Binding(
                         get: { viewModel.selectedProfile?.wakeOnLanEnabled ?? false },
@@ -82,4 +82,3 @@ struct SwiftUIWakeOnLANSettingsView: View {
             }
         }
     }
-}

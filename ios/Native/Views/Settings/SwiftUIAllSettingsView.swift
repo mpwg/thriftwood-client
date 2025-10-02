@@ -14,8 +14,7 @@ struct SwiftUIAllSettingsView: View {
     @State private var settingsViewModel = SettingsViewModel()
     
     var body: some View {
-        NavigationStack {
-            List {
+        List {
                 // Configuration Section
                 Section("Configuration") {
                     SettingsMenuItem(
@@ -100,13 +99,5 @@ struct SwiftUIAllSettingsView: View {
             }
             .navigationTitle("All Settings")
             .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Back") {
-                        dismiss()
-                    }
-                }
-            }
-        }
     }
 }

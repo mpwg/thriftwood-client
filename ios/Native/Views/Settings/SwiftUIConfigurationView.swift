@@ -14,8 +14,7 @@ struct SwiftUIConfigurationView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationStack {
-            List {
+        List {
                 if viewModel.selectedProfile == nil {
                     Section {
                         VStack(spacing: 16) {
@@ -90,16 +89,8 @@ struct SwiftUIConfigurationView: View {
             }
             .navigationTitle("Configuration")
             .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Back") {
-                        dismiss()
-                    }
-                }
-            }
             .task {
                 await viewModel.loadConfiguration()
             }
-        }
     }
 }

@@ -22,8 +22,8 @@ struct SwiftUISettingsView: View {
     @State private var showingProfiles = false
     
     var body: some View {
-        NavigationStack {
-            List {
+
+        List {
                 // MARK: - Flutter Parity Implementation
                 // Flutter equivalent: lib/modules/settings/routes/settings/route.dart
                 // Validation date: 2025-01-17
@@ -93,4 +93,3 @@ struct SwiftUISettingsView: View {
             }
         }
     }
-}
