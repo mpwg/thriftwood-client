@@ -78,15 +78,11 @@ struct DashboardView: View {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Back to Flutter") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: [
-                            "lastRoute": "/dashboard",
-                            "selectedTab": selectedTab,
-                            "timestamp": Date().timeIntervalSince1970
-                        ])
+                    Button("Back") {
+                        dismiss()
                     }
-                    .accessibilityLabel("Back to Flutter")
-                    .accessibilityHint("Return to the previous screen in Flutter")
+                    .accessibilityLabel("Back")
+                    .accessibilityHint("Return to the previous screen")
                 }
                 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {

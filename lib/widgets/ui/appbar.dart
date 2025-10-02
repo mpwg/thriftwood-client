@@ -235,8 +235,8 @@ class _State extends State<LunaAppBar> {
     return SizedBox(
       child: LunaIconButton.appBar(
         icon: Icons.arrow_back_ios_new_rounded,
-        onPressed: LunaRouter().popSafely,
-        onLongPress: LunaRouter().popToRootRoute,
+        onPressed: LunaRouter.popSafelyStatic,
+        onLongPress: LunaRouter.popToRootRouteStatic,
       ),
       height: kToolbarHeight,
     );

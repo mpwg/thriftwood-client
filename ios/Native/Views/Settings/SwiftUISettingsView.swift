@@ -64,10 +64,10 @@ struct SwiftUISettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
+                        dismiss()
                     }
-                    .accessibilityLabel("Back to Flutter")
-                    .accessibilityHint("Return to the previous screen in Flutter")
+                    .accessibilityLabel("Back")
+                    .accessibilityHint("Return to the previous screen")
                 }
                 
                 // Profile selector in top right (matches Flutter)
