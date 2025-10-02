@@ -62,6 +62,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		40D4667B2E8B0019001E5DB5 /* Native */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Native; sourceTree = "<group>"; };
+		40E9690C2E8F0BD7001E094F /* FlutterBridge */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = FlutterBridge; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +91,7 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				40E9690C2E8F0BD7001E094F /* FlutterBridge */,
 				40D4667B2E8B0019001E5DB5 /* Native */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
@@ -172,6 +174,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				40D4667B2E8B0019001E5DB5 /* Native */,
+				40E9690C2E8F0BD7001E094F /* FlutterBridge */,
 			);
 			name = Runner;
 			productName = Runner;

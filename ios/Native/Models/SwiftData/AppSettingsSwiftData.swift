@@ -197,7 +197,8 @@ extension AppSettingsSwiftData {
             "id": id.uuidString,
             "enabledProfile": enabledProfile,
             
-            // Theme
+            // Theme - include selectedTheme field that ThriftwoodAppSettings expects
+            "_selectedTheme": themeAmoled ? "dark" : "system",
             "themeAmoled": themeAmoled,
             "themeAmoledBorder": themeAmoledBorder,
             "themeImageBackgroundOpacity": themeImageBackgroundOpacity,
@@ -239,10 +240,15 @@ extension AppSettingsSwiftData {
         // Profile
         settings.enabledProfile = dict["enabledProfile"] as? String ?? "default"
         
-        // Theme
+        // Theme - handle both direct fields and _selectedTheme mapping
         settings.themeAmoled = dict["themeAmoled"] as? Bool ?? false
-        settings.themeAmoledBorder = dict["themeAmoledBorder"] as? Bool ?? false
+        settings.themeAmoledBorder = dict["themeAmoledBorder"] as? Bool ?? false  
         settings.themeImageBackgroundOpacity = dict["themeImageBackgroundOpacity"] as? Int ?? 20
+        
+        // Handle _selectedTheme from ThriftwoodAppSettings Codable
+        if let themeString = dict["_selectedTheme"] as? String {
+            settings.themeAmoled = (themeString == "dark")
+        }
         
         // Drawer
         settings.drawerAutomaticManage = dict["drawerAutomaticManage"] as? Bool ?? true
@@ -283,6 +289,11 @@ extension AppSettingsSwiftData {
         if let amoled = dict["themeAmoled"] as? Bool { themeAmoled = amoled }
         if let border = dict["themeAmoledBorder"] as? Bool { themeAmoledBorder = border }
         if let opacity = dict["themeImageBackgroundOpacity"] as? Int { themeImageBackgroundOpacity = opacity }
+        
+        // Handle _selectedTheme from ThriftwoodAppSettings Codable
+        if let themeString = dict["_selectedTheme"] as? String {
+            themeAmoled = (themeString == "dark")
+        }
         
         // Drawer
         if let manage = dict["drawerAutomaticManage"] as? Bool { drawerAutomaticManage = manage }

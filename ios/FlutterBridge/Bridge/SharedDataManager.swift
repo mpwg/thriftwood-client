@@ -145,7 +145,13 @@ class SharedDataManager {
     
     private func syncToFlutterStorage(_ data: Data, forKey key: String) async throws {
         return try await withCheckedThrowingContinuation { continuation in
-            methodChannel?.invokeMethod("saveToFlutterStorage", arguments: [
+            guard let methodChannel = methodChannel else {
+                // Method channel not initialized, just return success
+                continuation.resume()
+                return
+            }
+            
+            methodChannel.invokeMethod("saveToFlutterStorage", arguments: [
                 "key": key,
                 "data": data.base64EncodedString()
             ]) { result in
@@ -164,7 +170,13 @@ class SharedDataManager {
     
     private func loadFromFlutterStorage<T: Codable>(_ type: T.Type, forKey key: String) async throws -> T? {
         return try await withCheckedThrowingContinuation { continuation in
-            methodChannel?.invokeMethod("loadFromFlutterStorage", arguments: [
+            guard let methodChannel = methodChannel else {
+                // Method channel not initialized, return nil immediately
+                continuation.resume(returning: nil)
+                return
+            }
+            
+            methodChannel.invokeMethod("loadFromFlutterStorage", arguments: [
                 "key": key
             ]) { result in
                 if let error = result as? FlutterError {
@@ -192,7 +204,13 @@ class SharedDataManager {
     
     private func removeFromFlutterStorage(forKey key: String) async throws {
         return try await withCheckedThrowingContinuation { continuation in
-            methodChannel?.invokeMethod("removeFromFlutterStorage", arguments: [
+            guard let methodChannel = methodChannel else {
+                // Method channel not initialized, just return success
+                continuation.resume()
+                return
+            }
+            
+            methodChannel.invokeMethod("removeFromFlutterStorage", arguments: [
                 "key": key
             ]) { result in
                 if let error = result as? FlutterError {

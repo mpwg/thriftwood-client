@@ -43,10 +43,8 @@ import Flutter
   private func setupSwiftUIWindow() {
     window = UIWindow(frame: UIScreen.main.bounds)
     
-    // Create SwiftUI root view with native NavigationStack
-    let rootView = NavigationStack {
-      DashboardView()
-    }
+    // Create SwiftUI root view using MainAppCoordinatorView for proper navigation handling
+    let rootView = MainAppCoordinatorView()
     let hostingController = UIHostingController(rootView: rootView)
     
     window?.rootViewController = hostingController

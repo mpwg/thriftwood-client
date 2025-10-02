@@ -10,14 +10,24 @@ import SwiftUI
 import Flutter
 
 /// Main SwiftUI coordinator that manages the entire app navigation
-/// Replaces Flutter as the primary framework and embeds Flutter views when needed
+/// Serves as the root SwiftUI view that allows Flutter-initiated navigation to present SwiftUI views
 struct MainAppCoordinatorView: View {
     @State private var settingsViewModel = SettingsViewModel()
-    @State private var isFlutterReady = false
+    @State private var isInitializing = true
     
     var body: some View {
         Group {
-            if settingsViewModel.hasValidServices {
+            if isInitializing {
+                // Initial loading state - let Flutter handle navigation
+                VStack(spacing: 16) {
+                    ProgressView()
+                    Text("Loading...")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(UIColor.systemBackground))
+            } else if settingsViewModel.hasValidServices {
                 // Show SwiftUI dashboard when services are configured
                 DashboardView()
             } else {
@@ -35,14 +45,10 @@ struct MainAppCoordinatorView: View {
         // Load settings to determine what to show
         await settingsViewModel.loadSettings()
         
-        // Initialize Flutter bridge for hybrid functionality
-        await initializeFlutterBridge()
-    }
-    
-    private func initializeFlutterBridge() async {
-        // Bridge is already initialized by AppDelegate in SwiftUI-first architecture
-        // Just mark as ready since initialization happens at app startup
-        isFlutterReady = true
+        // Brief delay to allow Flutter initialization to complete
+        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+        
+        isInitializing = false
     }
 }
 

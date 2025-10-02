@@ -465,9 +465,26 @@ class DataLayerManager {
                     } else if let settings = result as? [String: Any] {
                         continuation.resume(returning: settings)
                     } else {
-                        continuation.resume(throwing: DataLayerError.invalidData(
-                            "Unexpected result from getHiveSettings"
-                        ))
+                        // Better error reporting - show what we actually got
+                        let resultType = type(of: result)
+                        let resultDescription = result.map { "\($0)" } ?? "nil"
+                        print("⚠️ DataLayerManager: getHiveSettings returned unexpected type: \(resultType), value: \(resultDescription)")
+                        
+                        // If result is nil, provide default settings
+                        if result is NSNull || result == nil {
+                            print("📝 DataLayerManager: Using default settings as Hive returned null")
+                            let defaultSettings: [String: Any] = [
+                                "enabledProfile": "default",
+                                "profiles": [:],
+                                "_selectedTheme": "system",
+                                "hybridSettingsUseSwiftUI": false
+                            ]
+                            continuation.resume(returning: defaultSettings)
+                        } else {
+                            continuation.resume(throwing: DataLayerError.invalidData(
+                                "Unexpected result from getHiveSettings: \(resultType) - \(resultDescription)"
+                            ))
+                        }
                     }
                 }
             }
