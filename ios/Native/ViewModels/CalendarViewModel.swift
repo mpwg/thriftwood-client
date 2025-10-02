@@ -70,9 +70,10 @@ class CalendarViewModel {
     // MARK: - Initialization
     
     init(methodChannel: FlutterMethodChannel? = nil) {
+        let todayDate = Calendar.current.startOfDay(for: Date())
         self.methodChannel = methodChannel
-        self.today = Calendar.current.startOfDay(for: Date())
-        self.selectedDate = self.today
+        self.today = todayDate
+        self.selectedDate = todayDate
         
         Task {
             await loadFromFlutterStorage()
