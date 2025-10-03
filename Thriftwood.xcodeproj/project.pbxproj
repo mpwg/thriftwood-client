@@ -6,6 +6,11 @@
 	objectVersion = 90;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		403991B22E905C68001E827C /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 403991B12E905C68001E827C /* Swinject */; };
+		403991B62E905E7D001E827C /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 403991B52E905E7D001E827C /* OpenAPIRuntime */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		402888492E904420005376F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -51,6 +56,8 @@
 		402888342E90441F005376F0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				403991B62E905E7D001E827C /* OpenAPIRuntime in Frameworks */,
+				403991B22E905C68001E827C /* Swinject in Frameworks */,
 			);
 		};
 		402888452E904420005376F0 /* Frameworks */ = {
@@ -96,6 +103,10 @@
 				402888392E90441F005376F0 /* Thriftwood */,
 			);
 			name = Thriftwood;
+			packageProductDependencies = (
+				403991B12E905C68001E827C /* Swinject */,
+				403991B52E905E7D001E827C /* OpenAPIRuntime */,
+			);
 			productName = Thriftwood;
 			productReference = 402888372E90441F005376F0 /* Thriftwood.app */;
 			productType = "com.apple.product-type.application";
@@ -149,6 +160,11 @@
 			);
 			mainGroup = 4028882E2E90441F005376F0;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				403991B02E905C68001E827C /* XCRemoteSwiftPackageReference "Swinject" */,
+				403991B32E905E58001E827C /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
+				403991B42E905E7D001E827C /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
+			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 402888382E90441F005376F0 /* Products */;
 			projectDirPath = "";
@@ -513,6 +529,46 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		403991B02E905C68001E827C /* XCRemoteSwiftPackageReference "Swinject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Swinject/Swinject.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.10.0;
+			};
+		};
+		403991B32E905E58001E827C /* XCRemoteSwiftPackageReference "swift-openapi-generator" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-generator";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.10.3;
+			};
+		};
+		403991B42E905E7D001E827C /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-runtime";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		403991B12E905C68001E827C /* Swinject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 403991B02E905C68001E827C /* XCRemoteSwiftPackageReference "Swinject" */;
+			productName = Swinject;
+		};
+		403991B52E905E7D001E827C /* OpenAPIRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 403991B42E905E7D001E827C /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */;
+			productName = OpenAPIRuntime;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4028882F2E90441F005376F0 /* Project object */;
 }
