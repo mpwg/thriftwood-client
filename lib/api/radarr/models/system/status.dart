@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'status.g.dart';
 
 /// Model for the system status from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

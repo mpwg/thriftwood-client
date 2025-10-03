@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lunasea/vendor.dart';
 
-part 'calendar_starting_type.g.dart';
-
-@HiveType(typeId: 15, adapterName: 'CalendarStartingTypeAdapter')
 enum CalendarStartingType {
-  @HiveField(0)
   CALENDAR,
-  @HiveField(1)
   SCHEDULE,
 }
 

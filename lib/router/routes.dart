@@ -4,7 +4,6 @@ import 'package:lunasea/modules.dart';
 import 'package:lunasea/router/router.dart';
 import 'package:lunasea/router/routes/bios.dart';
 import 'package:lunasea/router/routes/dashboard.dart';
-import 'package:lunasea/router/routes/external_modules.dart';
 import 'package:lunasea/router/routes/lidarr.dart';
 import 'package:lunasea/router/routes/nzbget.dart';
 import 'package:lunasea/router/routes/radarr.dart';
@@ -19,7 +18,6 @@ import 'package:lunasea/widgets/pages/not_enabled.dart';
 enum LunaRoutes {
   bios('bios', root: BIOSRoutes.HOME),
   dashboard('dashboard', root: DashboardRoutes.HOME),
-  externalModules('external_modules', root: ExternalModulesRoutes.HOME),
   lidarr('lidarr', root: LidarrRoutes.HOME),
   nzbget('nzbget', root: NZBGetRoutes.HOME),
   radarr('radarr', root: RadarrRoutes.HOME),

@@ -4,7 +4,6 @@ import 'package:lunasea/api/radarr/utilities.dart';
 import 'package:lunasea/api/radarr/models.dart';
 import 'package:lunasea/api/radarr/types.dart';
 
-part 'queue.g.dart';
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class RadarrQueue {

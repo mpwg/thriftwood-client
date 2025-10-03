@@ -3,7 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/types.dart';
 import 'package:lunasea/api/radarr/utilities.dart';
 
-part 'directory.g.dart';
 
 /// Model for a directory from the filesystem from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

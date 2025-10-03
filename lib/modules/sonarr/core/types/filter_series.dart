@@ -1,21 +1,13 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/sonarr.dart';
 
-part 'filter_series.g.dart';
 
-@HiveType(typeId: 27, adapterName: 'SonarrSeriesFilterAdapter')
 enum SonarrSeriesFilter {
-  @HiveField(0)
   ALL,
-  @HiveField(1)
   MONITORED,
-  @HiveField(2)
   UNMONITORED,
-  @HiveField(3)
   CONTINUING,
-  @HiveField(4)
   ENDED,
-  @HiveField(5)
   MISSING,
 }
 

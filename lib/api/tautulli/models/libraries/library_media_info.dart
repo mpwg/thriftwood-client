@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'library_media_info.g.dart';
 
 /// Model to store the Tautulli media information table data records.
 ///

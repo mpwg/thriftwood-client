@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/modules/sonarr.dart';
 
-part 'missing.g.dart';
 
 /// Model for missing episode records from Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

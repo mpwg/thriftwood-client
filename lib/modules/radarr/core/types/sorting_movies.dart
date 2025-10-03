@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/radarr.dart';
 
-part 'sorting_movies.g.dart';
 
 enum RadarrMoviesSorting {
   ALPHABETICAL,

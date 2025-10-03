@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'synced_item.g.dart';
 
 /// Model to store data about a synced item from Plex.
 @JsonSerializable(explicitToJson: true)

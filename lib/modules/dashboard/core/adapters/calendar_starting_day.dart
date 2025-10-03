@@ -1,22 +1,12 @@
 import 'package:lunasea/vendor.dart';
 
-part 'calendar_starting_day.g.dart';
-
-@HiveType(typeId: 12, adapterName: 'CalendarStartingDayAdapter')
 enum CalendarStartingDay {
-  @HiveField(0)
   MONDAY,
-  @HiveField(1)
   TUESDAY,
-  @HiveField(2)
   WEDNESDAY,
-  @HiveField(3)
   THURSDAY,
-  @HiveField(4)
   FRIDAY,
-  @HiveField(5)
   SATURDAY,
-  @HiveField(6)
   SUNDAY,
 }
 

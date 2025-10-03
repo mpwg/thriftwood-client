@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'episode_file_quality_quality.g.dart';
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SonarrEpisodeFileQualityQuality {

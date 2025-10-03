@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'quality.g.dart';
 
 /// Store details about a quality profile item.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

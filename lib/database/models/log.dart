@@ -2,8 +2,6 @@ import 'package:lunasea/core.dart';
 import 'package:lunasea/types/log_type.dart';
 import 'package:stack_trace/stack_trace.dart';
 
-part 'log.g.dart';
-
 class LunaLog {
   final int timestamp;
   final LunaLogType type;

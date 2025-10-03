@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/modules/sonarr.dart';
 
-part 'added_release.g.dart';
 
 /// Model for an episode release that was added to Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

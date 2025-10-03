@@ -62,11 +62,9 @@ class _State extends State<SABnzbdRoute> {
   }
 
   Widget _appBar() {
-    List<String> profiles = LunaBox.profiles.keys.fold([], (value, element) {
-      if (LunaBox.profiles.read(element)?.sabnzbdEnabled ?? false)
-        value.add(element);
-      return value;
-    });
+    // Build list of profiles with SABnzbd enabled - to be replaced with SwiftData in future
+    List<String> profiles = [];
+    // TODO: Replace with SwiftDataAccessor.getAllProfiles() when converting this route to async
     List<Widget>? actions;
     if (LunaProfile.current.sabnzbdEnabled)
       actions = [

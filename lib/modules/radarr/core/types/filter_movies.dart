@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/radarr.dart';
 
-part 'filter_movies.g.dart';
 
 enum RadarrMoviesFilter {
   ALL,

@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'user_login_record.g.dart';
 
 /// Model to store a single user login information.
 @JsonSerializable(explicitToJson: true)

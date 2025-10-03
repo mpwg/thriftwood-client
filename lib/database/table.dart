@@ -94,7 +94,7 @@ mixin LunaTableMixin<T> on Enum {
     return update(value as T);
   }
 
-  Stream<BoxEvent> watch() {
+  Stream<MapEntry<dynamic, dynamic>> watch() {
     return box.watch(this.key);
   }
 

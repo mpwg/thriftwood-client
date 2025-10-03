@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'update_check.g.dart';
 
 /// Model to store update information for Tautulli.
 @JsonSerializable(explicitToJson: true)

@@ -1,7 +1,7 @@
 import 'dart:convert';
+part 'stage_log.g.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'stage_log.g.dart';
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SABnzbdStageLog {

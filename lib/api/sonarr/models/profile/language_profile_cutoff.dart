@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'language_profile_cutoff.g.dart';
 
 /// Model for a language profile cutoffs from Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

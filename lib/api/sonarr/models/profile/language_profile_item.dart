@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/sonarr/models/profile/language_profile_item_language.dart';
 
-part 'language_profile_item.g.dart';
 
 /// Model for a language profile nested item from Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

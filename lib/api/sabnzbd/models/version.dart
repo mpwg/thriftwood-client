@@ -1,7 +1,7 @@
 import 'dart:convert';
+part 'version.g.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'version.g.dart';
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SABnzbdVersion {

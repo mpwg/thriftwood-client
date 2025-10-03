@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'library_user_stats.g.dart';
 
 /// Model to store user stats for a library in Plex.
 @JsonSerializable(explicitToJson: true)

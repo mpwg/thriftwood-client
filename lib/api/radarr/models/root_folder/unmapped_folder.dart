@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'unmapped_folder.g.dart';
 
 /// Model for unmapped folders within a root folder from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

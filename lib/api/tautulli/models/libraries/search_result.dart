@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'search_result.g.dart';
 
 /// Model to store Plex Media Server search result data.
 @JsonSerializable(explicitToJson: true)

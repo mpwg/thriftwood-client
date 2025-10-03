@@ -1,22 +1,12 @@
-import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/sonarr.dart';
-part 'monitor_status.g.dart';
 
-@HiveType(typeId: 14, adapterName: 'SonarrMonitorStatusAdapter')
 enum SonarrMonitorStatus {
-  @HiveField(0)
   ALL,
-  @HiveField(1)
   FUTURE,
-  @HiveField(2)
   MISSING,
-  @HiveField(3)
   EXISTING,
-  @HiveField(4)
   FIRST_SEASON,
-  @HiveField(5)
   LAST_SEASON,
-  @HiveField(6)
   NONE,
 }
 
@@ -56,8 +46,6 @@ extension SonarrMonitorStatusExtension on SonarrMonitorStatus {
         return 'lastseason';
       case SonarrMonitorStatus.NONE:
         return 'none';
-      default:
-        return null;
     }
   }
 

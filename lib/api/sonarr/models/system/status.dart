@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/modules/sonarr.dart';
 
-part 'status.g.dart';
 
 /// Model for the system status from Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

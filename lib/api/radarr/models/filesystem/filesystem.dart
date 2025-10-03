@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
-part 'filesystem.g.dart';
 
 /// Model for a call to the filesystem from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

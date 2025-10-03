@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'server.g.dart';
 
 /// Model to store the Plex Media Server details.
 @JsonSerializable(explicitToJson: true)

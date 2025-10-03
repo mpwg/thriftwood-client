@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'table_library.g.dart';
 
 /// Model for a single Tautulli library data from the library table in Tautulli.
 ///

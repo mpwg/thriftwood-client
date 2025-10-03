@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'manual_import_rejection.g.dart';
 
 /// Model for an manual import rejection reason.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

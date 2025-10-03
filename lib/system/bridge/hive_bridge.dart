@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:lunasea/database/database.dart';
-import 'package:lunasea/database/box.dart';
-import 'package:lunasea/database/models/profile.dart';
 import 'package:lunasea/database/tables/lunasea.dart';
 import 'package:lunasea/system/logger.dart';
 import 'package:lunasea/system/bridge/bridge_error.dart';
+import 'package:lunasea/system/bridge/swift_data_accessor.dart';
 
 /// Bridge for synchronizing Hive data between Flutter and SwiftUI
 class HiveBridge {
@@ -93,12 +92,13 @@ class HiveBridge {
   /// Get current Hive settings for SwiftUI
   static Future<Map<String, dynamic>> _getHiveSettings() async {
     try {
-      // Get all profiles
+      // Get all profiles from SwiftData
+      final profilesList = await SwiftDataAccessor.getAllProfiles();
       final profilesMap = <String, Map<String, dynamic>>{};
-      for (String profileKey in LunaBox.profiles.keys) {
-        final profile = LunaBox.profiles.read(profileKey);
-        if (profile != null) {
-          profilesMap[profileKey] = profile.toJson();
+      for (final profileData in profilesList) {
+        final profileKey = profileData['key'] ?? profileData['id'];
+        if (profileKey != null) {
+          profilesMap[profileKey] = profileData;
         }
       }
 
@@ -137,7 +137,6 @@ class HiveBridge {
         'enableTorrentSearching': true,
         'enableUsenetSearching': true,
         'searchIndexers': [],
-        'externalModules': [],
       };
 
       LunaLogger().debug(
@@ -208,8 +207,8 @@ class HiveBridge {
           }
 
           final profileData = Map<String, dynamic>.from(rawProfileData);
-          final profile = LunaProfile.fromJson(profileData);
-          LunaBox.profiles.update(profileKey, profile);
+          // Update profile via SwiftData instead of Hive
+          await SwiftDataAccessor.updateProfile(profileKey, profileData);
         }
       }
 
@@ -309,8 +308,8 @@ class HiveBridge {
       final profileName = rawProfileName.toString();
       final profileData = Map<String, dynamic>.from(rawProfileData);
 
-      final profile = LunaProfile.fromJson(profileData);
-      LunaBox.profiles.update(profileName, profile);
+      // Update profile via SwiftData instead of Hive
+      await SwiftDataAccessor.updateProfile(profileName, profileData);
 
       LunaLogger().debug('HiveBridge: Updated profile $profileName');
     } catch (e, stackTrace) {
@@ -389,18 +388,11 @@ class HiveBridge {
     }
   }
 
-  /// Get logs (equivalent to LunaBox.logs.data access)
+  /// Get logs (equivalent to SwiftDataAccessor.getLogs access)
   static Future<List<Map<String, dynamic>>> _getLogs(dynamic arguments) async {
     try {
-      // Access logs from LunaBox.logs like Flutter implementation
-      final logs = LunaBox.logs.data.map((log) {
-        // Convert LunaLog to JSON but with consistent key format for SwiftUI
-        final json = log.toJson();
-        // Fix the type field to use key instead of title for SwiftUI compatibility
-        json['type'] =
-            log.type.key; // Use key ("warning") instead of title ("Warning")
-        return json;
-      }).toList();
+      // Get logs from SwiftData instead of Hive
+      final logs = await SwiftDataAccessor.getLogs();
 
       LunaLogger().debug('HiveBridge: Retrieved ${logs.length} log entries');
       return logs;
@@ -423,11 +415,11 @@ class HiveBridge {
     }
   }
 
-  /// Clear logs (equivalent to LunaLogger().clear())
+  /// Clear logs (equivalent to SwiftDataAccessor.clearLogs())
   static Future<void> _clearLogs() async {
     try {
-      // Clear logs box using Flutter implementation pattern
-      await LunaBox.logs.clear();
+      // Clear logs via SwiftData instead of Hive
+      await SwiftDataAccessor.clearLogs();
 
       LunaLogger().debug('HiveBridge: Logs cleared');
     } catch (e, stackTrace) {
@@ -436,11 +428,11 @@ class HiveBridge {
     }
   }
 
-  /// Export logs (equivalent to LunaLogger().export())
+  /// Export logs (equivalent to SwiftDataAccessor.exportLogs())
   static Future<String> _exportLogs() async {
     try {
-      // Use the same export logic as LunaLogger().export()
-      final logs = LunaBox.logs.data.map((log) => log.toJson()).toList();
+      // Export logs via SwiftData instead of Hive
+      final logs = await SwiftDataAccessor.exportLogs();
       final encoder = JsonEncoder.withIndent(' ' * 4);
 
       LunaLogger().debug('HiveBridge: Exported ${logs.length} log entries');

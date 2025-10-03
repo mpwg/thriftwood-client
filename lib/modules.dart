@@ -19,10 +19,7 @@ import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
 import 'package:lunasea/system/bridge/hybrid_router.dart';
 import 'package:lunasea/system/bridge/swift_data_accessor.dart';
 
-part 'modules.g.dart';
-
 const MODULE_DASHBOARD_KEY = 'dashboard';
-const MODULE_EXTERNAL_MODULES_KEY = 'external_modules';
 const MODULE_LIDARR_KEY = 'lidarr';
 const MODULE_NZBGET_KEY = 'nzbget';
 const MODULE_OVERSEERR_KEY = 'overseerr';
@@ -36,7 +33,6 @@ const MODULE_WAKE_ON_LAN_KEY = 'wake_on_lan';
 
 enum LunaModule {
   DASHBOARD(MODULE_DASHBOARD_KEY),
-  EXTERNAL_MODULES(MODULE_EXTERNAL_MODULES_KEY),
   LIDARR(MODULE_LIDARR_KEY),
   NZBGET(MODULE_NZBGET_KEY),
   OVERSEERR(MODULE_OVERSEERR_KEY),
@@ -75,8 +71,6 @@ enum LunaModule {
         return LunaModule.TAUTULLI;
       case MODULE_WAKE_ON_LAN_KEY:
         return LunaModule.WAKE_ON_LAN;
-      case MODULE_EXTERNAL_MODULES_KEY:
-        return LunaModule.EXTERNAL_MODULES;
     }
     return null;
   }
@@ -127,8 +121,6 @@ extension LunaModuleEnablementExtension on LunaModule {
         return LunaProfile.current.tautulliEnabled;
       case LunaModule.WAKE_ON_LAN:
         return LunaProfile.current.wakeOnLANEnabled;
-      case LunaModule.EXTERNAL_MODULES:
-        return false; // External modules removed - always false
     }
   }
 }
@@ -158,8 +150,6 @@ extension LunaModuleMetadataExtension on LunaModule {
         return 'Overseerr';
       case LunaModule.WAKE_ON_LAN:
         return 'Wake on LAN';
-      case LunaModule.EXTERNAL_MODULES:
-        return 'lunasea.ExternalModules'.tr();
     }
   }
 
@@ -187,8 +177,6 @@ extension LunaModuleMetadataExtension on LunaModule {
         return LunaIcons.OVERSEERR;
       case LunaModule.WAKE_ON_LAN:
         return Icons.settings_remote_rounded;
-      case LunaModule.EXTERNAL_MODULES:
-        return Icons.settings_ethernet_rounded;
     }
   }
 
@@ -215,8 +203,6 @@ extension LunaModuleMetadataExtension on LunaModule {
       case LunaModule.OVERSEERR:
         return const Color(0xFF6366F1);
       case LunaModule.WAKE_ON_LAN:
-        return LunaColours.accent;
-      case LunaModule.EXTERNAL_MODULES:
         return LunaColours.accent;
     }
   }
@@ -245,8 +231,6 @@ extension LunaModuleMetadataExtension on LunaModule {
         return 'https://overseerr.dev';
       case LunaModule.WAKE_ON_LAN:
         return null;
-      case LunaModule.EXTERNAL_MODULES:
-        return null;
     }
   }
 
@@ -273,8 +257,6 @@ extension LunaModuleMetadataExtension on LunaModule {
       case LunaModule.OVERSEERR:
         return 'https://github.com/sct/overseerr';
       case LunaModule.WAKE_ON_LAN:
-        return null;
-      case LunaModule.EXTERNAL_MODULES:
         return null;
     }
   }
@@ -303,8 +285,6 @@ extension LunaModuleMetadataExtension on LunaModule {
         return 'Manage Requests for New Content';
       case LunaModule.WAKE_ON_LAN:
         return 'Wake Your Machine';
-      case LunaModule.EXTERNAL_MODULES:
-        return 'Access External Modules';
     }
   }
 
@@ -332,8 +312,6 @@ extension LunaModuleMetadataExtension on LunaModule {
         return 'Overseerr is a free and open source software application for managing requests for your media library. It integrates with your existing services, such as Sonarr, Radarr, and Plex!';
       case LunaModule.WAKE_ON_LAN:
         return 'Wake on LAN is an industry standard protocol for waking computers up from a very low power mode remotely by sending a specially constructed packet to the machine.';
-      case LunaModule.EXTERNAL_MODULES:
-        return 'LunaSea allows you to add links to additional modules that are not currently supported allowing you to open the module\'s web GUI without having to leave LunaSea!';
     }
   }
 }
@@ -363,8 +341,6 @@ extension LunaModuleRoutingExtension on LunaModule {
         return null;
       case LunaModule.WAKE_ON_LAN:
         return null;
-      case LunaModule.EXTERNAL_MODULES:
-        return LunaRoutes.externalModules.root.path;
     }
   }
 
@@ -381,7 +357,6 @@ extension LunaModuleRoutingExtension on LunaModule {
       case LunaModule.SONARR:
       case LunaModule.TAUTULLI:
       case LunaModule.WAKE_ON_LAN:
-      case LunaModule.EXTERNAL_MODULES:
         return SettingsRoutes.CONFIGURATION; // All delegate to Swift settings
       case LunaModule.OVERSEERR:
       case LunaModule.SETTINGS:
@@ -494,8 +469,6 @@ extension LunaModuleExtension on LunaModule {
         return null;
       case LunaModule.TAUTULLI:
         return context.read<TautulliState>();
-      case LunaModule.EXTERNAL_MODULES:
-        return null;
     }
   }
 

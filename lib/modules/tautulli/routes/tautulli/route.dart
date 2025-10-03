@@ -43,11 +43,9 @@ class _State extends State<TautulliRoute> {
   }
 
   PreferredSizeWidget _appBar() {
-    List<String> profiles = LunaBox.profiles.keys.fold([], (value, element) {
-      if (LunaBox.profiles.read(element)?.tautulliEnabled ?? false)
-        value.add(element);
-      return value;
-    });
+    // Build list of profiles with Tautulli enabled - to be replaced with SwiftData in future
+    List<String> profiles = [];
+    // TODO: Replace with SwiftDataAccessor.getAllProfiles() when converting this route to async
     List<Widget>? actions;
     if (context.watch<TautulliState>().enabled)
       actions = [

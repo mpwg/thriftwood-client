@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'disk_space.g.dart';
 
 /// Model for disk space details from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

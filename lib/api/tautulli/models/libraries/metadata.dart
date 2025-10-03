@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'metadata.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class TautulliMetadata {

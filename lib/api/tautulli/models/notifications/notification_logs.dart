@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'notification_logs.g.dart';
 
 /// Model to store notification logs from Tautulli.
 ///

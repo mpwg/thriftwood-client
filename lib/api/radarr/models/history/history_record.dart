@@ -4,7 +4,6 @@ import 'package:lunasea/api/radarr/types.dart';
 import 'package:lunasea/api/radarr/utilities.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
-part 'history_record.g.dart';
 
 /// Model for a history record from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

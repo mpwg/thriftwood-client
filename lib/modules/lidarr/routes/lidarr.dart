@@ -80,11 +80,10 @@ class _State extends State<LidarrRoute> {
   }
 
   Widget _appBar() {
-    const db = LunaBox.profiles;
-    final profiles = db.keys.fold<List<String>>([], (arr, key) {
-      if (LunaBox.profiles.read(key)?.lidarrEnabled ?? false) arr.add(key);
-      return arr;
-    });
+    // Build list of profiles with Lidarr enabled - to be replaced with SwiftData in future
+    final profiles = <String>[];
+    // TODO: Replace with SwiftDataAccessor.getAllProfiles() when converting this route to async
+    // For now, leave empty until route is converted to support async profile loading
     List<Widget>? actions;
     if (LunaProfile.current.lidarrEnabled)
       actions = [

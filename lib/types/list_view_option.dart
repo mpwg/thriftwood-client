@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lunasea/core.dart';
 
-part 'list_view_option.g.dart';
-
 const _BLOCK_VIEW = 'BLOCK_VIEW';
 const _GRID_VIEW = 'GRID_VIEW';
 

@@ -18,10 +18,7 @@ class ThriftwoodAppSettings: Codable {
     var profiles: [String: ThriftwoodProfile]
     
     // MARK: - Codable Implementation
-    private enum CodingKeys: String, CodingKey {
-        case selectedTheme
-        case enabledProfile
-        case profiles
+    enum CodingKeys: String, CodingKey {
         case enableImageHeaders
         case enableCustomHeaders
         case enableBiometrics
@@ -52,7 +49,6 @@ class ThriftwoodAppSettings: Codable {
         case enableTorrentSearching
         case enableUsenetSearching
         case searchIndexers
-        case externalModules
         case sonarrQueuePageSize
         case radarrQueuePageSize
         case tautulliRefreshRate
@@ -108,9 +104,6 @@ class ThriftwoodAppSettings: Codable {
     var enableUsenetSearching: Bool
     var searchIndexers: [SearchIndexer]
     
-    // External Modules Settings
-    var externalModules: [ExternalModule]
-    
     // Queue Settings (matching Flutter database tables)
     var sonarrQueuePageSize: Int
     var radarrQueuePageSize: Int
@@ -165,9 +158,6 @@ class ThriftwoodAppSettings: Codable {
         self.enableUsenetSearching = true
         self.searchIndexers = []
         
-        // External Modules defaults
-        self.externalModules = []
-        
         // Queue Settings defaults (matching Flutter)
         self.sonarrQueuePageSize = 50
         self.radarrQueuePageSize = 50
@@ -214,7 +204,6 @@ class ThriftwoodAppSettings: Codable {
         self.enableTorrentSearching = true
         self.enableUsenetSearching = true
         self.searchIndexers = []
-        self.externalModules = []
         self.sonarrQueuePageSize = 50
         self.radarrQueuePageSize = 50
         self.tautulliRefreshRate = 15
@@ -270,7 +259,6 @@ class ThriftwoodAppSettings: Codable {
             self.enableTorrentSearching = (try? container.decode(Bool.self, forKey: .enableTorrentSearching)) ?? self.enableTorrentSearching
             self.enableUsenetSearching = (try? container.decode(Bool.self, forKey: .enableUsenetSearching)) ?? self.enableUsenetSearching
             self.searchIndexers = (try? container.decode([SearchIndexer].self, forKey: .searchIndexers)) ?? self.searchIndexers
-            self.externalModules = (try? container.decode([ExternalModule].self, forKey: .externalModules)) ?? self.externalModules
             self.sonarrQueuePageSize = (try? container.decode(Int.self, forKey: .sonarrQueuePageSize)) ?? self.sonarrQueuePageSize
             self.radarrQueuePageSize = (try? container.decode(Int.self, forKey: .radarrQueuePageSize)) ?? self.radarrQueuePageSize
             self.tautulliRefreshRate = (try? container.decode(Int.self, forKey: .tautulliRefreshRate)) ?? self.tautulliRefreshRate
@@ -347,7 +335,6 @@ class ThriftwoodAppSettings: Codable {
         try container.encode(enableTorrentSearching, forKey: .enableTorrentSearching)
         try container.encode(enableUsenetSearching, forKey: .enableUsenetSearching)
         try container.encode(searchIndexers, forKey: .searchIndexers)
-        try container.encode(externalModules, forKey: .externalModules)
         try container.encode(sonarrQueuePageSize, forKey: .sonarrQueuePageSize)
         try container.encode(radarrQueuePageSize, forKey: .radarrQueuePageSize)
         try container.encode(tautulliRefreshRate, forKey: .tautulliRefreshRate)

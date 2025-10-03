@@ -14,9 +14,6 @@ enum SettingsRoutes with LunaRoutesMixin {
   CONFIGURATION_DASHBOARD_CALENDAR('calendar'),
   CONFIGURATION_DASHBOARD_DEFAULT_PAGES('default_pages'),
   CONFIGURATION_DRAWER('drawer'),
-  CONFIGURATION_EXTERNAL_MODULES('external_modules'),
-  CONFIGURATION_EXTERNAL_MODULES_ADD('add'),
-  CONFIGURATION_EXTERNAL_MODULES_EDIT('edit/:id'),
   CONFIGURATION_LIDARR('lidarr'),
   CONFIGURATION_LIDARR_CONNECTION_DETAILS('connection_details'),
   CONFIGURATION_LIDARR_CONNECTION_DETAILS_HEADERS('headers'),
@@ -84,15 +81,6 @@ enum SettingsRoutes with LunaRoutesMixin {
         return route(widget: const ConfigurationDashboardDefaultPagesRoute());
       case SettingsRoutes.CONFIGURATION_DRAWER:
         return route(widget: const ConfigurationDrawerRoute());
-      case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES:
-        return route(widget: const ConfigurationExternalModulesRoute());
-      case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_ADD:
-        return route(widget: const ConfigurationExternalModulesAddRoute());
-      case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_EDIT:
-        return route(builder: (_, state) {
-          final moduleId = int.tryParse(state.pathParameters['id']!) ?? -1;
-          return ConfigurationExternalModulesEditRoute(moduleId: moduleId);
-        });
       case SettingsRoutes.CONFIGURATION_LIDARR:
         return route(widget: const ConfigurationLidarrRoute());
       case SettingsRoutes.CONFIGURATION_LIDARR_CONNECTION_DETAILS:
@@ -212,7 +200,6 @@ enum SettingsRoutes with LunaRoutesMixin {
           SettingsRoutes.CONFIGURATION_GENERAL.routes,
           SettingsRoutes.CONFIGURATION_DASHBOARD.routes,
           SettingsRoutes.CONFIGURATION_DRAWER.routes,
-          SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES.routes,
           SettingsRoutes.CONFIGURATION_LIDARR.routes,
           SettingsRoutes.CONFIGURATION_NZBGET.routes,
           SettingsRoutes.CONFIGURATION_QUICK_ACTIONS.routes,
@@ -298,11 +285,6 @@ enum SettingsRoutes with LunaRoutesMixin {
         return [
           SettingsRoutes
               .CONFIGURATION_TAUTULLI_CONNECTION_DETAILS_HEADERS.routes,
-        ];
-      case SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES:
-        return [
-          SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_ADD.routes,
-          SettingsRoutes.CONFIGURATION_EXTERNAL_MODULES_EDIT.routes,
         ];
       case SettingsRoutes.SYSTEM:
         return [

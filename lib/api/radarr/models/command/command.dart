@@ -3,7 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/utilities.dart';
 import 'package:lunasea/api/radarr/models/command/command_body.dart';
 
-part 'command.g.dart';
 
 /// Model for the response for executing a command in Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

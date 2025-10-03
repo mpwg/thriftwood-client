@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'geolocation_info.g.dart';
 
 /// Model to store the geolocation information for an IP address.
 @JsonSerializable(explicitToJson: true)

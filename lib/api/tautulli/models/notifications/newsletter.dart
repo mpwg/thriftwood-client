@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'newsletter.g.dart';
 
 /// Model to store information about a Tautulli newsletter.
 @JsonSerializable(explicitToJson: true)

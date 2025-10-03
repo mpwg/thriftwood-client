@@ -47,15 +47,9 @@ class _State extends State<RadarrRoute> {
   }
 
   Widget _appBar() {
-    List<String> profiles = LunaBox.profiles.keys.fold(
-      [],
-      (value, element) {
-        if (LunaBox.profiles.read(element)?.radarrEnabled ?? false) {
-          value.add(element);
-        }
-        return value;
-      },
-    );
+    // Build list of profiles with Radarr enabled - to be replaced with SwiftData in future
+    List<String> profiles = [];
+    // TODO: Replace with SwiftDataAccessor.getAllProfiles() when converting this route to async
     List<Widget>? actions;
     if (context.watch<RadarrState>().enabled) {
       actions = [

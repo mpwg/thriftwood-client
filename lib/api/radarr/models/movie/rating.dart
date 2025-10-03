@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'rating.g.dart';
 
 /// Model for movies rating values.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

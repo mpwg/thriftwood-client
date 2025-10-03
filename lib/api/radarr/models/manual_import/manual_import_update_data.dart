@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
-part 'manual_import_update_data.g.dart';
 
 /// Model for an manual import update data that is attached to update requests.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

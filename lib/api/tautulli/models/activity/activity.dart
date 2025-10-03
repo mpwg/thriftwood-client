@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'activity.g.dart';
 
 /// Model for activity data from Tautulli.
 ///

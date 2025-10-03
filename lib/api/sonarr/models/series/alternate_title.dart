@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'alternate_title.g.dart';
 
 /// Model for series' alternate title from Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lunasea/vendor.dart';
 
-part 'calendar_starting_size.g.dart';
-
-@HiveType(typeId: 13, adapterName: 'CalendarStartingSizeAdapter')
 enum CalendarStartingSize {
-  @HiveField(0)
   ONE_WEEK,
-  @HiveField(1)
   TWO_WEEKS,
-  @HiveField(2)
   ONE_MONTH,
 }
 

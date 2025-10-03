@@ -59,7 +59,8 @@ class SearchDialogs {
                 },
                 itemBuilder: (context) {
                   return <PopupMenuEntry<String>>[
-                    for (final profile in LunaBox.profiles.keys.cast<String>())
+                    // TODO: Replace with SwiftDataAccessor.getAllProfiles() when converting to async
+                    for (final profile in <String>[])
                       PopupMenuItem<String>(
                         value: profile,
                         child: Text(

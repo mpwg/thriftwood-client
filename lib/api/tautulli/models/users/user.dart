@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'user.g.dart';
 
 /// Model for a single Tautulli user's data in Tautulli.
 ///

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:lunasea/database/models/external_module.dart';
 import 'package:lunasea/database/models/indexer.dart';
 import 'package:lunasea/database/models/log.dart';
 import 'package:lunasea/database/models/profile.dart';
@@ -10,7 +9,6 @@ import 'package:lunasea/vendor.dart';
 
 enum LunaBox<T> {
   alerts<dynamic>('alerts'),
-  externalModules<LunaExternalModule>('external_modules'),
   indexers<LunaIndexer>('indexers'),
   logs<LunaLog>('logs'),
   lunasea<dynamic>('lunasea'),
@@ -19,24 +17,38 @@ enum LunaBox<T> {
   final String key;
   const LunaBox(this.key);
 
-  Box<T> get _instance => Hive.box<T>(key);
+  // Simple in-memory storage until SwiftData migration is complete
+  static final Map<String, Map<dynamic, dynamic>> _storage = {};
+
+  Map<dynamic, dynamic> get _instance {
+    _storage[key] ??= <dynamic, dynamic>{};
+    return _storage[key]!;
+  }
 
   Iterable<dynamic> get keys => _instance.keys;
-  Iterable<T> get data => _instance.values;
+  Iterable<T> get data => _instance.values.cast<T>();
 
   int get size => _instance.length;
   bool get isEmpty => _instance.isEmpty;
 
   static Future<void> open() async {
-    for (final box in LunaBox.values) await box._open();
+    // Initialize all storage maps
+    for (final box in LunaBox.values) {
+      _storage[box.key] ??= <dynamic, dynamic>{};
+    }
   }
 
   T? read(dynamic key, {T? fallback}) {
-    return _instance.get(key, defaultValue: fallback);
+    final value = _instance[key];
+    return value != null ? value as T : fallback;
   }
 
   T? readAt(int index) {
-    return _instance.getAt(index);
+    final keys = _instance.keys.toList();
+    if (index >= 0 && index < keys.length) {
+      return _instance[keys[index]] as T?;
+    }
+    return null;
   }
 
   bool contains(dynamic key) {
@@ -44,31 +56,31 @@ enum LunaBox<T> {
   }
 
   Future<int> create(T value) async {
-    return _instance.add(value);
+    final keys = _instance.keys.where((k) => k is int).cast<int>();
+    final nextKey = keys.isEmpty ? 0 : keys.reduce((a, b) => a > b ? a : b) + 1;
+    _instance[nextKey] = value;
+    return nextKey;
   }
 
-  Future<void> update(dynamic key, T value) {
-    return _instance.put(key, value);
+  Future<void> update(dynamic key, T value) async {
+    _instance[key] = value;
   }
 
   Future<void> delete(dynamic key) async {
-    return _instance.delete(key);
+    _instance.remove(key);
   }
 
   Future<void> clear() async {
-    _instance.keys.forEach((k) async => await _instance.delete(k));
+    _instance.clear();
   }
 
-  Future<Box<T>> _open() async {
-    return Hive.openBox<T>(key);
+  Stream<MapEntry<dynamic, dynamic>> watch([dynamic key]) {
+    // Simple stub - return empty stream for now
+    return const Stream.empty();
   }
 
-  Stream<BoxEvent> watch([dynamic key]) {
-    return _instance.watch(key: key);
-  }
-
-  ValueListenable<Box<T>> listenable([List<dynamic>? keys]) {
-    return _instance.listenable(keys: keys);
+  ValueNotifier<Map<dynamic, dynamic>> listenable([List<dynamic>? keys]) {
+    return ValueNotifier(_instance);
   }
 
   ValueListenableBuilder listenableBuilder({
@@ -96,7 +108,7 @@ extension LunaBoxExtension on LunaBox {
   List<Map<String, dynamic>> export() {
     try {
       return _instance.keys
-          .map<Map<String, dynamic>>((k) => _instance.get(k)!.toJson())
+          .map<Map<String, dynamic>>((k) => (_instance[k]! as dynamic).toJson())
           .toList();
     } catch (error, stack) {
       LunaLogger().error('Failed to export LunaBox', error, stack);

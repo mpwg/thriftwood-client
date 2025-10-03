@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'server_identity.g.dart';
 
 /// Model to store the Plex server identity used in Tautulli.
 @JsonSerializable(explicitToJson: true)

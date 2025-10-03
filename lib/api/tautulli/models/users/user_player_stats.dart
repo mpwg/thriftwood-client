@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'user_player_stats.g.dart';
 
 /// Model to store total watch time stats for a user's players in Plex.
 @JsonSerializable(explicitToJson: true)

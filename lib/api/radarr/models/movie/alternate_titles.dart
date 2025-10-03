@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
-part 'alternate_titles.g.dart';
 
 /// Store details about alternate titles available for a movie.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

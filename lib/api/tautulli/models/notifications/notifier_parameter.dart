@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'notifier_parameter.g.dart';
 
 /// Model to store information about a Tautulli notifier parameters.
 @JsonSerializable(explicitToJson: true)

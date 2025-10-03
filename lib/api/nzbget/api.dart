@@ -2,7 +2,6 @@ import 'package:lunasea/api/nzbget/models/status.dart';
 import 'package:lunasea/api/nzbget/models/version.dart';
 import 'package:lunasea/vendor.dart';
 
-part 'api.g.dart';
 
 String _baseUrl(String host, String user, String password) {
   String base = host.endsWith('/') ? host.substring(0, host.length - 1) : host;

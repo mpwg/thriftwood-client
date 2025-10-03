@@ -1,15 +1,10 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/sonarr.dart';
 
-part 'filter_releases.g.dart';
 
-@HiveType(typeId: 28, adapterName: 'SonarrReleasesFilterAdapter')
 enum SonarrReleasesFilter {
-  @HiveField(0)
   ALL,
-  @HiveField(1)
   APPROVED,
-  @HiveField(2)
   REJECTED,
 }
 

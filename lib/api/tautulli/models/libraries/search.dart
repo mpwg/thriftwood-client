@@ -1,7 +1,6 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
-part 'search.g.dart';
 
 /// Model to store search results of your Plex Media Server library.
 ///

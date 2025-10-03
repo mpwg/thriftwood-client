@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lunasea/core.dart';
 
-part 'indexer_icon.g.dart';
 
 const _GENERIC = 'generic';
 const _DOGNZB = 'dognzb';
