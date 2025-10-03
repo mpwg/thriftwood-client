@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/modules/sonarr.dart';
 
+part 'root_folder.g.dart';
+
 
 /// Model for root folders from Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

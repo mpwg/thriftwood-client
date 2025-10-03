@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'episode_file_language.g.dart';
+
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SonarrEpisodeFileLanguage {

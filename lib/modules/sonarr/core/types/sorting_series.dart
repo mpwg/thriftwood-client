@@ -37,6 +37,14 @@ extension SonarrSeriesSortingExtension on SonarrSeriesSorting {
         return 'network';
       case SonarrSeriesSorting.QUALITY:
         return 'quality';
+      case SonarrSeriesSorting.QUALITY_PROFILE:
+        return 'quality_profile';
+      case SonarrSeriesSorting.SEASONS:
+        return 'seasons';
+      case SonarrSeriesSorting.SERIES_TYPE:
+        return 'series_type';
+      case SonarrSeriesSorting.SIZE_ON_DISK:
+        return 'size_on_disk';
       case SonarrSeriesSorting.NEXT_AIRING:
         return 'next_airing';
       case SonarrSeriesSorting.PREVIOUS_AIRING:
@@ -85,6 +93,8 @@ extension SonarrSeriesSortingExtension on SonarrSeriesSorting {
         return series.lunaDateAddedShort;
       case SonarrSeriesSorting.EPISODES:
         return series.lunaEpisodeCount;
+      case SonarrSeriesSorting.MONITORED:
+        return series.monitored?.toString() ?? LunaUI.TEXT_EMDASH;
       case SonarrSeriesSorting.NETWORK:
         return series.lunaNetwork;
       case SonarrSeriesSorting.NEXT_AIRING:
@@ -93,7 +103,15 @@ extension SonarrSeriesSortingExtension on SonarrSeriesSorting {
         return series.lunaPreviousAiring(true);
       case SonarrSeriesSorting.QUALITY:
         return profile?.name ?? LunaUI.TEXT_EMDASH;
+      case SonarrSeriesSorting.QUALITY_PROFILE:
+        return profile?.name ?? LunaUI.TEXT_EMDASH;
+      case SonarrSeriesSorting.SEASONS:
+        return series.seasons?.length.toString() ?? LunaUI.TEXT_EMDASH;
+      case SonarrSeriesSorting.SERIES_TYPE:
+        return series.lunaSeriesType;
       case SonarrSeriesSorting.SIZE:
+        return series.lunaSizeOnDisk;
+      case SonarrSeriesSorting.SIZE_ON_DISK:
         return series.lunaSizeOnDisk;
       case SonarrSeriesSorting.TYPE:
         return series.lunaSeriesType;
@@ -108,18 +126,28 @@ extension SonarrSeriesSortingExtension on SonarrSeriesSorting {
         return SonarrSeriesSorting.DATE_ADDED;
       case 'episodes':
         return SonarrSeriesSorting.EPISODES;
-      case 'size':
-        return SonarrSeriesSorting.SIZE;
-      case 'type':
-        return SonarrSeriesSorting.TYPE;
+      case 'monitored':
+        return SonarrSeriesSorting.MONITORED;
       case 'network':
         return SonarrSeriesSorting.NETWORK;
-      case 'quality':
-        return SonarrSeriesSorting.QUALITY;
       case 'next_airing':
         return SonarrSeriesSorting.NEXT_AIRING;
       case 'previous_airing':
         return SonarrSeriesSorting.PREVIOUS_AIRING;
+      case 'quality':
+        return SonarrSeriesSorting.QUALITY;
+      case 'quality_profile':
+        return SonarrSeriesSorting.QUALITY_PROFILE;
+      case 'seasons':
+        return SonarrSeriesSorting.SEASONS;
+      case 'series_type':
+        return SonarrSeriesSorting.SERIES_TYPE;
+      case 'size':
+        return SonarrSeriesSorting.SIZE;
+      case 'size_on_disk':
+        return SonarrSeriesSorting.SIZE_ON_DISK;
+      case 'type':
+        return SonarrSeriesSorting.TYPE;
       default:
         return null;
     }
@@ -140,20 +168,30 @@ class _Sorter {
         return _dateAdded(data, ascending);
       case SonarrSeriesSorting.EPISODES:
         return _episodes(data, ascending);
+      case SonarrSeriesSorting.MONITORED:
+        return _monitored(data, ascending);
       case SonarrSeriesSorting.NETWORK:
         return _network(data, ascending);
       case SonarrSeriesSorting.NEXT_AIRING:
         return _nextAiring(data, ascending);
       case SonarrSeriesSorting.PREVIOUS_AIRING:
         return _previousAiring(data, ascending);
+      case SonarrSeriesSorting.QUALITY:
+        return _quality(data, ascending);
+      case SonarrSeriesSorting.QUALITY_PROFILE:
+        return _quality(data, ascending);
+      case SonarrSeriesSorting.SEASONS:
+        return _seasons(data, ascending);
+      case SonarrSeriesSorting.SERIES_TYPE:
+        return _type(data, ascending);
       case SonarrSeriesSorting.SIZE:
+        return _size(data, ascending);
+      case SonarrSeriesSorting.SIZE_ON_DISK:
         return _size(data, ascending);
       case SonarrSeriesSorting.TYPE:
         return _type(data, ascending);
       case SonarrSeriesSorting.ALPHABETICAL:
         return _alphabetical(data, ascending);
-      case SonarrSeriesSorting.QUALITY:
-        return _quality(data, ascending);
     }
   }
 
@@ -311,5 +349,30 @@ class _Sorter {
     return ascending
         ? [..._anime, ..._daily, ..._stand]
         : [..._stand, ..._daily, ..._anime];
+  }
+
+  List<SonarrSeries> _monitored(List<SonarrSeries> series, bool ascending) {
+    series.sort((a, b) {
+      int _comparison = ascending
+          ? (a.monitored == true ? 1 : 0).compareTo(b.monitored == true ? 1 : 0)
+          : (b.monitored == true ? 1 : 0)
+              .compareTo(a.monitored == true ? 1 : 0);
+      return _comparison == 0
+          ? a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase())
+          : _comparison;
+    });
+    return series;
+  }
+
+  List<SonarrSeries> _seasons(List<SonarrSeries> series, bool ascending) {
+    series.sort((a, b) {
+      int _comparison = ascending
+          ? (a.seasons?.length ?? 0).compareTo(b.seasons?.length ?? 0)
+          : (b.seasons?.length ?? 0).compareTo(a.seasons?.length ?? 0);
+      return _comparison == 0
+          ? a.sortTitle!.toLowerCase().compareTo(b.sortTitle!.toLowerCase())
+          : _comparison;
+    });
+    return series;
   }
 }

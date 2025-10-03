@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
+part 'quality_definition.g.dart';
+
 
 /// Store details about a quality definition.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

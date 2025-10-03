@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'recently_added.g.dart';
+
 
 /// Model to store information about some recently added content.
 @JsonSerializable(explicitToJson: true)

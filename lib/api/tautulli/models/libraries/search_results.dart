@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/tautulli/models/libraries/search_result.dart';
 
+part 'search_results.g.dart';
+
 
 /// Model to store search result lists from your Plex Media Server library.
 @JsonSerializable(explicitToJson: true)

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/modules/sonarr.dart';
 
+part 'command.g.dart';
+
 
 /// Model for the response for executing a command in Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

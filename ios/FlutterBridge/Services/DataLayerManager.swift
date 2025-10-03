@@ -3,11 +3,7 @@
 //  Runner
 //
 //  Created by GitHub Copilot on 2025-10-01.
-//  Manages data layer selection b            LoggingService.shared.info("DataLayerManager: No existing data found, creating default settings...", category: .database)
-            try await createDefaultSettingsSwiftData()
-            LoggingService.shared.info("DataLayerManager: Default settings created in SwiftData", category: .database)
-        } catch {
-            LoggingService.shared.error("DataLayerManager: Initial data setup failed", error: error, category: .database)n Flutter Hive and SwiftData
+//  Manages data layer selection between Flutter Hive and SwiftData
 //  Implements Phase 4.1 Data Persistence Migration from migration.md
 //
 

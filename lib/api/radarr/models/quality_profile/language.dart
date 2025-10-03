@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'language.g.dart';
+
 
 /// Store details about a language.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

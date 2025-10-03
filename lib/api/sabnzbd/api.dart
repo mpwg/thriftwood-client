@@ -14,6 +14,8 @@ import 'package:lunasea/api/sabnzbd/types/priority.dart';
 import 'package:lunasea/api/sabnzbd/types/sort_category.dart';
 import 'package:lunasea/api/sabnzbd/types/sort_direction.dart';
 
+part 'api.g.dart';
+
 
 String _baseUrl(String host) {
   String base = host.endsWith('/') ? host.substring(0, host.length - 1) : host;

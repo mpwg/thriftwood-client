@@ -4,6 +4,8 @@ import 'package:lunasea/api/radarr/types.dart';
 import 'package:lunasea/api/radarr/utilities.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
+part 'credits.g.dart';
+
 
 /// Store details about credits for a person who has worked on the movie.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

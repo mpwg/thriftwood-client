@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
+part 'collection.g.dart';
+
 
 /// Store details about a collection the movie is apart of.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

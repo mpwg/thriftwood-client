@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'quality_profile_cutoff.g.dart';
+
 
 /// Model for a quality profile cutoffs from Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

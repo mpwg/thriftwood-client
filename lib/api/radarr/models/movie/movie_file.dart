@@ -3,6 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/utilities.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
+part 'movie_file.g.dart';
+
 
 @JsonSerializable()
 class RadarrMovieFile {

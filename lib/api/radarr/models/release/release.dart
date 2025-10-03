@@ -4,6 +4,8 @@ import 'package:lunasea/api/radarr/utilities.dart';
 import 'package:lunasea/api/radarr/models.dart';
 import 'package:lunasea/api/radarr/types.dart';
 
+part 'release.g.dart';
+
 
 /// Model for a movie release from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

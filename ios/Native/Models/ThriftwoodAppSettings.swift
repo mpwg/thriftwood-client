@@ -16,9 +16,14 @@ class ThriftwoodAppSettings: Codable {
     var selectedTheme: AppTheme
     var enabledProfile: String
     var profiles: [String: ThriftwoodProfile]
+    var externalModules: [ExternalModule]
     
     // MARK: - Codable Implementation
     enum CodingKeys: String, CodingKey {
+        case selectedTheme
+        case enabledProfile
+        case profiles
+        case externalModules
         case enableImageHeaders
         case enableCustomHeaders
         case enableBiometrics
@@ -117,6 +122,7 @@ class ThriftwoodAppSettings: Codable {
         self.selectedTheme = .system
         self.enabledProfile = "default"
         self.profiles = ["default": ThriftwoodProfile(name: "default")]
+        self.externalModules = []
         self.enableImageHeaders = true
         self.enableCustomHeaders = false
         self.enableBiometrics = false
@@ -174,6 +180,7 @@ class ThriftwoodAppSettings: Codable {
         self.selectedTheme = .system
         self.enabledProfile = "default"
         self.profiles = ["default": ThriftwoodProfile(name: "default")]
+        self.externalModules = []
         self.enableImageHeaders = true
         self.enableCustomHeaders = false
         self.enableBiometrics = false
@@ -226,6 +233,10 @@ class ThriftwoodAppSettings: Codable {
             
             if let profiles = try? container.decode([String: ThriftwoodProfile].self, forKey: .profiles) {
                 self.profiles = profiles
+            }
+            
+            if let externalModules = try? container.decode([ExternalModule].self, forKey: .externalModules) {
+                self.externalModules = externalModules
             }
             
             // Continue with all other properties using safe decoding
@@ -305,6 +316,7 @@ class ThriftwoodAppSettings: Codable {
         try container.encode(selectedTheme, forKey: .selectedTheme)
         try container.encode(enabledProfile, forKey: .enabledProfile)
         try container.encode(profiles, forKey: .profiles)
+        try container.encode(externalModules, forKey: .externalModules)
         try container.encode(enableImageHeaders, forKey: .enableImageHeaders)
         try container.encode(enableCustomHeaders, forKey: .enableCustomHeaders)
         try container.encode(enableBiometrics, forKey: .enableBiometrics)

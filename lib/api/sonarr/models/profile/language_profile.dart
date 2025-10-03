@@ -3,6 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/sonarr/models/profile/language_profile_cutoff.dart';
 import 'package:lunasea/api/sonarr/models/profile/language_profile_item.dart';
 
+part 'language_profile.g.dart';
+
 
 /// Model for a language profile from Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

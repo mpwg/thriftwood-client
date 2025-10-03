@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'audio_stream.g.dart';
+
 
 /// Model to store information about the audio stream for some content.
 @JsonSerializable(explicitToJson: true)

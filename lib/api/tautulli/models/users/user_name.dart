@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'user_name.g.dart';
+
 
 /// Model to store a user's name & ID.
 @JsonSerializable(explicitToJson: true)

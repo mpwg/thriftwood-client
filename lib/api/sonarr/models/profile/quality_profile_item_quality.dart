@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'quality_profile_item_quality.g.dart';
+
 
 /// Model for a quality profile's nested item's quality from Sonarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

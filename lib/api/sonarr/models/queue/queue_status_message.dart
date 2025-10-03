@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'queue_status_message.g.dart';
+
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SonarrQueueStatusMessage {

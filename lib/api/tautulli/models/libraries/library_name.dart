@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'library_name.g.dart';
+
 
 /// Model to store basic name and data about a library from Plex.
 @JsonSerializable(explicitToJson: true)

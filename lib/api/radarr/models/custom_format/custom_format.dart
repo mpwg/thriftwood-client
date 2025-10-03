@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/models/custom_format/custom_format_specifications.dart';
 
+part 'custom_format.g.dart';
+
 
 /// Model for a custom format from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'date_format.g.dart';
+
 
 /// Model to store the date and time formats.
 @JsonSerializable(explicitToJson: true)

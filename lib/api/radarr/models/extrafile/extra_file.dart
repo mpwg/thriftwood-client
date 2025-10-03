@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'extra_file.g.dart';
+
 
 /// Model for a movies' extra file information from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

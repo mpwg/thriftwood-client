@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'media_info.g.dart';
+
 
 /// Model to store the library content's media information.
 @JsonSerializable(explicitToJson: true)

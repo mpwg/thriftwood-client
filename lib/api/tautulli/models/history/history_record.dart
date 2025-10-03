@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'history_record.g.dart';
+
 
 /// Model for a single history record in Tautulli.
 @JsonSerializable(explicitToJson: true)

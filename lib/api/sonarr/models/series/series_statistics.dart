@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'series_statistics.g.dart';
+
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SonarrSeriesStatistics {

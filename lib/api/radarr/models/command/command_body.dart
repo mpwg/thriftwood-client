@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'command_body.g.dart';
 
 /// Model for the body for executing a command in Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

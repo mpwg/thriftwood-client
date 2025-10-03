@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'pms_update.g.dart';
+
 
 @JsonSerializable(explicitToJson: true)
 class TautulliPMSUpdate {

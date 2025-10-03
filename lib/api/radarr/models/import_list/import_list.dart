@@ -3,6 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/types.dart';
 import 'package:lunasea/api/radarr/utilities.dart';
 
+part 'import_list.g.dart';
+
 
 /// Model for an import list from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

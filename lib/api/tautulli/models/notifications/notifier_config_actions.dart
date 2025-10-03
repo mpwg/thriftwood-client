@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'notifier_config_actions.g.dart';
+
 
 /// Model to store information about a Tautulli notifier configuration actions.
 @JsonSerializable(explicitToJson: true)

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
+part 'manual_import_file.g.dart';
+
 
 /// Model for an manual import file.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

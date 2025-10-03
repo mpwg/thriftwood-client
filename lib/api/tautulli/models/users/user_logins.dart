@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'user_logins.g.dart';
+
 
 /// Model to store user login records from Tautulli.
 ///

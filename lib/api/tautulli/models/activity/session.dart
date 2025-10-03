@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'session.g.dart';
+
 
 /// Model for a single activity session in Tautulli.
 @JsonSerializable(explicitToJson: true)

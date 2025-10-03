@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'library.g.dart';
+
 
 /// Model to store data about a library from Plex.
 ///

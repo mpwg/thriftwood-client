@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'video_stream.g.dart';
+
 
 /// Model to store information about the video stream for some content.
 @JsonSerializable(explicitToJson: true)

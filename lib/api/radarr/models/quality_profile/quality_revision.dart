@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'quality_revision.g.dart';
+
 
 /// Model for an movie file's quality profile's revision.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

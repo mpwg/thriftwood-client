@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'stream_data.g.dart';
+
 
 /// Model to store information about an active or previous stream.
 @JsonSerializable(explicitToJson: true)

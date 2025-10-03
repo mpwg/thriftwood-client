@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
+part 'item.g.dart';
+
 
 /// Store details about a quality profile item.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

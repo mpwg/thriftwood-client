@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'movie_file_media_info.g.dart';
+
 
 @JsonSerializable()
 class RadarrMovieFileMediaInfo {

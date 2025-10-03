@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/modules/sonarr.dart';
 
+part 'missing_record.g.dart';
+
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SonarrMissingRecord {

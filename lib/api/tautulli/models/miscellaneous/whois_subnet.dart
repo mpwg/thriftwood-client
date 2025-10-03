@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'whois_subnet.g.dart';
+
 
 /// Model to store the WHOIS information for a subnet contained within an IP address lookup.
 @JsonSerializable(explicitToJson: true)

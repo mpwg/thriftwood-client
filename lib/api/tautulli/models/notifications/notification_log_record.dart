@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'notification_log_record.g.dart';
+
 
 /// Model to store an individual notification log details from Tautulli.
 @JsonSerializable(explicitToJson: true)

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/radarr/models.dart';
 
+part 'movie_file_quality.g.dart';
+
 
 /// Model for an movie file's quality profile.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

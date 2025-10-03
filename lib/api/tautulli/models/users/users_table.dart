@@ -1,6 +1,8 @@
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/tautulli.dart';
 
+part 'users_table.g.dart';
+
 
 /// Model for the Tautulli user table from Tautulli.
 ///

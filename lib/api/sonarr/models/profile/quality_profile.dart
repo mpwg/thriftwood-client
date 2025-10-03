@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/sonarr/models/profile/quality_profile_item.dart';
 
+part 'quality_profile.g.dart';
+
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SonarrQualityProfile {

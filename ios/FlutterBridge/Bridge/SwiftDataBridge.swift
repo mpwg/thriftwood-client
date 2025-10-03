@@ -252,7 +252,7 @@ class SwiftDataBridge: NSObject {
                 LoggingService.shared.info("SwiftDataBridge: Created new profile: \(profileName)", category: .database)
                 result(profile.toDictionary())
             } catch {
-                LoggingService.shared.warning("SwiftDataBridge: Profile insertion failed (likely duplicate): \(profileName)", error: error, category: .database)
+                LoggingService.shared.warning("SwiftDataBridge: Profile insertion failed (likely duplicate): \(profileName) - \(error.localizedDescription)", category: .database)
                 // If insertion fails, return the existing profile
                 if let existingProfile = existingProfiles.first {
                     result(existingProfile.toDictionary())
@@ -767,10 +767,6 @@ class SwiftDataBridge: NSObject {
             LoggingService.shared.error("Migration from Hive to SwiftData failed", error: error, category: .migration)
             result(FlutterError(code: "MIGRATION_ERROR", message: error.localizedDescription, details: nil))
         }
-    }
-    
-    private func isMigrationComplete() -> Bool {
-        return UserDefaults.standard.bool(forKey: "HIVE_TO_SWIFTDATA_MIGRATION_COMPLETE")
     }
 }
 
