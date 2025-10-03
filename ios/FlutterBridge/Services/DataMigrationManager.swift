@@ -62,6 +62,25 @@ class DataMigrationManager {
     private let modelContext: ModelContext
     private let methodChannel: FlutterMethodChannel?
     
+    // CRITICAL: Sync operation synchronization to prevent duplicate registrations using actors
+    private actor SyncActor {
+        private var isSyncing = false
+        
+        func withExclusiveAccess<T>(_ operation: () async throws -> T) async throws -> T {
+            guard !isSyncing else {
+                print("⚠️ DataMigrationManager: Sync operation already in progress, skipping...")
+                throw DataMigrationError.syncInProgress
+            }
+            
+            isSyncing = true
+            defer { isSyncing = false }
+            
+            return try await operation()
+        }
+    }
+    
+    private let syncActor = SyncActor()
+    
     /// Initialize with SwiftData context and Flutter method channel
     init(modelContext: ModelContext, methodChannel: FlutterMethodChannel?) {
         self.modelContext = modelContext
@@ -73,23 +92,26 @@ class DataMigrationManager {
     /// Sync all data from Flutter's Hive storage to SwiftData
     /// Called when user enables SwiftUI mode or on first launch with SwiftUI enabled
     func syncFromHive() async throws {
-        guard let methodChannel = methodChannel else {
-            throw DataMigrationError.channelNotInitialized
+        // CRITICAL: Prevent concurrent sync operations to avoid duplicate registrations
+        try await withSyncLock { [self] in
+            guard self.methodChannel != nil else {
+                throw DataMigrationError.channelNotInitialized
+            }
+            
+            // Get all settings from Hive
+            let hiveData = try await self.getHiveSettings()
+            
+            // Sync app settings
+            try await self.syncAppSettingsFromHive(hiveData)
+            
+            // Sync all profiles
+            try await self.syncProfilesFromHive(hiveData)
+            
+            // Save all changes
+            try self.modelContext.save()
+            
+            print("✅ DataMigrationManager: Successfully synced all data from Hive to SwiftData")
         }
-        
-        // Get all settings from Hive
-        let hiveData = try await getHiveSettings()
-        
-        // Sync app settings
-        try await syncAppSettingsFromHive(hiveData)
-        
-        // Sync all profiles
-        try await syncProfilesFromHive(hiveData)
-        
-        // Save all changes
-        try modelContext.save()
-        
-        print("✅ DataMigrationManager: Successfully synced all data from Hive to SwiftData")
     }
     
     /// Get settings from Hive via method channel
@@ -118,6 +140,7 @@ class DataMigrationManager {
     }
     
     /// Sync app settings from Hive data
+    @MainActor
     private func syncAppSettingsFromHive(_ hiveData: [String: Any]) async throws {
         // Check if app settings already exist in SwiftData
         let descriptor = FetchDescriptor<AppSettingsSwiftData>()
@@ -160,25 +183,40 @@ class DataMigrationManager {
     }
     
     /// Sync all profiles from Hive data
+    @MainActor
     private func syncProfilesFromHive(_ hiveData: [String: Any]) async throws {
         guard let profilesDict = hiveData["profiles"] as? [String: [String: Any]] else {
             print("⚠️ DataMigrationManager: No profiles found in Hive data")
             return
         }
         
-        // Get existing profiles in SwiftData
+        // Get existing profiles in SwiftData with proper fetch descriptor
         let descriptor = FetchDescriptor<ProfileSwiftData>()
         let existingProfiles = try modelContext.fetch(descriptor)
         let existingProfilesByName = Dictionary(uniqueKeysWithValues: existingProfiles.map { ($0.name, $0) })
         
-        // Sync each profile
+        // Sync each profile with duplicate prevention
         for (profileName, profileData) in profilesDict {
             let profile: ProfileSwiftData
             if let existing = existingProfilesByName[profileName] {
+                // CRITICAL: Use existing profile to prevent duplicate registration
                 profile = existing
+                print("🔄 DataMigrationManager: Updating existing profile: \(profileName)")
             } else {
-                profile = ProfileSwiftData(name: profileName)
-                modelContext.insert(profile)
+                // CRITICAL: Double-check profile doesn't exist before creating new one
+                let checkDescriptor = FetchDescriptor<ProfileSwiftData>(
+                    predicate: #Predicate<ProfileSwiftData> { $0.name == profileName }
+                )
+                let duplicateCheck = try modelContext.fetch(checkDescriptor)
+                
+                if let existingDuplicate = duplicateCheck.first {
+                    profile = existingDuplicate
+                    print("⚠️ DataMigrationManager: Found duplicate profile during creation check: \(profileName)")
+                } else {
+                    profile = ProfileSwiftData(name: profileName)
+                    modelContext.insert(profile)
+                    print("✅ DataMigrationManager: Created new profile: \(profileName)")
+                }
             }
             
             // Update profile fields from Hive data
@@ -286,25 +324,30 @@ class DataMigrationManager {
     
     /// Sync all SwiftData changes back to Flutter's Hive storage
     /// Called whenever data is modified in SwiftUI mode
+    @MainActor
     func syncToHive() async throws {
-        guard let methodChannel = methodChannel else {
-            throw DataMigrationError.channelNotInitialized
+        // CRITICAL: Prevent concurrent sync operations to avoid duplicate registrations
+        try await withSyncLock { [self] in
+            guard self.methodChannel != nil else {
+                throw DataMigrationError.channelNotInitialized
+            }
+            
+            // Get all data from SwiftData (already on MainActor)
+            let appSettings = try await self.getAppSettings()
+            let profiles = try await self.getAllProfiles()
+            
+            // Convert to Hive format
+            let hiveData = try self.buildHiveDataDictionary(appSettings: appSettings, profiles: profiles)
+            
+            // Send to Flutter via method channel
+            try await self.updateHiveSettings(hiveData)
+            
+            print("✅ DataMigrationManager: Successfully synced all data from SwiftData to Hive")
         }
-        
-        // Get all data from SwiftData
-        let appSettings = try await getAppSettings()
-        let profiles = try await getAllProfiles()
-        
-        // Convert to Hive format
-        let hiveData = try buildHiveDataDictionary(appSettings: appSettings, profiles: profiles)
-        
-        // Send to Flutter via method channel
-        try await updateHiveSettings(hiveData)
-        
-        print("✅ DataMigrationManager: Successfully synced all data from SwiftData to Hive")
     }
     
     /// Get app settings from SwiftData
+    @MainActor
     private func getAppSettings() async throws -> AppSettingsSwiftData {
         let descriptor = FetchDescriptor<AppSettingsSwiftData>()
         let settings = try modelContext.fetch(descriptor)
@@ -317,6 +360,7 @@ class DataMigrationManager {
     }
     
     /// Get all profiles from SwiftData
+    @MainActor
     private func getAllProfiles() async throws -> [ProfileSwiftData] {
         let descriptor = FetchDescriptor<ProfileSwiftData>()
         return try modelContext.fetch(descriptor)
@@ -420,27 +464,40 @@ class DataMigrationManager {
     
     /// Sync a single profile to Hive
     func syncProfileToHive(_ profile: ProfileSwiftData) async throws {
-        guard let methodChannel = methodChannel else {
-            throw DataMigrationError.channelNotInitialized
-        }
-        
-        let profileDict = try buildProfileDictionary(profile)
-        
-        return try await withCheckedThrowingContinuation { continuation in
-            Task { @MainActor in
-                methodChannel.invokeMethod("updateHiveProfile", arguments: [
-                    "profileName": profile.name,
-                    "profile": profileDict
-                ]) { result in
-                    if let error = result as? FlutterError {
-                        continuation.resume(throwing: DataMigrationError.flutterError(
-                            "Failed to sync profile to Hive: \(error.message ?? "Unknown error")"
-                        ))
-                    } else {
-                        continuation.resume()
+        // CRITICAL: Prevent concurrent profile sync operations
+        try await withSyncLock { [self] in
+            guard let methodChannel = self.methodChannel else {
+                throw DataMigrationError.channelNotInitialized
+            }
+            
+            let profileDict = try self.buildProfileDictionary(profile)
+            
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                Task { @MainActor in
+                    methodChannel.invokeMethod("updateHiveProfile", arguments: [
+                        "profileName": profile.name,
+                        "profile": profileDict
+                    ]) { result in
+                        if let error = result as? FlutterError {
+                            continuation.resume(throwing: DataMigrationError.flutterError(
+                                "Failed to sync profile to Hive: \(error.message ?? "Unknown error")"
+                            ))
+                        } else {
+                            continuation.resume(returning: ())
+                        }
                     }
                 }
             }
+        }
+    }
+    
+    // MARK: - Synchronization Helper
+    
+    /// Execute block with sync lock to prevent concurrent operations
+    private func withSyncLock<T>(_ operation: @escaping () async throws -> T) async throws -> T {
+        return try await syncActor.withExclusiveAccess {
+            print("🔒 DataMigrationManager: Executing sync operation with exclusive access")
+            return try await operation()
         }
     }
 }
@@ -452,6 +509,7 @@ enum DataMigrationError: LocalizedError {
     case flutterError(String)
     case invalidData(String)
     case noData(String)
+    case syncInProgress
     
     var errorDescription: String? {
         switch self {
@@ -463,6 +521,8 @@ enum DataMigrationError: LocalizedError {
             return "Invalid data: \(message)"
         case .noData(let message):
             return "No data found: \(message)"
+        case .syncInProgress:
+            return "Sync operation already in progress"
         }
     }
 }

@@ -146,7 +146,7 @@ class SettingsViewModel {
             availableProfiles = Array(appSettings.profiles.keys).sorted()
             
             hasLoadedInitialSettings = true
-            print("✅ SettingsViewModel: Successfully loaded settings via DataLayerManager (useSwiftData: \(dataLayerManager.useSwiftData))")
+            print("✅ SettingsViewModel: Successfully loaded settings via DataLayerManager")
         } catch {
             print("⚠️ SettingsViewModel: Failed to load settings: \(error)")
             // Keep default settings
@@ -159,7 +159,7 @@ class SettingsViewModel {
         do {
             // Use DataLayerManager which automatically saves to SwiftData or Hive based on toggle
             try await dataLayerManager.saveAppSettings(appSettings)
-            print("✅ Settings saved via DataLayerManager (useSwiftData: \(dataLayerManager.useSwiftData))")
+            print("✅ Settings saved via DataLayerManager")
         } catch {
             showError("Failed to save settings: \(error.localizedDescription)")
         }

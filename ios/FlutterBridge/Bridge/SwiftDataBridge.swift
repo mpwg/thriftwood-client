@@ -159,11 +159,39 @@ class SwiftDataBridge: NSObject {
         }
         
         do {
+            // CRITICAL: Check for existing profile before creating to prevent duplicates
+            let profileName = args["name"] as? String ?? "Unknown"
+            let checkDescriptor = FetchDescriptor<ProfileSwiftData>(
+                predicate: #Predicate<ProfileSwiftData> { $0.name == profileName }
+            )
+            let existingProfiles = try modelContext.fetch(checkDescriptor)
+            
+            if let existingProfile = existingProfiles.first {
+                // Return existing profile instead of creating duplicate
+                print("⚠️ SwiftDataBridge: Profile already exists, returning existing: \(profileName)")
+                result(existingProfile.toDictionary())
+                return
+            }
+            
             let profile = try ProfileSwiftData.fromDictionary(args)
-            modelContext.insert(profile)
-            try modelContext.save()
-            result(profile.toDictionary())
+            
+            // CRITICAL: Insert profile safely to prevent duplicate registration
+            do {
+                modelContext.insert(profile)
+                try modelContext.save()
+                print("✅ SwiftDataBridge: Created new profile: \(profileName)")
+                result(profile.toDictionary())
+            } catch {
+                print("⚠️ SwiftDataBridge: Profile insertion failed (likely duplicate): \(profileName) - \(error)")
+                // If insertion fails, return the existing profile
+                if let existingProfile = existingProfiles.first {
+                    result(existingProfile.toDictionary())
+                } else {
+                    result(FlutterError(code: "CREATE_ERROR", message: "Failed to create or find profile: \(error.localizedDescription)", details: nil))
+                }
+            }
         } catch {
+            print("❌ SwiftDataBridge: Profile creation failed: \(error)")
             result(FlutterError(code: "CREATE_ERROR", message: error.localizedDescription, details: nil))
         }
     }
