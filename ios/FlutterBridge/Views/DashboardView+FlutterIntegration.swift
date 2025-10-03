@@ -27,15 +27,24 @@ extension DashboardView {
     
     /// Initialize DashboardView with Flutter bridge integration
     /// ⚠️ MIGRATION TEMPORARY: Remove when Flutter bridge is no longer needed
-    static func withFlutterIntegration() -> DashboardView {
+    static func withFlutterIntegration() -> some View {
         // Initialize with method channel from FlutterSwiftUIBridge
         let bridge = FlutterSwiftUIBridge.shared
-        var view = DashboardView()
         
-        // Set up Flutter integration
+        // Create a wrapper with its own NavigationPath since this is used from Flutter
         // TODO: Remove this when pure SwiftUI implementation is complete
         
-        return view
+        return DashboardViewFlutterWrapper()
+    }
+}
+
+private struct DashboardViewFlutterWrapper: View {
+    @State private var navigationPath = NavigationPath()
+    
+    var body: some View {
+        NavigationStack(path: $navigationPath) {
+            DashboardView(navigationPath: $navigationPath)
+        }
     }
 }
 

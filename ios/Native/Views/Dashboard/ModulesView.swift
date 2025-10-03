@@ -14,11 +14,12 @@ import Flutter
 /// Displays service tiles in a list format matching Flutter implementation
 struct ModulesView: View {
     @Bindable var viewModel: DashboardViewModel
+    @Binding var navigationPath: NavigationPath
     
     var body: some View {
         if !viewModel.isAnyServiceEnabled {
             // Swift equivalent of Flutter's LunaMessage for no modules enabled
-            NoModulesEnabledView()
+            NoModulesEnabledView(navigationPath: $navigationPath)
         } else {
             LazyVStack(spacing: 0) {
                 // Enabled services - matches Flutter's service list

@@ -15,25 +15,31 @@ import SwiftUI
 struct MainAppCoordinatorView: View {
     @State private var settingsViewModel = SettingsViewModel()
     @State private var isInitializing = true
+    @State private var navigationPath = NavigationPath()
     
     var body: some View {
-        Group {
-            if isInitializing {
-                // Initial loading state
-                VStack(spacing: 16) {
-                    ProgressView()
-                    Text("Loading...")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+        NavigationStack(path: $navigationPath) {
+            Group {
+                if isInitializing {
+                    // Initial loading state
+                    VStack(spacing: 16) {
+                        ProgressView()
+                        Text("Loading...")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color(UIColor.systemBackground))
+                } else if settingsViewModel.hasValidServices {
+                    // Show SwiftUI dashboard when services are configured
+                    DashboardView(navigationPath: $navigationPath)
+                } else {
+                    // Show no modules enabled view (directs to settings)
+                    NoModulesEnabledView(navigationPath: $navigationPath)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(UIColor.systemBackground))
-            } else if settingsViewModel.hasValidServices {
-                // Show SwiftUI dashboard when services are configured
-                DashboardView()
-            } else {
-                // Show no modules enabled view (directs to settings)
-                NoModulesEnabledView()
+            }
+            .navigationDestination(for: AppRoute.self) { route in
+                destinationView(for: route)
             }
         }
         .task {
@@ -51,6 +57,23 @@ struct MainAppCoordinatorView: View {
         
         isInitializing = false
     }
+    
+    @ViewBuilder
+    private func destinationView(for route: AppRoute) -> some View {
+        switch route {
+        case .settings:
+            SwiftUISettingsView(viewModel: settingsViewModel)
+        case .dashboard:
+            DashboardView(navigationPath: $navigationPath)
+        }
+    }
+}
+
+// MARK: - Navigation Routes
+
+enum AppRoute: Hashable {
+    case settings
+    case dashboard
 }
 
 #Preview {

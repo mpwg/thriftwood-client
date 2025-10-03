@@ -12,6 +12,8 @@ import Flutter
 
 /// Swift equivalent of Flutter's LunaMessage for no modules enabled state
 struct NoModulesEnabledView: View {
+    @Binding var navigationPath: NavigationPath
+    
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "square.grid.2x2.fill")
@@ -51,8 +53,7 @@ struct NoModulesEnabledView: View {
     private func navigateToSettings() async {
         print("NoModulesEnabledView: Settings navigation initiated")
         
-        // Use the hybrid bridge system to navigate to settings
-        // This will present the SwiftUI settings view that's already registered
-        FlutterSwiftUIBridge.shared.presentNativeView(route: "/settings")
+        // Use native SwiftUI navigation
+        navigationPath.append(AppRoute.settings)
     }
 }

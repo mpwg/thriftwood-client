@@ -12,24 +12,21 @@ import SwiftUI
 /// This view provides the primary interface for accessing media management services
 struct DashboardView: View {
     // MARK: - Properties
+    @Binding var navigationPath: NavigationPath
     
     @State private var viewModel = DashboardViewModel()
     @State private var selectedTab: Int = 0
     @Environment(\.dismiss) private var dismiss
     
     // MARK: - Initialization
-    
-    init() {
-        // Pure SwiftUI initialization
-        // Migration note: Flutter bridge integration moved to FlutterBridge folder
-    }
+    // SwiftUI will automatically generate the required init with @Binding parameters
     
     // MARK: - Body
     
     var body: some View {
         TabView(selection: $selectedTab) {
             // Modules tab - Swift equivalent of ModulesPage
-            ModulesView(viewModel: viewModel)
+            ModulesView(viewModel: viewModel, navigationPath: $navigationPath)
                 .tabItem {
                     Image(systemName: "square.grid.2x2")
                     Text("Modules")
@@ -68,5 +65,5 @@ struct DashboardView: View {
 // MARK: - Preview
 
 #Preview {
-    DashboardView()
+    DashboardView(navigationPath: .constant(NavigationPath()))
 }

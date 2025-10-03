@@ -423,7 +423,7 @@ import Flutter
         case "/settings/all":
             return AnyView(SwiftUIAllSettingsView())
         case "/dashboard":
-            return AnyView(DashboardView())
+            return AnyView(DashboardWrapperView())
         case "/test":
             return AnyView(TestSwiftUIView(route: route, data: data))
         default:
@@ -526,9 +526,11 @@ struct SettingsWrapperView: View {
 }
 
 struct DashboardWrapperView: View {
-    let data: [String: Any]
+    @State private var navigationPath = NavigationPath()
     
     var body: some View {
-        DashboardView()
+        NavigationStack(path: $navigationPath) {
+            DashboardView(navigationPath: $navigationPath)
+        }
     }
 }
