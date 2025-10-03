@@ -84,6 +84,9 @@ extension BridgeMethodDispatcher {
     
     /// Register all core bridge methods
     func registerCoreBridgeMethods() {
+        // Context detection methods
+        registerEmbeddedContextMethods()
+        
         // Navigation methods
         registerHandler(for: "navigateToNative") { call, result in
             guard let args = call.arguments as? [String: Any],
