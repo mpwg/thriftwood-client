@@ -34,16 +34,19 @@ Every push to `main` or `rety` branches triggers:
 ## Features for Indie Development
 
 ### 1. Fast Feedback
+
 - Caches build artifacts to speed up runs
 - Skips CI on documentation-only changes
 - Cancels outdated runs automatically
 
 ### 2. Easy Debugging
+
 - Test results uploaded on failure
 - Clear step names and logging
 - Version information logged for troubleshooting
 
 ### 3. Low Maintenance
+
 - Uses latest stable Xcode
 - Minimal dependencies (just SwiftLint)
 - No code signing required for CI builds
@@ -68,6 +71,7 @@ xcodebuild test -project Thriftwood.xcodeproj -scheme Thriftwood
 ### Skip CI for Documentation Changes
 
 CI automatically skips on:
+
 - Markdown files (`**.md`)
 - Documentation folder (`docs/**`)
 - Legacy code (`legacy/**`)
@@ -75,6 +79,7 @@ CI automatically skips on:
 ### Adjust Xcode Version
 
 Edit `.github/workflows/ci.yml` line:
+
 ```yaml
 run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
 ```
@@ -86,6 +91,7 @@ Simply add steps to the workflow file. Keep it simple!
 ## SwiftLint Configuration
 
 See `.swiftlint.yml` for linting rules focused on maintainability:
+
 - Enforces consistent code style
 - Catches common errors
 - Encourages clear documentation
@@ -113,6 +119,7 @@ Auto-fix many issues: `swiftlint --fix`
 ## Future Enhancements
 
 When needed (not now):
+
 - Release builds and notarization
 - TestFlight deployment
 - Code coverage reporting

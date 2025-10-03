@@ -163,3 +163,5 @@ legacy/.dart_tool/
 legacy/.flutter-plugins
 legacy/.flutter-plugins-dependencies
 legacy/.packages
+
+Thriftwood.xcodeproj/project.xcworkspace/xcuserdata/*
