@@ -27,6 +27,8 @@ extension SonarrSeriesSortingExtension on SonarrSeriesSorting {
         return 'date_added';
       case SonarrSeriesSorting.EPISODES:
         return 'episodes';
+      case SonarrSeriesSorting.MONITORED:
+        return 'monitored';
       case SonarrSeriesSorting.SIZE:
         return 'size';
       case SonarrSeriesSorting.TYPE:
@@ -50,6 +52,8 @@ extension SonarrSeriesSortingExtension on SonarrSeriesSorting {
         return 'Date Added';
       case SonarrSeriesSorting.EPISODES:
         return 'Episodes';
+      case SonarrSeriesSorting.MONITORED:
+        return 'Monitored';
       case SonarrSeriesSorting.NETWORK:
         return 'Network';
       case SonarrSeriesSorting.SIZE:
@@ -58,6 +62,14 @@ extension SonarrSeriesSortingExtension on SonarrSeriesSorting {
         return 'Type';
       case SonarrSeriesSorting.QUALITY:
         return 'Quality Profile';
+      case SonarrSeriesSorting.QUALITY_PROFILE:
+        return 'Quality Profile';
+      case SonarrSeriesSorting.SEASONS:
+        return 'Seasons';
+      case SonarrSeriesSorting.SERIES_TYPE:
+        return 'Series Type';
+      case SonarrSeriesSorting.SIZE_ON_DISK:
+        return 'Size On Disk';
       case SonarrSeriesSorting.NEXT_AIRING:
         return 'Next Airing';
       case SonarrSeriesSorting.PREVIOUS_AIRING:

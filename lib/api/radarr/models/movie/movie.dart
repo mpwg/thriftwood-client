@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/modules/radarr.dart';
 
+part 'movie.g.dart';
 
 /// Model for a single movie data from Radarr.
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

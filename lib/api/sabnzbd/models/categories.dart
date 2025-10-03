@@ -1,7 +1,7 @@
 import 'dart:convert';
-part 'categories.g.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'categories.g.dart';
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SABnzbdCategories {

@@ -25,13 +25,8 @@ LunaFileSystem getFileSystem() {
 abstract class _Shared implements LunaFileSystem {
   @override
   Future<void> nuke() async {
-    final subpath = LunaDatabase().path;
-    final appDocDir = await getApplicationDocumentsDirectory();
-    final database = Directory('${appDocDir.path}/$subpath');
-
-    if (database.existsSync()) {
-      database.deleteSync(recursive: true);
-    }
+    // SwiftData handles data storage - just call database nuke
+    await LunaDatabase().nuke();
   }
 }
 

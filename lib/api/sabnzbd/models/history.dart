@@ -1,8 +1,8 @@
 import 'dart:convert';
-part 'history.g.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/sabnzbd/models/stage_log.dart';
 
+part 'history.g.dart';
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SABnzbdHistory {

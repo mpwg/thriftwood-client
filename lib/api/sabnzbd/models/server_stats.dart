@@ -1,8 +1,8 @@
 import 'dart:convert';
-part 'server_stats.g.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunasea/api/sabnzbd/models/server.dart';
 
+part 'server_stats.g.dart';
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SABnzbdServerStats {

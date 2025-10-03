@@ -1,7 +1,7 @@
 import 'dart:convert';
-part 'queue.g.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'queue.g.dart';
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SABnzbdQueue {
