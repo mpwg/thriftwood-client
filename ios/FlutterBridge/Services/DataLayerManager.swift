@@ -75,6 +75,9 @@ class DataLayerManager {
     /// When false: Use Hive (default)
     private(set) var useSwiftData: Bool = false
     
+    /// Tracks whether an explicit toggle state was found in Hive
+    private var hasExplicitToggleState: Bool = false
+    
     private init() {}
     
     /// Initialize the data layer manager
@@ -89,6 +92,19 @@ class DataLayerManager {
         
         // Get initial toggle state from Hive
         await loadToggleState()
+        
+        // If SwiftData context is available and no explicit toggle state is set,
+        // default to using SwiftData as per migration plan
+        if !hasExplicitToggleState {
+            useSwiftData = true
+            print("📊 DataLayerManager: Auto-enabling SwiftData since context is available")
+            
+            // Save this preference to Hive so it persists
+            await saveToggleStateToHive(enabled: true)
+            
+            // CRITICAL: Ensure data exists in SwiftData after auto-enabling
+            await performInitialDataSetupIfNeeded()
+        }
         
         // Setup listener for toggle changes
         setupToggleListener()
@@ -107,10 +123,15 @@ class DataLayerManager {
             
             // Check for hybridSettingsUseSwiftUI in the settings
             if let useSwiftUI = settings["hybridSettingsUseSwiftUI"] as? Bool {
+                hasExplicitToggleState = true
                 await handleToggleChange(newValue: useSwiftUI, initialLoad: true)
+            } else {
+                hasExplicitToggleState = false
+                print("📊 DataLayerManager: No explicit toggle state found in Hive")
             }
         } catch {
             print("⚠️ DataLayerManager: Failed to load toggle state: \(error)")
+            hasExplicitToggleState = false
             // Default to Hive (Flutter) storage
             useSwiftData = false
         }
@@ -188,10 +209,46 @@ class DataLayerManager {
         }
     }
     
+    /// Perform initial data setup when auto-enabling SwiftData
+    /// Either migrates from Hive or creates default settings
+    @MainActor
+    private func performInitialDataSetupIfNeeded() async {
+        guard let migrationManager = migrationManager else {
+            print("❌ DataLayerManager: Migration manager not initialized")
+            return
+        }
+        
+        do {
+            // First, check if SwiftData already has settings
+            if try await swiftDataHasSettings() {
+                print("✅ DataLayerManager: SwiftData already has settings, no setup needed")
+                return
+            }
+            
+            // Try to migrate from Hive if it has data
+            if try await hiveHasSettings() {
+                print("🔄 DataLayerManager: Migrating existing Hive data to SwiftData...")
+                try await migrationManager.syncFromHive()
+                print("✅ DataLayerManager: Initial migration from Hive completed")
+            } else {
+                // No data in either storage, create default settings
+                print("🆕 DataLayerManager: No existing data found, creating default settings...")
+                try await createDefaultSettingsInSwiftData()
+                print("✅ DataLayerManager: Default settings created in SwiftData")
+            }
+        } catch {
+            print("❌ DataLayerManager: Initial data setup failed: \(error)")
+            // Revert to Hive on failure
+            useSwiftData = false
+            await saveToggleStateToHive(enabled: false)
+        }
+    }
+    
     // MARK: - Data Access Methods
     
     /// Get active profile
     /// Uses SwiftData or Hive based on current toggle state
+    @MainActor
     func getActiveProfile() async throws -> ThriftwoodProfile {
         if useSwiftData {
             return try await getActiveProfileFromSwiftData()
@@ -201,6 +258,7 @@ class DataLayerManager {
     }
     
     /// Get all profiles
+    @MainActor
     func getAllProfiles() async throws -> [String: ThriftwoodProfile] {
         if useSwiftData {
             return try await getAllProfilesFromSwiftData()
@@ -210,6 +268,7 @@ class DataLayerManager {
     }
     
     /// Save profile
+    @MainActor
     func saveProfile(_ profile: ThriftwoodProfile) async throws {
         if useSwiftData {
             try await saveProfileToSwiftData(profile)
@@ -221,6 +280,7 @@ class DataLayerManager {
     }
     
     /// Get app settings
+    @MainActor
     func getAppSettings() async throws -> ThriftwoodAppSettings {
         if useSwiftData {
             return try await getAppSettingsFromSwiftData()
@@ -230,6 +290,7 @@ class DataLayerManager {
     }
     
     /// Save app settings
+    @MainActor
     func saveAppSettings(_ settings: ThriftwoodAppSettings) async throws {
         if useSwiftData {
             try await saveAppSettingsToSwiftData(settings)
@@ -242,6 +303,7 @@ class DataLayerManager {
     
     // MARK: - SwiftData Operations
     
+    @MainActor
     private func getActiveProfileFromSwiftData() async throws -> ThriftwoodProfile {
         guard let modelContext = modelContext else {
             throw DataLayerError.contextNotInitialized
@@ -269,6 +331,7 @@ class DataLayerManager {
         return profile.toThriftwoodProfile()
     }
     
+    @MainActor
     private func getAllProfilesFromSwiftData() async throws -> [String: ThriftwoodProfile] {
         guard let modelContext = modelContext else {
             throw DataLayerError.contextNotInitialized
@@ -282,6 +345,7 @@ class DataLayerManager {
         })
     }
     
+    @MainActor
     private func saveProfileToSwiftData(_ profile: ThriftwoodProfile) async throws {
         guard let modelContext = modelContext else {
             throw DataLayerError.contextNotInitialized
@@ -308,6 +372,7 @@ class DataLayerManager {
         try modelContext.save()
     }
     
+    @MainActor
     private func getAppSettingsFromSwiftData() async throws -> ThriftwoodAppSettings {
         guard let modelContext = modelContext else {
             throw DataLayerError.contextNotInitialized
@@ -326,6 +391,7 @@ class DataLayerManager {
         return appSettings.toThriftwoodAppSettings(profiles: profiles)
     }
     
+    @MainActor
     private func saveAppSettingsToSwiftData(_ settings: ThriftwoodAppSettings) async throws {
         guard let modelContext = modelContext else {
             throw DataLayerError.contextNotInitialized
@@ -450,6 +516,34 @@ class DataLayerManager {
     
     // MARK: - Helper Methods
     
+    /// Save the toggle state to Hive for persistence
+    private func saveToggleStateToHive(enabled: Bool) async {
+        guard let methodChannel = methodChannel else {
+            print("⚠️ DataLayerManager: Cannot save toggle state - method channel not available")
+            return
+        }
+        
+        do {
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                Task { @MainActor in
+                    let arguments = ["settings": ["hybridSettingsUseSwiftUI": enabled]]
+                    methodChannel.invokeMethod("updateHiveSettings", arguments: arguments) { result in
+                        if let error = result as? FlutterError {
+                            continuation.resume(throwing: DataLayerError.flutterError(
+                                error.message ?? "Failed to save toggle state"
+                            ))
+                        } else {
+                            continuation.resume(returning: ())
+                        }
+                    }
+                }
+            }
+            print("✅ DataLayerManager: Saved toggle state (useSwiftData: \(enabled)) to Hive")
+        } catch {
+            print("⚠️ DataLayerManager: Failed to save toggle state to Hive: \(error)")
+        }
+    }
+    
     private func getHiveSettings() async throws -> [String: Any] {
         guard let methodChannel = methodChannel else {
             throw DataLayerError.channelNotInitialized
@@ -489,6 +583,54 @@ class DataLayerManager {
                 }
             }
         }
+    }
+    
+    // MARK: - Helper Methods for Initial Setup
+    
+    /// Check if SwiftData has settings
+    @MainActor
+    private func swiftDataHasSettings() async throws -> Bool {
+        guard let modelContext = modelContext else {
+            return false
+        }
+        
+        let descriptor = FetchDescriptor<AppSettingsSwiftData>()
+        let settings = try modelContext.fetch(descriptor)
+        return !settings.isEmpty
+    }
+    
+    /// Check if Hive has settings
+    private func hiveHasSettings() async throws -> Bool {
+        do {
+            let settings = try await getHiveSettings()
+            // Check if we have meaningful settings beyond defaults
+            return settings.count > 4 || settings["profiles"] as? [String: Any] != nil
+        } catch {
+            // If we can't read from Hive, assume no data
+            return false
+        }
+    }
+    
+    /// Create default settings in SwiftData
+    @MainActor
+    private func createDefaultSettingsInSwiftData() async throws {
+        guard let modelContext = modelContext else {
+            throw DataLayerError.contextNotInitialized
+        }
+        
+        // Create default profile
+        let defaultProfile = ProfileSwiftData(name: "default")
+        modelContext.insert(defaultProfile)
+        
+        // Create default app settings
+        let defaultSettings = AppSettingsSwiftData()
+        defaultSettings.enabledProfile = "default"
+        modelContext.insert(defaultSettings)
+        
+        // Save to SwiftData
+        try modelContext.save()
+        
+        print("✅ DataLayerManager: Created default settings with profile 'default'")
     }
 }
 

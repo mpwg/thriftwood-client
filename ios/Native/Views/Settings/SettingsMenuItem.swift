@@ -53,8 +53,11 @@ struct SettingsMenuItem: View {
     
     private var destinationView: AnyView? {
         // Map routes to SwiftUI views for native navigation
-        // Use shared viewModel if provided, otherwise create new one
-        let settingsVM = viewModel ?? SettingsViewModel()
+        // CRITICAL: Always use provided viewModel to prevent creating new instances
+        guard let settingsVM = viewModel else {
+            print("⚠️ SettingsMenuItem: No viewModel provided for route \(route)")
+            return nil
+        }
         
         switch route {
         case "/settings":

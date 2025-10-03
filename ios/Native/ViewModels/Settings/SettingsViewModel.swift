@@ -118,16 +118,18 @@ class SettingsViewModel {
         self.selectedProfile = appSettings.profiles[appSettings.enabledProfile]
         self.availableProfiles = Array(appSettings.profiles.keys).sorted()
         
-        // Only load settings if this is the first initialization
-        if !hasLoadedInitialSettings {
-            Task { @MainActor in
-                await loadSettings()
-                hasLoadedInitialSettings = true
-            }
-        }
+        // Don't auto-load settings on init - this prevents endless loops in SwiftUI
+        // Settings will be loaded manually when needed via loadSettingsIfNeeded()
     }
     
     // MARK: - Public Methods
+    
+    /// Load settings if not already loaded (prevents endless loops)
+    @MainActor
+    func loadSettingsIfNeeded() async {
+        guard !hasLoadedInitialSettings else { return }
+        await loadSettings()
+    }
     
     /// Load settings from storage
     @MainActor
@@ -143,6 +145,7 @@ class SettingsViewModel {
             selectedProfile = appSettings.profiles[appSettings.enabledProfile]
             availableProfiles = Array(appSettings.profiles.keys).sorted()
             
+            hasLoadedInitialSettings = true
             print("✅ SettingsViewModel: Successfully loaded settings via DataLayerManager (useSwiftData: \(dataLayerManager.useSwiftData))")
         } catch {
             print("⚠️ SettingsViewModel: Failed to load settings: \(error)")

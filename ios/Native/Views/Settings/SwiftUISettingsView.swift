@@ -22,7 +22,6 @@ struct SwiftUISettingsView: View {
     @State private var showingProfiles = false
     
     var body: some View {
-
         List {
                 // Configuration Section
                 SettingsMenuItem(
@@ -89,5 +88,9 @@ struct SwiftUISettingsView: View {
             .fullScreenCover(isPresented: $showingProfiles) {
                 SwiftUIProfilesView(viewModel: viewModel)
             }
-        }
+            .task {
+                // Load settings when view appears, but only if not already loaded
+                await viewModel.loadSettingsIfNeeded()
+            }
+    }
     }
