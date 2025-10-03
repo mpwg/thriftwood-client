@@ -1,11 +1,9 @@
 import UIKit
 import SwiftUI
-import Flutter
 
 @main
 @objc class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
-  private var flutterEngine: FlutterEngine?
   
   func application(
     _ application: UIApplication,
@@ -19,55 +17,36 @@ import Flutter
     print("📱 Running in native iOS environment")
     #endif
     
-    // Initialize Flutter engine for hybrid functionality
-    initializeFlutterEngine()
+    // MIGRATION TEMPORARY: Initialize Flutter for hybrid functionality
+    // TODO: Remove this when migration to pure SwiftUI is complete
+    FlutterEngineManager.shared.initializeFlutterEngine()
     
-    // Create SwiftUI-first window
+    // Setup SwiftUI as the primary interface
     setupSwiftUIWindow()
     
     return true
   }
   
-  /// Initialize Flutter engine for embedding Flutter views when needed
-  private func initializeFlutterEngine() {
-    flutterEngine = FlutterEngine(name: "thriftwood_flutter_engine")
-    flutterEngine?.run()
-    
-    // Register Flutter plugins
-    GeneratedPluginRegistrant.register(with: flutterEngine!)
-    
-    print("✅ Flutter engine initialized for hybrid functionality")
-  }
-  
-  /// Setup SwiftUI as the root view controller with native navigation
+  /// Setup SwiftUI as the root view controller
+  /// This is the permanent app structure that will remain after migration
   private func setupSwiftUIWindow() {
     window = UIWindow(frame: UIScreen.main.bounds)
     
-    // Create SwiftUI root view using MainAppCoordinatorView for proper navigation handling
+    // Create SwiftUI root view - this is the permanent architecture
     let rootView = MainAppCoordinatorView()
     let hostingController = UIHostingController(rootView: rootView)
     
     window?.rootViewController = hostingController
     window?.makeKeyAndVisible()
     
-    // Initialize the Flutter bridge for hybrid functionality
-    initializeHybridBridge()
-    
-    print("✅ SwiftUI window setup complete - Native NavigationStack enabled")
-  }
-  
-  /// Initialize the Flutter-SwiftUI hybrid bridge for embedded Flutter views
-  private func initializeHybridBridge() {
-    guard let engine = flutterEngine else {
-      print("❌ Error: Flutter engine not initialized")
-      return
+    // MIGRATION TEMPORARY: Initialize hybrid bridge for Flutter integration
+    // TODO: Remove this when migration to pure SwiftUI is complete
+    Task {
+      await FlutterEngineManager.shared.initializeHybridBridge(with: window)
     }
     
-    // Initialize the hybrid bridge with the Flutter engine  
-    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
-    FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
-    
-    print("✅ Hybrid bridge initialized - SwiftUI primary, Flutter embedded")
+    print("✅ SwiftUI window setup complete - Native NavigationStack enabled")
+    print("⚠️  Flutter hybrid support active (migration temporary)")
   }
   
   /// Handle URL schemes for deep linking
@@ -76,13 +55,22 @@ import Flutter
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey : Any] = [:]
   ) -> Bool {
-    // Handle deep links through the hybrid navigation coordinator
-    let coordinator = HybridNavigationCoordinator()
-    if coordinator.handleDeepLink(url, sourceApplication: options[.sourceApplication] as? String) {
+    
+    // MIGRATION TEMPORARY: Handle deep links through hybrid system
+    // TODO: Replace with pure SwiftUI deep linking when migration complete
+    if FlutterEngineManager.shared.handleDeepLink(url, sourceApplication: options[.sourceApplication] as? String) {
       return true
     }
     
-    // For SwiftUI-first architecture, we handle URLs directly
+    // TODO: Add pure SwiftUI deep link handling here
+    print("Deep link not handled: \(url)")
     return false
+  }
+  
+  /// App termination cleanup
+  func applicationWillTerminate(_ application: UIApplication) {
+    // MIGRATION TEMPORARY: Cleanup Flutter resources
+    // TODO: Remove this when migration to pure SwiftUI is complete
+    FlutterEngineManager.shared.cleanup()
   }
 }

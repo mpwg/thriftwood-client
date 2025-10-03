@@ -3,54 +3,25 @@
 //  Runner
 //
 //  Created by GitHub Copilot on 2025-09-30.
-//  Dashboard view with Flutter parity
+//  Main dashboard view for the Thriftwood app
 //
 
-// MARK: - Flutter Parity Implementation
-// Flutter equivalent: lib/modules/dashboard/routes/dashboard/route.dart:1-56
-// Original Flutter class: DashboardRoute extends StatefulWidget
-// Migration date: 2025-09-30
-// Migrated by: GitHub Copilot
-// Validation status: ✅ Complete
-// Features ported: Service tiles, grid layout, navigation, state management, page view system
-// Data sync: Bidirectional via SharedDataManager + method channels
-// Testing: Unit tests + integration tests + manual validation
-
 import SwiftUI
-import Flutter
 
-/// Swift implementation of Flutter's DashboardRoute
-/// Maintains 100% functional parity with Flutter counterpart
-///
-/// **Bidirectional Integration:**
-/// - Initial state loaded from Flutter storage on initialization
-/// - All state changes immediately synced back to Flutter via SharedDataManager
-/// - Flutter state changes received via method channel notifications
-/// - Navigation integrated with FlutterSwiftUIBridge for seamless transitions
-///
-/// **Flutter Method Mapping:**
-/// - DashboardRoute.build() -> DashboardView.body
-/// - ModulesPage -> ModulesView
-/// - _buildFromLunaModule() -> ServiceTileView
-/// - _buildWakeOnLAN() -> WakeOnLANTileView
-///
-/// **Data Storage Consistency:**
-/// - Uses identical storage keys as Flutter implementation
-/// - Maintains same data serialization format
-/// - Preserves all validation rules and constraints
+/// Main dashboard view showing modules and calendar
+/// This view provides the primary interface for accessing media management services
 struct DashboardView: View {
     // MARK: - Properties
     
-    @State private var viewModel: DashboardViewModel
+    @State private var viewModel = DashboardViewModel()
     @State private var selectedTab: Int = 0
     @Environment(\.dismiss) private var dismiss
     
     // MARK: - Initialization
     
     init() {
-        // Initialize with method channel from FlutterSwiftUIBridge
-        let bridge = FlutterSwiftUIBridge.shared
-        self._viewModel = State(initialValue: DashboardViewModel(methodChannel: bridge.methodChannel))
+        // Pure SwiftUI initialization
+        // Migration note: Flutter bridge integration moved to FlutterBridge folder
     }
     
     // MARK: - Body

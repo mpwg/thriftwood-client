@@ -7,10 +7,11 @@
 //
 
 import SwiftUI
-import Flutter
+
+import SwiftUI
 
 /// Main SwiftUI coordinator that manages the entire app navigation
-/// Serves as the root SwiftUI view that allows Flutter-initiated navigation to present SwiftUI views
+/// Root view that coordinates between different app states and views
 struct MainAppCoordinatorView: View {
     @State private var settingsViewModel = SettingsViewModel()
     @State private var isInitializing = true
@@ -18,7 +19,7 @@ struct MainAppCoordinatorView: View {
     var body: some View {
         Group {
             if isInitializing {
-                // Initial loading state - let Flutter handle navigation
+                // Initial loading state
                 VStack(spacing: 16) {
                     ProgressView()
                     Text("Loading...")
@@ -45,7 +46,7 @@ struct MainAppCoordinatorView: View {
         // Load settings to determine what to show
         await settingsViewModel.loadSettings()
         
-        // Brief delay to allow Flutter initialization to complete
+        // Brief delay for smooth loading experience
         try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
         
         isInitializing = false

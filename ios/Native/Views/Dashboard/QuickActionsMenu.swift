@@ -8,9 +8,8 @@
 
 
 import SwiftUI
-import Flutter
 
-/// Swift equivalent of Flutter's quick actions functionality
+/// Quick actions menu for dashboard functionality
 /// Provides refresh, settings access, and other dashboard actions
 struct QuickActionsMenu: View {
     @Bindable var viewModel: DashboardViewModel
@@ -18,7 +17,7 @@ struct QuickActionsMenu: View {
     
     var body: some View {
         Menu {
-            // Refresh action - Swift equivalent of Flutter's refresh functionality
+            // Refresh action
             Button {
                 Task {
                     await viewModel.refresh()

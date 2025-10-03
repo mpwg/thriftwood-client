@@ -50,22 +50,9 @@ struct NoModulesEnabledView: View {
     
     private func navigateToSettings() async {
         print("NoModulesEnabledView: Settings navigation initiated")
-        let bridge = FlutterSwiftUIBridge.shared
-        let settingsRoute = "/settings"
         
-        if bridge.shouldUseNativeView(for: settingsRoute) {
-            // Navigate to SwiftUI settings view
-            print("NoModulesEnabledView: Using SwiftUI navigation for settings")
-            bridge.presentNativeView(route: settingsRoute, data: [
-                "from": "dashboard_no_modules"
-            ])
-        } else {
-            // Navigate back to Flutter for settings view
-            print("NoModulesEnabledView: Using Flutter navigation for settings")
-            bridge.navigateBackToFlutter(data: [
-                "navigateTo": settingsRoute,
-                "from": "dashboard_no_modules"
-            ])
-        }
+        // Use the hybrid bridge system to navigate to settings
+        // This will present the SwiftUI settings view that's already registered
+        FlutterSwiftUIBridge.shared.presentNativeView(route: "/settings")
     }
 }

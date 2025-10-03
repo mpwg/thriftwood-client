@@ -15,6 +15,7 @@ struct SettingsMenuItem: View {
     let icon: String
     let route: String
     var isEnabled: Bool = true
+    var viewModel: SettingsViewModel? = nil
     
     var body: some View {
         if isEnabled, let destination = destinationView {
@@ -36,51 +37,50 @@ struct SettingsMenuItem: View {
                 isEnabled: isEnabled
             )
         } else {
-            // Fall back to Flutter bridge for routes not yet implemented in SwiftUI
-            Button(action: navigateToFlutterRoute) {
+            // Route not yet implemented in SwiftUI
+            Button(action: showNotImplementedAlert) {
                 SettingsMenuItemContent(
                     title: title,
                     subtitle: subtitle,
                     icon: icon,
-                    isEnabled: isEnabled,
-                    showChevron: true
+                    isEnabled: false,
+                    showChevron: false
                 )
             }
+            .disabled(true)
         }
     }
     
     private var destinationView: AnyView? {
         // Map routes to SwiftUI views for native navigation
+        // Use shared viewModel if provided, otherwise create new one
+        let settingsVM = viewModel ?? SettingsViewModel()
+        
         switch route {
         case "/settings":
-            AnyView(SwiftUIAllSettingsView())
+            return AnyView(SwiftUIAllSettingsView())
         case "/settings/configuration":
-            AnyView(SwiftUIConfigurationView(viewModel: ConfigurationViewModel(settingsViewModel: SettingsViewModel())))
+            return AnyView(SwiftUIConfigurationView(viewModel: ConfigurationViewModel(settingsViewModel: settingsVM)))
         case "/settings/profiles":
-            AnyView(SwiftUIProfilesView(viewModel: SettingsViewModel()))
+            return AnyView(SwiftUIProfilesView(viewModel: settingsVM))
         case "/settings/general":
-            AnyView(SwiftUIGeneralSettingsView(viewModel: SettingsViewModel()))
+            return AnyView(SwiftUIGeneralSettingsView(viewModel: settingsVM))
         case "/settings/dashboard":
-            AnyView(SwiftUIDashboardSettingsView(viewModel: SettingsViewModel()))
+            return AnyView(SwiftUIDashboardSettingsView(viewModel: settingsVM))
         case "/settings/drawer":
-            AnyView(SwiftUIDrawerSettingsView(viewModel: SettingsViewModel()))
+            return AnyView(SwiftUIDrawerSettingsView(viewModel: settingsVM))
         case "/settings/quick_actions":
-            AnyView(SwiftUIQuickActionsSettingsView(viewModel: SettingsViewModel()))
+            return AnyView(SwiftUIQuickActionsSettingsView(viewModel: settingsVM))
+        case "/settings/system":
+            return AnyView(SwiftUISystemView(viewModel: settingsVM))
         default:
-            nil // Route not implemented in SwiftUI, will fall back to Flutter
+            return nil // Route not implemented in SwiftUI yet
         }
     }
     
-    private func navigateToFlutterRoute() {
-        print("SettingsMenuItem: Navigating to Flutter route: \(route)")
-        // Use Flutter navigation for routes not yet implemented in SwiftUI
-        // For now, we'll use a simple approach and delegate to Flutter
-        Task {
-            await MainActor.run {
-                // This would need to be implemented in the bridge
-                print("TODO: Navigate to Flutter route: \(route)")
-            }
-        }
+    private func showNotImplementedAlert() {
+        print("SettingsMenuItem: Route not implemented in SwiftUI: \(route)")
+        // TODO: Show alert or implement missing SwiftUI views
     }
 }
 

@@ -115,12 +115,7 @@ struct CalendarSonarrData: CalendarData {
     }
     
     func enterContent() {
-        // Navigate to Sonarr series details via Flutter bridge
-        // Uses hybrid navigation to route to Flutter's Sonarr module
-        FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: [
-            "navigateTo": "/sonarr/series/\(seriesID)",
-            "seriesId": seriesID,
-            "from": "calendar"
-        ])
+        // TODO: Implement pure SwiftUI navigation to Sonarr series details
+        print("Navigate to Sonarr series details: \(seriesID)")
     }
 }

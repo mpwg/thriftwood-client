@@ -77,12 +77,13 @@ enum ServiceStatus: Equatable {
 
 /// Service status checker that maintains parity with Flutter's profile system
 /// Swift equivalent of Flutter's service connectivity and enablement checks
+/// Now uses SwiftData for permanent architecture (no SharedDataManager dependency)
 @Observable
 class ServiceStatusChecker {
     
     // MARK: - Properties
     
-    private let sharedDataManager = SharedDataManager.shared
+    private let storageService = SwiftDataStorageService.shared
     private let methodChannel: FlutterMethodChannel?
     
     /// Status for each service
@@ -153,51 +154,66 @@ class ServiceStatusChecker {
         }
     }
     
-    /// Check if service is enabled in Flutter profile
+    /// Check if service is enabled using SwiftData
     /// Swift equivalent of Flutter's LunaProfile.current checks
     private func isServiceEnabled(_ serviceKey: String) async -> Bool {
         do {
-            let enabledKey = "\(serviceKey)Enabled"
-            let isEnabled = try await sharedDataManager.loadData(Bool.self, forKey: enabledKey) ?? false
-            
-            // Special case for search service
-            if serviceKey == "search" {
-                let indexersCount = try await sharedDataManager.loadData(Int.self, forKey: "indexers_count") ?? 0
-                return indexersCount > 0
+            // Map service keys to ServiceType enum
+            guard let serviceType = mapServiceKeyToType(serviceKey) else {
+                // Handle special cases not in ServiceType enum
+                if serviceKey == "search" {
+                    // TODO: Add search/indexers support to SwiftData model
+                    return false
+                }
+                if serviceKey == "wake_on_lan" {
+                    // TODO: Add wake on LAN support to SwiftData model
+                    return false
+                }
+                return false
             }
             
-            // Special case for wake_on_lan service  
-            if serviceKey == "wake_on_lan" {
-                // Check if Wake on LAN is supported and enabled
-                let isSupported = try await sharedDataManager.loadData(Bool.self, forKey: "wake_on_lan_supported") ?? false
-                return isEnabled && isSupported
-            }
-            
-            return isEnabled
+            return try storageService.isServiceEnabled(serviceType)
         } catch {
             print("Failed to check if \(serviceKey) is enabled: \(error)")
             return false
         }
     }
     
-    /// Get service configuration from Flutter storage
+    /// Map service key strings to ServiceType enum
+    private func mapServiceKeyToType(_ serviceKey: String) -> ServiceType? {
+        switch serviceKey.lowercased() {
+        case "lidarr":
+            return .lidarr
+        case "radarr":
+            return .radarr
+        case "sonarr":
+            return .sonarr
+        case "sabnzbd":
+            return .sabnzbd
+        case "nzbget":
+            return .nzbget
+        case "overseerr":
+            return .overseerr
+        case "tautulli":
+            return .tautulli
+        default:
+            return nil
+        }
+    }
+    
+    /// Get service configuration from SwiftData
     /// Swift equivalent of Flutter's profile host/key loading
     private func getServiceConfiguration(_ serviceKey: String) async throws -> [String: Any] {
-        var config: [String: Any] = [:]
-        
-        // Load host and API key from Flutter profile
-        let hostKey = "\(serviceKey)Host"
-        let keyKey = "\(serviceKey)Key"
-        
-        if let host = try await sharedDataManager.loadData(String.self, forKey: hostKey) {
-            config["host"] = host
+        guard let serviceType = mapServiceKeyToType(serviceKey),
+              let config = try storageService.getServiceConfig(serviceType) else {
+            return [:]
         }
         
-        if let apiKey = try await sharedDataManager.loadData(String.self, forKey: keyKey) {
-            config["apiKey"] = apiKey
-        }
-        
-        return config
+        return [
+            "host": config.host,
+            "apiKey": config.apiKey,
+            "strictTLS": config.strictTLS
+        ]
     }
     
     /// Check service connectivity via Flutter method channel

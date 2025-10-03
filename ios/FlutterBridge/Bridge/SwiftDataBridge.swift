@@ -96,6 +96,12 @@ class SwiftDataBridge: NSObject {
             )
             modelContext = ModelContext(container)
             print("✅ SwiftData context initialized")
+            
+            // Initialize SwiftDataStorageService with the context
+            Task { @MainActor in
+                SwiftDataStorageService.shared.initialize(modelContext!)
+                print("✅ SwiftDataStorageService initialized with context")
+            }
         } catch {
             print("❌ Failed to initialize SwiftData context: \(error)")
         }

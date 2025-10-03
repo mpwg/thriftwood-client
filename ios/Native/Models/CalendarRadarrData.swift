@@ -88,12 +88,7 @@ struct CalendarRadarrData: CalendarData {
     }
     
     func enterContent() {
-        // Navigate to Radarr movie details via Flutter bridge
-        // Uses hybrid navigation to route to Flutter's Radarr module
-        FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: [
-            "navigateTo": "/radarr/movie/\(id)",
-            "movieId": id,
-            "from": "calendar"
-        ])
+        // TODO: Implement pure SwiftUI navigation to Radarr movie details
+        print("Navigate to Radarr movie details: \(id)")
     }
 }

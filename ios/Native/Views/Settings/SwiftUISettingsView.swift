@@ -24,17 +24,13 @@ struct SwiftUISettingsView: View {
     var body: some View {
 
         List {
-                // MARK: - Flutter Parity Implementation
-                // Flutter equivalent: lib/modules/settings/routes/settings/route.dart
-                // Validation date: 2025-01-17
-                // Exact match to Flutter's 3-section structure
-                
-                // Configuration Section (matches _configurationBlock)
+                // Configuration Section
                 SettingsMenuItem(
                     title: "Configuration",
                     subtitle: "Configure application and modules", 
                     icon: "gear",
-                    route: "/settings/configuration"
+                    route: "/settings/configuration",
+                    viewModel: viewModel
                 )
                 .accessibilityLabel("Configuration")
                 .accessibilityHint("Configure application and module settings")
@@ -44,7 +40,8 @@ struct SwiftUISettingsView: View {
                     title: "Profiles",
                     subtitle: "Switch profiles and add new ones",
                     icon: "person.2",
-                    route: "/settings/profiles"
+                    route: "/settings/profiles",
+                    viewModel: viewModel
                 )
                 .accessibilityLabel("Profiles")
                 .accessibilityHint("Switch between profiles or add new ones")
@@ -54,7 +51,8 @@ struct SwiftUISettingsView: View {
                     title: "System", 
                     subtitle: "System utilities and logs",
                     icon: "gear.badge",
-                    route: "/settings/system"
+                    route: "/settings/system",
+                    viewModel: viewModel
                 )
                 .accessibilityLabel("System")
                 .accessibilityHint("Access system utilities and logs")
@@ -70,7 +68,7 @@ struct SwiftUISettingsView: View {
                     .accessibilityHint("Return to the previous screen")
                 }
                 
-                // Profile selector in top right (matches Flutter)
+                // Profile selector in top right
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(viewModel.currentProfileName) {
                         showingProfiles = true
@@ -89,7 +87,7 @@ struct SwiftUISettingsView: View {
                 Text(viewModel.errorMessage ?? "Unknown error")
             }
             .fullScreenCover(isPresented: $showingProfiles) {
-                FlutterSwiftUIBridge.shared.createSwiftUIView(for: "/settings/profiles", data: [:])
+                SwiftUIProfilesView(viewModel: viewModel)
             }
         }
     }

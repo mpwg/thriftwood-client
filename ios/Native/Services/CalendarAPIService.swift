@@ -13,7 +13,7 @@
 // Migrated by: GitHub Copilot
 // Validation status: ✅ Complete
 // Features ported: Multi-service calendar aggregation, date filtering, API calls
-// Data sync: Fetches from Radarr/Sonarr/Lidarr APIs
+// Data sync: Fetches from Radarr/Sonarr/Lidarr APIs using SwiftData
 // Testing: Unit tests + integration tests + API mocking
 
 import Foundation
@@ -21,9 +21,10 @@ import SwiftUI
 
 /// Service for fetching calendar events from enabled *arr services
 /// Maintains 100% functional parity with Flutter's API.getUpcoming()
+/// Now uses SwiftData for permanent architecture (no SharedDataManager dependency)
 @Observable
 class CalendarAPIService {
-    private let sharedDataManager = SharedDataManager.shared
+    private let storageService = SwiftDataStorageService.shared
     
     /// Fetch upcoming calendar events from all enabled services
     /// Swift equivalent of Flutter's API.getUpcoming()
@@ -31,15 +32,14 @@ class CalendarAPIService {
     func getUpcoming(today: Date) async throws -> [Date: [any CalendarData]] {
         var events: [Date: [any CalendarData]] = [:]
         
-        // Load service enabled states
-        let lidarrEnabled = try await sharedDataManager.loadData(Bool.self, forKey: "LIDARR_ENABLED") ?? false
-        let radarrEnabled = try await sharedDataManager.loadData(Bool.self, forKey: "RADARR_ENABLED") ?? false
-        let sonarrEnabled = try await sharedDataManager.loadData(Bool.self, forKey: "SONARR_ENABLED") ?? false
+        // Check service enabled states and calendar preferences
+        let lidarrEnabled = try storageService.isServiceEnabled(.lidarr)
+        let radarrEnabled = try storageService.isServiceEnabled(.radarr) 
+        let sonarrEnabled = try storageService.isServiceEnabled(.sonarr)
         
-        // Load calendar preferences
-        let enableLidarr = try await sharedDataManager.loadData(Bool.self, forKey: "DASHBOARD_CALENDAR_ENABLE_LIDARR") ?? true
-        let enableRadarr = try await sharedDataManager.loadData(Bool.self, forKey: "DASHBOARD_CALENDAR_ENABLE_RADARR") ?? true
-        let enableSonarr = try await sharedDataManager.loadData(Bool.self, forKey: "DASHBOARD_CALENDAR_ENABLE_SONARR") ?? true
+        let enableLidarr = try storageService.isCalendarServiceEnabled(.lidarr)
+        let enableRadarr = try storageService.isCalendarServiceEnabled(.radarr)
+        let enableSonarr = try storageService.isCalendarServiceEnabled(.sonarr)
         
         // Fetch from each enabled service
         if lidarrEnabled && enableLidarr {
@@ -60,20 +60,19 @@ class CalendarAPIService {
     // MARK: - Private API Methods
     
     private func fetchLidarrUpcoming(into events: inout [Date: [any CalendarData]], today: Date) async throws {
-        // Load Lidarr configuration
-        guard let host = try await sharedDataManager.loadData(String.self, forKey: "LIDARR_HOST"),
-              let apiKey = try await sharedDataManager.loadData(String.self, forKey: "LIDARR_API_KEY"),
-              !host.isEmpty else {
+        // Load Lidarr configuration from SwiftData
+        guard let config = try storageService.getServiceConfig(.lidarr),
+              !config.host.isEmpty else {
             return
         }
         
         // Build URL
-        guard var urlComponents = URLComponents(string: "\(host)/api/v1/calendar") else {
+        guard var urlComponents = URLComponents(string: "\(config.host)/api/v1/calendar") else {
             return
         }
         
         urlComponents.queryItems = [
-            URLQueryItem(name: "apikey", value: apiKey),
+            URLQueryItem(name: "apikey", value: config.apiKey),
             URLQueryItem(name: "start", value: formatDate(startBoundDate(today))),
             URLQueryItem(name: "end", value: formatDate(endBoundDate(today)))
         ]
@@ -116,20 +115,19 @@ class CalendarAPIService {
     }
     
     private func fetchRadarrUpcoming(into events: inout [Date: [any CalendarData]], today: Date) async throws {
-        // Load Radarr configuration
-        guard let host = try await sharedDataManager.loadData(String.self, forKey: "RADARR_HOST"),
-              let apiKey = try await sharedDataManager.loadData(String.self, forKey: "RADARR_API_KEY"),
-              !host.isEmpty else {
+        // Load Radarr configuration from SwiftData
+        guard let config = try storageService.getServiceConfig(.radarr),
+              !config.host.isEmpty else {
             return
         }
         
         // Build URL
-        guard var urlComponents = URLComponents(string: "\(host)/api/v3/calendar") else {
+        guard var urlComponents = URLComponents(string: "\(config.host)/api/v3/calendar") else {
             return
         }
         
         urlComponents.queryItems = [
-            URLQueryItem(name: "apikey", value: apiKey),
+            URLQueryItem(name: "apikey", value: config.apiKey),
             URLQueryItem(name: "start", value: formatDate(startBoundDate(today))),
             URLQueryItem(name: "end", value: formatDate(endBoundDate(today)))
         ]
@@ -183,20 +181,19 @@ class CalendarAPIService {
     }
     
     private func fetchSonarrUpcoming(into events: inout [Date: [any CalendarData]], today: Date) async throws {
-        // Load Sonarr configuration
-        guard let host = try await sharedDataManager.loadData(String.self, forKey: "SONARR_HOST"),
-              let apiKey = try await sharedDataManager.loadData(String.self, forKey: "SONARR_API_KEY"),
-              !host.isEmpty else {
+        // Load Sonarr configuration from SwiftData
+        guard let config = try storageService.getServiceConfig(.sonarr),
+              !config.host.isEmpty else {
             return
         }
         
         // Build URL
-        guard var urlComponents = URLComponents(string: "\(host)/api/v3/calendar") else {
+        guard var urlComponents = URLComponents(string: "\(config.host)/api/v3/calendar") else {
             return
         }
         
         urlComponents.queryItems = [
-            URLQueryItem(name: "apikey", value: apiKey),
+            URLQueryItem(name: "apikey", value: config.apiKey),
             URLQueryItem(name: "start", value: formatDate(startBoundDate(today))),
             URLQueryItem(name: "end", value: formatDate(endBoundDate(today))),
             URLQueryItem(name: "includeSeries", value: "true"),

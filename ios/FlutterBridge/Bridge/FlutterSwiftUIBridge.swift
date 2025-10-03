@@ -120,9 +120,8 @@ import Flutter
     ///   - route: The route identifier
     ///   - data: Optional data to pass to the SwiftUI view
     func presentNativeView(route: String, data: [String: Any] = [:]) {
-        guard let flutterVC = flutterViewController,
-              shouldUseNativeView(for: route) else {
-            print("Cannot present native view for route: \(route)")
+        guard shouldUseNativeView(for: route) else {
+            print("Cannot present native view for route: \(route) - not registered")
             // Show actionable error and fallback
             navigationCoordinator.presentError(
                 title: "Navigation not available",
@@ -131,6 +130,20 @@ import Flutter
                 retryRoute: route,
                 data: data
             )
+            return
+        }
+        
+        // Try Flutter view controller first, then fall back to root view controller
+        let presenterVC: UIViewController
+        if let flutterVC = flutterViewController {
+            presenterVC = flutterVC
+        } else if let rootVC = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow })?.rootViewController {
+            presenterVC = rootVC
+        } else {
+            print("⚠️ Cannot present \(route): No suitable view controller found")
             return
         }
         
@@ -145,7 +158,7 @@ import Flutter
         // Present the SwiftUI view with robust error handling
         DispatchQueue.main.async {
             // Find the topmost view controller that can present
-            guard let topVC = self.findTopViewController(from: flutterVC) else {
+            guard let topVC = self.findTopViewController(from: presenterVC) else {
                 print("⚠️ Cannot present \(route): No suitable view controller found")
                 return
             }
