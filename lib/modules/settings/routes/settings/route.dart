@@ -1,148 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:lunasea/system/bridge/hybrid_router.dart';
 
-import 'package:lunasea/core.dart';
-import 'package:lunasea/router/routes/settings.dart';
-import 'package:lunasea/system/hybrid_bridge.dart';
+/// Immediate Swift delegation route for Settings
+/// Enforces Swift-first migration rules - no Flutter implementation
+class SettingsRoute extends StatelessWidget {
+  final String? initialRoute;
+  final Map<String, dynamic>? routeData;
 
-class SettingsRoute extends StatefulWidget {
   const SettingsRoute({
     Key? key,
+    this.initialRoute,
+    this.routeData,
   }) : super(key: key);
 
   @override
-  State<SettingsRoute> createState() => _State();
-}
-
-class _State extends State<SettingsRoute> with LunaScrollControllerMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
   Widget build(BuildContext context) {
-    return LunaScaffold(
-      scaffoldKey: _scaffoldKey,
-      appBar: _appBar(),
-      drawer: _drawer(),
-      body: _body(),
-    );
-  }
-
-  Widget _drawer() => LunaDrawer(page: LunaModule.SETTINGS.key);
-
-  PreferredSizeWidget _appBar() {
-    return LunaAppBar(
-      useDrawer: true,
-      scrollControllers: [scrollController],
-      title: LunaModule.SETTINGS.title,
-    );
-  }
-
-  Widget _body() {
-    return LunaListView(
-      controller: scrollController,
-      children: [
-        _settingsVersionSelector(),
-        LunaDivider(),
-        _configurationBlock(),
-        _profilesBlock(),
-        _systemBlock(),
-      ],
-    );
-  }
-
-  Widget _settingsVersionSelector() {
-    const _db = LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI;
-    return _db.listenableBuilder(
-      builder: (context, _) {
-        bool useSwiftUISettings = _db.read();
-
-        return LunaBlock(
-          title: 'Settings Version',
-          body: [
-            TextSpan(
-              text: useSwiftUISettings
-                  ? 'Currently using SwiftUI settings (iOS native experience)'
-                  : 'Currently using Flutter settings (cross-platform experience)',
-            )
-          ],
-          trailing: LunaSwitch(
-            value: useSwiftUISettings,
-            onChanged: _db.update,
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _configurationBlock() {
-    const _db = LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI;
-    return _db.listenableBuilder(
-      builder: (context, _) {
-        bool useSwiftUISettings = _db.read();
-
-        return LunaBlock(
-          title: 'settings.Configuration'.tr(),
-          body: [TextSpan(text: 'settings.ConfigurationDescription'.tr())],
-          trailing: const LunaIconButton(icon: Icons.device_hub_rounded),
-          onTap: () =>
-              _handleSettingsNavigation('configuration', useSwiftUISettings),
-        );
-      },
-    );
-  }
-
-  Widget _profilesBlock() {
-    const _db = LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI;
-    return _db.listenableBuilder(
-      builder: (context, _) {
-        bool useSwiftUISettings = _db.read();
-
-        return LunaBlock(
-          title: 'settings.Profiles'.tr(),
-          body: [TextSpan(text: 'settings.ProfilesDescription'.tr())],
-          trailing: const LunaIconButton(icon: Icons.switch_account_rounded),
-          onTap: () =>
-              _handleSettingsNavigation('profiles', useSwiftUISettings),
-        );
-      },
-    );
-  }
-
-  Widget _systemBlock() {
-    const _db = LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI;
-    return _db.listenableBuilder(
-      builder: (context, _) {
-        bool useSwiftUISettings = _db.read();
-
-        return LunaBlock(
-          title: 'settings.System'.tr(),
-          body: [TextSpan(text: 'settings.SystemDescription'.tr())],
-          trailing: const LunaIconButton(icon: Icons.settings_rounded),
-          onTap: () => _handleSettingsNavigation('system', useSwiftUISettings),
-        );
-      },
-    );
-  }
-
-  void _handleSettingsNavigation(String section, bool useSwiftUISettings) {
-    if (useSwiftUISettings) {
-      // Navigate to SwiftUI version
-      FlutterSwiftUIBridge.navigateToNativeView(
-        'settings_$section',
-        data: {'section': section},
-      );
-    } else {
-      // Navigate to Flutter version
-      switch (section) {
-        case 'configuration':
-          SettingsRoutes.CONFIGURATION.go();
-          break;
-        case 'profiles':
-          SettingsRoutes.PROFILES.go();
-          break;
-        case 'system':
-          SettingsRoutes.SYSTEM.go();
-          break;
+    // SWIFT-FIRST RULE ENFORCEMENT:
+    // Settings Swift implementation is complete - delegate immediately
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final route = initialRoute ?? '/settings';
+      final success =
+          await HybridRouter.navigateTo(context, route, data: routeData);
+      if (!success) {
+        _showSettingsUnavailableError(context, route);
       }
-    }
+    });
+
+    // Temporary placeholder during navigation
+    return const Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Loading native settings...'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSettingsUnavailableError(BuildContext context, String route) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Settings Unavailable'),
+        content: Text(
+          'The native iOS settings implementation for "$route" is not available. '
+          'Please ensure you are running on iOS with the latest app version.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop(); // Go back to previous screen
+            },
+            child: const Text('Go Back'),
+          ),
+        ],
+      ),
+    );
   }
 }

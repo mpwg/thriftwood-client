@@ -13,8 +13,8 @@ struct SwiftUILidarrSettingsView: View {
     @Bindable var viewModel: SettingsViewModel
     
     var body: some View {
-        NavigationStack {
-            List {
+
+        List {
                 // Information Banner
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
@@ -90,7 +90,6 @@ struct SwiftUILidarrSettingsView: View {
             }
         }
     }
-}
 
 // MARK: - Connection Details View
 

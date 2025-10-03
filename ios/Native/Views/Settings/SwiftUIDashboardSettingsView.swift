@@ -14,8 +14,7 @@ struct SwiftUIDashboardSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationStack {
-            List {
+        List {
                 Section("Refresh") {
                     HStack {
                         Text("Refresh Interval")
@@ -92,16 +91,8 @@ struct SwiftUIDashboardSettingsView: View {
                         .pickerStyle(.menu)
                     }
                 }
-            }
-            .navigationTitle("Dashboard Settings")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Back") {
-                        dismiss()
-                    }
-                }
-            }
         }
+        .navigationTitle("Dashboard Settings")
+        .navigationBarTitleDisplayMode(.large)
     }
 }

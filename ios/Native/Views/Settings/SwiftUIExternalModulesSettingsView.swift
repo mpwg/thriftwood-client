@@ -17,8 +17,8 @@ struct SwiftUIExternalModulesSettingsView: View {
     @State private var newModuleHost = ""
 
     var body: some View {
-        NavigationStack {
-            List {
+
+        List {
                 Section(header: HStack {
                     Text("External Modules")
                     Spacer()
@@ -72,7 +72,7 @@ struct SwiftUIExternalModulesSettingsView: View {
                 }
             }
             .sheet(isPresented: $showingAddModule) {
-                NavigationStack {
+                NavigationView {
                     Form {
                         Section("Module Details") {
                             TextField("Internal Name", text: $newModuleName)
@@ -121,4 +121,3 @@ struct SwiftUIExternalModulesSettingsView: View {
             }
         }
     }
-}

@@ -192,12 +192,12 @@ class HybridSettingsButton extends StatelessWidget {
 
   void _navigateToFlutterSettings(BuildContext context) {
     // Navigate to existing Flutter settings
-    HybridRouter._navigateToFlutterView(context, '/settings');
+    HybridRouter.navigateTo(context, '/settings');
   }
 
   void _navigateToSwiftUISettings(BuildContext context) {
     // Force navigate to SwiftUI settings
-    FlutterSwiftUIBridge.navigateToNativeView('/settings');
+    HybridRouter.navigateTo(context, '/settings');
   }
 }
 
@@ -278,21 +278,21 @@ class _HybridTestWidgetState extends State<HybridTestWidget> {
   }
 
   void _testSettingsNavigation() {
-    FlutterSwiftUIBridge.navigateToNativeView('/settings', data: {
+    HybridRouter.navigateTo(context, '/settings', data: {
       'timestamp': DateTime.now().toString(),
       'source': 'flutter_test',
     });
   }
 
   void _testProfilesNavigation() {
-    FlutterSwiftUIBridge.navigateToNativeView('/settings/profiles', data: {
+    HybridRouter.navigateTo(context, '/settings/profiles', data: {
       'timestamp': DateTime.now().toString(),
       'source': 'flutter_test',
     });
   }
 
   void _testConfigurationNavigation() {
-    FlutterSwiftUIBridge.navigateToNativeView('/settings/configuration', data: {
+    HybridRouter.navigateTo(context, '/settings/configuration', data: {
       'timestamp': DateTime.now().toString(),
       'source': 'flutter_test',
     });

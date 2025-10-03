@@ -22,7 +22,19 @@ class LunaRouter {
     if (router.canPop()) router.pop();
   }
 
+  static void popSafelyStatic() {
+    if (router.canPop()) router.pop();
+  }
+
   void popToRootRoute() {
+    if (navigator.currentState == null) {
+      LunaLogger().warning('Not observing any navigation navigators, skipping');
+      return;
+    }
+    navigator.currentState!.popUntil((route) => route.isFirst);
+  }
+
+  static void popToRootRouteStatic() {
     if (navigator.currentState == null) {
       LunaLogger().warning('Not observing any navigation navigators, skipping');
       return;

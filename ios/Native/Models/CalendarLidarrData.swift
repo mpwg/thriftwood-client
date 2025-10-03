@@ -80,12 +80,7 @@ struct CalendarLidarrData: CalendarData {
     }
     
     func enterContent() {
-        // Navigate to Lidarr artist details via Flutter bridge
-        // Uses hybrid navigation to route to Flutter's Lidarr module
-        FlutterSwiftUIBridge.shared.navigateBackToFlutter(data: [
-            "navigateTo": "/lidarr/artist/\(artistId)",
-            "artistId": artistId,
-            "from": "calendar"
-        ])
+        // TODO: Implement pure SwiftUI navigation to Lidarr artist details
+        print("Navigate to Lidarr artist details: \(artistId)")
     }
 }

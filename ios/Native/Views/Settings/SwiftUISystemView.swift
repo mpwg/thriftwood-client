@@ -77,7 +77,8 @@ struct SwiftUISystemView: View {
                 Text(viewModel.errorMessage ?? "Unknown error")
             }
             .fullScreenCover(isPresented: $showingLogs) {
-                FlutterSwiftUIBridge.shared.createSwiftUIView(for: "settings_system_logs", data: [:])
+                // TODO: Replace with pure SwiftUI system logs view
+                SwiftUISystemLogsView()
             }
         }
     }

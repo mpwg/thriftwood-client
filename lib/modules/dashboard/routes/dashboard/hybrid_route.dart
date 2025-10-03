@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lunasea/system/bridge/native_bridge.dart';
+import 'package:lunasea/system/bridge/hybrid_router.dart';
 import 'package:lunasea/modules/dashboard/routes/dashboard/route.dart';
 
-/// Hybrid wrapper for the dashboard route that checks if it should use SwiftUI
+/// Hybrid wrapper for the dashboard route that uses HybridRouter for consistent navigation
 class HybridDashboardRoute extends StatefulWidget {
   const HybridDashboardRoute({Key? key}) : super(key: key);
 
@@ -22,34 +22,45 @@ class _HybridDashboardRouteState extends State<HybridDashboardRoute> {
 
   Future<void> _checkHybridNavigation() async {
     try {
-      // Check if the dashboard should use native SwiftUI view
-      final shouldUseNative =
-          await NativeBridge.isNativeViewAvailable('/dashboard');
+      // Use HybridRouter to handle navigation decision and presentation
+      final success = await HybridRouter.navigateTo(context, '/dashboard');
 
-      if (shouldUseNative) {
-        // Present the SwiftUI view
-        final success = await NativeBridge.navigateToNativeView('/dashboard');
-        if (success) {
-          // SwiftUI view was presented successfully
+      if (success) {
+        // Check if we actually navigated to SwiftUI by attempting the navigation
+        // If HybridRouter used SwiftUI, we should show minimal placeholder
+        // If it used Flutter navigation, we'll show the Flutter implementation
+
+        // We can determine if SwiftUI was used by checking if the widget is still mounted
+        // after a brief delay - if SwiftUI was presented, this widget will be obscured
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        if (mounted) {
+          // If we're still mounted and visible, it means Flutter navigation was used
+          setState(() {
+            _useNative = false;
+            _isCheckingHybrid = false;
+          });
+        } else {
+          // SwiftUI was presented, this widget is no longer relevant
           setState(() {
             _useNative = true;
             _isCheckingHybrid = false;
           });
-          return;
         }
+      } else {
+        // Navigation failed, use Flutter implementation
+        setState(() {
+          _useNative = false;
+          _isCheckingHybrid = false;
+        });
       }
-
-      // Use Flutter implementation
-      setState(() {
-        _useNative = false;
-        _isCheckingHybrid = false;
-      });
     } catch (e) {
       // If hybrid navigation fails, fall back to Flutter
       setState(() {
         _useNative = false;
         _isCheckingHybrid = false;
       });
+      // HybridRouter already shows error snackbars, so we don't need to duplicate
     }
   }
 

@@ -14,8 +14,7 @@ struct SwiftUIGeneralSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationStack {
-            List {
+        List {
                 Section("Application") {
                     TextField("App Name", text: Binding(
                         get: { viewModel.appSettings.appName },
@@ -52,16 +51,8 @@ struct SwiftUIGeneralSettingsView: View {
                         }
                     ))
                 }
-            }
-            .navigationTitle("General Settings")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Back") {
-                        dismiss()
-                    }
-                }
-            }
         }
+        .navigationTitle("General Settings")
+        .navigationBarTitleDisplayMode(.large)
     }
 }

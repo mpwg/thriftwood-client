@@ -18,8 +18,8 @@ struct SwiftUISearchSettingsView: View {
     @State private var newIndexerApiKey = ""
     
     var body: some View {
-        NavigationStack {
-            List {
+
+        List {
                 Section("Search Preferences") {
                     Toggle("Search History", isOn: Binding(
                         get: { viewModel.appSettings.enableSearchHistory },
@@ -121,7 +121,7 @@ struct SwiftUISearchSettingsView: View {
                 }
             }
             .sheet(isPresented: $showingAddIndexer) {
-                NavigationStack {
+                NavigationView {
                     Form {
                         Section("Indexer Details") {
                             TextField("Name", text: $newIndexerName)
@@ -166,4 +166,3 @@ struct SwiftUISearchSettingsView: View {
             }
         }
     }
-}

@@ -14,8 +14,7 @@ struct SwiftUIDrawerSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationStack {
-            List {
+        List {
                 Section("Drawer Behavior") {
                     Toggle("Auto Expand", isOn: Binding(
                         get: { viewModel.appSettings.drawerAutoExpand },
@@ -45,16 +44,8 @@ struct SwiftUIDrawerSettingsView: View {
                 Section(footer: Text("These settings customize how the navigation drawer behaves and what information it displays")) {
                     EmptyView()
                 }
-            }
-            .navigationTitle("Drawer Settings")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Back") {
-                        dismiss()
-                    }
-                }
-            }
         }
+        .navigationTitle("Drawer Settings")
+        .navigationBarTitleDisplayMode(.large)
     }
 }

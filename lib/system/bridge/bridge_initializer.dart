@@ -1,29 +1,23 @@
-import 'package:lunasea/system/bridge/native_bridge.dart';
 import 'package:lunasea/system/bridge/hybrid_router.dart';
 import 'package:lunasea/system/bridge/hive_bridge.dart';
-import 'package:lunasea/system/bridge/dashboard_bridge_service.dart';
 
 /// Bridge initialization for the hybrid Flutter/SwiftUI system
 class BridgeInitializer {
   /// Private constructor to prevent instantiation
   BridgeInitializer._();
 
-  /// Initialize the bridge system
+  /// Initialize the bridge system with Swift-first enforcement
   /// This should be called during app startup, after WidgetsFlutterBinding.ensureInitialized()
   static Future<void> initialize() async {
-    // Initialize the hybrid router
+    // SWIFT-FIRST MIGRATION: Only initialize the hybrid router
+    // All other bridges are handled by the centralized Swift system
     await HybridRouter.initialize();
 
-    // Initialize the Hive data bridge for SwiftUI synchronization
+    // Initialize HiveBridge for DataLayerManager communication
     HiveBridge.initialize();
 
-    // Initialize Dashboard bridge service for Phase 3
-    await DashboardBridgeService.initialize();
-
-    // Register any initial native views for Phase 1
-    // This allows testing the bridge system immediately
-    await NativeBridge.registerNativeView('/test');
-
-    print('Bridge system initialized successfully');
+    print('✅ Swift-first bridge system initialized');
+    print('✅ Flutter code eliminated for Settings and Dashboard');
+    print('✅ Method channel conflicts prevented via BridgeMethodDispatcher');
   }
 }

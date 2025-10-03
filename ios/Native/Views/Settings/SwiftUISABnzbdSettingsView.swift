@@ -14,7 +14,7 @@ struct SwiftUISABnzbdSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationStack {
+
             Form {
                 // Information banner
                 Section {
@@ -84,7 +84,6 @@ struct SwiftUISABnzbdSettingsView: View {
             }
         }
     }
-}
 
 struct SABnzbdConnectionDetailsView: View {
     @Bindable var viewModel: SettingsViewModel

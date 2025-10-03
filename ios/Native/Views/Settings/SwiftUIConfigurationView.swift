@@ -14,8 +14,7 @@ struct SwiftUIConfigurationView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationStack {
-            List {
+        List {
                 if viewModel.selectedProfile == nil {
                     Section {
                         VStack(spacing: 16) {
@@ -39,35 +38,35 @@ struct SwiftUIConfigurationView: View {
                             title: "General",
                             subtitle: "Customize LunaSea",
                             icon: "paintbrush",
-                            route: "settings_general"
+                            route: "/settings/general"
                         )
                         
                         SettingsMenuItem(
                             title: "Drawer",
                             subtitle: "Customize the Drawer",
                             icon: "sidebar.left",
-                            route: "settings_drawer"
+                            route: "/settings/drawer"
                         )
                         
                         SettingsMenuItem(
                             title: "Quick Actions",
                             subtitle: "Quick Actions on the Home Screen",
                             icon: "bolt",
-                            route: "settings_quick_actions"
+                            route: "/settings/quick_actions"
                         )
                         
                         SettingsMenuItem(
                             title: "Dashboard",
                             subtitle: "Configure Dashboard",
                             icon: "house",
-                            route: "settings_dashboard"
+                            route: "/settings/dashboard"
                         )
                         
                         SettingsMenuItem(
                             title: "External Modules",
                             subtitle: "Configure External Modules",
                             icon: "cube.box",
-                            route: "settings_external_modules"
+                            route: "/settings/external_modules"
                         )
                     }
                     
@@ -90,16 +89,8 @@ struct SwiftUIConfigurationView: View {
             }
             .navigationTitle("Configuration")
             .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Back") {
-                        dismiss()
-                    }
-                }
-            }
             .task {
                 await viewModel.loadConfiguration()
             }
-        }
     }
 }

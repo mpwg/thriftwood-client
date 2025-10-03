@@ -1,94 +1,76 @@
 import UIKit
-import Flutter
+import SwiftUI
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
-  override func application(
+@objc class AppDelegate: UIResponder, UIApplicationDelegate {
+  var window: UIWindow?
+  
+  func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // Register Flutter plugins
-    GeneratedPluginRegistrant.register(with: self)
     
     // Handle Mac Catalyst specific setup
     #if targetEnvironment(macCatalyst)
     print("🖥️ Running in Mac Catalyst environment")
-    // Disable unsupported features for Mac Catalyst
     #else
     print("📱 Running in native iOS environment")
     #endif
     
-    // Initialize the hybrid bridge system
-    initializeHybridBridge()
+    // MIGRATION TEMPORARY: Initialize Flutter for hybrid functionality
+    // TODO: Remove this when migration to pure SwiftUI is complete
+    FlutterEngineManager.shared.initializeFlutterEngine()
     
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    // Setup SwiftUI as the primary interface
+    setupSwiftUIWindow()
+    
+    return true
   }
   
-  /// Initialize the Flutter-SwiftUI hybrid bridge
-  private func initializeHybridBridge() {
-    guard let flutterViewController = window?.rootViewController as? FlutterViewController else {
-      print("Error: Could not find Flutter view controller for bridge initialization")
-      return
+  /// Setup SwiftUI as the root view controller
+  /// This is the permanent app structure that will remain after migration
+  private func setupSwiftUIWindow() {
+    window = UIWindow(frame: UIScreen.main.bounds)
+    
+    // Create SwiftUI root view - this is the permanent architecture
+    let rootView = MainAppCoordinatorView()
+    let hostingController = UIHostingController(rootView: rootView)
+    
+    window?.rootViewController = hostingController
+    window?.makeKeyAndVisible()
+    
+    // MIGRATION TEMPORARY: Initialize hybrid bridge for Flutter integration
+    // TODO: Remove this when migration to pure SwiftUI is complete
+    Task {
+      await FlutterEngineManager.shared.initializeHybridBridge(with: window)
     }
-
-    // Initialize the bridge with the Flutter view controller
-    FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
     
-    // Add a small delay to ensure Flutter is fully initialized
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      self.registerNativeViews()
-    }
-  }
-  
-  /// Register all native views after Flutter is fully initialized
-  private func registerNativeViews() {        // Register settings routes for Phase 2 hybrid functionality
-    // Main settings route (root level)
-    FlutterSwiftUIBridge.shared.registerNativeView("settings")
-    
-    // Sub-routes for settings sections
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_configuration")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_profiles")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_system")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_system_logs")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_general")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_dashboard")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_wake_on_lan")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_search")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_external_modules")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_drawer")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_quick_actions")
-    
-    // Service-specific settings routes
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_radarr")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_sonarr")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_lidarr")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_sabnzbd")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_nzbget")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_tautulli")
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_overseerr")
-    
-    FlutterSwiftUIBridge.shared.registerNativeView("settings_all")
-    
-    // Register Dashboard for Phase 3 hybrid functionality
-    FlutterSwiftUIBridge.shared.registerDashboardView()
-    FlutterSwiftUIBridge.shared.setupDashboardMethodHandlers()
-
-    print("Native views registered successfully")
+    print("✅ SwiftUI window setup complete - Native NavigationStack enabled")
+    print("⚠️  Flutter hybrid support active (migration temporary)")
   }
   
   /// Handle URL schemes for deep linking
-  override func application(
+  func application(
     _ app: UIApplication,
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey : Any] = [:]
   ) -> Bool {
-    // Handle deep links through the hybrid navigation coordinator
-    let coordinator = HybridNavigationCoordinator()
-    if coordinator.handleDeepLink(url, sourceApplication: options[.sourceApplication] as? String) {
+    
+    // MIGRATION TEMPORARY: Handle deep links through hybrid system
+    // TODO: Replace with pure SwiftUI deep linking when migration complete
+    if FlutterEngineManager.shared.handleDeepLink(url, sourceApplication: options[.sourceApplication] as? String) {
       return true
     }
     
-    // Fallback to Flutter's URL handling
-    return super.application(app, open: url, options: options)
+    // TODO: Add pure SwiftUI deep link handling here
+    print("Deep link not handled: \(url)")
+    return false
+  }
+  
+  /// App termination cleanup
+  func applicationWillTerminate(_ application: UIApplication) {
+    // MIGRATION TEMPORARY: Cleanup Flutter resources
+    // TODO: Remove this when migration to pure SwiftUI is complete
+    FlutterEngineManager.shared.cleanup()
   }
 }

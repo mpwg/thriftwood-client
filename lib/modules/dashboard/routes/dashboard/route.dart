@@ -1,64 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:lunasea/system/bridge/hybrid_router.dart';
+import 'package:lunasea/system/bridge/embedded_context_detector.dart';
 
-import 'package:lunasea/modules.dart';
-import 'package:lunasea/database/tables/dashboard.dart';
-import 'package:lunasea/database/tables/lunasea.dart';
-import 'package:lunasea/widgets/ui.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/pages/calendar.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/pages/modules.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/switch_view_action.dart';
-import 'package:lunasea/modules/dashboard/routes/dashboard/widgets/navigation_bar.dart';
-
-class DashboardRoute extends StatefulWidget {
-  const DashboardRoute({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  State<DashboardRoute> createState() => _State();
-}
-
-class _State extends State<DashboardRoute> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  LunaPageController? _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    int page = DashboardDatabase.NAVIGATION_INDEX.read();
-    _pageController = LunaPageController(initialPage: page);
-  }
+/// Immediate Swift delegation route for Dashboard
+/// Enforces Swift-first migration rules - no Flutter implementation
+class DashboardRoute extends StatelessWidget {
+  const DashboardRoute({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return LunaScaffold(
-      scaffoldKey: _scaffoldKey,
-      module: LunaModule.DASHBOARD,
-      body: _body(),
-      appBar: _appBar(),
-      drawer: LunaDrawer(page: LunaModule.DASHBOARD.key),
-      bottomNavigationBar: HomeNavigationBar(pageController: _pageController),
+    return FutureBuilder<bool>(
+      future: EmbeddedContextDetector.isEmbeddedInSwiftUI(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Checking navigation context...'),
+                ],
+              ),
+            ),
+          );
+        }
+
+        final isEmbedded = snapshot.data ?? false;
+
+        if (isEmbedded) {
+          // Flutter is embedded in SwiftUI - dashboard is already displayed
+          // Return an empty container since SwiftUI is handling the UI
+          return const SizedBox.shrink();
+        } else {
+          // Flutter is primary - attempt navigation to SwiftUI dashboard
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            final success =
+                await HybridRouter.navigateTo(context, '/dashboard');
+            if (!success) {
+              _showDashboardUnavailableError(context);
+            }
+          });
+
+          return const Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading native dashboard...'),
+                ],
+              ),
+            ),
+          );
+        }
+      },
     );
   }
 
-  PreferredSizeWidget _appBar() {
-    return LunaAppBar(
-      title: 'LunaSea',
-      useDrawer: true,
-      scrollControllers: HomeNavigationBar.scrollControllers,
-      pageController: _pageController,
-      actions: [SwitchViewAction(pageController: _pageController)],
-    );
-  }
-
-  Widget _body() {
-    return LunaSeaDatabase.ENABLED_PROFILE.listenableBuilder(
-      builder: (context, _) => LunaPageView(
-        controller: _pageController,
-        children: [
-          ModulesPage(key: ValueKey(LunaSeaDatabase.ENABLED_PROFILE.read())),
-          CalendarPage(key: ValueKey(LunaSeaDatabase.ENABLED_PROFILE.read())),
+  void _showDashboardUnavailableError(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Dashboard Unavailable'),
+        content: const Text(
+          'The native iOS dashboard implementation is not available. '
+          'Please ensure you are running on iOS with the latest app version.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop(); // Go back to previous screen
+            },
+            child: const Text('Go Back'),
+          ),
         ],
       ),
     );

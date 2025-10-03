@@ -10,32 +10,32 @@
 import SwiftUI
 
 struct SwiftUIAllSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var settingsViewModel = SettingsViewModel()
     
     var body: some View {
-        NavigationStack {
-            List {
+        List {
                 // Configuration Section
                 Section("Configuration") {
                     SettingsMenuItem(
                         title: "General",
                         subtitle: "Customize LunaSea",
                         icon: "paintbrush",
-                        route: "settings_general"
+                        route: "/settings/general"
                     )
                     
                     SettingsMenuItem(
                         title: "Dashboard",
                         subtitle: "Configure Dashboard",
                         icon: "house",
-                        route: "settings_dashboard"
+                        route: "/settings/dashboard"
                     )
                     
                     SettingsMenuItem(
                         title: "Service Configuration", 
                         subtitle: "Configure Services & Download Clients",
                         icon: "gear",
-                        route: "settings_configuration"
+                        route: "/settings/configuration"
                     )
                 }
                 
@@ -45,21 +45,21 @@ struct SwiftUIAllSettingsView: View {
                         title: "Wake on LAN",
                         subtitle: "Configure Wake on LAN",
                         icon: "wifi.router",
-                        route: "settings_wake_on_lan"
+                        route: "/settings/wake_on_lan"
                     )
                     
                     SettingsMenuItem(
                         title: "Search",
                         subtitle: "Configure Search & Indexers",
                         icon: "magnifyingglass",
-                        route: "settings_search"
+                        route: "/settings/search"
                     )
                     
                     SettingsMenuItem(
                         title: "External Modules",
                         subtitle: "Configure External Modules",
                         icon: "cube.box",
-                        route: "settings_external_modules"
+                        route: "/settings/external_modules"
                     )
                 }
                 
@@ -69,43 +69,35 @@ struct SwiftUIAllSettingsView: View {
                         title: "Drawer",
                         subtitle: "Customize the Drawer",
                         icon: "sidebar.left",
-                        route: "settings_drawer"
+                        route: "/settings/drawer"
                     )
                     
                     SettingsMenuItem(
                         title: "Quick Actions",
                         subtitle: "Quick Actions on the Home Screen",
                         icon: "bolt",
-                        route: "settings_quick_actions"
+                        route: "/settings/quick_actions"
                     )
                 }
                 
                 // System Section 
                 Section("System") {
-                    SettingsMenuItem(
+                    SettingsMenuItem( 
                         title: "Profiles",
                         subtitle: "Manage Profiles",
                         icon: "person.2",
-                        route: "settings_profiles"
+                        route: "/settings/profiles"
                     )
                     
                     SettingsMenuItem(
                         title: "System Logs",
                         subtitle: "View Application Logs",
                         icon: "doc.text",
-                        route: "settings_system_logs"
+                        route: "/settings/system/logs"
                     )
                 }
             }
             .navigationTitle("All Settings")
             .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Back") {
-                        FlutterSwiftUIBridge.shared.navigateBackToFlutter()
-                    }
-                }
-            }
-        }
     }
 }

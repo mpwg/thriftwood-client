@@ -184,6 +184,8 @@ class HiveBridge {
             'Failed to convert settings map: $e. Raw data: $rawSettings');
       }
 
+      // Settings update logic - hybrid toggle removed (Swift-first approach)
+
       // Update enabled profile
       if (settingsMap.containsKey('enabledProfile')) {
         LunaSeaDatabase.ENABLED_PROFILE.update(settingsMap['enabledProfile']);
@@ -216,6 +218,8 @@ class HiveBridge {
         LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE
             .update(settingsMap['drawerAutoExpand']);
       }
+
+      // Hybrid settings toggle removed - Swift-first approach enforced
 
       LunaLogger().debug('HiveBridge: Updated Hive settings successfully');
     } catch (e, stackTrace) {

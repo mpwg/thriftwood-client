@@ -18,11 +18,23 @@
 - **`lib/router/`**: GoRouter-based navigation system
 - **`lib/widgets/`**: Shared UI components
 
-### Migration Architecture (Reference `migration.md`)
+### Migration Architecture (Swift-First with Code Elimination)
 
-- **FlutterSwiftUIBridge**: Seamless navigation between Flutter/SwiftUI views
-- **Shared data layer**: Bidirectional sync between Hive (Flutter) and SwiftData (SwiftUI)
-- **Hybrid navigation**: Route registration system to determine platform per view
+**CRITICAL CHANGE**: Migration now follows Swift-first architecture with immediate Flutter code elimination:
+
+- **Swift becomes single source of truth** for each migrated feature
+- **Flutter code is removed** once Swift implementation is complete
+- **Flutter accesses Swift data models** via bridge layer (no data duplication)
+- **Progressive feature elimination** - migrate and remove Flutter code iteratively
+- **Bridge-based data access** - Flutter reads/writes Swift SwiftData models directly
+
+### Key Migration Principles
+
+- **No Code Duplication**: Swift replaces Flutter entirely, no parallel implementations
+- **Bridge-Based Access**: Flutter accesses Swift data via method channel bridge
+- **Immediate Elimination**: Flutter code removed as soon as Swift implementation complete
+- **Single Source of Truth**: Swift SwiftData becomes primary data persistence
+- **Progressive Migration**: Feature-by-feature elimination of Flutter components
 
 ### Key Files
 
@@ -31,6 +43,8 @@
 - **`lib/database/database.dart`**: Hive initialization and profile bootstrapping
 - **`lib/router/router.dart`**: GoRouter configuration
 - **`lib/system/bridge/`**: Flutter ↔ SwiftUI bridge implementation
+- **`ios/Native/Bridge/SwiftDataBridge.swift`**: Flutter access to Swift data models
+- **`lib/bridge/swift_data_accessor.dart`**: Flutter client for Swift data access
 
 ## Development Guidelines
 
@@ -106,55 +120,36 @@ Bridge initialization happens in `lib/main.dart` via `BridgeInitializer.initiali
 
 ### During Migration Period
 
-- **User Migration Control**: Maintain the settings toggle (`LunaSeaDatabase.HYBRID_SETTINGS_USE_SWIFTUI`) that allows users to switch between Flutter and SwiftUI implementations
-- **Test both platforms**: Ensure data consistency and navigation flow
-- **Bridge registration**: Register migrated views with `FlutterSwiftUIBridge`
-- **Maintain functionality**: App must remain fully functional at each phase
-- **Performance monitoring**: No regressions during hybrid period
-- **Fallback capability**: Users can instantly revert to Flutter if SwiftUI version has issues
+- **No User Toggle**: Users don't choose between Flutter/Swift - Swift always used when available
+- **Immediate Delegation**: Flutter routes immediately delegate to Swift when implemented
+- **Data Migration**: One-time migration from Flutter Hive to Swift SwiftData
+- **Code Elimination**: Flutter implementation removed upon Swift completion
+- **Bridge Access**: Flutter maintains access to Swift data for remaining Flutter features
 
-### SwiftUI Code Organization
-
-All SwiftUI code goes in `ios/Native/` with this structure:
-
-```
-ios/Native/
-├── Bridge/             # Flutter ↔ SwiftUI integration
-├── Models/             # @Observable data models
-├── ViewModels/         # MVVM presentation logic
-├── Views/              # SwiftUI user interfaces
-└── Services/           # Business logic & data persistence
-```
-
-Files in `ios/Native/` are automatically included in Xcode project.
-
-### SwiftUI Implementation Standards
+### Swift-First Implementation Standards
 
 ```swift
-// Modern Swift 6 service implementation
-@Observable
-class RadarrService {
-    private let apiClient: RadarrAPIClient
-    var movies: [Movie] = []
-    var isLoading = false
+// Modern Swift 6 service with Flutter bridge access
+@Model
+class RadarrMovie {
+    var id: Int
+    var title: String
+    // ...properties
 
-    func fetchMovies() async throws {
-        isLoading = true
-        defer { isLoading = false }
-        movies = try await apiClient.getMovies()
-    }
+    // MANDATORY: Flutter bridge serialization
+    func toDictionary() -> [String: Any] { /* implementation */ }
+    static func fromDictionary(_ dict: [String: Any]) -> RadarrMovie? { /* implementation */ }
 }
 
-// SwiftUI view with proper state management
-struct RadarrMoviesView: View {
-    @State private var service = RadarrService()
-
-    var body: some View {
-        NavigationStack {
-            List(service.movies) { movie in
-                MovieRow(movie: movie)
-            }
-            .task { try? await service.fetchMovies() }
+@Observable
+class RadarrService {
+    // MANDATORY: Flutter data access methods
+    @MainActor
+    func handleFlutterRequest(_ method: String, arguments: Any?) async -> Any? {
+        switch method {
+        case "getMovies": return await getMovies().map { $0.toDictionary() }
+        case "addMovie": return await addMovie(fromDict: arguments)
+        // ... all CRUD operations
         }
     }
 }
@@ -204,21 +199,21 @@ xcodebuild -workspace Runner.xcworkspace -scheme Runner # Build iOS app
 
 ### ✅ Do
 
-- Follow the migration timeline in `migration.md` strictly
-- Use `HybridRouter.navigateTo()` for navigation during hybrid period
-- Maintain profile data consistency across platforms
-- Test navigation paths thoroughly after each migration phase
-- Follow Swift 6 concurrency patterns for new SwiftUI code
-- Place new SwiftUI files in `ios/Native/` directory structure
+- Implement complete Swift feature before removing Flutter code
+- Create comprehensive Flutter-Swift data bridge
+- Remove Flutter implementation immediately upon Swift completion
+- Migrate user data from Flutter Hive to Swift SwiftData once
+- Test Swift implementation thoroughly before Flutter code elimination
+- Document which features are Swift-only vs. Flutter-accessible
 
 ### ❌ Don't
 
-- Skip hybrid infrastructure setup before migrating views
-- Break existing Flutter functionality during migration
-- Use legacy UIKit patterns in new SwiftUI code
-- Ignore accessibility requirements in migrated views
-- Hardcode service configurations (use profile system)
-- Import `lib/core.dart` (deprecated central export)
+- Maintain parallel Flutter and Swift implementations
+- Keep Flutter code after Swift implementation is complete
+- Create user toggles between Flutter and Swift versions
+- Duplicate data between Flutter Hive and Swift SwiftData
+- Skip data migration when eliminating Flutter storage
+- Remove Flutter code before Swift implementation is 100% complete and tested
 
 ## External Dependencies and APIs
 
@@ -277,3 +272,162 @@ class RadarrService {
 ```
 
 This codebase prioritizes user workflow continuity during the migration while modernizing to SwiftUI and Swift 6 patterns. Always reference the migration plan and existing instruction files for implementation details.
+
+## New Mandatory Navigation Rules
+
+- Source-agnostic navigation: It must not matter whether you are currently on a Flutter widget or a SwiftUI view—routes must be reachable from both, and back navigation must work in both directions. Implement symmetric navigation APIs on both platforms and never assume a single origin.
+- No silent navigation errors: Never ignore failures. Catch exceptions, report via `BridgeErrorReporter`/logger equivalents, and show an actionable UI (Retry, Go Back, Open Logs). Debug prints alone are not sufficient.
+
+Swift symmetric decision pattern example:
+
+```swift
+let coordinator = HybridNavigationCoordinator.shared
+if FlutterSwiftUIBridge.shared.shouldUseNativeView(for: route) {
+    FlutterSwiftUIBridge.shared.presentNativeView(route: route, data: data)
+} else {
+    coordinator.navigateInFlutter(route: route, data: data)
+}
+```
+
+## Method Channel Initialization Patterns - CRITICAL
+
+### Bridge Architecture Overview
+
+The app uses a centralized bridge system to prevent method channel conflicts and ensure proper initialization:
+
+1. **BridgeMethodDispatcher**: Central dispatcher that prevents handler conflicts
+2. **SwiftDataBridge**: Handles SwiftData model access from Flutter
+3. **DataLayerManager**: Unified data access API with automatic storage selection
+4. **HiveBridge**: Flutter-side handler for Hive data operations
+
+### MANDATORY Initialization Sequence
+
+**CRITICAL**: All data-dependent services must follow this exact initialization pattern to prevent "Flutter method channel not initialized" errors.
+
+#### 1. Swift Side Initialization (AppDelegate.swift)
+
+```swift
+private func initializeHybridBridge() {
+    guard let flutterViewController = window?.rootViewController as? FlutterViewController else {
+        print("❌ Error: Could not find Flutter view controller for bridge initialization")
+        return
+    }
+
+    // Initialize the Swift-first bridge system
+    FlutterSwiftUIBridge.shared.initialize(with: flutterViewController)
+}
+```
+
+#### 2. FlutterSwiftUIBridge.initialize Implementation
+
+```swift
+@MainActor
+func initialize(with flutterViewController: FlutterViewController) {
+    // 1. Initialize central dispatcher (prevents conflicts)
+    BridgeMethodDispatcher.shared.initialize(with: flutterViewController)
+    BridgeMethodDispatcher.shared.registerCoreBridgeMethods()
+
+    // 2. Initialize data bridge for SwiftData access
+    SwiftDataBridge.shared.initialize(with: flutterViewController)
+
+    // 3. CRITICAL: Initialize DataLayerManager with proper context and channel
+    Task {
+        await initializeDataLayerManager(with: flutterViewController)
+    }
+}
+
+private func initializeDataLayerManager(with flutterViewController: FlutterViewController) async {
+    // Get SwiftData context from SwiftDataBridge
+    guard let modelContext = SwiftDataBridge.shared.modelContext else {
+        print("❌ Cannot initialize DataLayerManager: SwiftData context not available")
+        return
+    }
+
+    // CRITICAL: Use same channel name as Flutter HiveBridge
+    let methodChannel = FlutterMethodChannel(
+        name: "com.thriftwood.hive",  // Must match HiveBridge channel name
+        binaryMessenger: flutterViewController.binaryMessenger
+    )
+
+    // Initialize with both SwiftData context and method channel
+    await DataLayerManager.shared.initialize(
+        modelContext: modelContext,
+        methodChannel: methodChannel
+    )
+}
+```
+
+#### 3. Flutter Side Initialization (BridgeInitializer.dart)
+
+```dart
+static Future<void> initialize() async {
+    await HybridRouter.initialize();
+
+    // CRITICAL: Initialize HiveBridge to handle method calls from DataLayerManager
+    HiveBridge.initialize();  // Registers handler for 'com.thriftwood.hive' channel
+}
+```
+
+### Common Error Patterns and Fixes
+
+#### Error: "Flutter method channel not initialized"
+
+**Root Cause**: DataLayerManager or other Swift services trying to use method channels before proper initialization.
+
+**Fix Checklist**:
+
+1. ✅ Verify BridgeInitializer.initialize() is called in Flutter main()
+2. ✅ Ensure HiveBridge.initialize() is included in BridgeInitializer
+3. ✅ Confirm DataLayerManager.initialize() is called with proper method channel
+4. ✅ Check method channel names match between Swift and Flutter sides
+5. ✅ Verify SwiftDataBridge exposes modelContext as private(set)
+
+#### Error: Method channel handler conflicts
+
+**Root Cause**: Multiple services registering handlers for the same method channel.
+
+**Fix**: Use BridgeMethodDispatcher for all method channel operations:
+
+```swift
+// ✅ CORRECT - Use centralized dispatcher
+BridgeMethodDispatcher.shared.registerHandler(for: "myMethod") { call, result in
+    // Handle method call
+}
+
+// ❌ INCORRECT - Direct method channel registration
+methodChannel?.setMethodCallHandler { call, result in
+    // This can cause conflicts
+}
+```
+
+### Required Method Channel Mappings
+
+| Swift Service          | Method Channel Name     | Flutter Handler        | Required Methods                                             |
+| ---------------------- | ----------------------- | ---------------------- | ------------------------------------------------------------ |
+| DataLayerManager       | `com.thriftwood.hive`   | HiveBridge             | `getHiveSettings`, `updateHiveProfile`, `updateHiveSettings` |
+| BridgeMethodDispatcher | `com.thriftwood.bridge` | HybridRouter           | `navigateToNative`, `isNativeViewAvailable`                  |
+| SwiftDataBridge        | `com.thriftwood.bridge` | BridgeMethodDispatcher | `profile.*`, `settings.*`                                    |
+
+### Debugging Method Channel Issues
+
+1. **Check initialization logs**: Look for "✅ [Service] initialized" messages
+2. **Verify channel registration**: Ensure Flutter and Swift use identical channel names
+3. **Test method availability**: Use BridgeMethodDispatcher.getRegisteredMethods() for debugging
+4. **Validate call sequence**: DataLayerManager requires SwiftDataBridge to be initialized first
+
+### Integration Testing Pattern
+
+```swift
+// Test that all required services are properly initialized
+func testBridgeInitialization() async {
+    // 1. Verify BridgeMethodDispatcher is ready
+    XCTAssertTrue(BridgeMethodDispatcher.shared.isInitialized)
+
+    // 2. Verify SwiftDataBridge has context
+    XCTAssertNotNil(SwiftDataBridge.shared.modelContext)
+
+    // 3. Verify DataLayerManager is initialized
+    let settings = try await DataLayerManager.shared.getAppSettings()
+    XCTAssertNotNil(settings)
+}
+```

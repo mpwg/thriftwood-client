@@ -41,10 +41,10 @@ struct ServiceConfigMenuItem: View {
             isNavigating = true
         }
         .fullScreenCover(isPresented: $isNavigating) {
-            FlutterSwiftUIBridge.shared.createSwiftUIView(
-                for: "settings_configuration_\(name.lowercased())",
-                data: [:]
-            )
+            // TODO: Replace with pure SwiftUI service configuration view
+            Text("\(name) configuration not yet implemented in pure SwiftUI")
+                .navigationTitle("\(name) Configuration")
+                .navigationBarTitleDisplayMode(.large)
         }
     }
 }
