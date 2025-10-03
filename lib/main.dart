@@ -12,6 +12,7 @@ import 'package:lunasea/system/recovery_mode/main.dart';
 import 'package:lunasea/system/window_manager/window_manager.dart';
 import 'package:lunasea/system/platform.dart';
 import 'package:lunasea/system/bridge/bridge_initializer.dart';
+import 'package:lunasea/system/bridge/settings_accessor.dart';
 
 /// LunaSea Entry Point: Bootstrap & Run Application
 ///
@@ -67,10 +68,10 @@ class LunaBIOS extends StatelessWidget {
           fallbackLocale: Locale('en'),
           startLocale: Locale('en'),
           useFallbackTranslations: true,
-          child: LunaBox.lunasea.listenableBuilder(
-            selectItems: [
-              LunaSeaDatabase.THEME_AMOLED,
-              LunaSeaDatabase.THEME_AMOLED_BORDER,
+          child: SettingsAccessor().settingsBuilder(
+            keys: [
+              'THEME_AMOLED',
+              'THEME_AMOLED_BORDER',
             ],
             builder: (context, _) {
               return MaterialApp.router(

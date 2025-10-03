@@ -1,22 +1,22 @@
 import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/database/box.dart';
 import 'package:lunasea/database/tables/lunasea.dart';
 import 'package:lunasea/system/state.dart';
 import 'package:lunasea/router/router.dart';
 import 'package:lunasea/system/logger.dart';
+import 'package:lunasea/system/bridge/swift_data_accessor.dart';
 import 'package:lunasea/types/exception.dart';
 import 'package:lunasea/vendor.dart';
 import 'package:lunasea/widgets/ui.dart';
 
 class LunaProfileTools {
-  bool changeTo(
+  Future<bool> changeTo(
     String profile, {
     bool showSnackbar = true,
     bool popToRootRoute = false,
-  }) {
+  }) async {
     try {
       if (LunaSeaDatabase.ENABLED_PROFILE.read() == profile) return true;
-      _changeTo(profile);
+      await _changeTo(profile);
 
       if (showSnackbar) {
         showLunaSuccessSnackBar(
@@ -42,7 +42,7 @@ class LunaProfileTools {
   }) async {
     try {
       await _create(profile);
-      _changeTo(profile);
+      await _changeTo(profile);
 
       if (showSnackbar) {
         showLunaSuccessSnackBar(
@@ -112,8 +112,9 @@ class LunaProfileTools {
     return false;
   }
 
-  void _changeTo(String profile) {
-    if (!LunaBox.profiles.contains(profile)) {
+  Future<void> _changeTo(String profile) async {
+    final profileData = await SwiftDataAccessor.getProfile(profile);
+    if (profileData == null) {
       throw ProfileNotFoundException(profile);
     }
 
@@ -122,11 +123,14 @@ class LunaProfileTools {
   }
 
   Future<void> _create(String profile) async {
-    if (LunaBox.profiles.contains(profile)) {
+    final existingProfile = await SwiftDataAccessor.getProfile(profile);
+    if (existingProfile != null) {
       throw ProfileAlreadyExistsException(profile);
     }
 
-    await LunaBox.profiles.update(profile, LunaProfile());
+    final profileData = LunaProfile().toJson();
+    profileData['profileKey'] = profile;
+    await SwiftDataAccessor.createProfile(profileData);
   }
 
   Future<void> _remove(String profile) async {
@@ -134,29 +138,35 @@ class LunaProfileTools {
       throw ActiveProfileRemovalException(profile);
     }
 
-    if (!LunaBox.profiles.contains(profile)) {
+    final existingProfile = await SwiftDataAccessor.getProfile(profile);
+    if (existingProfile == null) {
       throw ProfileNotFoundException(profile);
     }
 
-    await LunaBox.profiles.delete(profile);
+    await SwiftDataAccessor.deleteProfile(profile);
   }
 
   Future<void> _rename(String oldProfile, String newProfile) async {
-    if (!LunaBox.profiles.contains(oldProfile)) {
+    final oldProfileData = await SwiftDataAccessor.getProfile(oldProfile);
+    if (oldProfileData == null) {
       throw ProfileNotFoundException(oldProfile);
     }
 
-    if (LunaBox.profiles.contains(newProfile)) {
+    final existingNewProfile = await SwiftDataAccessor.getProfile(newProfile);
+    if (existingNewProfile != null) {
       throw ProfileAlreadyExistsException(newProfile);
     }
 
-    final oldDb = LunaBox.profiles.read(oldProfile)!;
-    final newDb = LunaProfile.clone(oldDb);
+    // Create new profile with existing data but new key
+    final newProfileData = Map<String, dynamic>.from(oldProfileData);
+    newProfileData['profileKey'] = newProfile;
+    await SwiftDataAccessor.createProfile(newProfileData);
 
-    await LunaBox.profiles.update(newProfile, newDb);
-    _changeTo(newProfile);
+    // Switch to new profile
+    await _changeTo(newProfile);
 
-    oldDb.delete();
+    // Delete old profile
+    await SwiftDataAccessor.deleteProfile(oldProfile);
   }
 }
 

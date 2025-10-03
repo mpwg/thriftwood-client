@@ -3,13 +3,9 @@ import 'package:lunasea/modules/radarr.dart';
 
 part 'filter_releases.g.dart';
 
-@HiveType(typeId: 20, adapterName: 'RadarrReleasesFilterAdapter')
 enum RadarrReleasesFilter {
-  @HiveField(0)
   ALL,
-  @HiveField(1)
   APPROVED,
-  @HiveField(2)
   REJECTED,
 }
 

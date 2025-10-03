@@ -3,14 +3,11 @@ import 'package:lunasea/core.dart';
 part 'external_module.g.dart';
 
 @JsonSerializable()
-@HiveType(typeId: 26, adapterName: 'LunaExternalModuleAdapter')
-class LunaExternalModule extends HiveObject {
+class LunaExternalModule {
   @JsonKey()
-  @HiveField(0, defaultValue: '')
   String displayName;
 
   @JsonKey()
-  @HiveField(1, defaultValue: '')
   String host;
 
   LunaExternalModule({
@@ -31,7 +28,9 @@ class LunaExternalModule extends HiveObject {
     return LunaExternalModule.fromJson(profile.toJson());
   }
 
+  @Deprecated('Use SwiftDataAccessor instead - migrated to SwiftData')
   factory LunaExternalModule.get(String key) {
-    return LunaBox.externalModules.read(key)!;
+    throw UnsupportedError(
+        'LunaExternalModule.get() deprecated - use SwiftDataAccessor');
   }
 }

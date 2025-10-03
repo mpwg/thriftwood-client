@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:lunasea/core.dart';
-import 'package:lunasea/database/models/log.dart';
+import 'package:lunasea/system/bridge/swift_data_accessor.dart';
 import 'package:lunasea/types/exception.dart';
 import 'package:lunasea/types/log_type.dart';
 
@@ -17,40 +17,51 @@ class LunaLogger {
         details.stack ?? StackTrace.current,
       );
     };
-    _compact();
   }
 
-  Future<void> _compact([int count = 50]) async {
-    if (LunaBox.logs.data.length <= count) return;
-    List<LunaLog> logs = LunaBox.logs.data.toList();
-    logs.sort((a, b) => (b.timestamp).compareTo(a.timestamp));
-    logs.skip(count).forEach((log) => log.delete());
+  /// Get recent logs
+  Future<List<Map<String, dynamic>>> get logs async {
+    try {
+      return await SwiftDataAccessor.getLogs();
+    } catch (error) {
+      if (kDebugMode) print('Failed to get logs from SwiftData: $error');
+      return [];
+    }
   }
 
   Future<String> export() async {
-    final logs = LunaBox.logs.data.map((log) => log.toJson()).toList();
-    final encoder = JsonEncoder.withIndent(' '.repeat(4));
-    return encoder.convert(logs);
+    try {
+      final logs = await SwiftDataAccessor.exportLogs();
+      final encoder = JsonEncoder.withIndent(' '.repeat(4));
+      return encoder.convert(logs);
+    } catch (error) {
+      if (kDebugMode) print('Failed to export logs from SwiftData: $error');
+      return '[]';
+    }
   }
 
-  Future<void> clear() async => LunaBox.logs.clear();
+  Future<void> clear() async {
+    try {
+      await SwiftDataAccessor.clearLogs();
+    } catch (error) {
+      if (kDebugMode) print('Failed to clear logs in SwiftData: $error');
+    }
+  }
 
   void debug(String message) {
-    LunaLog log = LunaLog.withMessage(
-      type: LunaLogType.DEBUG,
+    SwiftDataAccessor.writeLog(
       message: message,
+      type: 'debug',
     );
-    LunaBox.logs.create(log);
   }
 
   void warning(String message, [String? className, String? methodName]) {
-    LunaLog log = LunaLog.withMessage(
-      type: LunaLogType.WARNING,
+    SwiftDataAccessor.writeLog(
       message: message,
+      type: 'warning',
       className: className,
       methodName: methodName,
     );
-    LunaBox.logs.create(log);
   }
 
   void error(String message, dynamic error, StackTrace? stackTrace) {
@@ -61,13 +72,11 @@ class LunaLogger {
     }
 
     if (error is! NetworkImageLoadException) {
-      LunaLog log = LunaLog.withError(
-        type: LunaLogType.ERROR,
+      SwiftDataAccessor.writeLog(
         message: message,
-        error: error,
-        stackTrace: stackTrace,
+        type: 'error',
+        error: error?.toString(),
       );
-      LunaBox.logs.create(log);
     }
   }
 
@@ -78,13 +87,11 @@ class LunaLogger {
     }
 
     if (error is! NetworkImageLoadException) {
-      LunaLog log = LunaLog.withError(
-        type: LunaLogType.CRITICAL,
+      SwiftDataAccessor.writeLog(
         message: error?.toString() ?? LunaUI.TEXT_EMDASH,
-        error: error,
-        stackTrace: stackTrace,
+        type: 'critical',
+        error: error?.toString(),
       );
-      LunaBox.logs.create(log);
     }
   }
 

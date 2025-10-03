@@ -68,7 +68,7 @@ class DataMigrationManager {
         
         func withExclusiveAccess<T>(_ operation: () async throws -> T) async throws -> T {
             guard !isSyncing else {
-                print("⚠️ DataMigrationManager: Sync operation already in progress, skipping...")
+                LoggingService.shared.warning("DataMigrationManager: Sync operation already in progress, skipping...", category: .migration)
                 throw DataMigrationError.syncInProgress
             }
             
@@ -107,10 +107,13 @@ class DataMigrationManager {
             // Sync all profiles
             try await self.syncProfilesFromHive(hiveData)
             
+            // Sync all indexers
+            try await self.syncIndexersFromHive(hiveData)
+            
             // Save all changes
             try self.modelContext.save()
             
-            print("✅ DataMigrationManager: Successfully synced all data from Hive to SwiftData")
+            LoggingService.shared.info("Successfully synced all data from Hive to SwiftData", category: .migration)
         }
     }
     
@@ -179,14 +182,14 @@ class DataMigrationManager {
             appSettings.enableInAppNotifications = enableNotifications
         }
         
-        print("✅ DataMigrationManager: Synced app settings from Hive")
+        LoggingService.shared.info("DataMigrationManager: Synced app settings from Hive", category: .migration)
     }
     
     /// Sync all profiles from Hive data
     @MainActor
     private func syncProfilesFromHive(_ hiveData: [String: Any]) async throws {
         guard let profilesDict = hiveData["profiles"] as? [String: [String: Any]] else {
-            print("⚠️ DataMigrationManager: No profiles found in Hive data")
+            LoggingService.shared.warning("DataMigrationManager: No profiles found in Hive data", category: .migration)
             return
         }
         
@@ -201,7 +204,7 @@ class DataMigrationManager {
             if let existing = existingProfilesByName[profileName] {
                 // CRITICAL: Use existing profile to prevent duplicate registration
                 profile = existing
-                print("🔄 DataMigrationManager: Updating existing profile: \(profileName)")
+                LoggingService.shared.debug("DataMigrationManager: Updating existing profile: \(profileName)", category: .migration)
             } else {
                 // CRITICAL: Double-check profile doesn't exist before creating new one
                 let checkDescriptor = FetchDescriptor<ProfileSwiftData>(
@@ -211,11 +214,11 @@ class DataMigrationManager {
                 
                 if let existingDuplicate = duplicateCheck.first {
                     profile = existingDuplicate
-                    print("⚠️ DataMigrationManager: Found duplicate profile during creation check: \(profileName)")
+                    LoggingService.shared.warning("DataMigrationManager: Found duplicate profile during creation check: \(profileName)", category: .migration)
                 } else {
                     profile = ProfileSwiftData(name: profileName)
                     modelContext.insert(profile)
-                    print("✅ DataMigrationManager: Created new profile: \(profileName)")
+                    LoggingService.shared.info("DataMigrationManager: Created new profile: \(profileName)", category: .migration)
                 }
             }
             
@@ -223,7 +226,7 @@ class DataMigrationManager {
             updateProfileFromHiveData(profile, data: profileData)
         }
         
-        print("✅ DataMigrationManager: Synced \(profilesDict.count) profiles from Hive")
+        LoggingService.shared.info("DataMigrationManager: Synced \(profilesDict.count) profiles from Hive", category: .migration)
     }
     
     /// Update a profile from Hive data dictionary
@@ -320,6 +323,43 @@ class DataMigrationManager {
         }
     }
     
+    /// Sync indexers from Hive data
+    @MainActor
+    private func syncIndexersFromHive(_ hiveData: [String: Any]) async throws {
+        guard let indexersDict = hiveData["indexers"] as? [String: [String: Any]] else {
+            LoggingService.shared.info("No indexers found in Hive data", category: .migration)
+            return
+        }
+        
+        // Get existing indexers to avoid duplicates
+        let existingIndexers = try modelContext.fetch(FetchDescriptor<IndexerSwiftData>())
+        var existingIndexersByHost: [String: IndexerSwiftData] = [:]
+        for indexer in existingIndexers {
+            existingIndexersByHost[indexer.host] = indexer
+        }
+        
+        for (_, indexerData) in indexersDict {
+            guard let host = indexerData["host"] as? String else { continue }
+            
+            let indexer: IndexerSwiftData
+            if let existing = existingIndexersByHost[host] {
+                // Update existing indexer
+                indexer = existing
+                LoggingService.shared.debug("Updating existing indexer: \(host)", category: .migration)
+            } else {
+                // Create new indexer
+                indexer = IndexerSwiftData()
+                modelContext.insert(indexer)
+                LoggingService.shared.debug("Created new indexer: \(host)", category: .migration)
+            }
+            
+            // Update indexer fields from Hive data
+            indexer.updateFromHiveData(indexerData)
+        }
+        
+        LoggingService.shared.info("Synced \(indexersDict.count) indexers from Hive", category: .migration)
+    }
+    
     // MARK: - SwiftData → Hive Migration
     
     /// Sync all SwiftData changes back to Flutter's Hive storage
@@ -342,7 +382,7 @@ class DataMigrationManager {
             // Send to Flutter via method channel
             try await self.updateHiveSettings(hiveData)
             
-            print("✅ DataMigrationManager: Successfully synced all data from SwiftData to Hive")
+            LoggingService.shared.info("DataMigrationManager: Successfully synced all data from SwiftData to Hive", category: .migration)
         }
     }
     
@@ -385,6 +425,14 @@ class DataMigrationManager {
             profilesDict[profile.name] = try buildProfileDictionary(profile)
         }
         hiveData["profiles"] = profilesDict
+        
+        // Indexers
+        let indexers = try modelContext.fetch(FetchDescriptor<IndexerSwiftData>())
+        var indexersDict: [String: [String: Any]] = [:]
+        for indexer in indexers {
+            indexersDict[indexer.id.uuidString] = indexer.toDictionary()
+        }
+        hiveData["indexers"] = indexersDict
         
         return hiveData
     }
@@ -496,7 +544,7 @@ class DataMigrationManager {
     /// Execute block with sync lock to prevent concurrent operations
     private func withSyncLock<T>(_ operation: @escaping () async throws -> T) async throws -> T {
         return try await syncActor.withExclusiveAccess {
-            print("🔒 DataMigrationManager: Executing sync operation with exclusive access")
+            LoggingService.shared.debug("DataMigrationManager: Executing sync operation with exclusive access", category: .migration)
             return try await operation()
         }
     }

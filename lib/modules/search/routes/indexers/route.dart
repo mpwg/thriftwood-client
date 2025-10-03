@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lunasea/core.dart';
 import 'package:lunasea/modules/search.dart';
+import 'package:lunasea/system/bridge/swift_data_accessor.dart';
 
 class SearchRoute extends StatefulWidget {
   const SearchRoute({
@@ -35,26 +36,37 @@ class _State extends State<SearchRoute> with LunaScrollControllerMixin {
   Widget _drawer() => LunaDrawer(page: LunaModule.SEARCH.key);
 
   Widget _body() {
-    if (LunaBox.indexers.isEmpty) {
-      return LunaMessage.moduleNotEnabled(
-        context: context,
-        module: LunaModule.SEARCH.title,
-      );
-    }
-    return LunaListView(
-      controller: scrollController,
-      children: _list,
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: SwiftDataAccessor.getAllIndexers(),
+      builder: (context, snapshot) {
+        final indexers = snapshot.data ?? [];
+        if (indexers.isEmpty) {
+          return LunaMessage.moduleNotEnabled(
+            context: context,
+            module: LunaModule.SEARCH.title,
+          );
+        }
+
+        return _buildIndexersList(indexers);
+      },
     );
   }
 
-  List<Widget> get _list {
-    final list = LunaBox.indexers.data
-        .map((indexer) => SearchIndexerTile(indexer: indexer))
+  Widget _buildIndexersList(List<Map<String, dynamic>> indexers) {
+    // TODO: Update SearchIndexerTile to work with SwiftData format
+    final indexerWidgets = indexers
+        .map((indexerData) => ListTile(
+              title: Text(indexerData['displayName'] ?? 'Unknown Indexer'),
+              subtitle: Text(indexerData['host'] ?? ''),
+              onTap: () {
+                // TODO: Implement indexer navigation
+              },
+            ))
         .toList();
-    list.sort((a, b) => a.indexer!.displayName
-        .toLowerCase()
-        .compareTo(b.indexer!.displayName.toLowerCase()));
 
-    return list;
+    return LunaListView(
+      controller: scrollController,
+      children: indexerWidgets,
+    );
   }
 }

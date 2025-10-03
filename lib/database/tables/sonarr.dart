@@ -46,12 +46,9 @@ enum SonarrDatabase<T> with LunaTableMixin<T> {
   const SonarrDatabase(this.fallback);
 
   @override
+  @Deprecated('Hive registration deprecated - migrated to SwiftData')
   void register() {
-    Hive.registerAdapter(SonarrMonitorStatusAdapter());
-    Hive.registerAdapter(SonarrSeriesSortingAdapter());
-    Hive.registerAdapter(SonarrSeriesFilterAdapter());
-    Hive.registerAdapter(SonarrReleasesSortingAdapter());
-    Hive.registerAdapter(SonarrReleasesFilterAdapter());
+    // No-op - all Hive adapters removed during SwiftData migration
   }
 
   @override

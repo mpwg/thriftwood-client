@@ -1,54 +1,48 @@
-import 'package:lunasea/database/box.dart';
 import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/database/table.dart';
 import 'package:lunasea/database/tables/lunasea.dart';
-import 'package:lunasea/system/filesystem/filesystem.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:lunasea/system/bridge/swift_data_accessor.dart';
 
 class LunaDatabase {
-  static const String _DATABASE_LEGACY_PATH = 'database';
-
-  String get path {
-    // iOS uses legacy path
-    return _DATABASE_LEGACY_PATH;
-  }
-
+  /// SwiftData-only database - no Hive, no migration
+  /// All data operations are handled directly by SwiftData bridge
   Future<void> initialize() async {
-    await Hive.initFlutter(path);
-    LunaTable.register();
     await open();
   }
 
   Future<void> open() async {
-    await LunaBox.open();
-    if (LunaBox.profiles.isEmpty) await bootstrap();
+    // Ensure default profile exists in SwiftData
+    final profiles = await SwiftDataAccessor.getAllProfiles();
+    if (profiles.isEmpty) await bootstrap();
   }
 
   Future<void> nuke() async {
-    await Hive.close();
-
-    for (final box in LunaBox.values) {
-      await Hive.deleteBoxFromDisk(box.key, path: path);
-    }
-
-    if (LunaFileSystem.isSupported) {
-      await LunaFileSystem().nuke();
-    }
+    // Clear all SwiftData tables
+    await SwiftDataAccessor.clearAllProfiles();
+    await SwiftDataAccessor.clearAllIndexers();
+    await SwiftDataAccessor.clearLogs();
   }
 
   Future<void> bootstrap() async {
     const defaultProfile = LunaProfile.DEFAULT_PROFILE;
-    await clear();
 
-    LunaBox.profiles.update(defaultProfile, LunaProfile());
+    // Create default profile in SwiftData
+    final defaultProfileData = LunaProfile().toJson();
+    defaultProfileData['profileKey'] =
+        defaultProfile; // Add profile key to data
+    await SwiftDataAccessor.createProfile(defaultProfileData);
+
+    // Set as enabled profile
     LunaSeaDatabase.ENABLED_PROFILE.update(defaultProfile);
   }
 
   Future<void> clear() async {
-    for (final box in LunaBox.values) await box.clear();
+    // Clear all SwiftData tables
+    await SwiftDataAccessor.clearAllProfiles();
+    await SwiftDataAccessor.clearAllIndexers();
+    await SwiftDataAccessor.clearLogs();
   }
 
   Future<void> deinitialize() async {
-    await Hive.close();
+    // No-op - SwiftData managed by iOS
   }
 }

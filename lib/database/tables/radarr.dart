@@ -4,7 +4,6 @@ import 'package:lunasea/modules/radarr/core/types/filter_movies.dart';
 import 'package:lunasea/modules/radarr/core/types/filter_releases.dart';
 import 'package:lunasea/modules/radarr/core/types/sorting_movies.dart';
 import 'package:lunasea/modules/radarr/core/types/sorting_releases.dart';
-import 'package:lunasea/vendor.dart';
 
 enum RadarrDatabase<T> with LunaTableMixin<T> {
   NAVIGATION_INDEX<int>(0),
@@ -35,11 +34,9 @@ enum RadarrDatabase<T> with LunaTableMixin<T> {
   CONTENT_PAGE_SIZE<int>(10);
 
   @override
+  @Deprecated('Hive registration deprecated - migrated to SwiftData')
   void register() {
-    Hive.registerAdapter(RadarrMoviesSortingAdapter());
-    Hive.registerAdapter(RadarrMoviesFilterAdapter());
-    Hive.registerAdapter(RadarrReleasesSortingAdapter());
-    Hive.registerAdapter(RadarrReleasesFilterAdapter());
+    // No-op - all Hive adapters removed during SwiftData migration
   }
 
   @override

@@ -6,11 +6,8 @@ part 'list_view_option.g.dart';
 const _BLOCK_VIEW = 'BLOCK_VIEW';
 const _GRID_VIEW = 'GRID_VIEW';
 
-@HiveType(typeId: 29, adapterName: 'LunaListViewOptionAdapter')
 enum LunaListViewOption {
-  @HiveField(0)
   BLOCK_VIEW(_BLOCK_VIEW),
-  @HiveField(1)
   GRID_VIEW(_GRID_VIEW);
 
   final String key;

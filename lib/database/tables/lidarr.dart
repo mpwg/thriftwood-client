@@ -22,10 +22,9 @@ enum LidarrDatabase<T> with LunaTableMixin<T> {
   const LidarrDatabase(this.fallback);
 
   @override
+  @Deprecated('Hive registration deprecated - migrated to SwiftData')
   void register() {
-    Hive.registerAdapter(LidarrQualityProfileAdapter());
-    Hive.registerAdapter(LidarrMetadataProfileAdapter());
-    Hive.registerAdapter(LidarrRootFolderAdapter());
+    // No-op - all Hive adapters removed during SwiftData migration
   }
 
   @override

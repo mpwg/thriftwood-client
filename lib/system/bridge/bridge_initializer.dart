@@ -1,5 +1,4 @@
 import 'package:lunasea/system/bridge/hybrid_router.dart';
-import 'package:lunasea/system/bridge/hive_bridge.dart';
 
 /// Bridge initialization for the hybrid Flutter/SwiftUI system
 class BridgeInitializer {
@@ -13,11 +12,12 @@ class BridgeInitializer {
     // All other bridges are handled by the centralized Swift system
     await HybridRouter.initialize();
 
-    // Initialize HiveBridge for DataLayerManager communication
-    HiveBridge.initialize();
+    // HiveBridge removed - SwiftData is now the only data source
+    // All data operations go through SwiftDataAccessor bridge
 
     print('✅ Swift-first bridge system initialized');
     print('✅ Flutter code eliminated for Settings and Dashboard');
     print('✅ Method channel conflicts prevented via BridgeMethodDispatcher');
+    print('✅ Hive completely removed - SwiftData is single source of truth');
   }
 }

@@ -36,27 +36,27 @@ class BridgeMethodDispatcher {
             }
         }
         
-        print("✅ BridgeMethodDispatcher initialized - preventing handler conflicts")
+        LoggingService.shared.info("BridgeMethodDispatcher initialized - preventing handler conflicts", category: .bridge)
     }
     
     /// Register a method handler
     func registerHandler(for method: String, handler: @escaping (FlutterMethodCall, @escaping FlutterResult) -> Void) {
         if methodHandlers[method] != nil {
-            print("⚠️ WARNING: Overriding existing handler for method: \(method)")
+            LoggingService.shared.warning("Overriding existing handler for method: \(method)", category: .bridge)
         }
         methodHandlers[method] = handler
-        print("📝 Registered handler for method: \(method)")
+        LoggingService.shared.debug("Registered handler for method: \(method)", category: .bridge)
     }
     
     /// Dispatch method calls to appropriate handlers
     private func dispatch(_ call: FlutterMethodCall, result: @escaping FlutterResult) async {
         let method = call.method
         
-        print("🔍 BridgeMethodDispatcher received: \(method)")
+        LoggingService.shared.debug("BridgeMethodDispatcher received: \(method)", category: .bridge)
         
         guard let handler = methodHandlers[method] else {
             // RULE 13 ENFORCEMENT: No silent failures - show actionable error
-            print("❌ No handler found for method: \(method)")
+            LoggingService.shared.warning("No handler found for method: \(method)", category: .bridge)
             result(FlutterError(
                 code: "UNIMPLEMENTED",
                 message: "Method \(method) not implemented by any service",
@@ -117,7 +117,7 @@ extension BridgeMethodDispatcher {
         // Return navigation
         registerHandler(for: "onReturnFromNative") { call, result in
             // Handle return data from native views
-            print("📱 Received return data from native view: \(call.arguments ?? [:])")
+            LoggingService.shared.debug("Received return data from native view: \(call.arguments ?? [:])", category: .bridge)
             result(nil)
         }
     }

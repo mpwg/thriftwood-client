@@ -1,13 +1,6 @@
-import 'package:lunasea/database/models/external_module.dart';
-import 'package:lunasea/database/models/indexer.dart';
-import 'package:lunasea/database/models/log.dart';
 import 'package:lunasea/database/models/profile.dart';
-import 'package:lunasea/types/indexer_icon.dart';
-import 'package:lunasea/types/list_view_option.dart';
-import 'package:lunasea/modules.dart';
 import 'package:lunasea/database/table.dart';
-import 'package:lunasea/types/log_type.dart';
-import 'package:lunasea/vendor.dart';
+import 'package:lunasea/modules.dart';
 import 'package:lunasea/widgets/ui.dart';
 
 enum LunaSeaDatabase<T> with LunaTableMixin<T> {
@@ -40,15 +33,9 @@ enum LunaSeaDatabase<T> with LunaTableMixin<T> {
   const LunaSeaDatabase(this.fallback);
 
   @override
+  @Deprecated('Hive registration deprecated - migrated to SwiftData')
   void register() {
-    Hive.registerAdapter(LunaExternalModuleAdapter());
-    Hive.registerAdapter(LunaIndexerAdapter());
-    Hive.registerAdapter(LunaProfileAdapter());
-    Hive.registerAdapter(LunaLogAdapter());
-    Hive.registerAdapter(LunaIndexerIconAdapter());
-    Hive.registerAdapter(LunaLogTypeAdapter());
-    Hive.registerAdapter(LunaModuleAdapter());
-    Hive.registerAdapter(LunaListViewOptionAdapter());
+    // No-op - all Hive adapters removed during SwiftData migration
   }
 
   @override

@@ -12,34 +12,26 @@ const _NZBHYDRA = 'nzbhydra';
 const _NZBSU = 'nzbsu';
 
 @JsonEnum()
-@HiveType(typeId: 22, adapterName: 'LunaIndexerIconAdapter')
 enum LunaIndexerIcon {
   @JsonValue(_GENERIC)
-  @HiveField(0)
   GENERIC(_GENERIC),
 
   @JsonValue(_DOGNZB)
-  @HiveField(1)
   DOGNZB(_DOGNZB),
 
   @JsonValue(_DRUNKENSLUG)
-  @HiveField(2)
   DRUNKENSLUG(_DRUNKENSLUG),
 
   @JsonValue(_NZBFINDER)
-  @HiveField(3)
   NZBFINDER(_NZBFINDER),
 
   @JsonValue(_NZBGEEK)
-  @HiveField(4)
   NZBGEEK(_NZBGEEK),
 
   @JsonValue(_NZBHYDRA)
-  @HiveField(5)
   NZBHYDRA(_NZBHYDRA),
 
   @JsonValue(_NZBSU)
-  @HiveField(6)
   NZBSU(_NZBSU);
 
   final String key;

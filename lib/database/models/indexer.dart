@@ -3,22 +3,16 @@ import 'package:lunasea/core.dart';
 part 'indexer.g.dart';
 
 @JsonSerializable()
-@HiveType(typeId: 1, adapterName: 'LunaIndexerAdapter')
-class LunaIndexer extends HiveObject {
+class LunaIndexer {
   @JsonKey()
-  @HiveField(0, defaultValue: '')
   String displayName;
 
   @JsonKey()
-  @HiveField(1, defaultValue: '')
   String host;
 
   @JsonKey(name: 'key')
-  @HiveField(2, defaultValue: '')
   String apiKey;
 
-  @JsonKey()
-  @HiveField(3, defaultValue: <String, String>{})
   Map<String, String> headers;
 
   LunaIndexer._internal({
@@ -55,7 +49,9 @@ class LunaIndexer extends HiveObject {
     return LunaIndexer.fromJson(profile.toJson());
   }
 
+  // Legacy factory method - replaced by SwiftDataAccessor.getIndexer()
+  @Deprecated('Use SwiftDataAccessor.getIndexer() instead')
   factory LunaIndexer.get(String key) {
-    return LunaBox.indexers.read(key)!;
+    throw UnimplementedError('Use SwiftDataAccessor.getIndexer() instead');
   }
 }

@@ -9,15 +9,10 @@ const TYPE_WARNING = 'warning';
 const TYPE_ERROR = 'error';
 const TYPE_CRITICAL = 'critical';
 
-@HiveType(typeId: 24, adapterName: 'LunaLogTypeAdapter')
 enum LunaLogType {
-  @HiveField(0)
   WARNING(TYPE_WARNING),
-  @HiveField(1)
   ERROR(TYPE_ERROR),
-  @HiveField(2)
   CRITICAL(TYPE_CRITICAL),
-  @HiveField(3)
   DEBUG(TYPE_DEBUG);
 
   final String key;

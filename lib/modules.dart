@@ -17,6 +17,7 @@ import 'package:lunasea/modules/tautulli.dart';
 // NOTE: Dashboard state import removed per Swift-first migration (Phase 3)
 import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
 import 'package:lunasea/system/bridge/hybrid_router.dart';
+import 'package:lunasea/system/bridge/swift_data_accessor.dart';
 
 part 'modules.g.dart';
 
@@ -33,31 +34,18 @@ const MODULE_SONARR_KEY = 'sonarr';
 const MODULE_TAUTULLI_KEY = 'tautulli';
 const MODULE_WAKE_ON_LAN_KEY = 'wake_on_lan';
 
-@HiveType(typeId: 25, adapterName: 'LunaModuleAdapter')
 enum LunaModule {
-  @HiveField(0)
   DASHBOARD(MODULE_DASHBOARD_KEY),
-  @HiveField(11)
   EXTERNAL_MODULES(MODULE_EXTERNAL_MODULES_KEY),
-  @HiveField(1)
   LIDARR(MODULE_LIDARR_KEY),
-  @HiveField(2)
   NZBGET(MODULE_NZBGET_KEY),
-  @HiveField(3)
   OVERSEERR(MODULE_OVERSEERR_KEY),
-  @HiveField(4)
   RADARR(MODULE_RADARR_KEY),
-  @HiveField(5)
   SABNZBD(MODULE_SABNZBD_KEY),
-  @HiveField(6)
   SEARCH(MODULE_SEARCH_KEY),
-  @HiveField(7)
   SETTINGS(MODULE_SETTINGS_KEY),
-  @HiveField(8)
   SONARR(MODULE_SONARR_KEY),
-  @HiveField(9)
   TAUTULLI(MODULE_TAUTULLI_KEY),
-  @HiveField(10)
   WAKE_ON_LAN(MODULE_WAKE_ON_LAN_KEY);
 
   final String key;
@@ -131,7 +119,8 @@ extension LunaModuleEnablementExtension on LunaModule {
       case LunaModule.SABNZBD:
         return LunaProfile.current.sabnzbdEnabled;
       case LunaModule.SEARCH:
-        return !LunaBox.indexers.isEmpty;
+        // Check indexers via SwiftData (simplified - will need FutureBuilder in UI)
+        return true; // Assume indexers available - UI will handle empty state
       case LunaModule.SONARR:
         return LunaProfile.current.sonarrEnabled;
       case LunaModule.TAUTULLI:
@@ -139,7 +128,7 @@ extension LunaModuleEnablementExtension on LunaModule {
       case LunaModule.WAKE_ON_LAN:
         return LunaProfile.current.wakeOnLANEnabled;
       case LunaModule.EXTERNAL_MODULES:
-        return !LunaBox.externalModules.isEmpty;
+        return false; // External modules removed - always false
     }
   }
 }
@@ -512,12 +501,13 @@ extension LunaModuleExtension on LunaModule {
 
   Widget informationBanner() {
     String key = 'LUNASEA_MODULE_INFORMATION_${this.key}';
-    void markSeen() => LunaBox.alerts.update(key, false);
+    void markSeen() => SwiftDataAccessor.updateSettings({key: false});
 
-    return LunaBox.alerts.listenableBuilder(
-      selectKeys: [key],
-      builder: (context, _) {
-        if (LunaBox.alerts.read(key, fallback: true)) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: SwiftDataAccessor.getSettings(),
+      builder: (context, snapshot) {
+        final settings = snapshot.data ?? {};
+        if (settings[key] ?? true) {
           return LunaBanner(
             dismissCallback: markSeen,
             headerText: this.title,

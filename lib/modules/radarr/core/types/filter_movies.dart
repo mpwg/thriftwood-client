@@ -3,19 +3,12 @@ import 'package:lunasea/modules/radarr.dart';
 
 part 'filter_movies.g.dart';
 
-@HiveType(typeId: 19, adapterName: 'RadarrMoviesFilterAdapter')
 enum RadarrMoviesFilter {
-  @HiveField(0)
   ALL,
-  @HiveField(1)
   MONITORED,
-  @HiveField(2)
   UNMONITORED,
-  @HiveField(3)
   MISSING,
-  @HiveField(4)
   WANTED,
-  @HiveField(5)
   CUTOFF_UNMET,
 }
 

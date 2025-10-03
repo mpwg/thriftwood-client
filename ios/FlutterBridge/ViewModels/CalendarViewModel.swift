@@ -94,7 +94,7 @@ class CalendarViewModel {
             events = try await apiService.getUpcoming(today: today)
         } catch {
             self.error = error.localizedDescription
-            print("Failed to load calendar events: \(error)")
+            LoggingService.shared.error("Failed to load calendar events", error: error, category: .ui)
         }
         
         isLoading = false
@@ -225,7 +225,7 @@ class CalendarViewModel {
             calendarStartingType = CalendarStartingType(rawValue: typeRaw) ?? .calendar
             
         } catch {
-            print("Failed to load calendar state from Flutter storage: \(error)")
+            LoggingService.shared.error("Failed to load calendar state from Flutter storage", error: error, category: .ui)
         }
     }
     
@@ -244,7 +244,7 @@ class CalendarViewModel {
                 
                 _ = try await channel.invokeMethod("updateCalendarState", arguments: stateData)
             } catch {
-                print("Failed to sync CalendarViewModel to Flutter: \(error)")
+                LoggingService.shared.error("Failed to sync CalendarViewModel to Flutter", error: error, category: .ui)
             }
         }
     }

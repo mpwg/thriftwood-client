@@ -7,6 +7,7 @@ import 'package:lunasea/router/routes/nzbget.dart';
 
 import 'package:lunasea/system/filesystem/file.dart';
 import 'package:lunasea/system/filesystem/filesystem.dart';
+import 'package:lunasea/system/bridge/swift_data_accessor.dart';
 
 class NZBGetRoute extends StatefulWidget {
   final bool showDrawer;
@@ -64,11 +65,23 @@ class _State extends State<NZBGetRoute> {
   }
 
   Widget _appBar() {
-    List<String> profiles = LunaBox.profiles.keys.fold([], (value, element) {
-      if (LunaBox.profiles.read(element)?.nzbgetEnabled ?? false)
-        value.add(element);
-      return value;
-    });
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: SwiftDataAccessor.getAllProfiles(),
+      builder: (context, snapshot) {
+        final allProfiles = snapshot.data ?? [];
+        List<String> profiles = allProfiles
+            .where((profile) {
+              return profile['nzbgetEnabled'] == true;
+            })
+            .map((profile) => profile['profileKey'] as String)
+            .toList();
+
+        return _buildAppBar(profiles);
+      },
+    );
+  }
+
+  Widget _buildAppBar(List<String> profiles) {
     List<Widget>? actions;
     if (LunaProfile.current.nzbgetEnabled)
       actions = [

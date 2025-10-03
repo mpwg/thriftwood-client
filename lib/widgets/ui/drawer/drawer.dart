@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lunasea/core.dart';
 import 'package:lunasea/api/wake_on_lan/wake_on_lan.dart';
+import 'package:lunasea/system/bridge/swift_data_accessor.dart';
 
 class LunaDrawer extends StatelessWidget {
   final String page;
@@ -35,8 +36,9 @@ class LunaDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LunaSeaDatabase.ENABLED_PROFILE.listenableBuilder(
-      builder: (context, _) => LunaBox.indexers.listenableBuilder(
-        builder: (context, _) => Drawer(
+      builder: (context, _) => FutureBuilder<List<Map<String, dynamic>>>(
+        future: SwiftDataAccessor.getAllIndexers(),
+        builder: (context, indexerSnapshot) => Drawer(
           elevation: LunaUI.ELEVATION,
           backgroundColor: Theme.of(context).primaryColor,
           child: LunaSeaDatabase.DRAWER_AUTOMATIC_MANAGE.listenableBuilder(

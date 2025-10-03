@@ -25,7 +25,7 @@ extension FlutterSwiftUIBridge {
     /// Called during Phase 3 initialization
     func registerDashboardView() {
         registerNativeView("/dashboard")
-        print("✅ Dashboard view registered with FlutterSwiftUIBridge")
+        LoggingService.shared.info("Dashboard view registered with FlutterSwiftUIBridge", category: .bridge)
     }
     
     /// Setup Dashboard-specific method channel handlers
@@ -33,7 +33,7 @@ extension FlutterSwiftUIBridge {
     func setupDashboardMethodHandlers() {
         // Dashboard methods will be handled by the main bridge method handler
         // We just need to register dashboard-specific handling within the existing handler
-        print("✅ Dashboard method channel handlers configured (integrated with main bridge)")
+        LoggingService.shared.info("Dashboard method channel handlers configured (integrated with main bridge)", category: .bridge)
     }
     
     /// Handle Dashboard-specific method calls from Flutter
@@ -42,7 +42,7 @@ extension FlutterSwiftUIBridge {
         let method = call.method
         let arguments = call.arguments as? [String: Any] ?? [:]
         
-        print("📱 Dashboard method call: \(method)")
+        LoggingService.shared.debug("Dashboard method call: \(method)", category: .bridge)
         
         switch method {
         case "getDashboardState":
@@ -187,7 +187,7 @@ extension FlutterSwiftUIBridge {
             // This eliminates the need for repeated SharedDataManager UserDefaults lookups
             return try await DataLayerManager.shared.getServiceEnabledStates()
         } catch {
-            print("Failed to load service enabled states from DataLayerManager: \(error)")
+            LoggingService.shared.error("Failed to load service enabled states from DataLayerManager", error: error, category: .bridge)
             
             // Fallback to default disabled states
             return [

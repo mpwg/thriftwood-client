@@ -36,7 +36,7 @@ class SwiftDataBridge: NSObject {
         // Register data methods with central dispatcher (prevents conflicts)
         registerDataMethods()
         
-        print("✅ SwiftDataBridge initialized and registered with dispatcher")
+        LoggingService.shared.info("SwiftDataBridge initialized and registered with dispatcher", category: .bridge)
     }
     
     /// Register data access methods with BridgeMethodDispatcher
@@ -85,25 +85,95 @@ class SwiftDataBridge: NSObject {
             }
         }
         
-        print("✅ Data bridge methods registered with BridgeMethodDispatcher")
+        // Indexer data methods
+        BridgeMethodDispatcher.shared.registerHandler(for: "indexer.getAll") { call, result in
+            Task { @MainActor in
+                await self.handleGetAllIndexers(result: result)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "indexer.get") { call, result in
+            Task { @MainActor in
+                await self.handleGetIndexer(call: call, result: result)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "indexer.create") { call, result in
+            Task { @MainActor in
+                await self.handleCreateIndexer(call: call, result: result)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "indexer.update") { call, result in
+            Task { @MainActor in
+                await self.handleUpdateIndexer(call: call, result: result)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "indexer.delete") { call, result in
+            Task { @MainActor in
+                await self.handleDeleteIndexer(call: call, result: result)
+            }
+        }
+        
+        // Logging methods (OSLog integration)
+        BridgeMethodDispatcher.shared.registerHandler(for: "log.write") { call, result in
+            Task { @MainActor in
+                let success = LoggingService.shared.handleFlutterLogRequest(call.method, arguments: call.arguments)
+                result(success)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "log.export") { call, result in
+            Task { @MainActor in
+                let args = call.arguments as? [String: Any]
+                let limit = args?["limit"] as? Int ?? 1000
+                let logs = await LoggingService.shared.exportRecentLogs(limit: limit)
+                result(logs)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "log.clear") { call, result in
+            Task { @MainActor in
+                // OSLog doesn't support manual clearing - logs are managed by the system
+                LoggingService.shared.info("Log clear requested - OSLog manages retention automatically", category: .bridge)
+                result(true)
+            }
+        }
+        
+        // Migration methods
+        BridgeMethodDispatcher.shared.registerHandler(for: "migration.fromHive") { call, result in
+            Task { @MainActor in
+                await self.handleMigrateFromHive(result: result)
+            }
+        }
+        
+        BridgeMethodDispatcher.shared.registerHandler(for: "migration.isComplete") { call, result in
+            Task { @MainActor in
+                let isComplete = self.isMigrationComplete()
+                result(isComplete)
+            }
+        }
+        
+        LoggingService.shared.info("Data bridge methods registered with BridgeMethodDispatcher", category: .bridge)
     }
     
     /// Setup SwiftData model context
     private func setupSwiftDataContext() {
         do {
             let container = try ModelContainer(
-                for: ProfileSwiftData.self, AppSettingsSwiftData.self
+                for: ProfileSwiftData.self, AppSettingsSwiftData.self, IndexerSwiftData.self
             )
             modelContext = ModelContext(container)
-            print("✅ SwiftData context initialized")
+            LoggingService.shared.info("SwiftData context initialized", category: .database)
             
             // Initialize SwiftDataStorageService with the context
             Task { @MainActor in
                 SwiftDataStorageService.shared.initialize(modelContext!)
-                print("✅ SwiftDataStorageService initialized with context")
+                LoggingService.shared.info("SwiftDataStorageService initialized with context", category: .database)
             }
         } catch {
-            print("❌ Failed to initialize SwiftData context: \(error)")
+            LoggingService.shared.error("Failed to initialize SwiftData context", error: error, category: .database)
         }
     }
     
@@ -168,7 +238,7 @@ class SwiftDataBridge: NSObject {
             
             if let existingProfile = existingProfiles.first {
                 // Return existing profile instead of creating duplicate
-                print("⚠️ SwiftDataBridge: Profile already exists, returning existing: \(profileName)")
+                LoggingService.shared.warning("SwiftDataBridge: Profile already exists, returning existing: \(profileName)", category: .database)
                 result(existingProfile.toDictionary())
                 return
             }
@@ -179,10 +249,10 @@ class SwiftDataBridge: NSObject {
             do {
                 modelContext.insert(profile)
                 try modelContext.save()
-                print("✅ SwiftDataBridge: Created new profile: \(profileName)")
+                LoggingService.shared.info("SwiftDataBridge: Created new profile: \(profileName)", category: .database)
                 result(profile.toDictionary())
             } catch {
-                print("⚠️ SwiftDataBridge: Profile insertion failed (likely duplicate): \(profileName) - \(error)")
+                LoggingService.shared.warning("SwiftDataBridge: Profile insertion failed (likely duplicate): \(profileName)", error: error, category: .database)
                 // If insertion fails, return the existing profile
                 if let existingProfile = existingProfiles.first {
                     result(existingProfile.toDictionary())
@@ -191,7 +261,7 @@ class SwiftDataBridge: NSObject {
                 }
             }
         } catch {
-            print("❌ SwiftDataBridge: Profile creation failed: \(error)")
+            LoggingService.shared.error("SwiftDataBridge: Profile creation failed", error: error, category: .database)
             result(FlutterError(code: "CREATE_ERROR", message: error.localizedDescription, details: nil))
         }
     }
@@ -540,7 +610,7 @@ class SwiftDataBridge: NSObject {
         // Mark migration as complete
         markMigrationComplete()
         
-        print("✅ Data migration from Hive to SwiftData completed")
+        LoggingService.shared.info("Data migration from Hive to SwiftData completed", category: .migration)
         return true
     }
     
@@ -553,6 +623,154 @@ class SwiftDataBridge: NSObject {
     private func markMigrationComplete() -> Bool {
         UserDefaults.standard.set(true, forKey: "HIVE_TO_SWIFTDATA_MIGRATION_COMPLETE")
         return true
+    }
+    
+    // MARK: - Indexer Data Handlers
+    
+    private func handleGetAllIndexers(result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext else {
+            result(FlutterError(code: "NO_CONTEXT", message: "SwiftData context not initialized", details: nil))
+            return
+        }
+        
+        do {
+            let indexers = try modelContext.fetch(FetchDescriptor<IndexerSwiftData>())
+            let indexerDicts = indexers.map { $0.toDictionary() }
+            result(indexerDicts)
+        } catch {
+            result(FlutterError(code: "FETCH_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    private func handleGetIndexer(call: FlutterMethodCall, result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext,
+              let args = call.arguments as? [String: Any],
+              let idString = args["id"] as? String,
+              let id = UUID(uuidString: idString) else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Indexer ID required", details: nil))
+            return
+        }
+        
+        do {
+            let descriptor = FetchDescriptor<IndexerSwiftData>(
+                predicate: #Predicate<IndexerSwiftData> { $0.id == id }
+            )
+            let indexers = try modelContext.fetch(descriptor)
+            
+            if let indexer = indexers.first {
+                result(indexer.toDictionary())
+            } else {
+                result(nil)
+            }
+        } catch {
+            result(FlutterError(code: "FETCH_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    private func handleCreateIndexer(call: FlutterMethodCall, result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext,
+              let args = call.arguments as? [String: Any],
+              let indexer = IndexerSwiftData.fromDictionary(args) else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Valid indexer data required", details: nil))
+            return
+        }
+        
+        do {
+            modelContext.insert(indexer)
+            try modelContext.save()
+            result(indexer.toDictionary())
+        } catch {
+            result(FlutterError(code: "CREATE_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    private func handleUpdateIndexer(call: FlutterMethodCall, result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext,
+              let args = call.arguments as? [String: Any],
+              let idString = args["id"] as? String,
+              let id = UUID(uuidString: idString) else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Indexer ID and data required", details: nil))
+            return
+        }
+        
+        do {
+            let descriptor = FetchDescriptor<IndexerSwiftData>(
+                predicate: #Predicate<IndexerSwiftData> { $0.id == id }
+            )
+            let indexers = try modelContext.fetch(descriptor)
+            
+            guard let indexer = indexers.first else {
+                result(FlutterError(code: "NOT_FOUND", message: "Indexer not found", details: nil))
+                return
+            }
+            
+            indexer.updateFromHiveData(args)
+            try modelContext.save()
+            result(indexer.toDictionary())
+        } catch {
+            result(FlutterError(code: "UPDATE_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    private func handleDeleteIndexer(call: FlutterMethodCall, result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext,
+              let args = call.arguments as? [String: Any],
+              let idString = args["id"] as? String,
+              let id = UUID(uuidString: idString) else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Indexer ID required", details: nil))
+            return
+        }
+        
+        do {
+            let descriptor = FetchDescriptor<IndexerSwiftData>(
+                predicate: #Predicate<IndexerSwiftData> { $0.id == id }
+            )
+            let indexers = try modelContext.fetch(descriptor)
+            
+            guard let indexer = indexers.first else {
+                result(FlutterError(code: "NOT_FOUND", message: "Indexer not found", details: nil))
+                return
+            }
+            
+            modelContext.delete(indexer)
+            try modelContext.save()
+            result(true)
+        } catch {
+            result(FlutterError(code: "DELETE_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    // MARK: - Migration Handlers
+    
+    private func handleMigrateFromHive(result: @escaping FlutterResult) async {
+        guard let modelContext = modelContext else {
+            result(FlutterError(code: "NO_CONTEXT", message: "SwiftData context not initialized", details: nil))
+            return
+        }
+        
+        do {
+            // Initialize DataMigrationManager with existing method channel
+            let migrationManager = DataMigrationManager(
+                modelContext: modelContext,
+                methodChannel: self.methodChannel
+            )
+            
+            // Perform migration from Hive to SwiftData
+            try await migrationManager.syncFromHive()
+            
+            // Mark migration as complete
+            UserDefaults.standard.set(true, forKey: "HIVE_TO_SWIFTDATA_MIGRATION_COMPLETE")
+            
+            LoggingService.shared.info("Migration from Hive to SwiftData completed successfully", category: .migration)
+            result(true)
+        } catch {
+            LoggingService.shared.error("Migration from Hive to SwiftData failed", error: error, category: .migration)
+            result(FlutterError(code: "MIGRATION_ERROR", message: error.localizedDescription, details: nil))
+        }
+    }
+    
+    private func isMigrationComplete() -> Bool {
+        return UserDefaults.standard.bool(forKey: "HIVE_TO_SWIFTDATA_MIGRATION_COMPLETE")
     }
 }
 

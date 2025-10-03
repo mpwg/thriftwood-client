@@ -3,29 +3,17 @@ import 'package:lunasea/modules/radarr.dart';
 
 part 'sorting_movies.g.dart';
 
-@HiveType(typeId: 18, adapterName: 'RadarrMoviesSortingAdapter')
 enum RadarrMoviesSorting {
-  @HiveField(0)
   ALPHABETICAL,
-  @HiveField(1)
   DATE_ADDED,
-  @HiveField(8)
   DIGITAL_RELEASE,
-  @HiveField(10)
   IN_CINEMAS,
-  @HiveField(7)
   MIN_AVAILABILITY,
-  @HiveField(9)
   PHYSICAL_RELEASE,
-  @HiveField(2)
   QUALITY_PROFILE,
-  @HiveField(3)
   RUNTIME,
-  @HiveField(4)
   SIZE,
-  @HiveField(5)
   STUDIO,
-  @HiveField(6)
   YEAR,
 }
 

@@ -3,7 +3,11 @@
 //  Runner
 //
 //  Created by GitHub Copilot on 2025-10-01.
-//  Manages data layer selection between Flutter Hive and SwiftData
+//  Manages data layer selection b            LoggingService.shared.info("DataLayerManager: No existing data found, creating default settings...", category: .database)
+            try await createDefaultSettingsSwiftData()
+            LoggingService.shared.info("DataLayerManager: Default settings created in SwiftData", category: .database)
+        } catch {
+            LoggingService.shared.error("DataLayerManager: Initial data setup failed", error: error, category: .database)n Flutter Hive and SwiftData
 //  Implements Phase 4.1 Data Persistence Migration from migration.md
 //
 
@@ -99,12 +103,12 @@ class DataLayerManager {
         self.modelContext = modelContext
         self.methodChannel = methodChannel
         
-        print("✅ DataLayerManager: SwiftData-only initialization for migrated features")
+        LoggingService.shared.info("DataLayerManager: SwiftData-only initialization for migrated features", category: .database)
         
         // Ensure basic SwiftData setup is complete
         await performInitialDataSetupIfNeeded()
         
-        print("✅ DataLayerManager: Initialized - SwiftData-only for migrated features")
+        LoggingService.shared.info("DataLayerManager: Initialized - SwiftData-only for migrated features", category: .database)
     }
     
     // MARK: - SwiftData Setup
@@ -116,7 +120,7 @@ class DataLayerManager {
         do {
             // Check if SwiftData already has settings
             if try await swiftDataHasSettings() {
-                print("✅ DataLayerManager: SwiftData already has settings, no setup needed")
+                LoggingService.shared.debug("DataLayerManager: SwiftData already has settings, no setup needed", category: .database)
                 return
             }
             
@@ -290,7 +294,7 @@ class DataLayerManager {
         if let existingProfile = existing.first {
             // CRITICAL: Always use existing profile to prevent duplicate registration
             swiftDataProfile = existingProfile
-            print("🔄 DataLayerManager: Updating existing profile: \(profileName)")
+            LoggingService.shared.debug("DataLayerManager: Updating existing profile: \(profileName)", category: .database)
         } else {
             // CRITICAL: Double-check for any potential duplicates before creating
             let allProfiles = try modelContext.fetch(FetchDescriptor<ProfileSwiftData>())
@@ -298,14 +302,14 @@ class DataLayerManager {
             
             if let duplicate = duplicateProfile {
                 swiftDataProfile = duplicate
-                print("⚠️ DataLayerManager: Found duplicate profile during comprehensive check: \(profileName)")
+                LoggingService.shared.warning("DataLayerManager: Found duplicate profile during comprehensive check: \(profileName)", category: .database)
             } else {
                 let newProfile = ProfileSwiftData(name: profile.name)
                 
                 // CRITICAL: Insert profile safely to prevent duplicate registration
                 modelContext.insert(newProfile)
                 swiftDataProfile = newProfile
-                print("✅ DataLayerManager: Created new profile: \(profileName)")
+                LoggingService.shared.info("DataLayerManager: Created new profile: \(profileName)", category: .database)
             }
         }
         
@@ -313,9 +317,9 @@ class DataLayerManager {
         
         do {
             try modelContext.save()
-            print("✅ DataLayerManager: Successfully saved profile: \(profileName)")
+            LoggingService.shared.info("DataLayerManager: Successfully saved profile: \(profileName)", category: .database)
         } catch {
-            print("❌ DataLayerManager: Failed to save profile \(profileName): \(error)")
+            LoggingService.shared.error("DataLayerManager: Failed to save profile \(profileName)", error: error, category: .database)
             throw error
         }
     }
@@ -353,11 +357,11 @@ class DataLayerManager {
         if let existingSettings = existing.first {
             // Always use the first existing settings object
             swiftDataSettings = existingSettings
-            print("🔄 DataLayerManager: Updating existing AppSettings")
+            LoggingService.shared.debug("DataLayerManager: Updating existing AppSettings", category: .database)
         } else {
             // Create new settings only if absolutely none exist
             let newSettings = AppSettingsSwiftData()
-            print("✅ DataLayerManager: Creating new AppSettings")
+            LoggingService.shared.info("DataLayerManager: Creating new AppSettings", category: .database)
             
             // Insert and immediately save to prevent duplicate registrations
             modelContext.insert(newSettings)
@@ -371,7 +375,7 @@ class DataLayerManager {
         
         // Save changes
         try modelContext.save()
-        print("✅ DataLayerManager: AppSettings saved successfully")
+        LoggingService.shared.info("DataLayerManager: AppSettings saved successfully", category: .database)
     }
     
     // MARK: - Helper Methods
@@ -410,7 +414,7 @@ class DataLayerManager {
         // Save to SwiftData
         try modelContext.save()
         
-        print("✅ DataLayerManager: Created default settings with profile 'default'")
+        LoggingService.shared.info("DataLayerManager: Created default settings with profile 'default'", category: .database)
     }
     
     // MARK: - Operation Synchronization Helper
@@ -419,7 +423,7 @@ class DataLayerManager {
     @MainActor
     private func withOperationLock<T>(_ operation: @escaping @MainActor () async throws -> T) async throws -> T {
         return try await operationActor.withExclusiveAccess {
-            print("🔒 DataLayerManager: Executing operation with exclusive access")
+            LoggingService.shared.debug("DataLayerManager: Executing operation with exclusive access", category: .database)
             return try await operation()
         }
     }

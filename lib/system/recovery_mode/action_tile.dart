@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lunasea/core.dart';
 
 abstract class RecoveryActionTile extends StatelessWidget {
   final String title;
@@ -23,9 +23,8 @@ abstract class RecoveryActionTile extends StatelessWidget {
   }
 
   Future<void> _action(BuildContext context) async {
-    // ignore: invalid_use_of_visible_for_testing_member
-    Hive.resetAdapters();
-    await Hive.close();
+    // Hive cleanup removed - SwiftData is now the only storage system
+    // No database cleanup needed for SwiftData
 
     try {
       if (showConfirmDialog) {

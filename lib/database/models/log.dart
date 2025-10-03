@@ -4,21 +4,13 @@ import 'package:stack_trace/stack_trace.dart';
 
 part 'log.g.dart';
 
-@HiveType(typeId: 23, adapterName: 'LunaLogAdapter')
-class LunaLog extends HiveObject {
-  @HiveField(0)
+class LunaLog {
   final int timestamp;
-  @HiveField(1)
   final LunaLogType type;
-  @HiveField(2)
   final String? className;
-  @HiveField(3)
   final String? methodName;
-  @HiveField(4)
   final String message;
-  @HiveField(5)
   final String? error;
-  @HiveField(6)
   final String? stackTrace;
 
   LunaLog({
