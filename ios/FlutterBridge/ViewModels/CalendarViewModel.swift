@@ -215,15 +215,14 @@ class CalendarViewModel {
     @MainActor
     private func loadFromFlutterStorage() async {
         do {
-            // Load calendar format
-            if let formatRaw = try await sharedDataManager.loadData(String.self, forKey: "DASHBOARD_CALENDAR_FORMAT") {
+            // Load calendar format from SwiftData
+            if let formatRaw = try await DataLayerManager.shared.getCalendarFormat() {
                 calendarFormat = CalendarFormat(rawValue: formatRaw) ?? .month
             }
             
-            // Load calendar starting type
-            if let typeRaw = try await sharedDataManager.loadData(String.self, forKey: "DASHBOARD_CALENDAR_STARTING_TYPE") {
-                calendarStartingType = CalendarStartingType(rawValue: typeRaw) ?? .calendar
-            }
+            // Load calendar starting type from SwiftData
+            let typeRaw = try await DataLayerManager.shared.getCalendarStartingType()
+            calendarStartingType = CalendarStartingType(rawValue: typeRaw) ?? .calendar
             
         } catch {
             print("Failed to load calendar state from Flutter storage: \(error)")

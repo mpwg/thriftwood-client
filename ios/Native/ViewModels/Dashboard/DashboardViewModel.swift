@@ -86,13 +86,8 @@ class DashboardViewModel {
             isLoading = true
             defer { isLoading = false }
             
-            // Load drawer automatic manage setting (alphabetical ordering)
-            if let alphabetical: Bool = try await sharedDataManager.loadData(
-                Bool.self, 
-                forKey: "DRAWER_AUTOMATIC_MANAGE"
-            ) {
-                useAlphabeticalOrdering = alphabetical
-            }
+            // Load drawer automatic manage setting (alphabetical ordering) directly from SwiftData
+            useAlphabeticalOrdering = try await DataLayerManager.shared.getDrawerAutoExpand()
             
             // Load service enablement states from profile
             await loadServiceEnabledStates()
@@ -109,24 +104,21 @@ class DashboardViewModel {
     @MainActor
     private func loadServiceEnabledStates() async {
         do {
+            // Use DataLayerManager to get all service states at once
+            // This eliminates the for-loop that was causing excessive UserDefaults calls
+            let serviceStates = try await DataLayerManager.shared.getServiceEnabledStates()
+            
+            // Update each service's enabled state from the unified result
             for service in allServices {
-                let enabledKey = "\(service.key)Enabled"
-                if let isEnabled: Bool = try await sharedDataManager.loadData(
-                    Bool.self,
-                    forKey: enabledKey
-                ) {
+                if let isEnabled = serviceStates[service.key] {
                     service.isEnabled = isEnabled
                 }
             }
             
-            // Special handling for search service (based on indexers)
+            // Special handling for search service - check indexers count from SwiftData
             if let searchService = allServices.first(where: { $0.key == "search" }) {
-                if let indexersCount: Int = try await sharedDataManager.loadData(
-                    Int.self,
-                    forKey: "indexers_count"
-                ) {
-                    searchService.isEnabled = indexersCount > 0
-                }
+                let indexersCount = try await DataLayerManager.shared.getSearchIndexersCount()
+                searchService.isEnabled = indexersCount > 0
             }
             
             // Update overall enabled state

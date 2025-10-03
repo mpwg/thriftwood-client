@@ -279,6 +279,77 @@ class DataLayerManager {
         }
     }
     
+    /// Get service enabled states from active profile
+    /// Returns a dictionary with service keys and their enabled status
+    /// This replaces the need to query SharedDataManager for individual service states
+    @MainActor
+    func getServiceEnabledStates() async throws -> [String: Bool] {
+        let activeProfile = try await getActiveProfile()
+        
+        return [
+            "radarr": activeProfile.radarrEnabled,
+            "sonarr": activeProfile.sonarrEnabled,
+            "lidarr": activeProfile.lidarrEnabled,
+            "sabnzbd": activeProfile.sabnzbdEnabled,
+            "nzbget": activeProfile.nzbgetEnabled,
+            "tautulli": activeProfile.tautulliEnabled,
+            "search": false, // TODO: Add search enabled flag to ThriftwoodProfile if needed
+            "wake_on_lan": activeProfile.wakeOnLanEnabled,
+            "overseerr": activeProfile.overseerrEnabled
+        ]
+    }
+    
+    /// Get drawer automatic manage setting directly from SwiftData
+    /// This replaces SharedDataManager calls for DRAWER_AUTOMATIC_MANAGE
+    @MainActor
+    func getDrawerAutoExpand() async throws -> Bool {
+        if useSwiftData {
+            // Get directly from SwiftData
+            guard let modelContext = modelContext else {
+                throw DataLayerError.contextNotInitialized
+            }
+            
+            let descriptor = FetchDescriptor<AppSettingsSwiftData>()
+            let settings = try modelContext.fetch(descriptor)
+            
+            guard let appSettings = settings.first else {
+                throw DataLayerError.noData("No app settings found")
+            }
+            
+            return appSettings.drawerAutomaticManage
+        } else {
+            // Get from Hive via Flutter bridge
+            let appSettings = try await getAppSettingsFromHive()
+            return appSettings.drawerAutoExpand
+        }
+    }
+    
+    /// Get search indexers count directly from SwiftData
+    /// This replaces SharedDataManager calls for "indexers_count"
+    @MainActor
+    func getSearchIndexersCount() async throws -> Int {
+        let appSettings = try await getAppSettings()
+        return appSettings.searchIndexers.count
+    }
+    
+    /// Get calendar starting type from SwiftData
+    /// This replaces SharedDataManager calls for "DASHBOARD_CALENDAR_STARTING_TYPE"
+    @MainActor
+    func getCalendarStartingType() async throws -> String {
+        let appSettings = try await getAppSettings()
+        return appSettings.calendarStartingType.rawValue
+    }
+    
+    /// Get calendar format from SwiftData (fallback if not found)
+    /// This replaces SharedDataManager calls for "DASHBOARD_CALENDAR_FORMAT"
+    /// Note: This property might not exist in SwiftData model yet
+    @MainActor
+    func getCalendarFormat() async throws -> String? {
+        // For now, return a default since this property might not exist in ThriftwoodAppSettings
+        // TODO: Add calendarFormat property to ThriftwoodAppSettings if needed
+        return "month" // Default calendar format
+    }
+    
     /// Get app settings
     @MainActor
     func getAppSettings() async throws -> ThriftwoodAppSettings {

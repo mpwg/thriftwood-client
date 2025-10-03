@@ -66,12 +66,12 @@ extension FlutterSwiftUIBridge {
     private func handleGetDashboardState(result: @escaping FlutterResult) {
         Task {
             do {
-                // Get current dashboard state from SharedDataManager
-                let sharedData = SharedDataManager.shared
+                // Get current dashboard state from DataLayerManager (unified data access)
+                let drawerAutoExpand = try await DataLayerManager.shared.getDrawerAutoExpand()
                 
                 let dashboardState: [String: Any] = [
                     "enabledServices": await getEnabledServicesState(),
-                    "useAlphabeticalOrdering": try await sharedData.loadData(Bool.self, forKey: "DRAWER_AUTOMATIC_MANAGE") ?? true,
+                    "useAlphabeticalOrdering": drawerAutoExpand,
                     "timestamp": Date().timeIntervalSince1970
                 ]
                 
@@ -182,21 +182,25 @@ extension FlutterSwiftUIBridge {
     // MARK: - Helper Methods
     
     private func getEnabledServicesState() async -> [String: Bool] {
-        let sharedData = SharedDataManager.shared
-        let serviceKeys = ["radarr", "sonarr", "lidarr", "sabnzbd", "nzbget", "tautulli", "search", "wake_on_lan"]
-        
-        var enabledStates: [String: Bool] = [:]
-        
-        for serviceKey in serviceKeys {
-            do {
-                let isEnabled = try await sharedData.loadData(Bool.self, forKey: "\(serviceKey)Enabled") ?? false
-                enabledStates[serviceKey] = isEnabled
-            } catch {
-                print("Failed to load enabled state for \(serviceKey): \(error)")
-                enabledStates[serviceKey] = false
-            }
+        do {
+            // Use DataLayerManager to get service states from active profile
+            // This eliminates the need for repeated SharedDataManager UserDefaults lookups
+            return try await DataLayerManager.shared.getServiceEnabledStates()
+        } catch {
+            print("Failed to load service enabled states from DataLayerManager: \(error)")
+            
+            // Fallback to default disabled states
+            return [
+                "radarr": false,
+                "sonarr": false,
+                "lidarr": false,
+                "sabnzbd": false,
+                "nzbget": false,
+                "tautulli": false,
+                "search": false,
+                "wake_on_lan": false,
+                "overseerr": false
+            ]
         }
-        
-        return enabledStates
     }
 }
