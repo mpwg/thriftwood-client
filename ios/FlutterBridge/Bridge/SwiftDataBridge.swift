@@ -165,6 +165,10 @@ class SwiftDataBridge: NSObject {
                 for: ProfileSwiftData.self, AppSettingsSwiftData.self, IndexerSwiftData.self
             )
             modelContext = ModelContext(container)
+            
+            // Log the SQLite database location
+            modelContext?.logDatabaseLocation()
+            
             LoggingService.shared.info("SwiftData context initialized", category: .database)
             
             // Initialize SwiftDataStorageService with the context

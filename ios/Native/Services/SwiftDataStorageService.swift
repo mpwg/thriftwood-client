@@ -10,19 +10,23 @@ import Foundation
 import SwiftData
 
 /// SwiftData-based storage service for permanent SwiftUI architecture
-/// Accesses ProfileSwiftData and AppSettingsSwiftData models
+/// Accesses ProfileSwiftData and AppSettingsSwiftData models via SwiftDataManager
 /// This replaces SharedDataManager for pure SwiftUI services
 class SwiftDataStorageService {
     static let shared = SwiftDataStorageService()
     
-    private var modelContext: ModelContext?
-    
     private init() {}
     
-    /// Initialize with SwiftData model context
+    /// Get the ModelContext from SwiftDataManager
+    private var modelContext: ModelContext? {
+        return SwiftDataManager.shared.getContext()
+    }
+    
+    /// Initialize with SwiftData model context (called by SwiftDataManager)
     @MainActor
     func initialize(_ context: ModelContext) {
-        self.modelContext = context
+        // This method is kept for compatibility but SwiftDataManager handles initialization
+        // The context is now accessed directly from SwiftDataManager
     }
     
     // MARK: - Profile Data Access

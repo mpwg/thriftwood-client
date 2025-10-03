@@ -47,10 +47,10 @@ import Flutter
         // Register Swift-completed features (Swift-first rule enforcement)
         registerCompletedSwiftFeatures()
         
-        // Initialize data bridge for Flutter access to Swift models
-        SwiftDataBridge.shared.initialize(with: flutterViewController)
+        // Initialize Flutter bridge for accessing existing SwiftData
+        SwiftDataFlutterBridge.shared.initialize(with: flutterViewController)
         
-        // Initialize data layer manager with proper method channel
+        // Initialize data layer manager with existing SwiftData context
         Task {
             await initializeDataLayerManager(with: flutterViewController)
         }
@@ -59,13 +59,12 @@ import Flutter
         print("✅ Method channel conflicts prevented via BridgeMethodDispatcher")
     }
     
-    /// Initialize DataLayerManager with proper SwiftData context and method channel
+    /// Initialize DataLayerManager with existing SwiftData context and method channel
     @MainActor
     private func initializeDataLayerManager(with flutterViewController: FlutterViewController) async {
-        // Get SwiftData context from SwiftDataBridge
-        let swiftDataBridge = SwiftDataBridge.shared
-        guard let modelContext = swiftDataBridge.modelContext else {
-            print("❌ Cannot initialize DataLayerManager: SwiftData context not available")
+        // Get SwiftData context from SwiftDataManager (NOT from bridge)
+        guard let modelContext = SwiftDataManager.shared.getContext() else {
+            print("❌ Cannot initialize DataLayerManager: SwiftDataManager not ready")
             return
         }
         
@@ -75,13 +74,13 @@ import Flutter
             binaryMessenger: flutterViewController.binaryMessenger
         )
         
-        // Initialize DataLayerManager
+        // Initialize DataLayerManager with existing SwiftData context
         await DataLayerManager.shared.initialize(
             modelContext: modelContext,
             methodChannel: methodChannel
         )
         
-        print("✅ DataLayerManager initialized with SwiftData context and method channel")
+        print("✅ DataLayerManager initialized with existing SwiftData context")
     }
     
     // MARK: - Native View Registration

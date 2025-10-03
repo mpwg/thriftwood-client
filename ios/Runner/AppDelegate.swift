@@ -17,6 +17,12 @@ import SwiftUI
     print("📱 Running in native iOS environment")
     #endif
     
+    // CRITICAL: Initialize SwiftData FIRST (pure Swift, no Flutter dependencies)
+    Task { @MainActor in
+      let _ = SwiftDataManager.shared // This initializes SwiftData on main actor
+      print("✅ SwiftData initialized as primary storage")
+    }
+    
     // MIGRATION TEMPORARY: Initialize Flutter for hybrid functionality
     // TODO: Remove this when migration to pure SwiftUI is complete
     FlutterEngineManager.shared.initializeFlutterEngine()
