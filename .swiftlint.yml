@@ -1,0 +1,134 @@
+# SwiftLint Configuration for Thriftwood
+# Goal: Easy maintenance for indie developer
+# Philosophy: Enforce consistency and catch common errors without being overly restrictive
+
+# Paths to include/exclude
+included:
+  - Thriftwood
+  - ThriftwoodTests
+  - ThriftwoodUITests
+
+excluded:
+  - Carthage
+  - Pods
+  - legacy
+  - .build
+  - docs
+
+# Disabled rules that are too strict for solo development
+disabled_rules:
+  - todo # Allow TODOs during active development
+  - trailing_whitespace # Auto-formatting handles this
+  - line_length # Modern displays can handle longer lines
+
+# Opt-in rules that improve maintainability
+opt_in_rules:
+  - explicit_init # Clear initialization
+  - explicit_type_interface # Clear type declarations for complex types
+  - empty_count # Use isEmpty instead of count == 0
+  - empty_string # Use isEmpty instead of == ""
+  - file_name # File names should match their primary type
+  - first_where # Use first(where:) instead of filter().first
+  - sorted_first_last # Use min()/max() instead of sorted().first/last
+  - contains_over_first_not_nil # Use contains instead of first != nil
+  - last_where # Use last(where:) instead of filter().last
+  - toggle_bool # Use toggle() instead of = !
+  - unused_optional_binding # Remove unused let bindings
+  - private_outlet # IBOutlets should be private
+  - private_action # IBActions should be private
+  - redundant_nil_coalescing # Remove ?? nil
+  - redundant_type_annotation # Remove obvious type annotations
+  - multiline_function_chains # Better readability for chained calls
+  - multiline_parameters # Better readability for function parameters
+  - multiline_arguments # Better readability for function calls
+
+# Rule configurations for maintainability
+
+# Type body length - keep types focused and maintainable
+type_body_length:
+  warning: 300
+  error: 400
+
+# File length - encourage modular code
+file_length:
+  warning: 500
+  error: 1000
+  ignore_comment_only_lines: true
+
+# Function body length - keep functions simple
+function_body_length:
+  warning: 50
+  error: 100
+
+# Cyclomatic complexity - keep logic manageable
+cyclomatic_complexity:
+  warning: 10
+  error: 15
+
+# Nesting depth - avoid deeply nested code
+nesting:
+  type_level:
+    warning: 2
+    error: 3
+  statement_level:
+    warning: 4
+    error: 5
+
+# Identifier naming - clear and consistent
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+  max_length:
+    warning: 50
+    error: 60
+  excluded:
+    - id
+    - db
+    - x
+    - y
+
+# Type name conventions
+type_name:
+  min_length: 3
+  max_length: 50
+
+# Force unwrapping - discourage force unwraps
+force_unwrapping:
+  severity: warning
+
+# Force cast - prefer safe casting
+force_cast:
+  severity: warning
+
+# Large tuples - keep tuples simple
+large_tuple:
+  warning: 3
+  error: 4
+
+# Custom rules for maintainability
+custom_rules:
+  # Encourage documentation for public APIs
+  public_documentation:
+    name: "Public Documentation"
+    message: "Public types and functions should have documentation comments"
+    regex: '(?<!\/\/\/)(?<!\/\*\*)public\s+(class|struct|enum|protocol|func|var|let)'
+    severity: warning
+
+  # Avoid print statements in production code (use proper logging)
+  no_print_statements:
+    name: "No Print Statements"
+    message: "Use Logger instead of print() for maintainable logging"
+    regex: '\bprint\s*\('
+    match_kinds:
+      - identifier
+    severity: warning
+
+  # Encourage TODO with ticket/issue references
+  todo_with_reference:
+    name: "TODO with Reference"
+    message: "TODOs should reference an issue number or explanation"
+    regex: '\/\/\s*TODO:(?!\s*\w+-\d+|.{10,})'
+    severity: warning
+
+reporter: "xcode" # Use Xcode-friendly output format
