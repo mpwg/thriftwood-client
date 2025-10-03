@@ -36,13 +36,14 @@ Future<void> main() async {
 /// Bootstrap the core
 ///
 Future<void> bootstrap() async {
+  // CRITICAL: Initialize bridge system FIRST
+  // Database initialization requires bridge methods to be available
+  await BridgeInitializer.initialize();
+
   await LunaDatabase().initialize();
   LunaLogger().initialize();
   LunaTheme().initialize();
   if (LunaWindowManager.isSupported) await LunaWindowManager().initialize();
-
-  // Initialize the hybrid bridge system
-  await BridgeInitializer.initialize();
   if (LunaNetwork.isSupported) LunaNetwork().initialize();
   if (LunaImageCache.isSupported) LunaImageCache().initialize();
   LunaRouter().initialize();
