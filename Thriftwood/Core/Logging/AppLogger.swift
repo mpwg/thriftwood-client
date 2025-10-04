@@ -1,5 +1,5 @@
 //
-//  isolation.swift
+//  AppLogger.swift
 //  Thriftwood
 //
 //  Created by Matthias Wallner-Géhri on 04.10.25.
@@ -14,7 +14,7 @@ import OSLog
 /// With Approachable Concurrency, this logger can be used from any isolation context.
 /// Logging operations are inherently thread-safe and don't require actor isolation.
 struct AppLogger: Sendable {
-    private let subsystem = "com.thriftwood.app"
+    private let subsystem = "eu.mpwg.thriftwood"
     private let category: LogCategory
     private let logger: os.Logger
     
