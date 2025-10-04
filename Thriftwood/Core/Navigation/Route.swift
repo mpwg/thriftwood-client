@@ -80,20 +80,24 @@ protocol DeepLinkable {
 
 extension DashboardRoute: DeepLinkable {
     static func parse(from url: URL) -> DashboardRoute? {
-        let components = url.pathComponents.dropFirst() // Remove leading "/"
+        // For URLs like "thriftwood://dashboard/service/id", the host is "dashboard"
+        guard url.host == "dashboard" else { return nil }
         
-        guard components.first == "dashboard" else { return nil }
+        // Path components include the leading "/", so we filter it out
+        let pathComponents = url.pathComponents.filter { $0 != "/" }
         
-        switch components.dropFirst().first {
+        // If no path components, it's the home route
+        guard !pathComponents.isEmpty else { return .home }
+        
+        switch pathComponents[0] {
         case "service":
-            guard let serviceId = components.dropFirst(2).first else { return nil }
-            return .serviceDetail(serviceId: serviceId)
+            guard pathComponents.count >= 2 else { return nil }
+            return .serviceDetail(serviceId: pathComponents[1])
         case "media":
-            guard let mediaId = components.dropFirst(2).first,
-                  let serviceType = components.dropFirst(3).first else { return nil }
-            return .mediaDetail(mediaId: mediaId, serviceType: serviceType)
+            guard pathComponents.count >= 3 else { return nil }
+            return .mediaDetail(mediaId: pathComponents[1], serviceType: pathComponents[2])
         default:
-            return .home
+            return nil
         }
     }
     
@@ -112,21 +116,26 @@ extension DashboardRoute: DeepLinkable {
 
 extension ServicesRoute: DeepLinkable {
     static func parse(from url: URL) -> ServicesRoute? {
-        let components = url.pathComponents.dropFirst()
+        // For URLs like "thriftwood://services/add", the host is "services"
+        guard url.host == "services" else { return nil }
         
-        guard components.first == "services" else { return nil }
+        // Path components include the leading "/", so we filter it out
+        let pathComponents = url.pathComponents.filter { $0 != "/" }
         
-        switch components.dropFirst().first {
+        // If no path components, it's the list route
+        guard !pathComponents.isEmpty else { return .list }
+        
+        switch pathComponents[0] {
         case "add":
             return .addService
         case "configure":
-            guard let serviceId = components.dropFirst(2).first else { return nil }
-            return .serviceConfiguration(serviceId: serviceId)
+            guard pathComponents.count >= 2 else { return nil }
+            return .serviceConfiguration(serviceId: pathComponents[1])
         case "test":
-            guard let serviceId = components.dropFirst(2).first else { return nil }
-            return .testConnection(serviceId: serviceId)
+            guard pathComponents.count >= 2 else { return nil }
+            return .testConnection(serviceId: pathComponents[1])
         default:
-            return .list
+            return nil
         }
     }
     
@@ -147,21 +156,26 @@ extension ServicesRoute: DeepLinkable {
 
 extension SettingsRoute: DeepLinkable {
     static func parse(from url: URL) -> SettingsRoute? {
-        let components = url.pathComponents.dropFirst()
+        // For URLs like "thriftwood://settings/profiles", the host is "settings"
+        guard url.host == "settings" else { return nil }
         
-        guard components.first == "settings" else { return nil }
+        // Path components include the leading "/", so we filter it out
+        let pathComponents = url.pathComponents.filter { $0 != "/" }
         
-        switch components.dropFirst().first {
+        // If no path components, it's the main route
+        guard !pathComponents.isEmpty else { return .main }
+        
+        switch pathComponents[0] {
         case "profiles":
-            if let action = components.dropFirst(2).first {
-                switch action {
+            if pathComponents.count >= 2 {
+                switch pathComponents[1] {
                 case "add":
                     return .addProfile
                 case "edit":
-                    guard let profileId = components.dropFirst(3).first else { return nil }
-                    return .editProfile(profileId: profileId)
+                    guard pathComponents.count >= 3 else { return nil }
+                    return .editProfile(profileId: pathComponents[2])
                 default:
-                    return .profiles
+                    return nil
                 }
             }
             return .profiles
@@ -174,7 +188,7 @@ extension SettingsRoute: DeepLinkable {
         case "logs":
             return .logs
         default:
-            return .main
+            return nil
         }
     }
     

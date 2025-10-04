@@ -92,6 +92,32 @@ swiftlint --fix
 
 See `.swiftlint.yml` for full configuration.
 
+### Testing Requirements - MANDATORY
+
+**Before completing ANY task, you MUST verify:**
+
+1. ✅ **All changes have appropriate tests**
+
+   - New functionality must have corresponding test coverage
+   - Bug fixes must include regression tests
+   - Modified code must have updated tests
+
+2. ✅ **All tests pass**
+
+   - Run `xcodebuild test -project Thriftwood.xcodeproj -scheme Thriftwood -destination 'platform=macOS'`
+   - Verify no test failures before marking task complete
+   - Check that CI will pass with your changes
+
+3. ✅ **Tests follow the Swift Testing pattern**
+   - Refer to `.github/instructions/swift-testing-playbook.md` for patterns
+   - Use `@Test` macro instead of XCTest classes
+   - Use `#expect()` and `#require()` instead of `XCTAssert*`
+   - Use `@Suite` for test organization
+   - Use `@MainActor` where needed for UI/coordinator tests
+   - Follow parameterized testing patterns where applicable
+
+**This is not optional.** Tests are your contract that the code works correctly.
+
 ## Critical Migration Patterns
 
 ### Service API Translation (Flutter → Swift)

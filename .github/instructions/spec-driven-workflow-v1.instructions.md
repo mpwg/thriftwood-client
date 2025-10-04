@@ -163,7 +163,9 @@ For use in pull request summaries or executive summaries.
 
 **Checklist:**
 
-- [ ] Execute automated tests. - Document outputs, logs, and coverage reports. - For failures, document root cause analysis and remediation.
+- [ ] **Verify all changes have appropriate tests** - New functionality must have corresponding test coverage. - Bug fixes must include regression tests. - Modified code must have updated tests.
+- [ ] **Execute automated tests and verify they all pass** - Run `xcodebuild test -project Thriftwood.xcodeproj -scheme Thriftwood -destination 'platform=macOS'` - Document outputs, logs, and coverage reports. - For failures, document root cause analysis and remediation. - Verify no test failures before marking task complete.
+- [ ] **Verify tests follow Swift Testing patterns** - Refer to `.github/instructions/swift-testing-playbook.md` for patterns. - Use `@Test` macro instead of XCTest classes. - Use `#expect()` and `#require()` instead of `XCTAssert*`. - Use `@Suite` for test organization. - Use `@MainActor` where needed for UI/coordinator tests. - Follow parameterized testing patterns where applicable.
 - [ ] Perform manual verification if necessary. - Document procedures, checklists, and results.
 - [ ] Test edge cases and errors. - Document results and evidence of correct error handling.
 - [ ] Verify performance. - Document metrics and profile critical sections.
@@ -172,6 +174,7 @@ For use in pull request summaries or executive summaries.
 **Critical Constraint:**
 
 - **Do not proceed until all validation steps are complete and all issues are resolved.**
+- **Tests are not optional. They are your contract that the code works correctly.**
 
 ### **Phase 5: REFLECT**
 
