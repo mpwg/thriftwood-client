@@ -29,13 +29,110 @@
 
 ### Task 1.2: Core Architecture Setup
 
-**Estimated Time**: 8 hours
+**Estimated Time**: 8 hours  
+**Actual Time**: 6 hours  
+**Status**: ✅ COMPLETE  
+**Implementation Date**: 2025-10-03
 
-- [ ] Create folder structure following clean architecture
-- [ ] Implement base protocols for services
-- [ ] Setup dependency injection container
-- [ ] Create base ViewModel protocol with @Observable
-- [ ] Implement error handling framework
+**Implementation Summary**:
+
+Implemented complete core architecture following clean architecture principles with Swift 6.2's Approachable Concurrency.
+
+**Completed Components**:
+
+1. **Folder Structure** (`/Thriftwood/Core/`, `/Services/`, `/UI/`)
+
+   - Clean separation of concerns
+   - Modular organization for scalability
+
+2. **Dependency Injection** (Swinject framework)
+
+   - Added Swinject 2.10.0 via Swift Package Manager
+   - Documentation in `/docs/SWINJECT_SETUP.md`
+   - Type-safe dependency resolution
+   - Support for singletons and factories via Swinject's Container API
+   - Will be configured in app initialization as services are implemented
+
+3. **Error Handling** (`Core/Error/ThriftwoodError.swift`)
+
+   - Comprehensive error types (network, API, authentication, data, etc.)
+   - User-friendly localized error messages
+   - Retry logic support with `isRetryable` property
+   - Error conversion utilities for mapping platform errors
+
+4. **Logging Framework** (`Core/Logging/Logger.swift`)
+
+   - OSLog-based structured logging with subsystem organization
+   - Multiple categories (networking, storage, authentication, UI, services, general)
+   - Privacy-aware logging with automatic redaction
+   - Debug/Info/Warning/Error/Critical severity levels
+   - Convenience static loggers for common use cases
+   - All methods marked `nonisolated` for use from any context
+
+5. **Base Protocols** (`Services/ServiceProtocols.swift`)
+
+   - `ServiceConfiguration` for service setup
+   - `ServiceProtocol` base interface
+   - Foundation for service implementations
+
+6. **Networking Layer** (`Core/Networking/`)
+
+   - `APIClient` protocol for HTTP operations
+   - `Endpoint` structure for request configuration
+   - `HTTPMethod` and `HTTPHeaders` type aliases
+   - Request/Response generic types
+
+7. **Base ViewModel** (`Core/DI/BaseViewModel.swift`)
+   - `@Observable` protocol using Swift 6 Observation framework
+   - `@MainActor` isolated for UI safety
+   - Lifecycle methods (load, reload, cleanup)
+   - Error handling and loading state management
+
+**Key Architectural Decisions**:
+
+1. **Approachable Concurrency**:
+
+   - Leverages Swift 6.2's more pragmatic concurrency checking
+   - Uses `nonisolated(unsafe)` with locks where needed
+   - Avoids excessive `@preconcurrency` and `@unchecked Sendable`
+   - See `/docs/CONCURRENCY.md` for detailed rationale
+
+2. **Lock-Based DI with Swinject**:
+
+   - Using Swinject directly for dependency injection
+   - Well-established iOS/macOS DI framework
+   - Will configure Container in app delegate/initialization
+   - No custom wrapper needed - direct Swinject API usage
+
+3. **OSLog for Logging**:
+   - Native Apple framework with zero dependencies
+   - Automatic privacy redaction in release builds
+   - Integrated with macOS Console.app for debugging
+
+**Known Issues**:
+
+- None - all tests passing (34 Swift Testing tests)
+- Swinject Container will be configured when services are implemented in Milestone 2
+
+**Files Created**:
+
+- `Thriftwood/Core/DI/BaseViewModel.swift` (94 lines)
+- `Thriftwood/Core/Error/ThriftwoodError.swift` (167 lines)
+- `Thriftwood/Core/Logging/Logger.swift` (124 lines)
+- `Thriftwood/Core/Networking/APIClient.swift` (86 lines)
+- `Thriftwood/Core/Networking/Endpoint.swift` (37 lines)
+- `Thriftwood/Core/Networking/HTTPMethod.swift` (15 lines)
+- `Thriftwood/Services/ServiceProtocols.swift` (24 lines)
+- `ThriftwoodTests/LoggerSwiftTests.swift` (Swift Testing - 19 tests)
+- `ThriftwoodTests/ThriftwoodErrorSwiftTests.swift` (Swift Testing - 14 tests)
+- `ThriftwoodTests/ThriftwoodTests.swift` (1 basic test)
+- `docs/CONCURRENCY.md` (concurrency strategy documentation)
+- `docs/SWINJECT_SETUP.md` (Swinject integration guide)
+
+**Next Steps**:
+
+- Proceed to Task 1.3: Navigation Framework
+- Configure Swinject Container in Task 1.3 or when first services are implemented
 
 ### Task 1.3: Navigation Framework
 
