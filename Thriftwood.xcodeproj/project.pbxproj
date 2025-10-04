@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		403991B22E905C68001E827C /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 403991B12E905C68001E827C /* Swinject */; };
 		403991B62E905E7D001E827C /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 403991B52E905E7D001E827C /* OpenAPIRuntime */; };
+		404F89FE2E914FB0009D2DD6 /* AsyncHTTPClient in Frameworks */ = {isa = PBXBuildFile; productRef = 404F89FD2E914FB0009D2DD6 /* AsyncHTTPClient */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				403991B62E905E7D001E827C /* OpenAPIRuntime in Frameworks */,
+				404F89FE2E914FB0009D2DD6 /* AsyncHTTPClient in Frameworks */,
 				403991B22E905C68001E827C /* Swinject in Frameworks */,
 			);
 		};
@@ -106,6 +108,7 @@
 			packageProductDependencies = (
 				403991B12E905C68001E827C /* Swinject */,
 				403991B52E905E7D001E827C /* OpenAPIRuntime */,
+				404F89FD2E914FB0009D2DD6 /* AsyncHTTPClient */,
 			);
 			productName = Thriftwood;
 			productReference = 402888372E90441F005376F0 /* Thriftwood.app */;
@@ -164,6 +167,7 @@
 				403991B02E905C68001E827C /* XCRemoteSwiftPackageReference "Swinject" */,
 				403991B32E905E58001E827C /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
 				403991B42E905E7D001E827C /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
+				404F89FC2E914FB0009D2DD6 /* XCRemoteSwiftPackageReference "async-http-client" */,
 			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 402888382E90441F005376F0 /* Products */;
@@ -555,6 +559,14 @@
 				minimumVersion = 1.8.3;
 			};
 		};
+		404F89FC2E914FB0009D2DD6 /* XCRemoteSwiftPackageReference "async-http-client" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swift-server/async-http-client";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.28.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -567,6 +579,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 403991B42E905E7D001E827C /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */;
 			productName = OpenAPIRuntime;
+		};
+		404F89FD2E914FB0009D2DD6 /* AsyncHTTPClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 404F89FC2E914FB0009D2DD6 /* XCRemoteSwiftPackageReference "async-http-client" */;
+			productName = AsyncHTTPClient;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
