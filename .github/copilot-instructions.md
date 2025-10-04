@@ -210,6 +210,124 @@ Thriftwood/
 - **`.github/CI_README.md`**: CI documentation
 - **`.swiftlint.yml`**: Linting rules
 
+## Package Dependencies & Custom Implementations
+
+### MANDATORY: Search Swift Package Manager First
+
+**Before implementing ANY custom solution**, you MUST:
+
+1. **Search Swift Package Manager** for existing, well-maintained packages
+2. **Evaluate standard community solutions** (Alamofire, Swift Collections, etc.)
+3. **Only implement custom code** if no suitable package exists or package adds excessive complexity
+
+### Common Patterns - Use Packages
+
+#### Dependency Injection
+
+- ✅ **Use**: [Swinject](https://github.com/Swinject/Swinject), [Factory](https://github.com/hmlongco/Factory)
+- ❌ **Don't**: Build custom DI container unless requirements are unique
+
+#### HTTP Networking
+
+- ✅ **Use**: [Alamofire](https://github.com/Alamofire/Alamofire) for complex needs, URLSession for simple cases
+- ✅ **Use**: [swift-openapi-generator](https://github.com/apple/swift-openapi-generator) for API specs (see design.md)
+- ❌ **Don't**: Build custom HTTP client from scratch
+
+#### JSON Handling
+
+- ✅ **Use**: Built-in `Codable`, [SwiftyJSON](https://github.com/SwiftyJSON/SwiftyJSON) for dynamic JSON
+- ❌ **Don't**: Write custom JSON parsers
+
+#### Keychain Access
+
+- ✅ **Use**: [KeychainAccess](https://github.com/kishikawakatsumi/KeychainAccess)
+- ❌ **Don't**: Directly use Security framework APIs (error-prone)
+
+#### Image Loading/Caching
+
+- ✅ **Use**: [Kingfisher](https://github.com/onevcat/Kingfisher), [Nuke](https://github.com/kean/Nuke)
+- ❌ **Don't**: Build custom image cache
+
+#### Logging
+
+- ✅ **Use**: [swift-log](https://github.com/apple/swift-log), [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack)
+- ❌ **Don't**: Use `print()` statements or custom loggers
+
+#### Date/Time Formatting
+
+- ✅ **Use**: Built-in `DateFormatter`, `ISO8601DateFormatter`, `RelativeDateTimeFormatter`
+- ❌ **Don't**: Write custom date parsing logic
+
+### Evaluation Criteria for Packages
+
+When selecting a package, verify:
+
+1. **Maintenance**: Active development (commits in last 3-6 months)
+2. **Popularity**: High star count and real-world usage
+3. **Swift 6 Compatibility**: Explicitly supports Swift 6 strict concurrency
+4. **License**: Compatible with MIT/Apache 2.0 (avoid GPL)
+5. **Dependencies**: Minimal dependency tree (avoid deep chains)
+6. **Documentation**: Clear README, API docs, and examples
+7. **Testing**: High test coverage and CI setup
+
+### Search Process
+
+```bash
+# 1. Search GitHub for Swift packages
+gh search repos "swift dependency injection" --language=swift --sort=stars
+
+# 2. Check Swift Package Index
+open "https://swiftpackageindex.com/search?query=dependency+injection"
+
+# 3. Verify package quality
+gh repo view Swinject/Swinject --json stargazerCount,pushedAt,license
+
+# 4. Check Swift 6 compatibility in README/Package.swift
+```
+
+### When Custom Implementation Is Acceptable
+
+Implement custom solutions ONLY when:
+
+1. **No package exists** for the specific use case
+2. **Package adds excessive bloat** (e.g., 10+ transitive dependencies)
+3. **Performance requirements** demand optimized custom code
+4. **Package is unmaintained** (no commits in 12+ months)
+5. **Swift 6 incompatibility** and no migration path available
+
+**Document the decision** using a Decision Record (see spec-driven-workflow):
+
+```markdown
+### Decision - [TIMESTAMP]
+
+**Decision**: Implement custom [X] instead of using package [Y]
+**Context**: Evaluated packages [list], but none met requirements because [reason]
+**Rationale**: Custom implementation provides [benefits] without [package drawbacks]
+**Trade-offs**: We accept [maintenance burden] in exchange for [performance/size/control]
+**Review**: Re-evaluate when Swift 6 ecosystem matures (Q3 2025)
+```
+
+### Package.swift Management
+
+- **Keep dependencies minimal**: Only add packages that solve real problems
+- **Pin versions**: Use exact versions for stability (`from: "1.2.3"`)
+- **Document why**: Add comments explaining each dependency's purpose
+- **Regular audits**: Review dependencies quarterly for updates/alternatives
+
+```swift
+// filepath: Package.swift (example)
+dependencies: [
+    // HTTP networking - chosen for Combine integration and Swift 6 support
+    .package(url: "https://github.com/Alamofire/Alamofire", from: "5.8.0"),
+
+    // API client generation from OpenAPI specs (Radarr, Sonarr)
+    .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.0.0"),
+
+    // Keychain access - avoids Security framework boilerplate
+    .package(url: "https://github.com/kishikawakatsumi/KeychainAccess", from: "4.2.2"),
+]
+```
+
 ## Common Gotchas
 
 1. **Don't assume feature behavior** - Always check `/legacy` implementation first

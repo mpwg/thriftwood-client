@@ -1,7 +1,8 @@
 ---
-description: 'Specification-Driven Workflow v1 provides a structured approach to software development, ensuring that requirements are clearly defined, designs are meticulously planned, and implementations are thoroughly documented and validated.'
-applyTo: '**'
+description: "Specification-Driven Workflow v1 provides a structured approach to software development, ensuring that requirements are clearly defined, designs are meticulously planned, and implementations are thoroughly documented and validated."
+applyTo: "**"
 ---
+
 # Spec Driven Workflow v1
 
 **Specification-Driven Workflow:**
@@ -77,20 +78,12 @@ For use in pull request summaries or executive summaries.
 
 **Checklist:**
 
-- [ ] Read all provided code, documentation, tests, and logs.
-      - Document file inventory, summaries, and initial analysis results.
-- [ ] Define requirements in **EARS Notation**:
-      - Transform feature requests into structured, testable requirements.
-      - Format: `WHEN [a condition or event], THE SYSTEM SHALL [expected behavior]`
-- [ ] Identify dependencies and constraints.
-      - Document a dependency graph with risks and mitigation strategies.
-- [ ] Map data flows and interactions.
-      - Document system interaction diagrams and data models.
-- [ ] Catalog edge cases and failures.
-      - Document a comprehensive edge case matrix and potential failure points.
-- [ ] Assess confidence.
-      - Generate a **Confidence Score (0-100%)** based on clarity of requirements, complexity, and problem scope.
-      - Document the score and its rationale.
+- [ ] Read all provided code, documentation, tests, and logs. - Document file inventory, summaries, and initial analysis results.
+- [ ] Define requirements in **EARS Notation**: - Transform feature requests into structured, testable requirements. - Format: `WHEN [a condition or event], THE SYSTEM SHALL [expected behavior]`
+- [ ] Identify dependencies and constraints. - Document a dependency graph with risks and mitigation strategies.
+- [ ] Map data flows and interactions. - Document system interaction diagrams and data models.
+- [ ] Catalog edge cases and failures. - Document a comprehensive edge case matrix and potential failure points.
+- [ ] Assess confidence. - Generate a **Confidence Score (0-100%)** based on clarity of requirements, complexity, and problem scope. - Document the score and its rationale.
 
 **Critical Constraint:**
 
@@ -105,6 +98,7 @@ For use in pull request summaries or executive summaries.
 **Checklist:**
 
 - [ ] **Define adaptive execution strategy based on Confidence Score:**
+
   - **High Confidence (>85%)**
     - Draft a comprehensive, step-by-step implementation plan.
     - Skip proof-of-concept steps.
@@ -123,12 +117,14 @@ For use in pull request summaries or executive summaries.
     - Escalate only if confidence remains low.
 
 - [ ] **Document technical design in `design.md`:**
+
   - **Architecture:** High-level overview of components and interactions.
   - **Data Flow:** Diagrams and descriptions.
   - **Interfaces:** API contracts, schemas, public-facing function signatures.
   - **Data Models:** Data structures and database schemas.
 
 - [ ] **Document error handling:**
+
   - Create an error matrix with procedures and expected responses.
 
 - [ ] **Define unit testing strategy.**
@@ -148,16 +144,11 @@ For use in pull request summaries or executive summaries.
 
 **Checklist:**
 
-- [ ] Code in small, testable increments.
-      - Document each increment with code changes, results, and test links.
-- [ ] Implement from dependencies upward.
-      - Document resolution order, justification, and verification.
-- [ ] Follow conventions.
-      - Document adherence and any deviations with a Decision Record.
-- [ ] Add meaningful comments.
-      - Focus on intent ("why"), not mechanics ("what").
-- [ ] Create files as planned.
-      - Document file creation log.
+- [ ] Code in small, testable increments. - Document each increment with code changes, results, and test links.
+- [ ] Implement from dependencies upward. - Document resolution order, justification, and verification.
+- [ ] Follow conventions. - Document adherence and any deviations with a Decision Record.
+- [ ] Add meaningful comments. - Focus on intent ("why"), not mechanics ("what").
+- [ ] Create files as planned. - Document file creation log.
 - [ ] Update task status in real time.
 
 **Critical Constraint:**
@@ -172,17 +163,11 @@ For use in pull request summaries or executive summaries.
 
 **Checklist:**
 
-- [ ] Execute automated tests.
-      - Document outputs, logs, and coverage reports.
-      - For failures, document root cause analysis and remediation.
-- [ ] Perform manual verification if necessary.
-      - Document procedures, checklists, and results.
-- [ ] Test edge cases and errors.
-      - Document results and evidence of correct error handling.
-- [ ] Verify performance.
-      - Document metrics and profile critical sections.
-- [ ] Log execution traces.
-      - Document path analysis and runtime behavior.
+- [ ] Execute automated tests. - Document outputs, logs, and coverage reports. - For failures, document root cause analysis and remediation.
+- [ ] Perform manual verification if necessary. - Document procedures, checklists, and results.
+- [ ] Test edge cases and errors. - Document results and evidence of correct error handling.
+- [ ] Verify performance. - Document metrics and profile critical sections.
+- [ ] Log execution traces. - Document path analysis and runtime behavior.
 
 **Critical Constraint:**
 
@@ -196,18 +181,12 @@ For use in pull request summaries or executive summaries.
 
 **Checklist:**
 
-- [ ] Refactor for maintainability.
-      - Document decisions, before/after comparisons, and impact.
-- [ ] Update all project documentation.
-      - Ensure all READMEs, diagrams, and comments are current.
-- [ ] Identify potential improvements.
-      - Document backlog with prioritization.
-- [ ] Validate success criteria.
-      - Document final verification matrix.
-- [ ] Perform meta-analysis.
-      - Reflect on efficiency, tool usage, and protocol adherence.
-- [ ] Auto-create technical debt issues.
-      - Document inventory and remediation plans.
+- [ ] Refactor for maintainability. - Document decisions, before/after comparisons, and impact.
+- [ ] Update all project documentation. - Ensure all READMEs, diagrams, and comments are current.
+- [ ] Identify potential improvements. - Document backlog with prioritization.
+- [ ] Validate success criteria. - Document final verification matrix.
+- [ ] Perform meta-analysis. - Reflect on efficiency, tool usage, and protocol adherence.
+- [ ] Auto-create technical debt issues. - Document inventory and remediation plans.
 
 **Critical Constraint:**
 
@@ -221,17 +200,14 @@ For use in pull request summaries or executive summaries.
 
 **Checklist:**
 
-- [ ] Generate executive summary.
-      - Use **Compressed Decision Record** format.
+- [ ] Generate executive summary. - Use **Compressed Decision Record** format.
 - [ ] Prepare pull request (if applicable):
-    1. Executive summary.
-    2. Changelog from **Streamlined Action Log**.
-    3. Links to validation artifacts and Decision Records.
-    4. Links to final `requirements.md`, `design.md`, and `tasks.md`.
-- [ ] Finalize workspace.
-      - Archive intermediate files, logs, and temporary artifacts to `.agent_work/`.
-- [ ] Continue to next task.
-      - Document transition or completion.
+  1. Executive summary.
+  2. Changelog from **Streamlined Action Log**.
+  3. Links to validation artifacts and Decision Records.
+  4. Links to final `requirements.md`, `design.md`, and `tasks.md`.
+- [ ] Finalize workspace. - Archive intermediate files, logs, and temporary artifacts to `.agent_work/`.
+- [ ] Continue to next task. - Document transition or completion.
 
 **Critical Constraint:**
 
@@ -321,3 +297,30 @@ Each requirement must be:
 - **Necessary**: Contributes to the system's purpose
 - **Feasible**: Can be implemented within constraints
 - **Traceable**: Linked to user needs and design elements
+
+### Summary
+
+This addition establishes a **"package-first, custom-last"** philosophy that:
+
+1. **Mandates** searching SPM/GitHub before writing custom code
+2. **Lists common patterns** with recommended packages (DI, HTTP, Keychain, etc.)
+3. **Defines evaluation criteria** (maintenance, Swift 6 support, licensing)
+4. **Provides search workflow** using `gh` and Swift Package Index
+5. **Specifies when custom is acceptable** (no package, bloat, performance)
+6. **Requires Decision Records** when choosing custom over package
+
+This guidance prevents reinventing the wheel while maintaining quality standards for dependencies.
+
+```swift
+// filepath: Package.swift (example)
+dependencies: [
+    // HTTP networking - chosen for Combine integration and Swift 6 support
+    .package(url: "https://github.com/Alamofire/Alamofire", from: "5.8.0"),
+
+    // API client generation from OpenAPI specs (Radarr, Sonarr)
+    .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.0.0"),
+
+    // Keychain access - avoids Security framework boilerplate
+    .package(url: "https://github.com/kishikawakatsumi/KeychainAccess", from: "4.2.2"),
+]
+```
