@@ -35,6 +35,16 @@ final class DIContainer {
     
     /// Registers all services in the container
     private func registerServices() {
+        registerInfrastructure()
+        registerCoreServices()
+        registerDomainServices()
+        registerCoordinators()
+    }
+    
+    // MARK: - Infrastructure Registration
+    
+    /// Registers infrastructure services (storage, logging, etc.)
+    private func registerInfrastructure() {
         // Register ModelContainer (singleton)
         container.register(ModelContainer.self) { _ in
             do {
@@ -48,7 +58,12 @@ final class DIContainer {
         container.register((any KeychainServiceProtocol).self) { _ in
             KeychainService()
         }.inObjectScope(.container)
-        
+    }
+    
+    // MARK: - Core Services Registration
+    
+    /// Registers core business services
+    private func registerCoreServices() {
         // Register DataService (singleton)
         container.register(DataService.self) { resolver in
             let modelContainer = resolver.resolve(ModelContainer.self)!
@@ -57,6 +72,26 @@ final class DIContainer {
             }
             return DataService(modelContainer: modelContainer, keychainService: keychainService)
         }.inObjectScope(.container)
+    }
+    
+    // MARK: - Domain Services Registration
+    
+    /// Registers domain-specific services (Radarr, Sonarr, etc.)
+    /// Note: These will be registered when implementations are added
+    private func registerDomainServices() {
+        // Future: Register MediaService implementations (Radarr, Sonarr, Lidarr)
+        // Future: Register DownloadService implementations (SABnzbd, NZBGet)
+        // Future: Register other service implementations (Tautulli, Overseerr, etc.)
+    }
+    
+    // MARK: - Coordinators Registration
+    
+    /// Registers coordinators for navigation
+    /// Note: Coordinators are typically created with transient scope since they manage navigation state
+    private func registerCoordinators() {
+        // Note: Coordinators will be registered here when they need DI
+        // Most coordinators currently use simple init() and don't require services
+        // Future: Register coordinators that need DataService or other dependencies
     }
     
     // MARK: - Service Resolution
