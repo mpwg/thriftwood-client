@@ -39,14 +39,14 @@ final class UserPreferencesService: UserPreferencesServiceProtocol {
     
     // MARK: - Properties
     
-    private let dataService: DataService
+    private let dataService: any DataServiceProtocol
     private var settings: AppSettings
     
     // MARK: - Initialization
     
     /// Creates a new UserPreferencesService instance
     /// - Parameter dataService: The data service for persistence operations
-    init(dataService: DataService) throws {
+    init(dataService: any DataServiceProtocol) throws {
         self.dataService = dataService
         self.settings = try dataService.fetchAppSettings()
     }

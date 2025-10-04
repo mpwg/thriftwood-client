@@ -1,5 +1,5 @@
 //
-//  MediaService.swift
+//  DownloadService.swift
 //  Thriftwood
 //
 //  Thriftwood - Frontend for Media Management
@@ -19,7 +19,7 @@
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 //
-//  MediaService.swift
+//  DownloadService.swift
 //  Thriftwood
 //
 //  Created by Matthias Wallner-Géhri on 04.10.25.
@@ -28,16 +28,16 @@
 
 import Foundation
 
-/// Base protocol for all media management services (Radarr, Sonarr, etc.)
-protocol MediaService {
-    // Note: Configuration type will be concrete service configuration model (e.g., RadarrConfiguration)
+/// Base protocol for download client services (SABnzbd, NZBGet)
+protocol DownloadServiceProtocol {
+    // Note: Configuration type will be concrete service configuration model (e.g., SABnzbdConfiguration)
     // associatedtype Configuration
-    associatedtype Item: MediaItem
+    associatedtype QueueItem: DownloadQueueItem
     
     // /// Current service configuration
     // var configuration: Configuration? { get }
     
-    // /// Configure the service with connection details
+    // /// Configure the service
     // /// - Parameter config: Service configuration
     // /// - Throws: ThriftwoodError if configuration is invalid
     // func configure(_ config: Configuration) async throws
@@ -47,14 +47,25 @@ protocol MediaService {
     /// - Throws: ThriftwoodError if connection fails
     func testConnection() async throws -> Bool
     
-    /// Fetch all items from the service
-    /// - Returns: Array of media items
+    /// Fetch current download queue
+    /// - Returns: Array of queue items
     /// - Throws: ThriftwoodError if request fails
-    func fetchItems() async throws -> [Item]
+    func fetchQueue() async throws -> [QueueItem]
     
-    /// Search for items
-    /// - Parameter query: Search query
-    /// - Returns: Array of matching items
+    /// Pause a download
+    /// - Parameter id: Download ID
     /// - Throws: ThriftwoodError if request fails
-    func search(query: String) async throws -> [Item]
+    func pause(id: String) async throws
+    
+    /// Resume a download
+    /// - Parameter id: Download ID
+    /// - Throws: ThriftwoodError if request fails
+    func resume(id: String) async throws
+    
+    /// Delete a download
+    /// - Parameters:
+    ///   - id: Download ID
+    ///   - removeData: Whether to remove downloaded data
+    /// - Throws: ThriftwoodError if request fails
+    func delete(id: String, removeData: Bool) async throws
 }

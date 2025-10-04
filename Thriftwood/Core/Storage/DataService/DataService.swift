@@ -17,11 +17,6 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-//
-//
-//  DataService.swift
-//  Thriftwood
-//
 //  Service for managing SwiftData persistence operations
 //  Provides CRUD operations for all models
 //
@@ -32,7 +27,7 @@ import Combine
 
 /// Service for managing data persistence with SwiftData
 @MainActor
-final class DataService {
+final class DataService: DataServiceProtocol {
     private let modelContainer: ModelContainer
     private let modelContext: ModelContext
     private let keychainService: any KeychainServiceProtocol

@@ -47,7 +47,7 @@ struct DataServiceTests {
     }
     
     /// Creates a data service with in-memory storage and mock keychain
-    private func makeTestDataService() throws -> DataService {
+    private func makeTestDataService() throws -> any DataServiceProtocol {
         let container = try makeTestContainer()
         let keychainService = makeTestKeychainService()
         return DataService(modelContainer: container, keychainService: keychainService)
