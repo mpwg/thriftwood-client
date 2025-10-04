@@ -16,7 +16,7 @@ struct LoggerSwiftTests {
     @Test("Create logger with specific category")
     func createLoggerWithCategory() {
         // Given/When
-        let logger = AppLogger(category: .networking)
+        _ = AppLogger(category: .networking)
         
         // Then - Logger creation should succeed (no crash)
         #expect(Bool(true))
@@ -25,12 +25,12 @@ struct LoggerSwiftTests {
     @Test("Convenience loggers are accessible")
     func convenienceLoggers() {
         // Given/When
-        let networking = AppLogger.networking
-        let storage = AppLogger.storage
-        let authentication = AppLogger.authentication
-        let ui = AppLogger.ui
-        let services = AppLogger.services
-        let general = AppLogger.general
+        _ = AppLogger.networking
+        _ = AppLogger.storage
+        _ = AppLogger.authentication
+        _ = AppLogger.ui
+        _ = AppLogger.services
+        _ = AppLogger.general
         
         // Then - All convenience loggers should be accessible (no crash)
         #expect(Bool(true))
