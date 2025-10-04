@@ -16,6 +16,8 @@
 # - Quick iterations
 
 name: CI
+permissions:
+  contents: read
 
 # Trigger on push and pull requests to main/develop branches
 on:
