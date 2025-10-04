@@ -9,6 +9,7 @@ updates:
   - package-ecosystem: "swift"
     directory: "/"
     schedule:
+      interval: "daily"
     labels:
       - "dependencies"
       - "swift"
