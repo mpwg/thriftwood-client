@@ -17,121 +17,121 @@
 
 name: CI
 
-# Trigger on push and pull requests to main/rety branches
+# Trigger on push and pull requests to main/develop branches
 on:
-    push:
-        branches: [main, rety]
-        paths-ignore:
-            - "**.md"
-            - "docs/**"
-            - "legacy/**"
-            - ".gitignore"
-    pull_request:
-        branches: [main, rety]
-        paths-ignore:
-            - "**.md"
-            - "docs/**"
-            - "legacy/**"
+  push:
+    branches: [main, develop]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "legacy/**"
+      - ".gitignore"
+  pull_request:
+    branches: [main, develop]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "legacy/**"
 
 # Cancel in-progress runs when new push occurs
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-    # ==============================================
-    # Main CI Job: Build, Test, Lint
-    # ==============================================
-    build-and-test:
-        name: Build & Test
-        runs-on: macos-14 # Latest macOS with Apple Silicon
+  # ==============================================
+  # Main CI Job: Build, Test, Lint
+  # ==============================================
+  build-and-test:
+    name: Build & Test
+    runs-on: macos-26 # Latest macOS with Apple Silicon
 
-        steps:
-            # Checkout code
-            - name: Checkout
-              uses: actions/checkout@v4
+    steps:
+      # Checkout code
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            # Setup Xcode version
-            - name: Select Xcode
-              run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+      # Setup Xcode version
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.app/Contents/Developer
 
-            # Show Xcode and Swift versions for debugging
-            - name: Show Versions
-              run: |
-                  xcodebuild -version
-                  swift --version
+      # Show Xcode and Swift versions for debugging
+      - name: Show Versions
+        run: |
+          xcodebuild -version
+          swift --version
 
-            # Install SwiftLint for code quality checks
-            - name: Install SwiftLint
-              run: brew install swiftlint
+      # Install SwiftLint for code quality checks
+      - name: Install SwiftLint
+        run: brew install swiftlint
 
-            # Run SwiftLint
-            - name: Lint Code
-              run: swiftlint lint --strict --reporter github-actions-logging
-              continue-on-error: false # Fail on lint errors
+      # Run SwiftLint
+      - name: Lint Code
+        run: swiftlint lint --strict --reporter github-actions-logging
+        continue-on-error: false # Fail on lint errors
 
-            # Cache derived data to speed up builds
-            - name: Cache DerivedData
-              uses: actions/cache@v4
-              with:
-                  path: ~/Library/Developer/Xcode/DerivedData
-                  key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift') }}
-                  restore-keys: |
-                      ${{ runner.os }}-deriveddata-
+      # Cache derived data to speed up builds
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-
 
-            # Build the app
-            - name: Build App
-              run: |
-                  xcodebuild clean build \
-                    -project Thriftwood.xcodeproj \
-                    -scheme Thriftwood \
-                    -destination 'platform=macOS' \
-                    -configuration Debug \
-                    CODE_SIGNING_ALLOWED=NO \
-                    | xcpretty && exit ${PIPESTATUS[0]}
+      # Build the app
+      - name: Build App
+        run: |
+          xcodebuild clean build \
+            -project Thriftwood.xcodeproj \
+            -scheme Thriftwood \
+            -destination 'platform=macOS' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcpretty && exit ${PIPESTATUS[0]}
 
-            # Run unit tests
-            - name: Run Tests
-              run: |
-                  xcodebuild test \
-                    -project Thriftwood.xcodeproj \
-                    -scheme Thriftwood \
-                    -destination 'platform=macOS' \
-                    -configuration Debug \
-                    CODE_SIGNING_ALLOWED=NO \
-                    -enableCodeCoverage YES \
-                    | xcpretty && exit ${PIPESTATUS[0]}
+      # Run unit tests
+      - name: Run Tests
+        run: |
+          xcodebuild test \
+            -project Thriftwood.xcodeproj \
+            -scheme Thriftwood \
+            -destination 'platform=macOS' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            -enableCodeCoverage YES \
+            | xcpretty && exit ${PIPESTATUS[0]}
 
-            # Archive test results (if tests fail, this helps debugging)
-            - name: Upload Test Results
-              if: failure()
-              uses: actions/upload-artifact@v4
-              with:
-                  name: test-results
-                  path: |
-                      ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
-                  retention-days: 7
+      # Archive test results (if tests fail, this helps debugging)
+      - name: Upload Test Results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+          retention-days: 7
 
-    # ==============================================
-    # Code Quality Summary (Optional)
-    # ==============================================
-    code-quality:
-        name: Code Quality Summary
-        runs-on: macos-14
-        needs: build-and-test
-        if: always()
+  # ==============================================
+  # Code Quality Summary (Optional)
+  # ==============================================
+  code-quality:
+    name: Code Quality Summary
+    runs-on: macos-26
+    needs: build-and-test
+    if: always()
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            - name: Install SwiftLint
-              run: brew install swiftlint
+      - name: Install SwiftLint
+        run: brew install swiftlint
 
-            - name: Generate Lint Report
-              run: |
-                  echo "## Code Quality Report" >> $GITHUB_STEP_SUMMARY
-                  echo "" >> $GITHUB_STEP_SUMMARY
-                  swiftlint lint --reporter markdown >> $GITHUB_STEP_SUMMARY || true
-                  echo "" >> $GITHUB_STEP_SUMMARY
-                  echo "✅ All checks completed!" >> $GITHUB_STEP_SUMMARY
+      - name: Generate Lint Report
+        run: |
+          echo "## Code Quality Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          swiftlint lint --reporter markdown >> $GITHUB_STEP_SUMMARY || true
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All checks completed!" >> $GITHUB_STEP_SUMMARY

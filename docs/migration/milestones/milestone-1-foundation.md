@@ -36,8 +36,7 @@
 
 **Implementation Summary**:
 
-Implemented complete core architecture following c
-lean architecture principles with Swift 6.2's Approachable Concurrency.
+Implemented complete core architecture following clean architecture principles with Swift 6.2's Approachable Concurrency.
 
 **Completed Components**:
 
@@ -46,13 +45,13 @@ lean architecture principles with Swift 6.2's Approachable Concurrency.
    - Clean separation of concerns
    - Modular organization for scalability
 
-2. **Dependency Injection** (`Core/DI/DependencyContainer.swift`)
+2. **Dependency Injection** (Swinject framework)
 
-   - Lock-based singleton container with `Sendable` conformance
-   - Factory and singleton registration patterns
-   - Type-safe resolution with error handling
-   - Property wrapper `@Injected` for easy dependency injection
-   - Uses `nonisolated(unsafe)` with NSLock for thread safety
+   - Added Swinject 2.10.0 via Swift Package Manager
+   - Documentation in `/docs/SWINJECT_SETUP.md`
+   - Type-safe dependency resolution
+   - Support for singletons and factories via Swinject's Container API
+   - Will be configured in app initialization as services are implemented
 
 3. **Error Handling** (`Core/Error/ThriftwoodError.swift`)
 
@@ -98,11 +97,12 @@ lean architecture principles with Swift 6.2's Approachable Concurrency.
    - Avoids excessive `@preconcurrency` and `@unchecked Sendable`
    - See `/docs/CONCURRENCY.md` for detailed rationale
 
-2. **Lock-Based DI Container**:
+2. **Lock-Based DI with Swinject**:
 
-   - Chose NSLock over Actor for predictable performance
-   - Singleton pattern for app-wide access
-   - Factory pattern support for transient dependencies
+   - Using Swinject directly for dependency injection
+   - Well-established iOS/macOS DI framework
+   - Will configure Container in app delegate/initialization
+   - No custom wrapper needed - direct Swinject API usage
 
 3. **OSLog for Logging**:
    - Native Apple framework with zero dependencies
@@ -111,25 +111,28 @@ lean architecture principles with Swift 6.2's Approachable Concurrency.
 
 **Known Issues**:
 
-- Test compilation currently fails due to Swift 6.2 strict concurrency checking with `nonisolated(unsafe)` patterns
-- Need to research proper `unsafe` block syntax or consider actor-based DI container
-- Core implementation is complete and functional; tests need adjustment
+- None - all tests passing (34 Swift Testing tests)
+- Swinject Container will be configured when services are implemented in Milestone 2
 
 **Files Created**:
 
-- `Thriftwood/Core/DI/DependencyContainer.swift` (201 lines)
 - `Thriftwood/Core/DI/BaseViewModel.swift` (94 lines)
 - `Thriftwood/Core/Error/ThriftwoodError.swift` (167 lines)
 - `Thriftwood/Core/Logging/Logger.swift` (124 lines)
 - `Thriftwood/Core/Networking/APIClient.swift` (86 lines)
 - `Thriftwood/Core/Networking/Endpoint.swift` (37 lines)
+- `Thriftwood/Core/Networking/HTTPMethod.swift` (15 lines)
 - `Thriftwood/Services/ServiceProtocols.swift` (24 lines)
-- `docs/CONCURRENCY.md` (documentation)
+- `ThriftwoodTests/LoggerSwiftTests.swift` (Swift Testing - 19 tests)
+- `ThriftwoodTests/ThriftwoodErrorSwiftTests.swift` (Swift Testing - 14 tests)
+- `ThriftwoodTests/ThriftwoodTests.swift` (1 basic test)
+- `docs/CONCURRENCY.md` (concurrency strategy documentation)
+- `docs/SWINJECT_SETUP.md` (Swinject integration guide)
 
 **Next Steps**:
 
 - Proceed to Task 1.3: Navigation Framework
-- Address test compilation in parallel or defer to polish phase
+- Configure Swinject Container in Task 1.3 or when first services are implemented
 
 ### Task 1.3: Navigation Framework
 

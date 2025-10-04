@@ -6,6 +6,7 @@
 //
 
 import Testing
+import OSLog
 @testable import Thriftwood
 
 @Suite("Logger Tests")
