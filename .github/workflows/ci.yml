@@ -74,14 +74,14 @@ jobs:
         run: swiftlint lint --strict --reporter github-actions-logging
         continue-on-error: true # continue on lint errors
 
-      # # Cache derived data to speed up builds
-      # - name: Cache DerivedData
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ~/Library/Developer/Xcode/DerivedData
-      #     key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-deriveddata-
+      # Cache derived data to speed up builds
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-
 
       # Build the app
       - name: Build App
