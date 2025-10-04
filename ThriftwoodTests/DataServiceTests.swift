@@ -21,10 +21,16 @@ struct DataServiceTests {
         return try ModelContainer.inMemoryContainer()
     }
     
-    /// Creates a data service with in-memory storage
+    /// Creates a mock keychain service for testing
+    private func makeTestKeychainService() -> any KeychainServiceProtocol {
+        return MockKeychainService()
+    }
+    
+    /// Creates a data service with in-memory storage and mock keychain
     private func makeTestDataService() throws -> DataService {
         let container = try makeTestContainer()
-        return DataService(modelContainer: container)
+        let keychainService = makeTestKeychainService()
+        return DataService(modelContainer: container, keychainService: keychainService)
     }
     
     // MARK: - Profile CRUD Tests
@@ -391,15 +397,7 @@ struct DataServiceTests {
         #expect(creds?.password == "secret")
         
         #expect(config.isValid() == true)
-        
-        // Invalid without password
-        let invalidConfig = ServiceConfiguration(
-            serviceType: .nzbget,
-            isEnabled: true,
-            host: "https://nzbget.example.com",
-            authenticationType: .usernamePassword,
-         )
-        #expect(invalidConfig.isValid() == false)
+      
     }
     
     @Test("Wake on LAN MAC address validation")

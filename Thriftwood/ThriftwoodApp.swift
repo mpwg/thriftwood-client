@@ -10,16 +10,15 @@ import SwiftData
 
 @main
 struct ThriftwoodApp: App {
-    /// Shared model container for the app
-    var sharedModelContainer: ModelContainer = {
-        do {
-            return try ModelContainer.thriftwoodContainer()
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    /// Shared DI container
+    private let container = DIContainer.shared
     
-    /// Data service for persistence operations
+    /// Shared model container for the app (resolved from DI)
+    var sharedModelContainer: ModelContainer {
+        container.resolve(ModelContainer.self)
+    }
+    
+    /// Data service for persistence operations (resolved from DI)
     @State private var dataService: DataService?
 
     var body: some Scene {
@@ -28,7 +27,7 @@ struct ThriftwoodApp: App {
                 .task {
                     // Initialize data service and bootstrap database
                     if dataService == nil {
-                        let service = DataService(modelContainer: sharedModelContainer)
+                        let service = container.resolve(DataService.self)
                         dataService = service
                         do {
                             try service.bootstrap()

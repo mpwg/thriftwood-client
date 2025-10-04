@@ -15,9 +15,9 @@ import Combine
 final class DataService {
     private let modelContainer: ModelContainer
     private let modelContext: ModelContext
-    private let keychainService: KeychainService
+    private let keychainService: any KeychainServiceProtocol
     
-    init(modelContainer: ModelContainer, keychainService: KeychainService = KeychainService()) {
+    init(modelContainer: ModelContainer, keychainService: any KeychainServiceProtocol) {
         self.modelContainer = modelContainer
         self.modelContext = modelContainer.mainContext
         self.keychainService = keychainService

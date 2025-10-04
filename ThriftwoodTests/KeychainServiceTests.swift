@@ -13,12 +13,12 @@ import Foundation
 @MainActor
 struct KeychainServiceTests {
     
-    /// Test keychain service instance
-    let keychainService: KeychainService
+    /// Test keychain service instance (using mock for testing)
+    let keychainService: any KeychainServiceProtocol
     
     init() {
-        // Use a test-specific identifier to avoid conflicts
-        self.keychainService = KeychainService(identifier: "com.thriftwood.test.\(UUID().uuidString)")
+        // Use mock implementation to avoid keychain entitlement issues in tests
+        self.keychainService = MockKeychainService()
     }
     
     // MARK: - API Key Tests
