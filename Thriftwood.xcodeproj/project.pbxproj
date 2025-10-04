@@ -10,7 +10,6 @@
 		403991B22E905C68001E827C /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 403991B12E905C68001E827C /* Swinject */; };
 		403991B62E905E7D001E827C /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 403991B52E905E7D001E827C /* OpenAPIRuntime */; };
 		404F89FE2E914FB0009D2DD6 /* AsyncHTTPClient in Frameworks */ = {isa = PBXBuildFile; productRef = 404F89FD2E914FB0009D2DD6 /* AsyncHTTPClient */; };
-		404F8AC62E9176B6009D2DD6 /* Valet in Frameworks */ = {isa = PBXBuildFile; productRef = 404F8AC52E9176B6009D2DD6 /* Valet */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,7 +58,6 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				403991B62E905E7D001E827C /* OpenAPIRuntime in Frameworks */,
-				404F8AC62E9176B6009D2DD6 /* Valet in Frameworks */,
 				404F89FE2E914FB0009D2DD6 /* AsyncHTTPClient in Frameworks */,
 				403991B22E905C68001E827C /* Swinject in Frameworks */,
 			);
@@ -111,7 +109,6 @@
 				403991B12E905C68001E827C /* Swinject */,
 				403991B52E905E7D001E827C /* OpenAPIRuntime */,
 				404F89FD2E914FB0009D2DD6 /* AsyncHTTPClient */,
-				404F8AC52E9176B6009D2DD6 /* Valet */,
 			);
 			productName = Thriftwood;
 			productReference = 402888372E90441F005376F0 /* Thriftwood.app */;
@@ -171,7 +168,6 @@
 				403991B32E905E58001E827C /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
 				403991B42E905E7D001E827C /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
 				404F89FC2E914FB0009D2DD6 /* XCRemoteSwiftPackageReference "async-http-client" */,
-				404F8AC42E9176B6009D2DD6 /* XCRemoteSwiftPackageReference "Valet" */,
 			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 402888382E90441F005376F0 /* Products */;
@@ -228,9 +224,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PZV43D6HWT;
 				ENABLE_APP_SANDBOX = YES;
-				ENABLE_ENHANCED_SECURITY = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -255,15 +249,15 @@
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -277,9 +271,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PZV43D6HWT;
 				ENABLE_APP_SANDBOX = YES;
-				ENABLE_ENHANCED_SECURITY = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -304,15 +296,15 @@
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
@@ -575,14 +567,6 @@
 				minimumVersion = 1.28.0;
 			};
 		};
-		404F8AC42E9176B6009D2DD6 /* XCRemoteSwiftPackageReference "Valet" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/square/Valet";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -600,11 +584,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 404F89FC2E914FB0009D2DD6 /* XCRemoteSwiftPackageReference "async-http-client" */;
 			productName = AsyncHTTPClient;
-		};
-		404F8AC52E9176B6009D2DD6 /* Valet */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 404F8AC42E9176B6009D2DD6 /* XCRemoteSwiftPackageReference "Valet" */;
-			productName = Valet;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
