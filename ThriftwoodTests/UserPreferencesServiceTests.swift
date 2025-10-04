@@ -447,4 +447,19 @@ struct UserPreferencesServiceTests {
         #expect(service.themeImageBackgroundOpacity == 20)
         #expect(service.enabledProfileName == "default")
     }
+    
+    // MARK: - DI Resolution Test
+    
+    @Test("Resolve UserPreferencesService from DI container")
+    func resolvefromDIContainer() async throws {
+        let container = DIContainer.shared
+        
+        // Resolve the service
+        let service = container.resolve((any UserPreferencesServiceProtocol).self)
+        
+        // Verify it works
+        #expect(service.themeAMOLED == false)
+        service.themeAMOLED = true
+        #expect(service.themeAMOLED == true)
+    }
 }
