@@ -19,16 +19,12 @@
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 //
-//  DataServiceProtocol.swift
-//  Thriftwood
-//
-//  Protocol for data persistence service to enable dependency injection and testing
-//
 
 import Foundation
 
 /// Protocol defining data persistence operations
 /// Enables dependency injection and mock implementations in tests
+/// Protocol for data persistence service to enable dependency injection and testing
 @MainActor
 protocol DataServiceProtocol {
     
