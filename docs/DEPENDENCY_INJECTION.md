@@ -43,9 +43,10 @@ Services are organized into four categories:
 
 ### Core Services
 
-| Service       | Protocol | Scope     | Description                                      |
-| ------------- | -------- | --------- | ------------------------------------------------ |
-| `DataService` | N/A      | Singleton | High-level data operations (CRUD for all models) |
+| Service                  | Protocol                         | Scope     | Description                                      |
+| ------------------------ | -------------------------------- | --------- | ------------------------------------------------ |
+| `DataService`            | N/A                              | Singleton | High-level data operations (CRUD for all models) |
+| `UserPreferencesService` | `UserPreferencesServiceProtocol` | Singleton | User preferences management (SwiftData-backed)   |
 
 ### Domain Services
 

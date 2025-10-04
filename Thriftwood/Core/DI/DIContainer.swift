@@ -72,6 +72,16 @@ final class DIContainer {
             }
             return DataService(modelContainer: modelContainer, keychainService: keychainService)
         }.inObjectScope(.container)
+        
+        // Register UserPreferencesService (singleton, using protocol)
+        container.register((any UserPreferencesServiceProtocol).self) { resolver in
+            let dataService = resolver.resolve(DataService.self)!
+            do {
+                return try UserPreferencesService(dataService: dataService)
+            } catch {
+                fatalError("Could not create UserPreferencesService: \(error)")
+            }
+        }.inObjectScope(.container)
     }
     
     // MARK: - Domain Services Registration
