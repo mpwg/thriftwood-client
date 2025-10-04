@@ -398,9 +398,7 @@ struct DataServiceTests {
             isEnabled: true,
             host: "https://nzbget.example.com",
             authenticationType: .usernamePassword,
-            username: "admin",
-            password: ""
-        )
+         )
         #expect(invalidConfig.isValid() == false)
     }
     
