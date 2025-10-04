@@ -13,11 +13,11 @@ import OSLog
 /// Coordinator that manages navigation within the Services feature.
 /// Handles adding services, configuring them, testing connections, etc.
 @MainActor
-final class ServicesCoordinator: @MainActor CoordinatorProtocol, Sendable {
+final class ServicesCoordinator: @MainActor Coordinator, Sendable {
     // MARK: - Coordinator Protocol
     
-    var childCoordinators: [any CoordinatorProtocol] = []
-    weak var parent: (any CoordinatorProtocol)?
+    var childCoordinators: [any Coordinator] = []
+    weak var parent: (any Coordinator)?
     var navigationPath: [ServicesRoute] = []
     
     // MARK: - Initialization
