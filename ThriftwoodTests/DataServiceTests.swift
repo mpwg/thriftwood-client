@@ -133,19 +133,24 @@ struct DataServiceTests {
             isEnabled: true,
             host: "https://radarr.example.com",
             authenticationType: .apiKey,
-            apiKey: "test-api-key",
             headers: ["X-Custom": "Value"]
         )
         profile.serviceConfigurations.append(radarrConfig)
         try dataService.updateProfile(profile)
+        
+        // Save API key to Keychain
+        try dataService.saveAPIKey("test-api-key", for: radarrConfig)
         
         // Verify configuration is attached
         let fetched = try dataService.fetchProfile(named: "Test Profile")
         let radarr = fetched?.serviceConfiguration(for: .radarr)
         #expect(radarr != nil)
         #expect(radarr?.host == "https://radarr.example.com")
-        #expect(radarr?.apiKey == "test-api-key")
         #expect(radarr?.headers["X-Custom"] == "Value")
+        
+        // Verify API key is stored in Keychain
+        let apiKey = dataService.getAPIKey(for: radarrConfig)
+        #expect(apiKey == "test-api-key")
     }
     
     @Test("Profile cascade deletes service configurations")
@@ -154,30 +159,31 @@ struct DataServiceTests {
         
         // Create profile with configurations using unified ServiceConfiguration
         let profile = Profile(name: "Test Profile")
-        profile.serviceConfigurations.append(
-            ServiceConfiguration(
-                serviceType: .radarr,
-                isEnabled: true,
-                host: "https://radarr.example.com",
-                authenticationType: .apiKey,
-                apiKey: "key"
-            )
+        let radarrConfig = ServiceConfiguration(
+            serviceType: .radarr,
+            isEnabled: true,
+            host: "https://radarr.example.com",
+            authenticationType: .apiKey
         )
-        profile.serviceConfigurations.append(
-            ServiceConfiguration(
-                serviceType: .sonarr,
-                isEnabled: true,
-                host: "https://sonarr.example.com",
-                authenticationType: .apiKey,
-                apiKey: "key"
-            )
+        let sonarrConfig = ServiceConfiguration(
+            serviceType: .sonarr,
+            isEnabled: true,
+            host: "https://sonarr.example.com",
+            authenticationType: .apiKey
         )
+        profile.serviceConfigurations.append(radarrConfig)
+        profile.serviceConfigurations.append(sonarrConfig)
         try dataService.createProfile(profile)
+        
+        // Save API keys to Keychain
+        try dataService.saveAPIKey("radarr-key", for: radarrConfig)
+        try dataService.saveAPIKey("sonarr-key", for: sonarrConfig)
         
         // Delete profile
         try dataService.deleteProfile(profile)
         
         // Configurations should be deleted via cascade
+        // Note: Credentials remain in Keychain unless explicitly deleted
         let profiles = try dataService.fetchProfiles()
         #expect(profiles.isEmpty)
     }
@@ -303,49 +309,87 @@ struct DataServiceTests {
     
     // MARK: - Validation Tests
     
-    @Test("Service configuration validation")
-    func serviceConfigurationValidation() async throws {
-        // Valid configuration
+    @Test("Service configuration validation - basic")
+    func serviceConfigurationBasicValidation() async throws {
+        // Valid configuration (host validation only, credentials checked separately)
         let validConfig = ServiceConfiguration(
             serviceType: .radarr,
             isEnabled: true,
             host: "https://radarr.example.com",
-            authenticationType: .apiKey,
-            apiKey: "valid-key"
+            authenticationType: .apiKey
         )
         #expect(validConfig.isValid() == true)
-        
-        // Invalid - empty API key
-        let invalidKey = ServiceConfiguration(
-            serviceType: .radarr,
-            isEnabled: true,
-            host: "https://radarr.example.com",
-            authenticationType: .apiKey,
-            apiKey: ""
-        )
-        #expect(invalidKey.isValid() == false)
         
         // Invalid - bad URL
         let invalidURL = ServiceConfiguration(
             serviceType: .radarr,
             isEnabled: true,
             host: "not-a-url",
-            authenticationType: .apiKey,
-            apiKey: "key"
+            authenticationType: .apiKey
         )
         #expect(invalidURL.isValid() == false)
+        
+        // Disabled services are always valid
+        let disabledConfig = ServiceConfiguration(
+            serviceType: .radarr,
+            isEnabled: false,
+            host: "",
+            authenticationType: .apiKey
+        )
+        #expect(disabledConfig.isValid() == true)
+    }
+    
+    @Test("Service configuration validation with credentials")
+    func serviceConfigurationCredentialValidation() async throws {
+        let dataService = try makeTestDataService()
+        
+        // Create config with API key authentication
+        let apiKeyConfig = ServiceConfiguration(
+            serviceType: .radarr,
+            isEnabled: true,
+            host: "https://radarr.example.com",
+            authenticationType: .apiKey
+        )
+        
+        // Should be invalid without API key in Keychain
+        let isValidWithoutKey = dataService.validateServiceConfiguration(apiKeyConfig)
+        #expect(isValidWithoutKey == false)
+        
+        // Save API key
+        try dataService.saveAPIKey("test-key", for: apiKeyConfig)
+        
+        // Should now be valid
+        let isValidWithKey = dataService.validateServiceConfiguration(apiKeyConfig)
+        #expect(isValidWithKey == true)
     }
     
     @Test("NZBGet uses username/password instead of API key")
     func nzbgetAuthentication() async throws {
+        let dataService = try makeTestDataService()
+        
         let config = ServiceConfiguration(
             serviceType: .nzbget,
             isEnabled: true,
             host: "https://nzbget.example.com",
-            authenticationType: .usernamePassword,
-            username: "admin",
-            password: "secret"
+            authenticationType: .usernamePassword
         )
+        
+        // Should be invalid without credentials
+        let isValidWithoutCreds = dataService.validateServiceConfiguration(config)
+        #expect(isValidWithoutCreds == false)
+        
+        // Save credentials
+        try dataService.saveUsernamePassword(username: "admin", password: "secret", for: config)
+        
+        // Should now be valid
+        let isValidWithCreds = dataService.validateServiceConfiguration(config)
+        #expect(isValidWithCreds == true)
+        
+        // Verify credentials can be retrieved
+        let creds = dataService.getUsernamePassword(for: config)
+        #expect(creds?.username == "admin")
+        #expect(creds?.password == "secret")
+        
         #expect(config.isValid() == true)
         
         // Invalid without password
@@ -354,9 +398,7 @@ struct DataServiceTests {
             isEnabled: true,
             host: "https://nzbget.example.com",
             authenticationType: .usernamePassword,
-            username: "admin",
-            password: ""
-        )
+         )
         #expect(invalidConfig.isValid() == false)
     }
     
