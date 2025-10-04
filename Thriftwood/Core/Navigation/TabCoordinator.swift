@@ -16,7 +16,7 @@ import SwiftUI
 /// has its own coordinator managing its navigation stack independently.
 @Observable
 @MainActor
-final class TabCoordinator: Coordinator, @unchecked Sendable {
+final class TabCoordinator: @MainActor Coordinator,  Sendable {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any Coordinator] = []

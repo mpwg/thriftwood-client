@@ -13,7 +13,7 @@ import OSLog
 /// Coordinator that manages navigation within the Settings feature.
 /// Handles navigation to various settings screens and preferences.
 @MainActor
-final class SettingsCoordinator: Coordinator, @unchecked Sendable {
+final class SettingsCoordinator: @MainActor Coordinator,  Sendable {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any Coordinator] = []

@@ -13,7 +13,7 @@ import OSLog
 /// Coordinator that manages navigation within the Dashboard feature.
 /// Handles showing service details, media details, and other dashboard-related screens.
 @MainActor
-final class DashboardCoordinator: Coordinator, @unchecked Sendable {
+final class DashboardCoordinator: @MainActor Coordinator,  Sendable {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any Coordinator] = []

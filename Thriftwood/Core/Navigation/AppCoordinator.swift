@@ -14,7 +14,7 @@ import SwiftUI
 /// but adapted for SwiftUI's NavigationStack pattern.
 @Observable
 @MainActor
-final class AppCoordinator: Coordinator, @unchecked Sendable {
+final class AppCoordinator: @MainActor Coordinator,  Sendable {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any Coordinator] = []
