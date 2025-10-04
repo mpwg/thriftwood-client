@@ -55,6 +55,52 @@
 
 ## Development Workflow
 
+### License Headers - MANDATORY
+
+**Every Swift file MUST include the GPL-3.0 license header:**
+
+```swift
+//
+//  FileName.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
+```
+
+**When creating new files:**
+
+- Always include the GPL-3.0 header at the top of every Swift file
+- Replace `FileName.swift` with the actual filename
+- Use 2025 as the copyright year (or current year if later)
+- See `.github/instructions/license-header.instructions.md` for full details
+
+**Verification:**
+
+```bash
+# Check for missing headers
+./scripts/check-license-headers.sh --check
+
+# Add headers to new files
+./scripts/check-license-headers.sh --add
+```
+
+CI will **block merges** if headers are missing.
+
 ### Build & Test Commands
 
 **Important**: CI runs on every push to `main`/`rety` (excludes docs/legacy changes)
@@ -71,10 +117,14 @@ swiftlint lint --strict
 
 # Format (optional)
 swiftlint --fix
+
+# Check license headers
+./scripts/check-license-headers.sh --check
 ```
 
 **GitHub Actions CI** (`.github/workflows/ci.yml`):
 
+- Validates GPL-3.0 license headers (blocks if missing)
 - Runs lint, build, test on macOS-14
 - Caches Swift packages for speed
 - Auto-cancels old runs on new push
