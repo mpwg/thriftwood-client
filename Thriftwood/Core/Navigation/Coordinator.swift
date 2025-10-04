@@ -18,6 +18,9 @@ import SwiftUI
 /// References:
 /// - https://www.hackingwithswift.com/articles/71/how-to-use-the-coordinator-pattern-in-ios-apps
 /// - https://www.hackingwithswift.com/articles/175/advanced-coordinator-pattern-tutorial-ios
+///
+/// Note: This protocol is not marked as @MainActor to allow flexibility in conformance.
+/// Individual coordinators should be marked @MainActor as needed.
 protocol Coordinator: AnyObject {
     /// The type of route this coordinator handles
     associatedtype Route: Hashable

@@ -8,9 +8,10 @@
 
 import Foundation
 import SwiftUI
+import OSLog
 
 /// Routes within the onboarding flow
-enum OnboardingRoute: Hashable {
+enum OnboardingRoute: Hashable, Sendable {
     case welcome
     case createProfile
     case addFirstService
@@ -19,9 +20,8 @@ enum OnboardingRoute: Hashable {
 
 /// Coordinator that manages the onboarding flow for new users.
 /// This is a child coordinator that reports back to AppCoordinator when complete.
-@Observable
 @MainActor
-final class OnboardingCoordinator: Coordinator {
+final class OnboardingCoordinator: Coordinator, @unchecked Sendable {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any Coordinator] = []
@@ -36,13 +36,13 @@ final class OnboardingCoordinator: Coordinator {
     // MARK: - Initialization
     
     init() {
-        Logger.navigation.info("OnboardingCoordinator initialized")
+        AppLogger.navigation.info("OnboardingCoordinator initialized")
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        Logger.navigation.info("OnboardingCoordinator starting")
+        AppLogger.navigation.info("OnboardingCoordinator starting")
         navigationPath = [.welcome]
     }
     
@@ -50,25 +50,25 @@ final class OnboardingCoordinator: Coordinator {
     
     /// Proceeds to the create profile step
     func showCreateProfile() {
-        Logger.navigation.info("Showing create profile")
+        AppLogger.navigation.info("Showing create profile")
         navigate(to: .createProfile)
     }
     
     /// Proceeds to adding the first service
     func showAddFirstService() {
-        Logger.navigation.info("Showing add first service")
+        AppLogger.navigation.info("Showing add first service")
         navigate(to: .addFirstService)
     }
     
     /// Completes the onboarding flow
     func completeOnboarding() {
-        Logger.navigation.info("Completing onboarding")
+        AppLogger.navigation.info("Completing onboarding")
         onComplete?()
     }
     
     /// Skips onboarding and goes straight to the main app
     func skipOnboarding() {
-        Logger.navigation.info("Skipping onboarding")
+        AppLogger.navigation.info("Skipping onboarding")
         onComplete?()
     }
 }

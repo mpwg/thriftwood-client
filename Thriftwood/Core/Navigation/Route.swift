@@ -9,13 +9,13 @@
 import Foundation
 
 /// Root-level routes for the entire application
-enum AppRoute: Hashable {
+enum AppRoute: Hashable, Sendable {
     case onboarding
     case main
 }
 
 /// Routes for the main tab navigation
-enum TabRoute: Hashable, CaseIterable {
+enum TabRoute: Hashable, CaseIterable, Sendable {
     case dashboard
     case services
     case settings
@@ -38,14 +38,14 @@ enum TabRoute: Hashable, CaseIterable {
 }
 
 /// Routes within the Dashboard feature
-enum DashboardRoute: Hashable {
+enum DashboardRoute: Hashable, Sendable {
     case home
     case serviceDetail(serviceId: String)
     case mediaDetail(mediaId: String, serviceType: String)
 }
 
 /// Routes within the Services feature
-enum ServicesRoute: Hashable {
+enum ServicesRoute: Hashable, Sendable {
     case list
     case addService
     case serviceConfiguration(serviceId: String)
@@ -53,7 +53,7 @@ enum ServicesRoute: Hashable {
 }
 
 /// Routes within the Settings feature
-enum SettingsRoute: Hashable {
+enum SettingsRoute: Hashable, Sendable {
     case main
     case profiles
     case addProfile

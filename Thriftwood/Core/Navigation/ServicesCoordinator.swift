@@ -8,12 +8,12 @@
 
 import Foundation
 import SwiftUI
+import OSLog
 
 /// Coordinator that manages navigation within the Services feature.
 /// Handles adding services, configuring them, testing connections, etc.
-@Observable
 @MainActor
-final class ServicesCoordinator: Coordinator {
+final class ServicesCoordinator: Coordinator, @unchecked Sendable {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any Coordinator] = []
@@ -23,13 +23,13 @@ final class ServicesCoordinator: Coordinator {
     // MARK: - Initialization
     
     init() {
-        Logger.navigation.info("ServicesCoordinator initialized")
+        AppLogger.navigation.info("ServicesCoordinator initialized")
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        Logger.navigation.info("ServicesCoordinator starting")
+        AppLogger.navigation.info("ServicesCoordinator starting")
         navigationPath = [.list]
     }
     
@@ -37,21 +37,21 @@ final class ServicesCoordinator: Coordinator {
     
     /// Shows the add service screen
     func showAddService() {
-        Logger.navigation.info("Showing add service screen")
+        AppLogger.navigation.info("Showing add service screen")
         navigate(to: .addService)
     }
     
     /// Shows configuration for a specific service
     /// - Parameter serviceId: The ID of the service to configure
     func showServiceConfiguration(serviceId: String) {
-        Logger.navigation.info("Showing service configuration: \(serviceId)")
+        AppLogger.navigation.info("Showing service configuration: \(serviceId)")
         navigate(to: .serviceConfiguration(serviceId: serviceId))
     }
     
     /// Shows the connection test screen for a service
     /// - Parameter serviceId: The ID of the service to test
     func showTestConnection(serviceId: String) {
-        Logger.navigation.info("Showing test connection: \(serviceId)")
+        AppLogger.navigation.info("Showing test connection: \(serviceId)")
         navigate(to: .testConnection(serviceId: serviceId))
     }
 }

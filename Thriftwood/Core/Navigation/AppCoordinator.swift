@@ -14,7 +14,7 @@ import SwiftUI
 /// but adapted for SwiftUI's NavigationStack pattern.
 @Observable
 @MainActor
-final class AppCoordinator: Coordinator {
+final class AppCoordinator: Coordinator, @unchecked Sendable {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any Coordinator] = []
@@ -34,13 +34,13 @@ final class AppCoordinator: Coordinator {
     // MARK: - Initialization
     
     init() {
-        Logger.navigation.info("AppCoordinator initialized")
+        AppLogger.navigation.info("AppCoordinator initialized")
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        Logger.navigation.info("AppCoordinator starting")
+        AppLogger.navigation.info("AppCoordinator starting")
         
         if hasCompletedOnboarding {
             showMainApp()
@@ -53,7 +53,7 @@ final class AppCoordinator: Coordinator {
     
     /// Shows the onboarding flow for first-time users
     func showOnboarding() {
-        Logger.navigation.info("Showing onboarding flow")
+        AppLogger.navigation.info("Showing onboarding flow")
         
         // Create and start onboarding coordinator
         let onboardingCoordinator = OnboardingCoordinator()
@@ -71,7 +71,7 @@ final class AppCoordinator: Coordinator {
     
     /// Shows the main app interface with tabs
     func showMainApp() {
-        Logger.navigation.info("Showing main app")
+        AppLogger.navigation.info("Showing main app")
         
         // Create and start tab coordinator
         let tabCoordinator = TabCoordinator()
@@ -86,7 +86,7 @@ final class AppCoordinator: Coordinator {
     
     /// Called when onboarding is completed
     private func onboardingDidComplete() {
-        Logger.navigation.info("Onboarding completed")
+        AppLogger.navigation.info("Onboarding completed")
         
         // Mark onboarding as complete
         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
@@ -102,7 +102,7 @@ final class AppCoordinator: Coordinator {
     
     /// Resets the app to show onboarding again (useful for testing)
     func resetOnboarding() {
-        Logger.navigation.info("Resetting onboarding state")
+        AppLogger.navigation.info("Resetting onboarding state")
         
         UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
         

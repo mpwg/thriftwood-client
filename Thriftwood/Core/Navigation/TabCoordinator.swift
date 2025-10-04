@@ -16,7 +16,7 @@ import SwiftUI
 /// has its own coordinator managing its navigation stack independently.
 @Observable
 @MainActor
-final class TabCoordinator: Coordinator {
+final class TabCoordinator: Coordinator, @unchecked Sendable {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any Coordinator] = []
@@ -36,13 +36,13 @@ final class TabCoordinator: Coordinator {
     // MARK: - Initialization
     
     init() {
-        Logger.navigation.info("TabCoordinator initialized")
+        AppLogger.navigation.info("TabCoordinator initialized")
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        Logger.navigation.info("TabCoordinator starting")
+        AppLogger.navigation.info("TabCoordinator starting")
         
         // Create coordinators for each tab
         setupDashboardCoordinator()
@@ -62,7 +62,7 @@ final class TabCoordinator: Coordinator {
         dashboardCoordinator = coordinator
         coordinator.start()
         
-        Logger.navigation.debug("Dashboard coordinator set up")
+        AppLogger.navigation.debug("Dashboard coordinator set up")
     }
     
     private func setupServicesCoordinator() {
@@ -72,7 +72,7 @@ final class TabCoordinator: Coordinator {
         servicesCoordinator = coordinator
         coordinator.start()
         
-        Logger.navigation.debug("Services coordinator set up")
+        AppLogger.navigation.debug("Services coordinator set up")
     }
     
     private func setupSettingsCoordinator() {
@@ -82,7 +82,7 @@ final class TabCoordinator: Coordinator {
         settingsCoordinator = coordinator
         coordinator.start()
         
-        Logger.navigation.debug("Settings coordinator set up")
+        AppLogger.navigation.debug("Settings coordinator set up")
     }
     
     // MARK: - Tab Selection
@@ -90,7 +90,7 @@ final class TabCoordinator: Coordinator {
     /// Switches to the specified tab
     /// - Parameter tab: The tab to switch to
     func select(tab: TabRoute) {
-        Logger.navigation.info("Switching to tab: \(String(describing: tab))")
+        AppLogger.navigation.info("Switching to tab: \(String(describing: tab))")
         selectedTab = tab
     }
     
@@ -98,7 +98,7 @@ final class TabCoordinator: Coordinator {
     /// - Parameter url: The deep link URL to handle
     /// - Returns: true if the URL was handled, false otherwise
     func handleDeepLink(_ url: URL) -> Bool {
-        Logger.navigation.info("Handling deep link: \(url.absoluteString)")
+        AppLogger.navigation.info("Handling deep link: \(url.absoluteString)")
         
         // Try to parse as dashboard route
         if let dashboardRoute = DashboardRoute.parse(from: url) {
@@ -121,7 +121,7 @@ final class TabCoordinator: Coordinator {
             return true
         }
         
-        Logger.navigation.warning("Deep link could not be parsed: \(url.absoluteString)")
+        AppLogger.navigation.warning("Deep link could not be parsed: \(url.absoluteString)")
         return false
     }
 }
