@@ -9,28 +9,28 @@ import Foundation
 import SwiftUI
 
 /// Protocol defining common ViewModel behavior
-@MainActor
+
 protocol BaseViewModel: AnyObject, Observable {
     /// Current loading state
-    var isLoading: Bool { get set }
+    @MainActor var isLoading: Bool { get set }
     
     /// Current error state
-    var error: ThriftwoodError? { get set }
+    @MainActor var error: ThriftwoodError? { get set }
     
     /// Whether the view model has data loaded
-    var hasData: Bool { get }
+    @MainActor var hasData: Bool { get }
     
     /// Load initial data
-    func load() async
+    @MainActor func load() async
     
     /// Reload data (refresh)
-    func reload() async
+    @MainActor func reload() async
     
     /// Handle error with optional custom action
     /// - Parameters:
     ///   - error: The error to handle
     ///   - customMessage: Optional custom error message
-    func handleError(_ error: any Error, customMessage: String?)
+    @MainActor func handleError(_ error: any Error, customMessage: String?)
 }
 
 /// Default implementations for BaseViewModel
