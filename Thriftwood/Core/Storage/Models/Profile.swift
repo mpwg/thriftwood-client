@@ -28,39 +28,11 @@ final class Profile {
     /// Timestamp when the profile was last modified
     var updatedAt: Date
     
-    // MARK: - Service Configurations (One-to-One Relationships)
+    // MARK: - Service Configurations (One-to-Many Relationship)
     
-    /// Radarr (movie management) configuration
-    @Relationship(deleteRule: .cascade, inverse: \RadarrConfiguration.profile)
-    var radarrConfiguration: RadarrConfiguration?
-    
-    /// Sonarr (TV show management) configuration
-    @Relationship(deleteRule: .cascade, inverse: \SonarrConfiguration.profile)
-    var sonarrConfiguration: SonarrConfiguration?
-    
-    /// Lidarr (music management) configuration
-    @Relationship(deleteRule: .cascade, inverse: \LidarrConfiguration.profile)
-    var lidarrConfiguration: LidarrConfiguration?
-    
-    /// SABnzbd (download client) configuration
-    @Relationship(deleteRule: .cascade, inverse: \SABnzbdConfiguration.profile)
-    var sabnzbdConfiguration: SABnzbdConfiguration?
-    
-    /// NZBGet (download client) configuration
-    @Relationship(deleteRule: .cascade, inverse: \NZBGetConfiguration.profile)
-    var nzbgetConfiguration: NZBGetConfiguration?
-    
-    /// Tautulli (Plex statistics) configuration
-    @Relationship(deleteRule: .cascade, inverse: \TautulliConfiguration.profile)
-    var tautulliConfiguration: TautulliConfiguration?
-    
-    /// Overseerr (media request management) configuration
-    @Relationship(deleteRule: .cascade, inverse: \OverseerrConfiguration.profile)
-    var overseerrConfiguration: OverseerrConfiguration?
-    
-    /// Wake on LAN configuration
-    @Relationship(deleteRule: .cascade, inverse: \WakeOnLANConfiguration.profile)
-    var wakeOnLANConfiguration: WakeOnLANConfiguration?
+    /// All service configurations for this profile
+    @Relationship(deleteRule: .cascade, inverse: \ServiceConfiguration.profile)
+    var serviceConfigurations: [ServiceConfiguration]
     
     // MARK: - Initialization
     
@@ -69,13 +41,15 @@ final class Profile {
         name: String,
         isEnabled: Bool = false,
         createdAt: Date = Date(),
-        updatedAt: Date = Date()
+        updatedAt: Date = Date(),
+        serviceConfigurations: [ServiceConfiguration] = []
     ) {
         self.id = id
         self.name = name
         self.isEnabled = isEnabled
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.serviceConfigurations = serviceConfigurations
     }
     
     // MARK: - Convenience Methods
@@ -87,13 +61,17 @@ final class Profile {
     
     /// Returns true if any service is configured and enabled in this profile
     func hasAnyServiceEnabled() -> Bool {
-        return (radarrConfiguration?.isEnabled ?? false) ||
-               (sonarrConfiguration?.isEnabled ?? false) ||
-               (lidarrConfiguration?.isEnabled ?? false) ||
-               (sabnzbdConfiguration?.isEnabled ?? false) ||
-               (nzbgetConfiguration?.isEnabled ?? false) ||
-               (tautulliConfiguration?.isEnabled ?? false) ||
-               (overseerrConfiguration?.isEnabled ?? false)
+        return serviceConfigurations.contains { $0.isEnabled }
+    }
+    
+    /// Get a specific service configuration by type
+    func serviceConfiguration(for type: ServiceType) -> ServiceConfiguration? {
+        return serviceConfigurations.first { $0.serviceType == type }
+    }
+    
+    /// Get all enabled service configurations
+    func enabledServices() -> [ServiceConfiguration] {
+        return serviceConfigurations.filter { $0.isEnabled }
     }
 }
 

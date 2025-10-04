@@ -7,34 +7,21 @@
 
 import Foundation
 
-/// Configuration for a service connection
-protocol ServiceConfiguration: Codable {
-    /// Base URL for the service
-    var baseURL: URL { get }
-    
-    /// API key or authentication token
-    var apiKey: String { get }
-    
-    /// Whether SSL certificate validation is enabled
-    var enableSSL: Bool { get }
-    
-    /// Validate configuration
-    /// - Throws: ThriftwoodError.invalidConfiguration if validation fails
-    func validate() throws
-}
+
 
 /// Base protocol for all media management services (Radarr, Sonarr, etc.)
 protocol MediaService {
-    associatedtype Configuration: ServiceConfiguration
+    // Note: Configuration type will be concrete service configuration model (e.g., RadarrConfiguration)
+    // associatedtype Configuration
     associatedtype Item: MediaItem
     
-    /// Current service configuration
-    var configuration: Configuration? { get }
+    // /// Current service configuration
+    // var configuration: Configuration? { get }
     
-    /// Configure the service with connection details
-    /// - Parameter config: Service configuration
-    /// - Throws: ThriftwoodError if configuration is invalid
-    func configure(_ config: Configuration) async throws
+    // /// Configure the service with connection details
+    // /// - Parameter config: Service configuration
+    // /// - Throws: ThriftwoodError if configuration is invalid
+    // func configure(_ config: Configuration) async throws
     
     /// Test the service connection
     /// - Returns: True if connection is successful
@@ -55,16 +42,17 @@ protocol MediaService {
 
 /// Base protocol for download client services (SABnzbd, NZBGet)
 protocol DownloadService {
-    associatedtype Configuration: ServiceConfiguration
+    // Note: Configuration type will be concrete service configuration model (e.g., SABnzbdConfiguration)
+    // associatedtype Configuration
     associatedtype QueueItem: DownloadQueueItem
     
-    /// Current service configuration
-    var configuration: Configuration? { get }
+    // /// Current service configuration
+    // var configuration: Configuration? { get }
     
-    /// Configure the service
-    /// - Parameter config: Service configuration
-    /// - Throws: ThriftwoodError if configuration is invalid
-    func configure(_ config: Configuration) async throws
+    // /// Configure the service
+    // /// - Parameter config: Service configuration
+    // /// - Throws: ThriftwoodError if configuration is invalid
+    // func configure(_ config: Configuration) async throws
     
     /// Test the service connection
     /// - Returns: True if connection is successful

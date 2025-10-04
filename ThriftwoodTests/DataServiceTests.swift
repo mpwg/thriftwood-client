@@ -127,39 +127,50 @@ struct DataServiceTests {
         let profile = Profile(name: "Test Profile")
         try dataService.createProfile(profile)
         
-        // Create Radarr configuration
-        let radarrConfig = RadarrConfiguration(
+        // Create Radarr configuration using unified ServiceConfiguration
+        let radarrConfig = ServiceConfiguration(
+            serviceType: .radarr,
             isEnabled: true,
             host: "https://radarr.example.com",
+            authenticationType: .apiKey,
             apiKey: "test-api-key",
             headers: ["X-Custom": "Value"]
         )
-        profile.radarrConfiguration = radarrConfig
+        profile.serviceConfigurations.append(radarrConfig)
         try dataService.updateProfile(profile)
         
         // Verify configuration is attached
         let fetched = try dataService.fetchProfile(named: "Test Profile")
-        #expect(fetched?.radarrConfiguration != nil)
-        #expect(fetched?.radarrConfiguration?.host == "https://radarr.example.com")
-        #expect(fetched?.radarrConfiguration?.apiKey == "test-api-key")
-        #expect(fetched?.radarrConfiguration?.headers["X-Custom"] == "Value")
+        let radarr = fetched?.serviceConfiguration(for: .radarr)
+        #expect(radarr != nil)
+        #expect(radarr?.host == "https://radarr.example.com")
+        #expect(radarr?.apiKey == "test-api-key")
+        #expect(radarr?.headers["X-Custom"] == "Value")
     }
     
     @Test("Profile cascade deletes service configurations")
     func profileCascadeDelete() async throws {
         let dataService = try makeTestDataService()
         
-        // Create profile with configurations
+        // Create profile with configurations using unified ServiceConfiguration
         let profile = Profile(name: "Test Profile")
-        profile.radarrConfiguration = RadarrConfiguration(
-            isEnabled: true,
-            host: "https://radarr.example.com",
-            apiKey: "key"
+        profile.serviceConfigurations.append(
+            ServiceConfiguration(
+                serviceType: .radarr,
+                isEnabled: true,
+                host: "https://radarr.example.com",
+                authenticationType: .apiKey,
+                apiKey: "key"
+            )
         )
-        profile.sonarrConfiguration = SonarrConfiguration(
-            isEnabled: true,
-            host: "https://sonarr.example.com",
-            apiKey: "key"
+        profile.serviceConfigurations.append(
+            ServiceConfiguration(
+                serviceType: .sonarr,
+                isEnabled: true,
+                host: "https://sonarr.example.com",
+                authenticationType: .apiKey,
+                apiKey: "key"
+            )
         )
         try dataService.createProfile(profile)
         
@@ -295,25 +306,31 @@ struct DataServiceTests {
     @Test("Service configuration validation")
     func serviceConfigurationValidation() async throws {
         // Valid configuration
-        let validConfig = RadarrConfiguration(
+        let validConfig = ServiceConfiguration(
+            serviceType: .radarr,
             isEnabled: true,
             host: "https://radarr.example.com",
+            authenticationType: .apiKey,
             apiKey: "valid-key"
         )
         #expect(validConfig.isValid() == true)
         
         // Invalid - empty API key
-        let invalidKey = RadarrConfiguration(
+        let invalidKey = ServiceConfiguration(
+            serviceType: .radarr,
             isEnabled: true,
             host: "https://radarr.example.com",
+            authenticationType: .apiKey,
             apiKey: ""
         )
         #expect(invalidKey.isValid() == false)
         
         // Invalid - bad URL
-        let invalidURL = RadarrConfiguration(
+        let invalidURL = ServiceConfiguration(
+            serviceType: .radarr,
             isEnabled: true,
             host: "not-a-url",
+            authenticationType: .apiKey,
             apiKey: "key"
         )
         #expect(invalidURL.isValid() == false)
@@ -321,18 +338,22 @@ struct DataServiceTests {
     
     @Test("NZBGet uses username/password instead of API key")
     func nzbgetAuthentication() async throws {
-        let config = NZBGetConfiguration(
+        let config = ServiceConfiguration(
+            serviceType: .nzbget,
             isEnabled: true,
             host: "https://nzbget.example.com",
+            authenticationType: .usernamePassword,
             username: "admin",
             password: "secret"
         )
         #expect(config.isValid() == true)
         
         // Invalid without password
-        let invalidConfig = NZBGetConfiguration(
+        let invalidConfig = ServiceConfiguration(
+            serviceType: .nzbget,
             isEnabled: true,
             host: "https://nzbget.example.com",
+            authenticationType: .usernamePassword,
             username: "admin",
             password: ""
         )
@@ -342,16 +363,20 @@ struct DataServiceTests {
     @Test("Wake on LAN MAC address validation")
     func wakeOnLANValidation() async throws {
         // Valid MAC address
-        let valid = WakeOnLANConfiguration(
+        let valid = ServiceConfiguration(
+            serviceType: .wakeOnLAN,
             isEnabled: true,
+            authenticationType: .none,
             broadcastAddress: "192.168.1.255",
             macAddress: "AA:BB:CC:DD:EE:FF"
         )
         #expect(valid.isValid() == true)
         
         // Invalid MAC address format
-        let invalid = WakeOnLANConfiguration(
+        let invalid = ServiceConfiguration(
+            serviceType: .wakeOnLAN,
             isEnabled: true,
+            authenticationType: .none,
             broadcastAddress: "192.168.1.255",
             macAddress: "invalid-mac"
         )

@@ -528,7 +528,6 @@ Successfully mapped all Flutter/Hive structures:
 - [ ] Implement KeychainService wrapper
 - [ ] Create secure storage for API keys
 - [ ] Add biometric authentication support
-- [ ] Implement credential migration from legacy app
 
 ### Task 2.3: User Preferences
 

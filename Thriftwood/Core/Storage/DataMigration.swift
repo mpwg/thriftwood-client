@@ -30,14 +30,7 @@ enum SchemaV1: VersionedSchema {
         return [
             Profile.self,
             AppSettings.self,
-            RadarrConfiguration.self,
-            SonarrConfiguration.self,
-            LidarrConfiguration.self,
-            SABnzbdConfiguration.self,
-            NZBGetConfiguration.self,
-            TautulliConfiguration.self,
-            OverseerrConfiguration.self,
-            WakeOnLANConfiguration.self,
+            ServiceConfiguration.self,
             Indexer.self,
             ExternalModule.self
         ]

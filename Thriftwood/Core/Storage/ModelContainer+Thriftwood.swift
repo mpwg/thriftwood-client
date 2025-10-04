@@ -16,15 +16,8 @@ extension ModelContainer {
             Profile.self,
             AppSettings.self,
             
-            // Service configurations
-            RadarrConfiguration.self,
-            SonarrConfiguration.self,
-            LidarrConfiguration.self,
-            SABnzbdConfiguration.self,
-            NZBGetConfiguration.self,
-            TautulliConfiguration.self,
-            OverseerrConfiguration.self,
-            WakeOnLANConfiguration.self,
+            // Unified service configuration
+            ServiceConfiguration.self,
             
             // Search and external modules
             Indexer.self,
@@ -48,14 +41,7 @@ extension ModelContainer {
         let schema = Schema([
             Profile.self,
             AppSettings.self,
-            RadarrConfiguration.self,
-            SonarrConfiguration.self,
-            LidarrConfiguration.self,
-            SABnzbdConfiguration.self,
-            NZBGetConfiguration.self,
-            TautulliConfiguration.self,
-            OverseerrConfiguration.self,
-            WakeOnLANConfiguration.self,
+            ServiceConfiguration.self,
             Indexer.self,
             ExternalModule.self
         ])
