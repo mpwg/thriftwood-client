@@ -9,7 +9,6 @@ import Foundation
 
 /// Protocol defining keychain service operations
 /// Allows for dependency injection and mock implementations in tests
-@MainActor
 protocol KeychainServiceProtocol {
     
     // MARK: - API Key Storage

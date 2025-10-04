@@ -11,7 +11,6 @@ import Valet
 
 /// Service for managing secure credential storage
 /// Stores API keys, passwords, and other sensitive data in the iOS/macOS Keychain
-@MainActor
 final class KeychainService: KeychainServiceProtocol {
     
     // MARK: - Properties

@@ -11,7 +11,6 @@ import Foundation
 
 /// Mock keychain service that stores credentials in memory for testing
 /// Does not require keychain entitlements and provides clean state for each test
-@MainActor
 final class MockKeychainService: KeychainServiceProtocol {
     
     // MARK: - Properties
