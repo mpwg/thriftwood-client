@@ -1,0 +1,150 @@
+//
+//  AppSettings.swift
+//  Thriftwood
+//
+//  SwiftData model for app-wide settings and preferences
+//  Replaces Flutter/Hive thriftwoodDatabase settings and UserDefaults
+//
+
+import Foundation
+import SwiftData
+
+@Model
+final class AppSettings {
+    /// Unique identifier (singleton pattern - only one instance should exist)
+    @Attribute(.unique) var id: UUID
+    
+    // MARK: - Profile Management
+    
+    /// Name of the currently enabled/active profile
+    var enabledProfileName: String
+    
+    // MARK: - Theme Settings
+    
+    /// Whether AMOLED black theme is enabled (pure black for OLED screens)
+    var themeAMOLED: Bool
+    
+    /// Whether to show borders in AMOLED mode
+    var themeAMOLEDBorder: Bool
+    
+    /// Opacity for image backgrounds (0-100)
+    var themeImageBackgroundOpacity: Int
+    
+    // MARK: - Drawer/Navigation Settings
+    
+    /// Whether Android back button opens drawer (mobile-specific)
+    var androidBackOpensDrawer: Bool
+    
+    /// Whether to automatically manage drawer module order
+    var drawerAutomaticManage: Bool
+    
+    /// Manual order of drawer modules (stored as array of module keys)
+    var drawerManualOrder: [String]
+    
+    // MARK: - Networking Settings
+    
+    /// Whether to validate TLS/SSL certificates (disable for self-signed certs)
+    var networkingTLSValidation: Bool
+    
+    // MARK: - Quick Actions Settings
+    
+    /// Whether Lidarr quick action is enabled
+    var quickActionsLidarr: Bool
+    
+    /// Whether Radarr quick action is enabled
+    var quickActionsRadarr: Bool
+    
+    /// Whether Sonarr quick action is enabled
+    var quickActionsSonarr: Bool
+    
+    /// Whether NZBGet quick action is enabled
+    var quickActionsNZBGet: Bool
+    
+    /// Whether SABnzbd quick action is enabled
+    var quickActionsSABnzbd: Bool
+    
+    /// Whether Overseerr quick action is enabled
+    var quickActionsOverseerr: Bool
+    
+    /// Whether Tautulli quick action is enabled
+    var quickActionsTautulli: Bool
+    
+    /// Whether Search quick action is enabled
+    var quickActionsSearch: Bool
+    
+    // MARK: - Display Settings
+    
+    /// Whether to use 24-hour time format (vs 12-hour AM/PM)
+    var use24HourTime: Bool
+    
+    /// Whether to enable in-app notifications
+    var enableInAppNotifications: Bool
+    
+    // MARK: - App Metadata
+    
+    /// Last build version shown in changelog (for tracking updates)
+    var changelogLastBuildVersion: Int
+    
+    /// Timestamp when settings were last updated
+    var updatedAt: Date
+    
+    init(
+        id: UUID = UUID(),
+        enabledProfileName: String = Profile.defaultProfileName,
+        themeAMOLED: Bool = false,
+        themeAMOLEDBorder: Bool = false,
+        themeImageBackgroundOpacity: Int = 20,
+        androidBackOpensDrawer: Bool = true,
+        drawerAutomaticManage: Bool = true,
+        drawerManualOrder: [String] = [],
+        networkingTLSValidation: Bool = false,
+        quickActionsLidarr: Bool = false,
+        quickActionsRadarr: Bool = false,
+        quickActionsSonarr: Bool = false,
+        quickActionsNZBGet: Bool = false,
+        quickActionsSABnzbd: Bool = false,
+        quickActionsOverseerr: Bool = false,
+        quickActionsTautulli: Bool = false,
+        quickActionsSearch: Bool = false,
+        use24HourTime: Bool = false,
+        enableInAppNotifications: Bool = true,
+        changelogLastBuildVersion: Int = 0,
+        updatedAt: Date = Date()
+    ) {
+        self.id = id
+        self.enabledProfileName = enabledProfileName
+        self.themeAMOLED = themeAMOLED
+        self.themeAMOLEDBorder = themeAMOLEDBorder
+        self.themeImageBackgroundOpacity = themeImageBackgroundOpacity
+        self.androidBackOpensDrawer = androidBackOpensDrawer
+        self.drawerAutomaticManage = drawerAutomaticManage
+        self.drawerManualOrder = drawerManualOrder
+        self.networkingTLSValidation = networkingTLSValidation
+        self.quickActionsLidarr = quickActionsLidarr
+        self.quickActionsRadarr = quickActionsRadarr
+        self.quickActionsSonarr = quickActionsSonarr
+        self.quickActionsNZBGet = quickActionsNZBGet
+        self.quickActionsSABnzbd = quickActionsSABnzbd
+        self.quickActionsOverseerr = quickActionsOverseerr
+        self.quickActionsTautulli = quickActionsTautulli
+        self.quickActionsSearch = quickActionsSearch
+        self.use24HourTime = use24HourTime
+        self.enableInAppNotifications = enableInAppNotifications
+        self.changelogLastBuildVersion = changelogLastBuildVersion
+        self.updatedAt = updatedAt
+    }
+}
+
+// MARK: - Default Settings
+
+extension AppSettings {
+    /// Creates default app settings on first launch
+    static func createDefault() -> AppSettings {
+        return AppSettings()
+    }
+    
+    /// Updates the `updatedAt` timestamp
+    func markAsUpdated() {
+        self.updatedAt = Date()
+    }
+}

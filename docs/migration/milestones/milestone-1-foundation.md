@@ -356,13 +356,170 @@ See `/docs/AsyncHTTPClient-Integration.md` for:
 
 ### Task 2.1: SwiftData Setup
 
-**Estimated Time**: 6 hours
+**Estimated Time**: 6 hours  
+**Actual Time**: 4 hours  
+**Status**: ✅ COMPLETE  
+**Implementation Date**: 2025-10-04
 
-- [ ] Define SwiftData models for profiles
-- [ ] Define models for service configurations
-- [ ] Setup model container and context
-- [ ] Implement migration support
-- [ ] Create data persistence service
+**Implementation Summary**:
+
+Implemented comprehensive SwiftData models and persistence layer to replace Flutter/Hive database. All legacy data structures have been migrated to Swift 6-native SwiftData models.
+
+**Completed Components**:
+
+1. **Profile Model** (`Core/Storage/Models/Profile.swift`)
+
+   - Multi-profile support with one-to-one relationships to service configurations
+   - Automatic cascade deletion of related configurations
+   - Profile switching and default profile creation
+   - `hasAnyServiceEnabled()` convenience method
+
+2. **Service Configuration Models** (`Core/Storage/Models/*.swift`)
+
+   - `RadarrConfiguration` - Movie management (API key auth)
+   - `SonarrConfiguration` - TV show management (API key auth)
+   - `LidarrConfiguration` - Music management (API key auth)
+   - `SABnzbdConfiguration` - Download client (API key auth)
+   - `NZBGetConfiguration` - Download client (username/password auth)
+   - `TautulliConfiguration` - Plex statistics (API key auth)
+   - `OverseerrConfiguration` - Media requests (API key auth)
+   - `WakeOnLANConfiguration` - Network wake-up (broadcast + MAC address)
+   - All models support custom HTTP headers (native Codable dictionary storage)
+   - Protocol-based validation via `ServiceConfigurationProtocol`
+
+3. **Indexer and ExternalModule Models**
+
+   - `Indexer` - Search indexers (Newznab/Torznab providers)
+   - `ExternalModule` - External web links for dashboard
+
+4. **AppSettings Model** (`Core/Storage/Models/AppSettings.swift`)
+
+   - Singleton model replacing all UserDefaults storage
+   - Theme settings (AMOLED, borders, background opacity)
+   - Navigation/drawer settings
+   - Quick actions configuration for all services
+   - Networking options (TLS validation)
+   - Display preferences (24-hour time, notifications)
+   - Active profile tracking
+
+5. **ModelContainer Setup** (`Core/Storage/ModelContainer+Thriftwood.swift`)
+
+   - `thriftwoodContainer()` - Production container with disk persistence
+   - `inMemoryContainer()` - Testing container
+   - Configured with all 13 model types
+
+6. **DataService** (`Core/Storage/DataService.swift`)
+
+   - @MainActor isolated for UI safety
+   - Profile CRUD operations with profile switching
+   - AppSettings singleton management
+   - Indexer and ExternalModule CRUD
+   - Bootstrap method for first-launch setup
+   - Reset method for testing/debugging
+   - Type-safe FetchDescriptor queries with predicates
+
+7. **Migration Support** (`Core/Storage/DataMigration.swift`)
+
+   - Schema versioning (SchemaV1 initial release)
+   - `ThriftwoodMigrationPlan` for future migrations
+   - `LegacyDataMigration` service (placeholder for future Hive import)
+   - SwiftData automatic migration support
+
+8. **App Integration** (`ThriftwoodApp.swift`)
+   - ModelContainer initialization with error handling
+   - DataService bootstrap on app launch
+   - Proper @State lifecycle management
+
+**Key Architectural Decisions**:
+
+1. **Native SwiftData Features**:
+
+   - No custom transformers needed - SwiftData handles `[String: String]` natively
+   - Codable conformance for all models
+   - @Attribute(.unique) for singleton enforcement
+   - Cascade delete rules for relationships
+
+2. **Separate Models Per Service**:
+
+   - Cleaner than single "god object" profile
+   - Easier to test and maintain
+   - Natural relationships via SwiftData
+
+3. **Protocol-Based Validation**:
+
+   - `ServiceConfigurationProtocol` for common validation logic
+   - Each service can override with custom rules
+   - URL and authentication validation
+
+4. **@MainActor Isolation**:
+   - All SwiftData operations on main actor
+   - Safe for SwiftUI integration
+   - Consistent with Swift 6 concurrency
+
+**Tests** (Swift Testing):
+
+- ✅ 22 comprehensive tests in `DataServiceTests.swift`
+- Profile CRUD operations (create, read, update, delete, switch)
+- Service configuration attachment and cascade deletion
+- AppSettings singleton behavior
+- Indexer and ExternalModule CRUD
+- Validation logic (URLs, API keys, MAC addresses)
+- Bootstrap and reset functionality
+- **All tests passing** ✅
+
+**Files Created**:
+
+- `Thriftwood/Core/Storage/Models/Profile.swift` (125 lines)
+- `Thriftwood/Core/Storage/Models/ServiceConfiguration.swift` (29 lines)
+- `Thriftwood/Core/Storage/Models/RadarrConfiguration.swift` (52 lines)
+- `Thriftwood/Core/Storage/Models/SonarrConfiguration.swift` (52 lines)
+- `Thriftwood/Core/Storage/Models/LidarrConfiguration.swift` (52 lines)
+- `Thriftwood/Core/Storage/Models/SABnzbdConfiguration.swift` (52 lines)
+- `Thriftwood/Core/Storage/Models/NZBGetConfiguration.swift` (58 lines)
+- `Thriftwood/Core/Storage/Models/TautulliConfiguration.swift` (52 lines)
+- `Thriftwood/Core/Storage/Models/OverseerrConfiguration.swift` (52 lines)
+- `Thriftwood/Core/Storage/Models/WakeOnLANConfiguration.swift` (53 lines)
+- `Thriftwood/Core/Storage/Models/Indexer.swift` (56 lines)
+- `Thriftwood/Core/Storage/Models/ExternalModule.swift` (47 lines)
+- `Thriftwood/Core/Storage/Models/AppSettings.swift` (172 lines)
+- `Thriftwood/Core/Storage/ModelContainer+Thriftwood.swift` (68 lines)
+- `Thriftwood/Core/Storage/DataService.swift` (230 lines)
+- `Thriftwood/Core/Storage/DataMigration.swift` (132 lines)
+- `Thriftwood/Core/Storage/DictionaryTransformer.swift` (21 lines)
+- `ThriftwoodTests/DataServiceTests.swift` (379 lines - 22 tests)
+- Updated `Thriftwood/ThriftwoodApp.swift` (bootstrap integration)
+
+**Migration from Legacy**:
+
+Successfully mapped all Flutter/Hive structures:
+
+| Legacy (Hive)                | Swift (SwiftData)             |
+| ---------------------------- | ----------------------------- |
+| `LunaProfile`                | `Profile`                     |
+| `profile.radarr*` fields     | `RadarrConfiguration`         |
+| `profile.sonarr*` fields     | `SonarrConfiguration`         |
+| `profile.lidarr*` fields     | `LidarrConfiguration`         |
+| `profile.sabnzbd*` fields    | `SABnzbdConfiguration`        |
+| `profile.nzbget*` fields     | `NZBGetConfiguration`         |
+| `profile.tautulli*` fields   | `TautulliConfiguration`       |
+| `profile.overseerr*` fields  | `OverseerrConfiguration`      |
+| `profile.wakeOnLAN*` fields  | `WakeOnLANConfiguration`      |
+| `LunaIndexer`                | `Indexer`                     |
+| `LunaExternalModule`         | `ExternalModule`              |
+| `thriftwoodDatabase` (Hive)  | `AppSettings`                 |
+| `UserDefaults` storage       | `AppSettings` (in SwiftData)  |
+| Hive boxes (separate tables) | SwiftData entities (one file) |
+
+**Known Issues**:
+
+- None - all tests passing ✅
+
+**Next Steps**:
+
+- Proceed to Task 2.2: Keychain Integration
+- API keys will be stored in Keychain (not SwiftData)
+- SwiftData stores URLs, usernames, and settings
+- Credentials will be moved to secure storage
 
 ### Task 2.2: Keychain Integration
 
