@@ -15,10 +15,12 @@ import Combine
 final class DataService {
     private let modelContainer: ModelContainer
     private let modelContext: ModelContext
+    private let keychainService: KeychainService
     
-    init(modelContainer: ModelContainer) {
+    init(modelContainer: ModelContainer, keychainService: KeychainService = KeychainService()) {
         self.modelContainer = modelContainer
         self.modelContext = modelContainer.mainContext
+        self.keychainService = keychainService
     }
     
     // MARK: - Profile Operations
@@ -109,6 +111,68 @@ final class DataService {
         // SwiftData will automatically manage relationships
         // Just save the context
         try modelContext.save()
+    }
+    
+    // MARK: - Credential Operations
+    
+    /// Saves API key for a service configuration to Keychain
+    /// - Parameters:
+    ///   - apiKey: The API key to store securely
+    ///   - configuration: The service configuration
+    func saveAPIKey(_ apiKey: String, for configuration: ServiceConfiguration) throws {
+        try keychainService.saveAPIKey(apiKey, for: configuration.id)
+    }
+    
+    /// Retrieves API key for a service configuration from Keychain
+    /// - Parameter configuration: The service configuration
+    /// - Returns: The API key if found, nil otherwise
+    func getAPIKey(for configuration: ServiceConfiguration) -> String? {
+        keychainService.getAPIKey(for: configuration.id)
+    }
+    
+    /// Saves username and password for a service configuration to Keychain
+    /// - Parameters:
+    ///   - username: The username to store securely
+    ///   - password: The password to store securely
+    ///   - configuration: The service configuration
+    func saveUsernamePassword(username: String, password: String, for configuration: ServiceConfiguration) throws {
+        try keychainService.saveUsernamePassword(username: username, password: password, for: configuration.id)
+    }
+    
+    /// Retrieves username and password for a service configuration from Keychain
+    /// - Parameter configuration: The service configuration
+    /// - Returns: Tuple of (username, password) if found, nil otherwise
+    func getUsernamePassword(for configuration: ServiceConfiguration) -> (username: String, password: String)? {
+        keychainService.getUsernamePassword(for: configuration.id)
+    }
+    
+    /// Deletes all credentials for a service configuration from Keychain
+    /// - Parameter configuration: The service configuration
+    func deleteCredentials(for configuration: ServiceConfiguration) throws {
+        try keychainService.deleteCredentials(for: configuration.id)
+    }
+    
+    /// Validates a service configuration including credentials
+    /// - Parameter configuration: The service configuration to validate
+    /// - Returns: True if valid (including required credentials), false otherwise
+    func validateServiceConfiguration(_ configuration: ServiceConfiguration) -> Bool {
+        // First validate the basic configuration
+        guard configuration.isValid() else { return false }
+        
+        // Skip credential validation if service is disabled
+        guard configuration.isEnabled else { return true }
+        
+        // Check credentials based on authentication type
+        switch configuration.authenticationType {
+        case .apiKey:
+            let apiKey = getAPIKey(for: configuration)
+            return apiKey != nil && !apiKey!.isEmpty
+        case .usernamePassword:
+            let credentials = getUsernamePassword(for: configuration)
+            return credentials != nil && !credentials!.username.isEmpty && !credentials!.password.isEmpty
+        case .none:
+            return true
+        }
     }
     
     // MARK: - Indexer Operations
@@ -214,6 +278,9 @@ final class DataService {
         if let settings = try modelContext.fetch(descriptor).first {
             modelContext.delete(settings)
         }
+        
+        // Delete all credentials from Keychain
+        try keychainService.deleteAllCredentials()
         
         try modelContext.save()
     }
