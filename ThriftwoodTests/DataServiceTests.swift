@@ -149,7 +149,7 @@ struct DataServiceTests {
         #expect(radarr?.headers["X-Custom"] == "Value")
         
         // Verify API key is stored in Keychain
-        let apiKey = try dataService.getAPIKey(for: radarrConfig)
+        let apiKey = dataService.getAPIKey(for: radarrConfig)
         #expect(apiKey == "test-api-key")
     }
     
@@ -352,14 +352,14 @@ struct DataServiceTests {
         )
         
         // Should be invalid without API key in Keychain
-        let isValidWithoutKey = try dataService.validateServiceConfiguration(apiKeyConfig)
+        let isValidWithoutKey = dataService.validateServiceConfiguration(apiKeyConfig)
         #expect(isValidWithoutKey == false)
         
         // Save API key
         try dataService.saveAPIKey("test-key", for: apiKeyConfig)
         
         // Should now be valid
-        let isValidWithKey = try dataService.validateServiceConfiguration(apiKeyConfig)
+        let isValidWithKey = dataService.validateServiceConfiguration(apiKeyConfig)
         #expect(isValidWithKey == true)
     }
     
@@ -375,18 +375,18 @@ struct DataServiceTests {
         )
         
         // Should be invalid without credentials
-        let isValidWithoutCreds = try dataService.validateServiceConfiguration(config)
+        let isValidWithoutCreds = dataService.validateServiceConfiguration(config)
         #expect(isValidWithoutCreds == false)
         
         // Save credentials
         try dataService.saveUsernamePassword(username: "admin", password: "secret", for: config)
         
         // Should now be valid
-        let isValidWithCreds = try dataService.validateServiceConfiguration(config)
+        let isValidWithCreds = dataService.validateServiceConfiguration(config)
         #expect(isValidWithCreds == true)
         
         // Verify credentials can be retrieved
-        let creds = try dataService.getUsernamePassword(for: config)
+        let creds = dataService.getUsernamePassword(for: config)
         #expect(creds?.username == "admin")
         #expect(creds?.password == "secret")
         

@@ -21,11 +21,11 @@ enum OnboardingRoute: Hashable, Sendable {
 /// Coordinator that manages the onboarding flow for new users.
 /// This is a child coordinator that reports back to AppCoordinator when complete.
 @MainActor
-final class OnboardingCoordinator: @MainActor Coordinator, Sendable {
+final class OnboardingCoordinator: @MainActor CoordinatorProtocol, Sendable {
     // MARK: - Coordinator Protocol
     
-    var childCoordinators: [any Coordinator] = []
-    weak var parent: (any Coordinator)?
+    var childCoordinators: [any CoordinatorProtocol] = []
+    weak var parent: (any CoordinatorProtocol)?
     var navigationPath: [OnboardingRoute] = []
     
     // MARK: - Properties
