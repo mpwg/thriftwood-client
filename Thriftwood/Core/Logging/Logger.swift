@@ -15,6 +15,7 @@ enum LogCategory: String {
     case authentication = "Authentication"
     case ui = "UI"
     case services = "Services"
+    case navigation = "Navigation"
     case general = "General"
 }
 
@@ -122,5 +123,6 @@ extension AppLogger {
     nonisolated static let authentication = AppLogger(category: .authentication)
     nonisolated static let ui = AppLogger(category: .ui)
     nonisolated static let services = AppLogger(category: .services)
+    nonisolated static let navigation = AppLogger(category: .navigation)
     nonisolated static let general = AppLogger(category: .general)
 }
