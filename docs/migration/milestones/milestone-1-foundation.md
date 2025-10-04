@@ -288,19 +288,19 @@ import AsyncHTTPClient
 // In service implementation
 final class RadarrService {
     private let httpClient: HTTPClient
-    
+
     init(httpClient: HTTPClient) {
         self.httpClient = httpClient
     }
-    
+
     func getMovies() async throws -> [Movie] {
         var request = HTTPClientRequest(url: "\(baseURL)/api/v3/movie")
         request.method = .GET
         request.headers.add(name: "X-Api-Key", value: apiKey)
-        
+
         let response = try await httpClient.execute(request, timeout: .seconds(30))
         let data = try await response.body.collect(upTo: 10 * 1024 * 1024)
-        
+
         return try JSONDecoder().decode([Movie].self, from: Data(buffer: data))
     }
 }

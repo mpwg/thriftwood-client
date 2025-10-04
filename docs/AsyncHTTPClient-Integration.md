@@ -62,22 +62,22 @@ actor RadarrService {
     private let httpClient: HTTPClient
     private let baseURL: String
     private let apiKey: String
-    
+
     init(httpClient: HTTPClient, profile: ServiceProfile) {
         self.httpClient = httpClient
         self.baseURL = profile.baseURL
         self.apiKey = profile.apiKey
     }
-    
+
     func getMovies() async throws -> [Movie] {
         // Create request with HTTPTypes
         var request = HTTPClientRequest(url: "\(baseURL)/api/v3/movie")
         request.method = .GET
         request.headers.add(name: "X-Api-Key", value: apiKey)
-        
+
         // Execute request
         let response = try await httpClient.execute(request, timeout: .seconds(30))
-        
+
         // Handle response
         guard response.status == .ok else {
             throw ThriftwoodError.apiError(
@@ -85,10 +85,10 @@ actor RadarrService {
                 message: "Failed to fetch movies"
             )
         }
-        
+
         // Stream body data
         let body = try await response.body.collect(upTo: 10 * 1024 * 1024) // 10MB max
-        
+
         // Decode JSON
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -110,17 +110,17 @@ struct RadarrServiceTests {
     func testFetchMovies() async throws {
         let httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
         defer { try? httpClient.syncShutdown() }
-        
+
         let profile = ServiceProfile(
             baseURL: "http://localhost:7878",
             apiKey: "test-key"
         )
-        
+
         let service = RadarrService(
             httpClient: httpClient,
             profile: profile
         )
-        
+
         // Start mock server or use real test instance
         let movies = try await service.getMovies()
         #expect(!movies.isEmpty)
@@ -139,7 +139,7 @@ func performRequest<T: Decodable>(
 ) async throws -> T {
     do {
         let response = try await httpClient.execute(request, timeout: .seconds(30))
-        
+
         guard response.status == .ok else {
             // Map HTTP errors to ThriftwoodError
             throw ThriftwoodError.apiError(
@@ -147,10 +147,10 @@ func performRequest<T: Decodable>(
                 message: response.status.reasonPhrase
             )
         }
-        
+
         let body = try await response.body.collect(upTo: 10 * 1024 * 1024)
         return try JSONDecoder().decode(T.self, from: Data(buffer: body))
-        
+
     } catch let error as HTTPClientError {
         // Map connection errors
         throw ThriftwoodError.networkError(error.localizedDescription)
@@ -168,25 +168,25 @@ func performRequest<T: Decodable>(
 HTTPClient.Configuration(
     // TLS configuration
     tlsConfiguration: .makeClientConfiguration(),
-    
+
     // Redirect handling
     redirectConfiguration: .follow(max: 5, allowCycles: false),
-    
+
     // Timeout settings
     timeout: HTTPClient.Configuration.Timeout(
         connect: .seconds(10),
         read: .seconds(30)
     ),
-    
+
     // Connection pool
     connectionPool: HTTPClient.Configuration.ConnectionPool(
         idleTimeout: .seconds(60),
         concurrentHTTP1ConnectionsPerHostSoftLimit: 8
     ),
-    
+
     // Proxy settings (if needed)
     proxy: nil,
-    
+
     // HTTP version preference
     httpVersion: .automatic // Prefers HTTP/2
 )

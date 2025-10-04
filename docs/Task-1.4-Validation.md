@@ -82,12 +82,12 @@ container.register(HTTPClient.self) { _ in
 // Use directly in services (Milestone 2)
 actor RadarrService {
     private let httpClient: HTTPClient
-    
+
     func getMovies() async throws -> [Movie] {
         var request = HTTPClientRequest(url: "\(baseURL)/api/v3/movie")
         request.method = .GET
         request.headers.add(name: "X-Api-Key", value: apiKey)
-        
+
         let response = try await httpClient.execute(request, timeout: .seconds(30))
         // ... handle response
     }
