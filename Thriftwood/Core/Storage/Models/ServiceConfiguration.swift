@@ -32,9 +32,7 @@ final class ServiceConfiguration {
     var isEnabled: Bool
     var host: String
     var authenticationType: AuthenticationType
-    var apiKey: String
-    var username: String
-    var password: String
+    // Note: apiKey, username, and password are stored in Keychain, not SwiftData
     var broadcastAddress: String
     var macAddress: String
     var headers: [String: String]
@@ -46,9 +44,6 @@ final class ServiceConfiguration {
         isEnabled: Bool = false,
         host: String = "",
         authenticationType: AuthenticationType = .apiKey,
-        apiKey: String = "",
-        username: String = "",
-        password: String = "",
         broadcastAddress: String = "",
         macAddress: String = "",
         headers: [String: String] = [:]
@@ -58,9 +53,6 @@ final class ServiceConfiguration {
         self.isEnabled = isEnabled
         self.host = host
         self.authenticationType = authenticationType
-        self.apiKey = apiKey
-        self.username = username
-        self.password = password
         self.broadcastAddress = broadcastAddress
         self.macAddress = macAddress
         self.headers = headers
@@ -68,13 +60,15 @@ final class ServiceConfiguration {
 }
 
 extension ServiceConfiguration {
+    /// Validates the configuration (excluding credentials which are in Keychain)
+    /// - Note: Credential validation should be done separately via KeychainService
     func isValid() -> Bool {
         guard isEnabled else { return true }
         switch serviceType {
         case .radarr, .sonarr, .lidarr, .sabnzbd, .tautulli, .overseerr:
-            return isHostValid() && !apiKey.isEmpty
+            return isHostValid()
         case .nzbget:
-            return isHostValid() && !username.isEmpty && !password.isEmpty
+            return isHostValid()
         case .wakeOnLAN:
             return !broadcastAddress.isEmpty && !macAddress.isEmpty && isMACAddressValid()
         }

@@ -14,11 +14,11 @@ import SwiftUI
 /// but adapted for SwiftUI's NavigationStack pattern.
 @Observable
 @MainActor
-final class AppCoordinator: @MainActor Coordinator,  Sendable {
+final class AppCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     // MARK: - Coordinator Protocol
     
-    var childCoordinators: [any Coordinator] = []
-    weak var parent: (any Coordinator)?
+    var childCoordinators: [any CoordinatorProtocol] = []
+    weak var parent: (any CoordinatorProtocol)?
     var navigationPath: [AppRoute] = []
     
     // MARK: - Properties
@@ -29,7 +29,7 @@ final class AppCoordinator: @MainActor Coordinator,  Sendable {
     }
     
     /// The current active child coordinator (tab coordinator or onboarding)
-    private(set) var activeCoordinator: (any Coordinator)?
+    private(set) var activeCoordinator: (any CoordinatorProtocol)?
     
     // MARK: - Initialization
     

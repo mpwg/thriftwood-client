@@ -20,17 +20,17 @@ import SwiftUI
 /// - https://www.hackingwithswift.com/articles/175/advanced-coordinator-pattern-tutorial-ios
 ///
 @MainActor
-protocol Coordinator: AnyObject {
+protocol CoordinatorProtocol: AnyObject {
     /// The type of route this coordinator handles
     associatedtype Route: Hashable
     
     /// Array of child coordinators managed by this coordinator.
     /// Child coordinators should be added when creating sub-flows and removed when finished.
-    var childCoordinators: [any Coordinator] { get set }
+    var childCoordinators: [any CoordinatorProtocol] { get set }
     
     /// Reference to the parent coordinator (if this is a child coordinator).
     /// Use `weak` to avoid retain cycles since parent owns the child.
-    var parent: (any Coordinator)? { get set }
+    var parent: (any CoordinatorProtocol)? { get set }
     
     /// The navigation path used with SwiftUI's NavigationStack.
     /// This replaces UINavigationController from the UIKit version.
@@ -53,12 +53,12 @@ protocol Coordinator: AnyObject {
     /// Called when a child coordinator has finished its work.
     /// The parent should remove the child from its childCoordinators array.
     /// - Parameter child: The child coordinator that finished
-    func childDidFinish(_ child: any Coordinator)
+    func childDidFinish(_ child: any CoordinatorProtocol)
 }
 
 // MARK: - Default Implementations
 
-extension Coordinator {
+extension CoordinatorProtocol {
     /// Default implementation for navigating to a route
     func navigate(to route: Route) {
         navigationPath.append(route)
@@ -77,7 +77,7 @@ extension Coordinator {
     
     /// Default implementation for cleaning up child coordinators.
     /// Uses identity comparison (===) to find the specific child coordinator.
-    func childDidFinish(_ child: any Coordinator) {
+    func childDidFinish(_ child: any CoordinatorProtocol) {
         for (index, coordinator) in childCoordinators.enumerated() {
             if coordinator === child {
                 childCoordinators.remove(at: index)

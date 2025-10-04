@@ -82,7 +82,7 @@ Implemented complete core architecture following clean architecture principles w
    - `HTTPMethod` and `HTTPHeaders` type aliases
    - Request/Response generic types
 
-7. **Base ViewModel** (`Core/DI/BaseViewModel.swift`)
+7. **Base ViewModel** (`Core/ViewModels/BaseViewModel.swift`)
    - `@Observable` protocol using Swift 6 Observation framework
    - `@MainActor` isolated for UI safety
    - Lifecycle methods (load, reload, cleanup)
