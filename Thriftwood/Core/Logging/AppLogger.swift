@@ -17,13 +17,7 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-//
-//
-//  AppLogger.swift
-//  Thriftwood
-//
-//  Created by Matthias Wallner-Géhri on 04.10.25.
-//
+
 
 
 import Foundation
