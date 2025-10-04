@@ -108,6 +108,15 @@ large_tuple:
 
 # Custom rules for maintainability
 custom_rules:
+  # MANDATORY: GPL-3.0 license header
+  gpl_license_header:
+    name: "GPL-3.0 License Header"
+    message: "All Swift files must include the GPL-3.0 license header. See .github/instructions/license-header.instructions.md"
+    regex: '^\/\/\n\/\/\s+\w+\.swift\n\/\/\s+Thriftwood\n\/\/\n\/\/\s+Thriftwood - Frontend for Media Management\n\/\/\s+Copyright \(C\) 202\d Matthias Wallner Géhri\n\/\/\n\/\/\s+This program is free software'
+    severity: error
+    match_kinds:
+      - comment
+
   # Encourage documentation for public APIs
   public_documentation:
     name: "Public Documentation"

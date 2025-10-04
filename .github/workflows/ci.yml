@@ -69,6 +69,12 @@ jobs:
       - name: Install SwiftLint
         run: brew install swiftlint
 
+      # Check GPL-3.0 license headers
+      - name: Check License Headers
+        run: |
+          ./scripts/check-license-headers.sh --check
+        continue-on-error: false # Fail CI if headers are missing
+
       # Run SwiftLint
       - name: Lint Code
         run: swiftlint lint --strict --reporter github-actions-logging
