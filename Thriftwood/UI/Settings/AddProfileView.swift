@@ -40,65 +40,63 @@ struct AddProfileView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    TextFieldRow(
-                        title: "Profile Name",
-                        placeholder: "e.g., Home, Work, Personal",
-                        subtitle: "A unique name for this profile",
-                        icon: "person.text.rectangle",
-                        text: $viewModel.profileName
-                    )
-                    .autocorrectionDisabled()
-                } header: {
-                    Text("Profile Information")
-                } footer: {
-                    if let validationError = viewModel.validationError {
-                        Text(validationError)
-                            .foregroundStyle(.red)
+        Form {
+            Section {
+                TextFieldRow(
+                    title: "Profile Name",
+                    placeholder: "e.g., Home, Work, Personal",
+                    subtitle: "A unique name for this profile",
+                    icon: "person.text.rectangle",
+                    text: $viewModel.profileName
+                )
+                .autocorrectionDisabled()
+            } header: {
+                Text("Profile Information")
+            } footer: {
+                if let validationError = viewModel.validationError {
+                    Text(validationError)
+                        .foregroundStyle(.red)
+                        .font(.caption)
+                }
+            }
+            
+            Section {
+                Toggle(isOn: $viewModel.switchAfterCreation) {
+                    VStack(alignment: .leading, spacing: Spacing.xxs) {
+                        Text("Switch to Profile")
+                        Text("Make this profile active after creation")
                             .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
-                
-                Section {
-                    Toggle(isOn: $viewModel.switchAfterCreation) {
-                        VStack(alignment: .leading, spacing: Spacing.xxs) {
-                            Text("Switch to Profile")
-                            Text("Make this profile active after creation")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                } header: {
-                    Text("Options")
+            } header: {
+                Text("Options")
+            }
+        }
+        .navigationTitle(viewModel.isEditing ? "Edit Profile" : "New Profile")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") {
+                    dismiss()
                 }
             }
-            .navigationTitle(viewModel.isEditing ? "Edit Profile" : "New Profile")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
+            
+            ToolbarItem(placement: .confirmationAction) {
+                Button(viewModel.isEditing ? "Save" : "Create") {
+                    Task {
+                        await saveProfile()
                     }
                 }
-                
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(viewModel.isEditing ? "Save" : "Create") {
-                        Task {
-                            await saveProfile()
-                        }
-                    }
-                    .disabled(!viewModel.isValid || viewModel.isSaving)
-                }
+                .disabled(!viewModel.isValid || viewModel.isSaving)
             }
-            .alert("Error", isPresented: .constant(viewModel.error != nil), presenting: viewModel.error) { _ in
-                Button("OK") {
-                    viewModel.error = nil
-                }
-            } message: { error in
-                Text(error.localizedDescription)
+        }
+        .alert("Error", isPresented: .constant(viewModel.error != nil), presenting: viewModel.error) { _ in
+            Button("OK") {
+                viewModel.error = nil
             }
+        } message: { error in
+            Text(error.localizedDescription)
         }
     }
     
@@ -114,11 +112,15 @@ struct AddProfileView: View {
 
 #Preview("Add Profile") {
     let coordinator = SettingsCoordinator()
-    return AddProfileView(coordinator: coordinator)
+    return NavigationStack {
+        AddProfileView(coordinator: coordinator)
+    }
 }
 
 #Preview("Edit Profile") {
     let coordinator = SettingsCoordinator()
     let profile = Profile(name: "Test Profile")
-    return AddProfileView(coordinator: coordinator, profile: profile)
+    return NavigationStack {
+        AddProfileView(coordinator: coordinator, profile: profile)
+    }
 }
