@@ -64,8 +64,7 @@ struct SettingsCoordinatorView: View {
                 .navigationTitle("About")
             
         case .logs:
-            Text("Acknowledgements")
-                .navigationTitle("Acknowledgements")
+            AcknowledgementsView()
         }
     }
 }
