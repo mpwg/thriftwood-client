@@ -39,6 +39,9 @@ enum ThriftwoodError: LocalizedError {
     case invalidConfiguration(String)
     case storageError(any Error)
     case keychainError(OSStatus)
+    case validation(message: String)
+    case notFound(message: String)
+    case data(message: String)
     case unknown(any Error)
     
     var errorDescription: String? {
@@ -63,6 +66,12 @@ enum ThriftwoodError: LocalizedError {
             return "Storage error: \(error.localizedDescription)"
         case .keychainError(let status):
             return "Keychain error: \(status)"
+        case .validation(let message):
+            return "Validation error: \(message)"
+        case .notFound(let message):
+            return "Not found: \(message)"
+        case .data(let message):
+            return "Data error: \(message)"
         case .unknown(let error):
             return "An unexpected error occurred: \(error.localizedDescription)"
         }
@@ -86,6 +95,12 @@ enum ThriftwoodError: LocalizedError {
             return "Try restarting the app. If the issue persists, contact support."
         case .keychainError:
             return "Please re-enter your credentials in settings."
+        case .validation:
+            return "Please check your input and try again."
+        case .notFound:
+            return "The requested item could not be found."
+        case .data:
+            return "There was a problem with the data. Please try again."
         default:
             return "Please try again or contact support if the issue persists."
         }

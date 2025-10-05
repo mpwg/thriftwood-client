@@ -84,7 +84,16 @@ final class DIContainer {
     
     /// Registers core business services
     private func registerCoreServices() {
-        // Register DataService (singleton)
+        // Register DataService (singleton, using protocol)
+        container.register((any DataServiceProtocol).self) { resolver in
+            let modelContainer = resolver.resolve(ModelContainer.self)!
+            guard let keychainService = resolver.resolve((any KeychainServiceProtocol).self) else {
+                fatalError("Could not resolve KeychainServiceProtocol")
+            }
+            return DataService(modelContainer: modelContainer, keychainService: keychainService)
+        }.inObjectScope(.container)
+        
+        // Register DataService as concrete type (for services that need concrete DataService)
         container.register(DataService.self) { resolver in
             let modelContainer = resolver.resolve(ModelContainer.self)!
             guard let keychainService = resolver.resolve((any KeychainServiceProtocol).self) else {
@@ -101,6 +110,14 @@ final class DIContainer {
             } catch {
                 fatalError("Could not create UserPreferencesService: \(error)")
             }
+        }.inObjectScope(.container)
+        
+        // Register ProfileService (singleton, using protocol)
+        container.register((any ProfileServiceProtocol).self) { resolver in
+            guard let dataService = resolver.resolve((any DataServiceProtocol).self) else {
+                fatalError("Could not resolve DataServiceProtocol")
+            }
+            return ProfileService(dataService: dataService)
         }.inObjectScope(.container)
     }
     

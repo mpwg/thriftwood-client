@@ -39,7 +39,7 @@ struct ThriftwoodApp: App {
     }
     
     /// Data service for persistence operations (resolved from DI)
-    @State private var dataService: DataService?
+    @State private var dataService: (any DataServiceProtocol)?
 
     var body: some Scene {
         WindowGroup {
@@ -47,7 +47,7 @@ struct ThriftwoodApp: App {
                 .task {
                     // Initialize data service and bootstrap database
                     if dataService == nil {
-                        let service = container.resolve(DataService.self)
+                        let service = container.resolve((any DataServiceProtocol).self)
                         dataService = service
                         do {
                             try service.bootstrap()

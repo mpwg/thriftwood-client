@@ -671,8 +671,126 @@ struct SettingsView: View {
 ### Task 2.4: Profile Management
 
 **Estimated Time**: 6 hours  
-**Status**: ⏳ PENDING  
-**(Note: Profile CRUD operations already implemented in DataService during Task 2.1)**
+**Actual Time**: 5 hours  
+**Status**: ✅ COMPLETE  
+**Implementation Date**: 2025-10-04
+
+**Implementation Summary**:
+
+Implemented comprehensive profile management service with full CRUD operations, export/import functionality, and proper DI integration. Extends the basic profile operations from DataService with validation, business logic, and JSON-based backup/restore capabilities.
+
+**Completed Components**:
+
+1. **ProfileServiceProtocol** (`Core/Storage/ProfileServiceProtocol.swift`)
+
+   - Complete CRUD operations (create, read, update, delete, rename)
+   - Profile switching methods (by reference or by name)
+   - Validation methods (name uniqueness, delete constraints)
+   - Service configuration management (attach/detach)
+   - Export/import operations with validation
+   - Supporting types: `ProfileImportValidation`, `ExportableProfile`, `ExportableProfiles`
+
+2. **ProfileService** (`Core/Storage/ProfileService.swift`)
+
+   - Wraps DataService for profile-specific operations
+   - Input validation (empty names, duplicates, last profile protection)
+   - JSON export with ISO8601 date encoding, pretty-printed format
+   - JSON import with conflict resolution (overwrite or skip)
+   - Import validation before applying changes
+   - **Security**: Credentials NOT included in exports (API keys stay in Keychain)
+
+3. **MockProfileService** (`ThriftwoodTests/Mocks/MockProfileService.swift`)
+
+   - In-memory mock for testing
+   - Call tracking for all operations
+   - Error injection support
+   - Reset helpers for test isolation
+
+4. **DI Container Registration** (`Core/DI/DIContainer.swift`)
+
+   - Registered as singleton via protocol
+   - Automatic DataService dependency resolution
+
+5. **Comprehensive Tests** (`ThriftwoodTests/ProfileServiceTests.swift`)
+   - **38 Swift Testing tests** covering:
+     - Profile CRUD operations (fetch, create, update, delete, rename)
+     - Profile switching (by reference and by name)
+     - Validation (name uniqueness, delete constraints, empty names)
+     - Export/import with JSON format
+     - Import conflict resolution (overwrite vs. skip)
+     - Import validation
+     - DI container resolution
+     - Mock service behavior and tracking
+   - **All tests passing** ✅
+
+**Key Architectural Decisions**:
+
+1. **Service Layer Pattern**:
+
+   - Dedicated profile service (vs. direct DataService usage in views)
+   - Better abstraction and separation of concerns
+   - Centralized validation logic
+   - Easier testing with protocol-based mocking
+
+2. **JSON Export Format**:
+
+   - Human-readable with pretty printing and sorted keys
+   - ISO8601 dates for cross-platform compatibility
+   - Version field for future migration support
+   - **Excludes credentials** - API keys and passwords NOT exported
+   - Users must re-enter credentials after import (security best practice)
+
+3. **Import Conflict Resolution**:
+
+   - `overwriteExisting: Bool` parameter for user control
+   - Skip conflicts by default (safe mode)
+   - Never auto-enable imported profiles (prevent unexpected switches)
+
+4. **Validation First**:
+   - All operations validate input before modifying state
+   - Consistent error messages via ThriftwoodError
+   - Prevent invalid states (empty names, last profile deletion)
+
+**Export/Import Flow**:
+
+```swift
+// Export single profile
+let exportData = try profileService.exportProfile(profile)
+try exportData.write(to: fileURL)
+
+// Export all profiles
+let allData = try profileService.exportAllProfiles()
+
+// Validate before importing
+let validation = try profileService.validateImportData(importData)
+if validation.isValid {
+    if !validation.conflictingNames.isEmpty {
+        // Show user warning about conflicts
+    }
+    let imported = try profileService.importProfiles(
+        from: importData,
+        overwriteExisting: userChoice
+    )
+}
+```
+
+**Files Created**:
+
+- `Thriftwood/Core/Storage/ProfileServiceProtocol.swift` (157 lines)
+- `Thriftwood/Core/Storage/ProfileService.swift` (276 lines)
+- `ThriftwoodTests/Mocks/MockProfileService.swift` (284 lines)
+- `ThriftwoodTests/ProfileServiceTests.swift` (544 lines - 38 tests)
+- Updated `Thriftwood/Core/DI/DIContainer.swift` (DI registration)
+- Updated `Thriftwood/Core/Error/ThriftwoodError.swift` (added validation, notFound, data error cases)
+
+**Known Issues**:
+
+- None - all functionality complete ✅
+
+**Next Steps**:
+
+- Proceed to Task 3.1: Design System
+- ProfileService ready for UI integration in Week 3
 
 - [ ] Create Profile model and repository
 - [ ] Implement profile CRUD operations

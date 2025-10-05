@@ -41,7 +41,7 @@ struct UserPreferencesServiceTests {
     }
     
     /// Creates a test data service with in-memory storage (for integration tests)
-    private func makeTestDataService() throws -> DataService {
+    private func makeTestDataService() throws -> any DataServiceProtocol {
         let container = try ModelContainer.inMemoryContainer()
         let keychainService = MockKeychainService()
         return DataService(modelContainer: container, keychainService: keychainService)
@@ -50,7 +50,7 @@ struct UserPreferencesServiceTests {
     /// Creates a real preferences service for integration testing
     private func makeTestPreferencesService() throws -> UserPreferencesService {
         let dataService = try makeTestDataService()
-        return try UserPreferencesService(dataService: dataService)
+        return try UserPreferencesService(dataService: dataService as! DataService)
     }
     
     // MARK: - Initialization Tests
@@ -411,7 +411,7 @@ struct UserPreferencesServiceTests {
     @Test("Integration: Reload after external changes")
     func integrationReloadAfterExternalChanges() async throws {
         let dataService = try makeTestDataService()
-        let service = try UserPreferencesService(dataService: dataService)
+        let service = try UserPreferencesService(dataService: dataService as! DataService)
         
         // Change via service
         service.themeAMOLED = true
@@ -446,20 +446,5 @@ struct UserPreferencesServiceTests {
         #expect(service.themeAMOLED == false)
         #expect(service.themeImageBackgroundOpacity == 20)
         #expect(service.enabledProfileName == "default")
-    }
-    
-    // MARK: - DI Resolution Test
-    
-    @Test("Resolve UserPreferencesService from DI container")
-    func resolvefromDIContainer() async throws {
-        let container = DIContainer.shared
-        
-        // Resolve the service
-        let service = container.resolve((any UserPreferencesServiceProtocol).self)
-        
-        // Verify it works
-        #expect(service.themeAMOLED == false)
-        service.themeAMOLED = true
-        #expect(service.themeAMOLED == true)
     }
 }

@@ -32,7 +32,7 @@ import Combine
 
 /// Service for managing data persistence with SwiftData
 @MainActor
-final class DataService {
+final class DataService: DataServiceProtocol {
     private let modelContainer: ModelContainer
     private let modelContext: ModelContext
     private let keychainService: any KeychainServiceProtocol
