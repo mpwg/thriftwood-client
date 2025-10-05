@@ -18,15 +18,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-//
-//  MainTabView.swift
-//  Thriftwood
-//
-//  Main tab view that displays enabled tabs based on user configuration
-//  Tabs are customizable - users can enable/disable and reorder them
-//
 
 import SwiftUI
+
+/// Main tab view that displays enabled tabs based on user configuration.
+/// Tabs are customizable - users can enable/disable and reorder them.
 
 /// Main tab view with customizable tabs
 /// Reads configuration from TabCoordinator which uses UserPreferencesService
