@@ -22,7 +22,8 @@
 import Foundation
 
 /// Theme selection mode for the app
-enum ThemeMode: String, Codable, Equatable {
+/// Prefixed with MPWG to avoid naming conflicts
+enum MPWGThemeMode: String, Codable, Equatable {
     /// Follow system appearance settings
     case system
     

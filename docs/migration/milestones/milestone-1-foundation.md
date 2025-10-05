@@ -1022,13 +1022,150 @@ Implemented 6 reusable SwiftUI components matching legacy Flutter app patterns (
 
 ### Task 3.3: Form Components
 
-**Estimated Time**: 6 hours
+**Estimated Time**: 6 hours  
+**Actual Time**: 8 hours (including MPWG refactoring)  
+**Status**: ✅ COMPLETE  
+**Implementation Date**: 2025-10-05
 
-- [ ] Create TextFieldRow for settings
-- [ ] Build SecureFieldRow for passwords
-- [ ] Implement ToggleRow
-- [ ] Create PickerRow for selections
-- [ ] Add form validation helpers
+**Implementation Summary**:
+
+Implemented comprehensive form component library using native SwiftUI components. Added robust validation helpers and completed major refactoring to prefix all theme types with "MPWG" to avoid naming conflicts with SwiftUI's Theme protocol.
+
+**Completed Components**:
+
+1. **TextFieldRow** (182 lines)
+
+   - Native TextField wrapper with FormRow layout
+   - Supports placeholder, subtitle, icon, keyboard type, autocorrection
+   - Optional text content type for iOS autofill
+   - Preview examples for URL, text, number inputs
+
+2. **SecureFieldRow** (147 lines)
+
+   - Native SecureField wrapper for password/API key input
+   - Same layout and features as TextFieldRow
+   - Preview examples for password, API key inputs
+
+3. **ToggleRow** (114 lines)
+
+   - Native Toggle wrapper with FormRow layout
+   - Supports subtitle and icon
+   - Preview examples for various settings toggles
+
+4. **PickerRow** (152 lines)
+
+   - Native Picker wrapper with FormRow layout
+   - Generic over any Hashable type
+   - `PickerOption` struct for label/value pairs
+   - Supports subtitle and icon
+   - Preview examples for enum and string selections
+
+5. **NavigationRow** (118 lines)
+
+   - Tappable row with chevron for navigation
+   - Supports subtitle, icon, and badge text
+   - Preview examples for settings navigation
+
+6. **FormRow** (124 lines)
+
+   - Base component for consistent form row layout
+   - Reused by all form components
+   - Handles icon, title, subtitle, content slot
+   - Theme-aware colors and spacing
+
+7. **FormValidation** (142 lines) with `nonisolated` enum
+   - URL validation (scheme + host required, empty scheme rejected)
+   - HTTP/HTTPS URL validation
+   - Port validation (1-65535)
+   - API key validation (non-empty, optional min length)
+   - Username validation (alphanumeric + underscore/hyphen)
+   - Password validation (optional min length check)
+   - MAC address validation (colon or hyphen separated)
+   - Length range validation
+   - Empty string detection
+   - String extensions for convenient usage
+
+**Major Refactoring - MPWG Prefix**:
+
+To avoid naming conflicts with SwiftUI.Theme protocol, all custom theme types were renamed:
+
+| Old Name               | New Name                   | Files Updated                                      |
+| ---------------------- | -------------------------- | -------------------------------------------------- |
+| `Theme`                | `MPWGTheme`                | Theme.swift, ThemeManager.swift, Color+Theme.swift |
+| `ThemeMode`            | `MPWGThemeMode`            | ThemeMode.swift, ThemeManager.swift                |
+| `ThemeManager`         | `MPWGThemeManager`         | ThemeManager.swift, DIContainer.swift              |
+| `ThemeManagerProtocol` | `MPWGThemeManagerProtocol` | ThemeManager.swift                                 |
+| `\.theme`              | `\.mpwgTheme`              | Environment key                                    |
+| `\.themeManager`       | `\.mpwgThemeManager`       | Environment key                                    |
+
+**Files Updated**:
+
+- `Thriftwood/Core/Theme/Theme.swift`
+- `Thriftwood/Core/Theme/ThemeMode.swift`
+- `Thriftwood/Core/Theme/ThemeManager.swift`
+- `Thriftwood/Core/Theme/Color+Theme.swift`
+- `Thriftwood/Core/DI/DIContainer.swift`
+- `ThriftwoodTests/ThemeTests.swift`
+
+**Testing Coverage**:
+
+- **FormComponentsTests.swift** (222 lines, 14 tests)
+
+  - Initialization tests for all form components
+  - Parameter validation tests
+  - PickerOption creation tests
+  - All tests passing ✅
+
+- **FormValidationTests.swift** (224 lines, 24 tests)
+  - Comprehensive validation tests for all helpers
+  - Edge case coverage (empty strings, invalid formats)
+  - String extension convenience method tests
+  - Fixed URL validation for empty scheme bug
+  - All tests passing ✅
+
+**Key Architectural Decisions**:
+
+1. **Native SwiftUI First**: Used native TextField, SecureField, Toggle, Picker instead of custom implementations
+2. **Composition over Inheritance**: FormRow base component reused across all form types
+3. **Generic Picker**: PickerRow is generic over any Hashable type for maximum flexibility
+4. **Nonisolated Validation**: FormValidation enum marked `nonisolated` to avoid unnecessary MainActor isolation
+5. **String Extensions**: Convenient `isValidURL()`, `isValidAPIKey()`, etc. extensions on String
+6. **MPWG Prefix**: Professional naming convention to avoid framework conflicts and enable future package extraction
+
+**Known Issues**: None
+
+**Next Steps**:
+
+- Proceed to Task 3.4: Main App Structure (MainTabView, SettingsView, ProfileListView)
+
+- [x] Create TextFieldRow for settings
+- [x] Build SecureFieldRow for passwords
+- [x] Implement ToggleRow
+- [x] Create PickerRow for selections
+- [x] Add form validation helpers
+- [x] Refactor theme types with MPWG prefix
+
+**Files Created**:
+
+- `Thriftwood/UI/Components/FormRow.swift` (124 lines)
+- `Thriftwood/UI/Components/TextFieldRow.swift` (182 lines)
+- `Thriftwood/UI/Components/SecureFieldRow.swift` (147 lines)
+- `Thriftwood/UI/Components/ToggleRow.swift` (114 lines)
+- `Thriftwood/UI/Components/PickerRow.swift` (152 lines)
+- `Thriftwood/UI/Components/NavigationRow.swift` (118 lines)
+- `Thriftwood/UI/Components/FormValidation.swift` (142 lines)
+- `ThriftwoodTests/FormComponentsTests.swift` (222 lines - 14 tests)
+- `ThriftwoodTests/FormValidationTests.swift` (224 lines - 24 tests)
+- `docs/REUSABLE_COMPONENTS_STRATEGY.md` (documentation for future package extraction)
+
+**Files Modified**:
+
+- `Thriftwood/Core/Theme/Theme.swift` (MPWGTheme renaming)
+- `Thriftwood/Core/Theme/ThemeMode.swift` (MPWGThemeMode renaming)
+- `Thriftwood/Core/Theme/ThemeManager.swift` (MPWGThemeManager renaming)
+- `Thriftwood/Core/Theme/Color+Theme.swift` (updated references)
+- `Thriftwood/Core/DI/DIContainer.swift` (updated registration)
+- `ThriftwoodTests/ThemeTests.swift` (updated test references)
 
 ### Task 3.4: Main App Structure
 

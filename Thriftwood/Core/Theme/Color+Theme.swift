@@ -187,10 +187,10 @@ extension Color {
 
 extension Color {
     /// Apply a theme's colors to the color scheme
-    /// This is used by ThemeManager to update colors when theme changes
-    static func applyTheme(_ theme: Theme) {
+    /// This is used by MPWGThemeManager to update colors when theme changes
+    static func applyTheme(_ theme: MPWGTheme) {
         // Theme colors are applied through SwiftUI environment
-        // Views access them via @Environment(\.theme) or Color.themeAccent
+        // Views access them via @Environment(\.mpwgTheme) or Color.themeAccent
     }
     
     /// Initialize color from hexadecimal value
