@@ -4,6 +4,8 @@
 
 This project uses a simple, maintainable CI/CD pipeline designed for **indie development**. The focus is on easy maintenance and quick feedback.
 
+**Build Target**: Mac Catalyst (iOS app running on macOS)
+
 ## Philosophy
 
 **Main Goal: Easy Maintenance**
@@ -20,14 +22,16 @@ This project uses a simple, maintainable CI/CD pipeline designed for **indie dev
 Every push to `main` or `rety` branches triggers:
 
 1. **SwiftLint** - Code quality and style consistency
-2. **Build** - Ensures the app compiles
-3. **Tests** - Runs all unit tests
-4. **Summary** - Generates a code quality report
+2. **GPL-3.0 License Headers** - Ensures all Swift files have required license headers
+3. **Build** - Ensures the app compiles for Mac Catalyst
+4. **Tests** - Runs all unit tests with Mac Catalyst
+5. **Summary** - Generates a code quality report
 
 ## Workflow Details
 
 - **File**: `.github/workflows/ci.yml`
-- **Runs on**: macOS 14 (latest Apple Silicon runner)
+- **Runs on**: macOS 26 (latest with Xcode 26.0)
+- **Build Target**: Mac Catalyst (`platform=macOS,variant=Mac Catalyst`)
 - **Duration**: ~5-10 minutes typical
 - **Cancellation**: Automatically cancels previous runs on new push
 
@@ -56,14 +60,23 @@ Every push to `main` or `rety` branches triggers:
 Run the same checks locally before pushing:
 
 ```bash
+# Check license headers
+./scripts/check-license-headers.sh --check
+
 # Lint your code
-swiftlint lint
+swiftlint lint --strict
 
-# Build
-xcodebuild clean build -project Thriftwood.xcodeproj -scheme Thriftwood
+# Build (Mac Catalyst)
+xcodebuild clean build \
+  -project Thriftwood.xcodeproj \
+  -scheme Thriftwood \
+  -destination 'platform=macOS,variant=Mac Catalyst'
 
-# Test
-xcodebuild test -project Thriftwood.xcodeproj -scheme Thriftwood
+# Test (Mac Catalyst)
+xcodebuild test \
+  -project Thriftwood.xcodeproj \
+  -scheme Thriftwood \
+  -destination 'platform=macOS,variant=Mac Catalyst'
 ```
 
 ## Customization
@@ -78,10 +91,23 @@ CI automatically skips on:
 
 ### Adjust Xcode Version
 
-Edit `.github/workflows/ci.yml` line:
+Edit `.github/workflows/ci.yml`:
 
 ```yaml
-run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+- name: Setup Xcode
+  uses: maxim-lobanov/setup-xcode@v1
+  with:
+    xcode-version: "26.0" # Change this to your desired version
+```
+
+### Change Build Target
+
+To build for native macOS instead of Mac Catalyst:
+
+```yaml
+-destination 'platform=macOS'  # Native macOS
+# or
+-destination 'platform=macOS,variant=Mac Catalyst'  # Mac Catalyst (current)
 ```
 
 ### Add More Checks
@@ -101,15 +127,25 @@ See `.swiftlint.yml` for linting rules focused on maintainability:
 
 ### Build Fails on CI but Works Locally
 
-1. Check Xcode version match
-2. Clear derived data: `rm -rf ~/Library/Developer/Xcode/DerivedData`
-3. Check for scheme visibility (must be shared)
+1. Check Xcode version match (CI uses Xcode 26.0)
+2. Verify Mac Catalyst destination: `platform=macOS,variant=Mac Catalyst`
+3. Clear derived data: `rm -rf ~/Library/Developer/Xcode/DerivedData`
+4. Check for scheme visibility (must be shared)
 
-### Tests Pass Locally but Fail on CI
+### Tests Fail on CI but Pass Locally
 
 1. Check for environment-specific assumptions
 2. Ensure test resources are in Git
 3. Look for timing-sensitive tests
+4. Verify Mac Catalyst test runner configuration
+
+### License Header Check Fails
+
+Run the script to add missing headers:
+
+```bash
+./scripts/check-license-headers.sh --add
+```
 
 ### SwiftLint Errors
 

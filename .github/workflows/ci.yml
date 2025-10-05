@@ -89,24 +89,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-deriveddata-
 
-      # Build the app
+      # Build the app (Mac Catalyst)
       - name: Build App
         run: |
           xcodebuild clean build \
             -project Thriftwood.xcodeproj \
             -scheme Thriftwood \
-            -destination 'platform=macOS' \
+            -destination 'platform=macOS,variant=Mac Catalyst' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             | xcpretty && exit ${PIPESTATUS[0]}
 
-      # Run unit tests
+      # Run unit tests (Mac Catalyst)
       - name: Run Tests
         run: |
           xcodebuild test \
             -project Thriftwood.xcodeproj \
             -scheme Thriftwood \
-            -destination 'platform=macOS' \
+            -destination 'platform=macOS,variant=Mac Catalyst' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             -enableCodeCoverage YES \
