@@ -479,7 +479,8 @@ struct ProfileServiceTests {
     @Test("Profile Service - DI Container Resolution")
     @MainActor
     func testDIContainerResolution() async throws {
-        let container = DIContainer.shared
+        // Setup test container with in-memory storage
+        let container = try TestDIContainer.makeTestContainer()
         
         // Resolve ProfileService via protocol
         let service = container.resolve((any ProfileServiceProtocol).self)

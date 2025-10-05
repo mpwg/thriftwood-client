@@ -44,11 +44,20 @@ final class DIContainer {
     /// The underlying Swinject container
     private let container: Container
     
+    /// Optional model container to use (for testing)
+    private let modelContainer: ModelContainer?
+    
     // MARK: - Initialization
     
-    private init() {
+    private init(modelContainer: ModelContainer? = nil) {
         self.container = Container()
+        self.modelContainer = modelContainer
         registerServices()
+    }
+    
+    /// Creates a test instance with custom model container
+    static func makeTestContainer(modelContainer: ModelContainer) -> DIContainer {
+        return DIContainer(modelContainer: modelContainer)
     }
     
     // MARK: - Service Registration
@@ -66,7 +75,12 @@ final class DIContainer {
     /// Registers infrastructure services (storage, logging, etc.)
     private func registerInfrastructure() {
         // Register ModelContainer (singleton)
-        container.register(ModelContainer.self) { _ in
+        container.register(ModelContainer.self) { [weak self] _ in
+            // Use provided container if available (for tests), otherwise create production container
+            if let testContainer = self?.modelContainer {
+                return testContainer
+            }
+            
             do {
                 return try ModelContainer.thriftwoodContainer()
             } catch {
