@@ -54,20 +54,11 @@ struct ContentView: View {
     private func coordinatorView(_ coordinator: AppCoordinator) -> some View {
         if let tabCoordinator = coordinator.activeCoordinator as? TabCoordinator {
             MainTabView(coordinator: tabCoordinator)
+        } else if let onboardingCoordinator = coordinator.activeCoordinator as? OnboardingCoordinator {
+            OnboardingCoordinatorView(coordinator: onboardingCoordinator)
         } else {
-            // Onboarding or other states
-            VStack {
-                Image(systemName: "checkmark.circle")
-                    .font(.system(size: 60))
-                Text("Welcome to Thriftwood")
-                    .font(.title)
-                Button("Get Started") {
-                    // Complete onboarding
-                    UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
-                    coordinator.start()
-                }
-                .buttonStyle(.borderedProminent)
-            }
+            // Fallback loading state
+            ProgressView("Loading...")
         }
     }
 }

@@ -46,9 +46,25 @@ final class AppCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     /// User preferences service for configuration
     private let preferencesService: any UserPreferencesServiceProtocol
     
+    /// Profile service for checking if profiles exist
+    private let profileService: any ProfileServiceProtocol
+    
     /// Whether the user has completed onboarding
     private var hasCompletedOnboarding: Bool {
-        UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+        // Check both UserDefaults flag AND if at least one profile exists
+        let hasFlag = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+        if !hasFlag {
+            return false
+        }
+        
+        // Verify at least one profile exists
+        do {
+            let profiles = try profileService.fetchProfiles()
+            return !profiles.isEmpty
+        } catch {
+            AppLogger.navigation.error("Failed to check profiles during onboarding check: \(error.localizedDescription)")
+            return false
+        }
     }
     
     /// The current active child coordinator (tab coordinator or onboarding)
@@ -56,8 +72,9 @@ final class AppCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     
     // MARK: - Initialization
     
-    init(preferencesService: any UserPreferencesServiceProtocol) {
+    init(preferencesService: any UserPreferencesServiceProtocol, profileService: any ProfileServiceProtocol) {
         self.preferencesService = preferencesService
+        self.profileService = profileService
         AppLogger.navigation.info("AppCoordinator initialized")
     }
     

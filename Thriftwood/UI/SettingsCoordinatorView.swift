@@ -21,22 +21,50 @@
 
 import SwiftUI
 
-/// Settings coordinator view (placeholder)
+/// Settings coordinator view
 struct SettingsCoordinatorView: View {
     @Bindable var coordinator: SettingsCoordinator
     
     var body: some View {
         NavigationStack(path: $coordinator.navigationPath) {
-            VStack {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 60))
-                Text("Settings")
-                    .font(.title)
-                Text("Configuration screens coming soon")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .navigationTitle("Settings")
+            SettingsView(coordinator: coordinator)
+                .navigationDestination(for: SettingsRoute.self) { route in
+                    destinationView(for: route)
+                }
+        }
+    }
+    
+    @ViewBuilder
+    private func destinationView(for route: SettingsRoute) -> some View {
+        switch route {
+        case .main:
+            Text("General Settings")
+                .navigationTitle("General")
+            
+        case .profiles:
+            ProfileListView(coordinator: coordinator)
+            
+        case .addProfile:
+            AddProfileView(coordinator: coordinator)
+            
+        case .editProfile(let profileId):
+            Text("Edit Profile: \(profileId)")
+                .navigationTitle("Edit Profile")
+            
+        case .appearance:
+            Text("Appearance Settings")
+                .navigationTitle("Appearance")
+            
+        case .notifications:
+            Text("Networking Settings")
+                .navigationTitle("Networking")
+            
+        case .about:
+            Text("About Thriftwood")
+                .navigationTitle("About")
+            
+        case .logs:
+            AcknowledgementsView()
         }
     }
 }

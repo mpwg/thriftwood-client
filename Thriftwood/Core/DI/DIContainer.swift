@@ -18,17 +18,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-//
-//  DIContainer.swift
-//  Thriftwood
-//
-//  Dependency Injection container using Swinject
-//  Manages service registration and resolution
-//
 
 import Foundation
 import SwiftData
 import Swinject
+import AsyncHTTPClient
 
 /// Main dependency injection container for the application
 @MainActor
@@ -88,6 +82,12 @@ final class DIContainer {
             }
         }.inObjectScope(.container)
         
+        // Register HTTPClient (singleton)
+        // Per ADR-0004, use AsyncHTTPClient for all HTTP networking
+        container.register(HTTPClient.self) { _ in
+            HTTPClient(eventLoopGroupProvider: .singleton)
+        }.inObjectScope(.container)
+        
         // Register KeychainService (singleton, using protocol)
         container.register((any KeychainServiceProtocol).self) { _ in
             KeychainService()
@@ -98,7 +98,8 @@ final class DIContainer {
     
     /// Registers core business services
     private func registerCoreServices() {
-        // Register DataService (singleton, using protocol)
+        // Register DataService (singleton, using protocol only)
+        // Per ADR-0003, services should be registered by protocol to enable dependency injection and testing
         container.register((any DataServiceProtocol).self) { resolver in
             let modelContainer = resolver.resolve(ModelContainer.self)!
             guard let keychainService = resolver.resolve((any KeychainServiceProtocol).self) else {
@@ -107,18 +108,12 @@ final class DIContainer {
             return DataService(modelContainer: modelContainer, keychainService: keychainService)
         }.inObjectScope(.container)
         
-        // Register DataService as concrete type (for services that need concrete DataService)
-        container.register(DataService.self) { resolver in
-            let modelContainer = resolver.resolve(ModelContainer.self)!
-            guard let keychainService = resolver.resolve((any KeychainServiceProtocol).self) else {
-                fatalError("Could not resolve KeychainServiceProtocol")
-            }
-            return DataService(modelContainer: modelContainer, keychainService: keychainService)
-        }.inObjectScope(.container)
-        
         // Register UserPreferencesService (singleton, using protocol)
+        // Note: UserPreferencesService requires concrete DataService type for SwiftData operations
         container.register((any UserPreferencesServiceProtocol).self) { resolver in
-            let dataService = resolver.resolve(DataService.self)!
+            guard let dataService = resolver.resolve((any DataServiceProtocol).self) as? DataService else {
+                fatalError("Could not resolve DataService (concrete type required)")
+            }
             do {
                 return try UserPreferencesService(dataService: dataService)
             } catch {
@@ -134,21 +129,13 @@ final class DIContainer {
             return ProfileService(dataService: dataService)
         }.inObjectScope(.container)
         
-        // Register MPWGThemeManager (singleton, using protocol)
+        // Register MPWGThemeManager (singleton, using protocol only)
+        // SwiftUI can access via protocol through environment or direct resolution
         container.register((any MPWGThemeManagerProtocol).self) { resolver in
             guard let userPreferences = resolver.resolve((any UserPreferencesServiceProtocol).self) else {
                 fatalError("Could not resolve UserPreferencesServiceProtocol")
             }
             return MPWGThemeManager(userPreferences: userPreferences)
-        }.inObjectScope(.container)
-        
-        // Register MPWGThemeManager as concrete type (for SwiftUI environment)
-        container.register(MPWGThemeManager.self) { resolver in
-            // Alias to the protocol registration to ensure singleton consistency
-            guard let themeManager = resolver.resolve((any MPWGThemeManagerProtocol).self) as? MPWGThemeManager else {
-                fatalError("Could not resolve MPWGThemeManagerProtocol as MPWGThemeManager")
-            }
-            return themeManager
         }.inObjectScope(.container)
     }
     
@@ -167,12 +154,15 @@ final class DIContainer {
     /// Registers coordinators for navigation
     /// Note: Coordinators are typically created with transient scope since they manage navigation state
     private func registerCoordinators() {
-        // Register AppCoordinator (needs UserPreferencesService)
+        // Register AppCoordinator (needs UserPreferencesService and ProfileService)
         container.register(AppCoordinator.self) { resolver in
             guard let preferencesService = resolver.resolve((any UserPreferencesServiceProtocol).self) else {
                 fatalError("Could not resolve UserPreferencesServiceProtocol for AppCoordinator")
             }
-            return AppCoordinator(preferencesService: preferencesService)
+            guard let profileService = resolver.resolve((any ProfileServiceProtocol).self) else {
+                fatalError("Could not resolve ProfileServiceProtocol for AppCoordinator")
+            }
+            return AppCoordinator(preferencesService: preferencesService, profileService: profileService)
         }
         
         // Note: Other coordinators are created on-demand by parent coordinators
@@ -197,6 +187,20 @@ final class DIContainer {
     /// - Returns: The resolved service instance, or nil if not found
     func resolveOptional<Service>(_ serviceType: Service.Type) -> Service? {
         return container.resolve(serviceType)
+    }
+    
+    /// Shutdown the DI container and cleanup resources
+    /// Should be called when the app terminates
+    func shutdown() async {
+        // Shutdown HTTPClient gracefully
+        if let httpClient = container.resolve(HTTPClient.self) {
+            do {
+                try await httpClient.shutdown()
+                AppLogger.general.info("HTTPClient shutdown successfully")
+            } catch {
+                AppLogger.general.error("Failed to shutdown HTTPClient", error: error)
+            }
+        }
     }
     
     // MARK: - Testing Support

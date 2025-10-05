@@ -18,12 +18,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-//
-//  ThriftwoodApp.swift
-//  Thriftwood
-//
-//  Created by Matthias Wallner-Géhri on 03.10.25.
-//
 
 import SwiftUI
 import SwiftData
@@ -51,8 +45,9 @@ struct ThriftwoodApp: App {
                         dataService = service
                         do {
                             try service.bootstrap()
+                            AppLogger.general.info("Database bootstrapped successfully")
                         } catch {
-                            print("Failed to bootstrap database: \(error)")
+                            AppLogger.general.error("Failed to bootstrap database", error: error)
                         }
                     }
                 }

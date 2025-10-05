@@ -42,9 +42,9 @@ extension Color {
     /// The static properties below provide fallback colors when theme is not available
     /// (e.g., in previews or during initialization).
     
-    /// Accent color from active theme (fallback: orange)
+    /// Accent color from active theme (fallback: Thriftwood Orange)
     static var themeAccent: Color {
-        .orange
+        Color(red: 0.902, green: 0.494, blue: 0.133) // #E67E22
     }
     
     /// Primary background from active theme
