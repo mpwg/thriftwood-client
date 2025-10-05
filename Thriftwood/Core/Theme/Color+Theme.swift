@@ -27,12 +27,23 @@ extension Color {
     
     // MARK: - Dynamic Colors (from active theme)
     
-    /// Get color from the current theme
-    /// These colors will be provided via ThemeManager environment
+    /// Theme color accessors
+    ///
+    /// **Usage Pattern**:
+    /// For dynamic theme colors, access the theme via environment:
+    /// ```swift
+    /// @Environment(\.mpwgTheme) private var theme
+    /// var body: some View {
+    ///     Text("Hello")
+    ///         .foregroundStyle(theme.accentColor.color)
+    /// }
+    /// ```
+    ///
+    /// The static properties below provide fallback colors when theme is not available
+    /// (e.g., in previews or during initialization).
     
-    /// Accent color from active theme
+    /// Accent color from active theme (fallback: orange)
     static var themeAccent: Color {
-        // Will be overridden by ThemeManager environment value
         .orange
     }
     
@@ -187,10 +198,19 @@ extension Color {
 
 extension Color {
     /// Apply a theme's colors to the color scheme
-    /// This is used by MPWGThemeManager to update colors when theme changes
+    ///
+    /// **Recommended Pattern**:
+    /// Access theme colors dynamically via environment:
+    /// ```swift
+    /// @Environment(\.mpwgTheme) private var theme
+    /// theme.accentColor.color  // Dynamic accent color
+    /// ```
+    ///
+    /// Static accessors like `Color.themeAccent` provide fallbacks but don't update
+    /// when the theme changes. Use `@Environment(\.mpwgTheme)` for dynamic theming.
     static func applyTheme(_ theme: MPWGTheme) {
         // Theme colors are applied through SwiftUI environment
-        // Views access them via @Environment(\.mpwgTheme) or Color.themeAccent
+        // Access via: @Environment(\.mpwgTheme) private var theme
     }
     
     /// Initialize color from hexadecimal value
@@ -208,4 +228,66 @@ extension Color {
         
         self.init(red: red, green: green, blue: blue)
     }
+}
+
+// MARK: - MPWGTheme Convenience Extensions
+
+extension MPWGTheme {
+    /// Convenience accessors for SwiftUI Colors from theme
+    ///
+    /// Usage in views:
+    /// ```swift
+    /// @Environment(\.mpwgTheme) private var theme
+    ///
+    /// var body: some View {
+    ///     Text("Hello")
+    ///         .foregroundStyle(theme.accent)      // Shorter syntax
+    ///         .background(theme.primaryBg)
+    /// }
+    /// ```
+    
+    /// Accent color (shorter accessor)
+    var accent: Color { accentColor.color }
+    
+    /// Primary background (shorter accessor)
+    var primaryBg: Color { primaryBackground.color }
+    
+    /// Secondary background (shorter accessor)
+    var secondaryBg: Color { secondaryBackground.color }
+    
+    /// Tertiary background (shorter accessor)
+    var tertiaryBg: Color { tertiaryBackground.color }
+    
+    /// Card background (shorter accessor)
+    var cardBg: Color { cardBackground.color }
+    
+    /// Primary text (shorter accessor)
+    var primaryTxt: Color { primaryText.color }
+    
+    /// Secondary text (shorter accessor)
+    var secondaryTxt: Color { secondaryText.color }
+    
+    /// Tertiary text (shorter accessor)
+    var tertiaryTxt: Color { tertiaryText.color }
+    
+    /// Placeholder text (shorter accessor)
+    var placeholderTxt: Color { placeholderText.color }
+    
+    /// Separator (shorter accessor)
+    var separatorColor: Color { separator.color }
+    
+    /// Opaque separator (shorter accessor)
+    var opaqueSeparatorColor: Color { opaqueSeparator.color }
+    
+    /// Success color (shorter accessor)
+    var successColor: Color { success.color }
+    
+    /// Warning color (shorter accessor)
+    var warningColor: Color { warning.color }
+    
+    /// Error color (shorter accessor)
+    var errorColor: Color { error.color }
+    
+    /// Info color (shorter accessor)
+    var infoColor: Color { info.color }
 }
