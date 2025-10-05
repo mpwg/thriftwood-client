@@ -130,10 +130,11 @@ final class DIContainer {
         
         // Register ThemeManager as concrete type (for SwiftUI environment)
         container.register(ThemeManager.self) { resolver in
-            guard let userPreferences = resolver.resolve((any UserPreferencesServiceProtocol).self) else {
-                fatalError("Could not resolve UserPreferencesServiceProtocol")
+            // Alias to the protocol registration to ensure singleton consistency
+            guard let themeManager = resolver.resolve((any ThemeManagerProtocol).self) as? ThemeManager else {
+                fatalError("Could not resolve ThemeManagerProtocol as ThemeManager")
             }
-            return ThemeManager(userPreferences: userPreferences)
+            return themeManager
         }.inObjectScope(.container)
     }
     
