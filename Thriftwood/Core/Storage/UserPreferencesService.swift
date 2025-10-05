@@ -113,6 +113,32 @@ final class UserPreferencesService: UserPreferencesServiceProtocol {
         }
     }
     
+    // MARK: - Tab Bar Configuration
+    
+    var tabAutomaticManage: Bool {
+        get { settings.tabAutomaticManage }
+        set {
+            settings.tabAutomaticManage = newValue
+            try? saveInternal()
+        }
+    }
+    
+    var tabManualOrder: [String] {
+        get { settings.tabManualOrder }
+        set {
+            settings.tabManualOrder = newValue
+            try? saveInternal()
+        }
+    }
+    
+    var enabledTabs: [String] {
+        get { settings.enabledTabs }
+        set {
+            settings.enabledTabs = newValue
+            try? saveInternal()
+        }
+    }
+    
     // MARK: - Networking Settings
     
     var networkingTLSValidation: Bool {
@@ -252,5 +278,64 @@ final class UserPreferencesService: UserPreferencesServiceProtocol {
     private func saveInternal() throws {
         settings.markAsUpdated()
         try dataService.updateAppSettings(settings)
+    }
+    
+    // MARK: - Tab Configuration Helpers
+    
+    /// Get ordered tab configurations based on current settings
+    /// Returns tabs in automatic (alphabetical) or manual order, filtered by enabled status
+    /// - Returns: Array of tab IDs in the configured order
+    func getOrderedTabIDs() -> [String] {
+        let allTabIDs = ["dashboard", "calendar", "services", "search", "settings"]
+        let enabledTabIDs = enabledTabs
+        
+        // Filter to only enabled tabs
+        var orderedTabs = allTabIDs.filter { enabledTabIDs.contains($0) }
+        
+        if tabAutomaticManage {
+            // Automatic: alphabetical order
+            orderedTabs.sort()
+        } else {
+            // Manual: use configured order
+            let manualOrder = tabManualOrder
+            orderedTabs.sort { tabA, tabB in
+                let indexA = manualOrder.firstIndex(of: tabA) ?? Int.max
+                let indexB = manualOrder.firstIndex(of: tabB) ?? Int.max
+                return indexA < indexB
+            }
+        }
+        
+        return orderedTabs
+    }
+    
+    /// Toggle whether a tab is enabled/disabled
+    /// - Parameter tabID: The tab identifier to toggle
+    /// - Note: Dashboard and Settings tabs cannot be disabled
+    func toggleTabEnabled(_ tabID: String) {
+        // Dashboard and Settings cannot be disabled
+        guard tabID != "dashboard" && tabID != "settings" else {
+            return
+        }
+        
+        var updatedEnabledTabs = enabledTabs
+        if updatedEnabledTabs.contains(tabID) {
+            updatedEnabledTabs.removeAll { $0 == tabID }
+        } else {
+            updatedEnabledTabs.append(tabID)
+        }
+        enabledTabs = updatedEnabledTabs
+    }
+    
+    /// Check if a specific tab is enabled
+    /// - Parameter tabID: The tab identifier to check
+    /// - Returns: true if the tab is enabled
+    func isTabEnabled(_ tabID: String) -> Bool {
+        return enabledTabs.contains(tabID)
+    }
+    
+    /// Update the manual tab order
+    /// - Parameter tabIDs: Array of tab IDs in desired order
+    func updateTabOrder(_ tabIDs: [String]) {
+        tabManualOrder = tabIDs
     }
 }

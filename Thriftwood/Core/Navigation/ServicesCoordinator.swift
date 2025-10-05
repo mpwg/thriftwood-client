@@ -33,6 +33,7 @@ import OSLog
 /// Coordinator that manages navigation within the Services feature.
 /// Handles adding services, configuring them, testing connections, etc.
 @MainActor
+@Observable
 final class ServicesCoordinator: @MainActor CoordinatorProtocol, Sendable {
     // MARK: - Coordinator Protocol
     

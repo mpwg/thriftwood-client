@@ -60,6 +60,17 @@ protocol UserPreferencesServiceProtocol: AnyObject {
     /// Manual order of drawer modules (stored as array of module keys)
     var drawerManualOrder: [String] { get set }
     
+    // MARK: - Tab Bar Configuration
+    
+    /// Whether to automatically manage tab bar order (alphabetical vs manual)
+    var tabAutomaticManage: Bool { get set }
+    
+    /// Manual order of tabs (stored as array of tab IDs)
+    var tabManualOrder: [String] { get set }
+    
+    /// Enabled tabs (tabs not in this list are hidden)
+    var enabledTabs: [String] { get set }
+    
     // MARK: - Networking Settings
     
     /// Whether to validate TLS/SSL certificates (disable for self-signed certs)
@@ -117,4 +128,25 @@ protocol UserPreferencesServiceProtocol: AnyObject {
     
     /// Resets all preferences to defaults
     func resetToDefaults() throws
+    
+    // MARK: - Tab Configuration Helpers
+    
+    /// Get ordered tab configurations based on current settings
+    /// Returns tabs in automatic (alphabetical) or manual order, filtered by enabled status
+    /// - Returns: Array of tab IDs in the configured order
+    func getOrderedTabIDs() -> [String]
+    
+    /// Toggle whether a tab is enabled/disabled
+    /// - Parameter tabID: The tab identifier to toggle
+    /// - Note: Dashboard and Settings tabs cannot be disabled
+    func toggleTabEnabled(_ tabID: String)
+    
+    /// Check if a specific tab is enabled
+    /// - Parameter tabID: The tab identifier to check
+    /// - Returns: true if the tab is enabled
+    func isTabEnabled(_ tabID: String) -> Bool
+    
+    /// Update the manual tab order
+    /// - Parameter tabIDs: Array of tab IDs in desired order
+    func updateTabOrder(_ tabIDs: [String])
 }

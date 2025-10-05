@@ -43,6 +43,9 @@ final class AppCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     
     // MARK: - Properties
     
+    /// User preferences service for configuration
+    private let preferencesService: any UserPreferencesServiceProtocol
+    
     /// Whether the user has completed onboarding
     private var hasCompletedOnboarding: Bool {
         UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
@@ -53,7 +56,8 @@ final class AppCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     
     // MARK: - Initialization
     
-    init() {
+    init(preferencesService: any UserPreferencesServiceProtocol) {
+        self.preferencesService = preferencesService
         AppLogger.navigation.info("AppCoordinator initialized")
     }
     
@@ -93,8 +97,8 @@ final class AppCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     func showMainApp() {
         AppLogger.navigation.info("Showing main app")
         
-        // Create and start tab coordinator
-        let tabCoordinator = TabCoordinator()
+        // Create and start tab coordinator with preferences service
+        let tabCoordinator = TabCoordinator(preferencesService: preferencesService)
         tabCoordinator.parent = self
         
         childCoordinators.append(tabCoordinator)

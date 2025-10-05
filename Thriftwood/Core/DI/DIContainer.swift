@@ -44,11 +44,20 @@ final class DIContainer {
     /// The underlying Swinject container
     private let container: Container
     
+    /// Optional model container to use (for testing)
+    private let modelContainer: ModelContainer?
+    
     // MARK: - Initialization
     
-    private init() {
+    private init(modelContainer: ModelContainer? = nil) {
         self.container = Container()
+        self.modelContainer = modelContainer
         registerServices()
+    }
+    
+    /// Creates a test instance with custom model container
+    static func makeTestContainer(modelContainer: ModelContainer) -> DIContainer {
+        return DIContainer(modelContainer: modelContainer)
     }
     
     // MARK: - Service Registration
@@ -66,7 +75,12 @@ final class DIContainer {
     /// Registers infrastructure services (storage, logging, etc.)
     private func registerInfrastructure() {
         // Register ModelContainer (singleton)
-        container.register(ModelContainer.self) { _ in
+        container.register(ModelContainer.self) { [weak self] _ in
+            // Use provided container if available (for tests), otherwise create production container
+            if let testContainer = self?.modelContainer {
+                return testContainer
+            }
+            
             do {
                 return try ModelContainer.thriftwoodContainer()
             } catch {
@@ -153,9 +167,17 @@ final class DIContainer {
     /// Registers coordinators for navigation
     /// Note: Coordinators are typically created with transient scope since they manage navigation state
     private func registerCoordinators() {
-        // Note: Coordinators will be registered here when they need DI
-        // Most coordinators currently use simple init() and don't require services
-        // Future: Register coordinators that need DataService or other dependencies
+        // Register AppCoordinator (needs UserPreferencesService)
+        container.register(AppCoordinator.self) { resolver in
+            guard let preferencesService = resolver.resolve((any UserPreferencesServiceProtocol).self) else {
+                fatalError("Could not resolve UserPreferencesServiceProtocol for AppCoordinator")
+            }
+            return AppCoordinator(preferencesService: preferencesService)
+        }
+        
+        // Note: Other coordinators are created on-demand by parent coordinators
+        // TabCoordinator, DashboardCoordinator, etc. are created with simple init()
+        // or are passed dependencies from their parent coordinators
     }
     
     // MARK: - Service Resolution

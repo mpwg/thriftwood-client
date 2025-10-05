@@ -61,6 +61,17 @@ final class AppSettings {
     /// Manual order of drawer modules (stored as array of module keys)
     var drawerManualOrder: [String]
     
+    // MARK: - Tab Bar Configuration
+    
+    /// Whether to automatically manage tab bar order (alphabetical vs manual)
+    var tabAutomaticManage: Bool
+    
+    /// Manual order of tabs (stored as array of tab IDs)
+    var tabManualOrder: [String]
+    
+    /// Enabled tabs (tabs not in this list are hidden)
+    var enabledTabs: [String]
+    
     // MARK: - Networking Settings
     
     /// Whether to validate TLS/SSL certificates (disable for self-signed certs)
@@ -117,6 +128,9 @@ final class AppSettings {
         androidBackOpensDrawer: Bool = true,
         drawerAutomaticManage: Bool = true,
         drawerManualOrder: [String] = [],
+        tabAutomaticManage: Bool = true,
+        tabManualOrder: [String] = [],
+        enabledTabs: [String] = ["dashboard", "calendar", "services", "search", "settings"],
         networkingTLSValidation: Bool = false,
         quickActionsLidarr: Bool = false,
         quickActionsRadarr: Bool = false,
@@ -139,6 +153,9 @@ final class AppSettings {
         self.androidBackOpensDrawer = androidBackOpensDrawer
         self.drawerAutomaticManage = drawerAutomaticManage
         self.drawerManualOrder = drawerManualOrder
+        self.tabAutomaticManage = tabAutomaticManage
+        self.tabManualOrder = tabManualOrder
+        self.enabledTabs = enabledTabs
         self.networkingTLSValidation = networkingTLSValidation
         self.quickActionsLidarr = quickActionsLidarr
         self.quickActionsRadarr = quickActionsRadarr

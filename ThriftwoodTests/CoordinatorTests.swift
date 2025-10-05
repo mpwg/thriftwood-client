@@ -39,7 +39,8 @@ struct CoordinatorTests {
     
     @Test("AppCoordinator initializes correctly")
     func testAppCoordinatorInitialization() async {
-        let coordinator = AppCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = AppCoordinator(preferencesService: mockPrefs)
         
         #expect(coordinator.childCoordinators.isEmpty)
         #expect(coordinator.navigationPath.isEmpty)
@@ -48,27 +49,31 @@ struct CoordinatorTests {
     }
     
     @Test("AppCoordinator starts with onboarding when not completed")
+    @MainActor
     func testAppCoordinatorStartsWithOnboarding() async {
         // Reset onboarding state
         UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
         
-        let coordinator = AppCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = AppCoordinator(preferencesService: mockPrefs)
         coordinator.start()
         
-        #expect(coordinator.navigationPath == [.onboarding])
+        #expect(coordinator.navigationPath == [AppRoute.onboarding])
         #expect(coordinator.childCoordinators.count == 1)
         #expect(coordinator.activeCoordinator is OnboardingCoordinator)
     }
     
     @Test("AppCoordinator starts with main app when onboarding completed")
+    @MainActor
     func testAppCoordinatorStartsWithMainApp() async {
         // Mark onboarding as complete
         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
         
-        let coordinator = AppCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = AppCoordinator(preferencesService: mockPrefs)
         coordinator.start()
         
-        #expect(coordinator.navigationPath == [.main])
+        #expect(coordinator.navigationPath == [AppRoute.main])
         #expect(coordinator.childCoordinators.count == 1)
         #expect(coordinator.activeCoordinator is TabCoordinator)
         
@@ -77,17 +82,19 @@ struct CoordinatorTests {
     }
     
     @Test("AppCoordinator can reset onboarding")
+    @MainActor
     func testAppCoordinatorResetOnboarding() async {
         // Set onboarding as complete
         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
         
-        let coordinator = AppCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = AppCoordinator(preferencesService: mockPrefs)
         coordinator.start()
         
         // Reset onboarding
         coordinator.resetOnboarding()
         
-        #expect(coordinator.navigationPath == [.onboarding])
+        #expect(coordinator.navigationPath == [AppRoute.onboarding])
         #expect(coordinator.activeCoordinator is OnboardingCoordinator)
         
         // Clean up
@@ -97,18 +104,22 @@ struct CoordinatorTests {
     // MARK: - TabCoordinator Tests
     
     @Test("TabCoordinator initializes correctly")
+    @MainActor
     func testTabCoordinatorInitialization() async {
-        let coordinator = TabCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = TabCoordinator(preferencesService: mockPrefs)
         
         #expect(coordinator.childCoordinators.isEmpty)
         #expect(coordinator.navigationPath.isEmpty)
         #expect(coordinator.parent == nil)
-        #expect(coordinator.selectedTab == .dashboard)
+        #expect(coordinator.selectedTab == TabRoute.dashboard)
     }
     
     @Test("TabCoordinator creates child coordinators on start")
+    @MainActor
     func testTabCoordinatorStartCreatesChildren() async {
-        let coordinator = TabCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = TabCoordinator(preferencesService: mockPrefs)
         coordinator.start()
         
         #expect(coordinator.childCoordinators.count == 3)
@@ -118,15 +129,17 @@ struct CoordinatorTests {
     }
     
     @Test("TabCoordinator can switch tabs")
+    @MainActor
     func testTabCoordinatorSwitchTab() async {
-        let coordinator = TabCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = TabCoordinator(preferencesService: mockPrefs)
         coordinator.start()
         
-        coordinator.select(tab: .services)
-        #expect(coordinator.selectedTab == .services)
+        coordinator.select(tab: TabRoute.services)
+        #expect(coordinator.selectedTab == TabRoute.services)
         
-        coordinator.select(tab: .settings)
-        #expect(coordinator.selectedTab == .settings)
+        coordinator.select(tab: TabRoute.settings)
+        #expect(coordinator.selectedTab == TabRoute.settings)
         
         coordinator.select(tab: .dashboard)
         #expect(coordinator.selectedTab == .dashboard)
@@ -298,8 +311,10 @@ struct CoordinatorTests {
     // MARK: - Child Coordinator Tests
     
     @Test("Parent coordinator removes child coordinator")
+    @MainActor
     func testParentRemovesChildCoordinator() async {
-        let parent = TabCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let parent = TabCoordinator(preferencesService: mockPrefs)
         parent.start()
         
         let initialCount = parent.childCoordinators.count
