@@ -43,7 +43,7 @@ echo "Found checkouts at: $CHECKOUT_BASE"
 mkdir -p "$PROJECT_DIR/Thriftwood/Resources"
 
 # Start JSON output
-cat > "$OUTPUT_FILE" << 'EOF'
+cat > "$OUTPUT_FILE" << EOF
 {
   "generated": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "dependencies": [
