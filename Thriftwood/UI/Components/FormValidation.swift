@@ -23,7 +23,7 @@ import Foundation
 
 /// Validation helpers for form inputs.
 /// Provides common validation patterns for URLs, ports, API keys, etc.
-enum FormValidation {
+nonisolated enum FormValidation {
     
     // MARK: - URL Validation
     
