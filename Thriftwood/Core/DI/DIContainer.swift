@@ -120,19 +120,19 @@ final class DIContainer {
             return ProfileService(dataService: dataService)
         }.inObjectScope(.container)
         
-        // Register ThemeManager (singleton, using protocol)
-        container.register((any ThemeManagerProtocol).self) { resolver in
+        // Register MPWGThemeManager (singleton, using protocol)
+        container.register((any MPWGThemeManagerProtocol).self) { resolver in
             guard let userPreferences = resolver.resolve((any UserPreferencesServiceProtocol).self) else {
                 fatalError("Could not resolve UserPreferencesServiceProtocol")
             }
-            return ThemeManager(userPreferences: userPreferences)
+            return MPWGThemeManager(userPreferences: userPreferences)
         }.inObjectScope(.container)
         
-        // Register ThemeManager as concrete type (for SwiftUI environment)
-        container.register(ThemeManager.self) { resolver in
+        // Register MPWGThemeManager as concrete type (for SwiftUI environment)
+        container.register(MPWGThemeManager.self) { resolver in
             // Alias to the protocol registration to ensure singleton consistency
-            guard let themeManager = resolver.resolve((any ThemeManagerProtocol).self) as? ThemeManager else {
-                fatalError("Could not resolve ThemeManagerProtocol as ThemeManager")
+            guard let themeManager = resolver.resolve((any MPWGThemeManagerProtocol).self) as? MPWGThemeManager else {
+                fatalError("Could not resolve MPWGThemeManagerProtocol as MPWGThemeManager")
             }
             return themeManager
         }.inObjectScope(.container)

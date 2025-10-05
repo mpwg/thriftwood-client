@@ -64,16 +64,34 @@ Thriftwood/Core/Theme/
 
 ### Accessing Themes
 
+**Recommended Pattern (MPWG Refactoring)**:
+
 ```swift
 import SwiftUI
 
 struct MyView: View {
-    @EnvironmentObject var themeManager: ThemeManager
+    @Environment(\.mpwgTheme) private var theme
 
     var body: some View {
         VStack {
             Text("Hello")
-                .foregroundStyle(Color.themeAccent)
+                .foregroundStyle(theme.accent)        // Dynamic accent color
+                .font(.headingLarge)
+        }
+        .background(theme.primaryBg)                  // Dynamic background
+        .padding(Spacing.medium)
+    }
+}
+```
+
+**Legacy Pattern (Static Fallbacks)**:
+
+```swift
+struct MyView: View {
+    var body: some View {
+        VStack {
+            Text("Hello")
+                .foregroundStyle(Color.themeAccent)   // Static fallback (doesn't update on theme change)
                 .font(.headingLarge)
         }
         .background(Color.themePrimaryBackground)
@@ -82,17 +100,23 @@ struct MyView: View {
 }
 ```
 
+> **Note**: The legacy static pattern (`Color.themeAccent`) provides fallback colors but doesn't update
+> when the theme changes. Use `@Environment(\.mpwgTheme)` for dynamic theming.
+
 ### Switching Themes
 
 ```swift
+// Access theme manager
+@Environment(\.mpwgThemeManager) private var themeManager
+
 // Use system theme (default - follows light/dark mode)
-themeManager.themeMode = .system
+themeManager?.themeMode = .system
 
 // Select specific theme (persisted across app launches)
-themeManager.setTheme(Theme.dark)
+themeManager?.setTheme(MPWGTheme.dark)
 
 // Reset to default (clears saved theme, returns to system mode)
-themeManager.resetToDefault()
+themeManager?.resetToDefault()
 ```
 
 **Persistence Behavior:**
@@ -105,7 +129,9 @@ themeManager.resetToDefault()
 ### Creating Custom Themes
 
 ```swift
-let customTheme = Theme.light.customized(
+@Environment(\.mpwgThemeManager) private var themeManager
+
+let customTheme = MPWGTheme.light.customized(
     id: "my-theme",
     name: "My Theme",
     accentColor: Color(red: 0.5, green: 0.0, blue: 0.8), // Purple
@@ -113,23 +139,47 @@ let customTheme = Theme.light.customized(
     imageBackgroundOpacity: 60
 )
 
-themeManager.addCustomTheme(customTheme)
-themeManager.setTheme(customTheme)
+themeManager?.addCustomTheme(customTheme)
+themeManager?.setTheme(customTheme)
 ```
 
 ## Design Tokens
 
 ### Colors
 
-#### Background Colors
+#### Recommended: Environment-based (Dynamic)
 
+Access colors via `@Environment(\.mpwgTheme)` for dynamic theme support:
+
+```swift
+@Environment(\.mpwgTheme) private var theme
+
+// Shorter accessors
+theme.accent                  // Accent color
+theme.primaryBg               // Primary background
+theme.secondaryBg             // Secondary background
+theme.tertiaryBg              // Tertiary background
+theme.cardBg                  // Card background
+theme.primaryTxt              // Primary text
+theme.secondaryTxt            // Secondary text
+theme.tertiaryTxt             // Tertiary text
+theme.placeholderTxt          // Placeholder text
+theme.separatorColor          // Separator
+theme.opaqueSeparatorColor    // Opaque separator
+theme.successColor            // Success state
+theme.warningColor            // Warning state
+theme.errorColor              // Error state
+theme.infoColor               // Info state
+```
+
+#### Legacy: Static Fallbacks (Non-dynamic)
+
+Static color accessors (don't update on theme change):
+
+- `Color.themeAccent` - Primary accent color (fallback: orange)
 - `Color.themePrimaryBackground` - Main background
 - `Color.themeSecondaryBackground` - Cards, sections
 - `Color.themeTertiaryBackground` - Nested elements
-
-#### Text Colors
-
-- `Color.themeAccent` - Primary accent color
 - `Color.themePrimaryText` - Main text
 - `Color.themeSecondaryText` - Subtext, captions
 - `Color.themePlaceholderText` - Placeholder text
@@ -339,23 +389,54 @@ Mac Catalyst test runner has configuration issues (test bundle doesn't contain e
 
 ### DO
 
-✅ Use theme colors via extensions (`Color.themeAccent`)  
+✅ Use dynamic theme colors via `@Environment(\.mpwgTheme)`  
+✅ Use shorter accessors (`theme.accent`, `theme.primaryBg`)  
 ✅ Use spacing constants (`Spacing.medium`)  
 ✅ Use standard animations (`Animation.quickSpring`)  
-✅ Access theme via `@EnvironmentObject var themeManager: ThemeManager`  
+✅ Access theme manager via `@Environment(\.mpwgThemeManager)`  
 ✅ Create custom themes by customizing existing ones
 
 ### DON'T
 
 ❌ Hard-code color values  
+❌ Use static `Color.themeAccent` when you need dynamic theming  
+❌ Access theme outside of `@MainActor` context  
 ❌ Use arbitrary spacing values  
 ❌ Access `Theme` properties from non-main threads  
 ❌ Mutate theme properties directly (use `customized()`)  
 ❌ Store raw `Color` values (use `CodableColor`)
 
-## Migration from Legacy
+## Migration Patterns
 
-### Flutter Color → Swift
+### Static to Environment-based (MPWG Refactoring)
+
+**Before (Static - doesn't update on theme change)**:
+
+```swift
+struct MyView: View {
+    var body: some View {
+        Text("Hello")
+            .foregroundStyle(Color.themeAccent)
+            .background(Color.themePrimaryBackground)
+    }
+}
+```
+
+**After (Dynamic - updates when theme changes)**:
+
+```swift
+struct MyView: View {
+    @Environment(\.mpwgTheme) private var theme
+
+    var body: some View {
+        Text("Hello")
+            .foregroundStyle(theme.accent)
+            .background(theme.primaryBg)
+    }
+}
+```
+
+### Flutter → SwiftUI (Legacy Migration)
 
 ```dart
 // Flutter (legacy)
@@ -363,11 +444,18 @@ color: LunaUI.accent
 backgroundColor: LunaUI.background
 textStyle: LunaUI.textStyle
 
-// Swift (Thriftwood)
-.foregroundStyle(Color.themeAccent)
+// Swift (Thriftwood - Environment pattern)
+@Environment(\.mpwgTheme) private var theme
+
+.foregroundStyle(theme.accent)
+.background(theme.primaryBg)
+.font(.headingLarge)
+```
+
 .background(Color.themePrimaryBackground)
 .font(.body)
-```
+
+````
 
 ### Flutter Theme → Swift
 
@@ -381,7 +469,7 @@ ThemeData(
 // Swift (Thriftwood)
 Theme.dark // Uses built-in dark theme
 themeManager.setTheme(Theme.dark)
-```
+````
 
 ## Roadmap
 

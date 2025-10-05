@@ -24,49 +24,51 @@ import Combine
 import OSLog
 
 /// Protocol for theme management
-protocol ThemeManagerProtocol {
+/// Prefixed with MPWG to avoid naming conflicts
+protocol MPWGThemeManagerProtocol {
     /// Current active theme
-    var currentTheme: Theme { get }
+    var currentTheme: MPWGTheme { get }
     
     /// Current theme mode (system or custom)
-    var themeMode: ThemeMode { get set }
+    var themeMode: MPWGThemeMode { get set }
     
     /// ID of selected custom theme (when themeMode is .custom)
     var selectedThemeID: String? { get set }
     
     /// All available themes (built-in + custom)
-    var availableThemes: [Theme] { get }
+    var availableThemes: [MPWGTheme] { get }
     
     /// Custom themes created by user
-    var customThemes: [Theme] { get set }
+    var customThemes: [MPWGTheme] { get set }
     
     /// Detect if system is in dark mode
     var isSystemDarkMode: Bool { get }
     
     /// Set a specific theme
-    func setTheme(_ theme: Theme)
+    func setTheme(_ theme: MPWGTheme)
     
     /// Add a custom theme
-    func addCustomTheme(_ theme: Theme)
+    func addCustomTheme(_ theme: MPWGTheme)
     
     /// Remove a custom theme
     func removeCustomTheme(id: String)
     
     /// Update an existing custom theme
-    func updateCustomTheme(_ theme: Theme)
+    func updateCustomTheme(_ theme: MPWGTheme)
     
     /// Reset to default theme
     func resetToDefault()
 }
 
 /// Theme manager for handling app-wide theme state
+/// Prefixed with MPWG to avoid naming conflicts
 @MainActor
-final class ThemeManager: ThemeManagerProtocol, ObservableObject {
+final class MPWGThemeManager: MPWGThemeManagerProtocol, ObservableObject {
     
     // MARK: - Published Properties
     
-    @Published private(set) var currentTheme: Theme
-    @Published var themeMode: ThemeMode {
+    @Published private(set) var currentTheme: MPWGTheme
+    @Published var themeMode: MPWGThemeMode {
         didSet {
             updateCurrentTheme()
             savePreferences()
@@ -80,7 +82,7 @@ final class ThemeManager: ThemeManagerProtocol, ObservableObject {
         }
     }
     
-    @Published var customThemes: [Theme] {
+    @Published var customThemes: [MPWGTheme] {
         didSet {
             saveCustomThemes()
         }
@@ -101,8 +103,8 @@ final class ThemeManager: ThemeManagerProtocol, ObservableObject {
     
     // MARK: - Computed Properties
     
-    var availableThemes: [Theme] {
-        Theme.builtInThemes + customThemes
+    var availableThemes: [MPWGTheme] {
+        MPWGTheme.builtInThemes + customThemes
     }
     
     // MARK: - Initialization
@@ -136,13 +138,13 @@ final class ThemeManager: ThemeManagerProtocol, ObservableObject {
     
     // MARK: - Public Methods
     
-    func setTheme(_ theme: Theme) {
+    func setTheme(_ theme: MPWGTheme) {
         themeMode = .custom
         selectedThemeID = theme.id
         currentTheme = theme
     }
     
-    func addCustomTheme(_ theme: Theme) {
+    func addCustomTheme(_ theme: MPWGTheme) {
         guard !availableThemes.contains(where: { $0.id == theme.id }) else {
             unsafe os_log(.info, "Theme with ID %{public}@ already exists", theme.id)
             return
@@ -159,7 +161,7 @@ final class ThemeManager: ThemeManagerProtocol, ObservableObject {
         }
     }
     
-    func updateCustomTheme(_ theme: Theme) {
+    func updateCustomTheme(_ theme: MPWGTheme) {
         if let index = customThemes.firstIndex(where: { $0.id == theme.id }) {
             customThemes[index] = theme
             
@@ -188,24 +190,24 @@ final class ThemeManager: ThemeManagerProtocol, ObservableObject {
     }
     
     private static func resolveTheme(
-        mode: ThemeMode,
+        mode: MPWGThemeMode,
         selectedID: String?,
-        customThemes: [Theme],
+        customThemes: [MPWGTheme],
         isSystemDark: Bool
-    ) -> Theme {
+    ) -> MPWGTheme {
         switch mode {
         case .system:
             // Follow system appearance
-            return isSystemDark ? Theme.dark : Theme.light
+            return isSystemDark ? MPWGTheme.dark : MPWGTheme.light
             
         case .custom:
             // Use selected theme or fall back to system
             guard let id = selectedID else {
-                return isSystemDark ? Theme.dark : Theme.light
+                return isSystemDark ? MPWGTheme.dark : MPWGTheme.light
             }
             
             // Look in built-in themes first
-            if let theme = Theme.builtInThemes.first(where: { $0.id == id }) {
+            if let theme = MPWGTheme.builtInThemes.first(where: { $0.id == id }) {
                 return theme
             }
             
@@ -215,7 +217,7 @@ final class ThemeManager: ThemeManagerProtocol, ObservableObject {
             }
             
             // Fall back to system
-            return isSystemDark ? Theme.dark : Theme.light
+            return isSystemDark ? MPWGTheme.dark : MPWGTheme.light
         }
     }
     
@@ -289,9 +291,9 @@ final class ThemeManager: ThemeManagerProtocol, ObservableObject {
         }
     }
     
-    private static func loadThemeMode() -> ThemeMode {
+    private static func loadThemeMode() -> MPWGThemeMode {
         guard let rawValue = UserDefaults.standard.string(forKey: "thriftwood.themeMode"),
-              let mode = ThemeMode(rawValue: rawValue) else {
+              let mode = MPWGThemeMode(rawValue: rawValue) else {
             return .system
         }
         return mode
@@ -301,9 +303,9 @@ final class ThemeManager: ThemeManagerProtocol, ObservableObject {
         UserDefaults.standard.string(forKey: "thriftwood.selectedThemeID")
     }
     
-    private static func loadCustomThemes() -> [Theme] {
+    private static func loadCustomThemes() -> [MPWGTheme] {
         guard let data = UserDefaults.standard.data(forKey: "thriftwood.customThemes"),
-              let themes = try? JSONDecoder().decode([Theme].self, from: data) else {
+              let themes = try? JSONDecoder().decode([MPWGTheme].self, from: data) else {
             return []
         }
         return themes
@@ -312,23 +314,23 @@ final class ThemeManager: ThemeManagerProtocol, ObservableObject {
 
 // MARK: - Environment Key
 
-private struct ThemeKey: EnvironmentKey {
-    static let defaultValue: Theme = Theme.light
+private struct MPWGThemeKey: EnvironmentKey {
+    static let defaultValue: MPWGTheme = MPWGTheme.light
 }
 
-private struct ThemeManagerKey: EnvironmentKey {
-    static let defaultValue: ThemeManager? = nil
+private struct MPWGThemeManagerKey: EnvironmentKey {
+    static let defaultValue: MPWGThemeManager? = nil
 }
 
 extension EnvironmentValues {
-    var theme: Theme {
-        get { self[ThemeKey.self] }
-        set { self[ThemeKey.self] = newValue }
+    var mpwgTheme: MPWGTheme {
+        get { self[MPWGThemeKey.self] }
+        set { self[MPWGThemeKey.self] = newValue }
     }
     
-    var themeManager: ThemeManager? {
-        get { self[ThemeManagerKey.self] }
-        set { self[ThemeManagerKey.self] = newValue }
+    var mpwgThemeManager: MPWGThemeManager? {
+        get { self[MPWGThemeManagerKey.self] }
+        set { self[MPWGThemeManagerKey.self] = newValue }
     }
 }
 
@@ -336,15 +338,15 @@ extension EnvironmentValues {
 
 extension View {
     /// Apply the theme to this view and its children
-    func themed(_ theme: Theme) -> some View {
-        self.environment(\.theme, theme)
+    func themed(_ theme: MPWGTheme) -> some View {
+        self.environment(\.mpwgTheme, theme)
             .preferredColorScheme(theme.isDark ? .dark : .light)
     }
     
     /// Apply the theme manager to this view and its children
-    func themedWithManager(_ manager: ThemeManager) -> some View {
-        self.environment(\.theme, manager.currentTheme)
-            .environment(\.themeManager, manager)
+    func themedWithManager(_ manager: MPWGThemeManager) -> some View {
+        self.environment(\.mpwgTheme, manager.currentTheme)
+            .environment(\.mpwgThemeManager, manager)
             .preferredColorScheme(manager.currentTheme.isDark ? .dark : .light)
     }
 }

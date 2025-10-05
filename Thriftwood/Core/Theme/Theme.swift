@@ -22,7 +22,8 @@
 import SwiftUI
 
 /// Complete theme definition with all colors and styles
-struct Theme: Codable, Equatable, Identifiable {
+/// Prefixed with MPWG to avoid naming conflicts with SwiftUI.Theme
+struct MPWGTheme: Codable, Equatable, Identifiable {
     let id: String
     let name: String
     let isDark: Bool
@@ -72,7 +73,7 @@ struct Theme: Codable, Equatable, Identifiable {
     // MARK: - Predefined Themes
     
     /// Light theme (default)
-    static let light = Theme(
+    static let light = MPWGTheme(
         id: "light",
         name: "Light",
         isDark: false,
@@ -96,7 +97,7 @@ struct Theme: Codable, Equatable, Identifiable {
     )
     
     /// Dark theme
-    static let dark = Theme(
+    static let dark = MPWGTheme(
         id: "dark",
         name: "Dark",
         isDark: true,
@@ -120,7 +121,7 @@ struct Theme: Codable, Equatable, Identifiable {
     )
     
     /// Pure black theme (for OLED screens)
-    static let black = Theme(
+    static let black = MPWGTheme(
         id: "black",
         name: "Black",
         isDark: true,
@@ -144,7 +145,7 @@ struct Theme: Codable, Equatable, Identifiable {
     )
     
     /// All built-in themes
-    static let builtInThemes: [Theme] = [.light, .dark, .black]
+    static let builtInThemes: [MPWGTheme] = [.light, .dark, .black]
 }
 
 /// Codable wrapper for SwiftUI Color
@@ -195,7 +196,7 @@ struct CodableColor: Codable, Equatable {
 
 // MARK: - Theme Extensions
 
-extension Theme {
+extension MPWGTheme {
     /// Create a custom theme by modifying an existing theme
     func customized(
         id: String,
@@ -203,8 +204,8 @@ extension Theme {
         accentColor: Color? = nil,
         showBorders: Bool? = nil,
         imageBackgroundOpacity: Int? = nil
-    ) -> Theme {
-        Theme(
+    ) -> MPWGTheme {
+        MPWGTheme(
             id: id,
             name: name,
             isDark: self.isDark,

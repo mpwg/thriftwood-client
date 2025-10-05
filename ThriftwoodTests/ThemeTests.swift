@@ -23,9 +23,9 @@ import Testing
 import SwiftUI
 @testable import Thriftwood
 
-// MARK: - Theme Tests
+// MARK: - MPWGTheme Tests
 
-@Suite("Theme System Tests")
+@Suite("MPWGTheme System Tests")
 @MainActor
 struct ThemeTests {
     
@@ -33,15 +33,15 @@ struct ThemeTests {
     
     @Test("Built-in themes exist")
     func builtInThemesExist() {
-        #expect(Theme.builtInThemes.count == 3)
-        #expect(Theme.builtInThemes.contains(where: { $0.id == "light" }))
-        #expect(Theme.builtInThemes.contains(where: { $0.id == "dark" }))
-        #expect(Theme.builtInThemes.contains(where: { $0.id == "black" }))
+        #expect(MPWGTheme.builtInThemes.count == 3)
+        #expect(MPWGTheme.builtInThemes.contains(where: { $0.id == "light" }))
+        #expect(MPWGTheme.builtInThemes.contains(where: { $0.id == "dark" }))
+        #expect(MPWGTheme.builtInThemes.contains(where: { $0.id == "black" }))
     }
     
     @Test("Light theme properties")
     func lightThemeProperties() {
-        let theme = Theme.light
+        let theme = MPWGTheme.light
         #expect(theme.id == "light")
         #expect(theme.name == "Light")
         #expect(theme.isDark == false)
@@ -51,7 +51,7 @@ struct ThemeTests {
     
     @Test("Dark theme properties")
     func darkThemeProperties() {
-        let theme = Theme.dark
+        let theme = MPWGTheme.dark
         #expect(theme.id == "dark")
         #expect(theme.name == "Dark")
         #expect(theme.isDark == true)
@@ -60,7 +60,7 @@ struct ThemeTests {
     
     @Test("Black theme properties")
     func blackThemeProperties() {
-        let theme = Theme.black
+        let theme = MPWGTheme.black
         #expect(theme.id == "black")
         #expect(theme.name == "Black")
         #expect(theme.isDark == true)
@@ -86,12 +86,12 @@ struct ThemeTests {
         _ = codableColor.color
     }
     
-    // MARK: - Theme Customization
+    // MARK: - MPWGTheme Customization
     
-    @Test("Theme customization")
+    @Test("MPWGTheme customization")
     func themeCustomization() {
-        let lightIsDark = Theme.light.isDark
-        let customTheme = Theme.light.customized(
+        let lightIsDark = MPWGTheme.light.isDark
+        let customTheme = MPWGTheme.light.customized(
             id: "custom-light",
             name: "Custom Light",
             accentColor: .blue,
@@ -106,16 +106,16 @@ struct ThemeTests {
         #expect(customTheme.isDark == lightIsDark)
     }
     
-    // MARK: - Theme Codable
+    // MARK: - MPWGTheme Codable
     
-    @Test("Theme encoding and decoding")
+    @Test("MPWGTheme encoding and decoding")
     func themeEncodingDecoding() throws {
-        let original = Theme.light
+        let original = MPWGTheme.light
         let encoder = JSONEncoder()
         let data = try encoder.encode(original)
         
         let decoder = JSONDecoder()
-        let decoded = try decoder.decode(Theme.self, from: data)
+        let decoded = try decoder.decode(MPWGTheme.self, from: data)
         
         #expect(decoded.id == original.id)
         #expect(decoded.name == original.name)
@@ -123,15 +123,15 @@ struct ThemeTests {
     }
 }
 
-// MARK: - Theme Manager Tests
+// MARK: - MPWGTheme Manager Tests
 
-@Suite("ThemeManager Tests")
+@Suite("MPWGThemeManager Tests")
 @MainActor
 struct ThemeManagerTests {
     
     // MARK: - Initialization
     
-    @Test("ThemeManager initialization with defaults")
+    @Test("MPWGThemeManager initialization with defaults")
     func themeManagerInitialization() async throws {
         // Clear UserDefaults
         UserDefaults.standard.removeObject(forKey: "thriftwood.themeMode")
@@ -139,7 +139,7 @@ struct ThemeManagerTests {
         UserDefaults.standard.removeObject(forKey: "thriftwood.customThemes")
         
         let mockPreferences = MockUserPreferencesService()
-        let manager = ThemeManager(userPreferences: mockPreferences)
+        let manager = MPWGThemeManager(userPreferences: mockPreferences)
         
         #expect(manager.themeMode == .system)
         #expect(manager.selectedThemeID == nil)
@@ -147,14 +147,14 @@ struct ThemeManagerTests {
         #expect(manager.availableThemes.count == 3) // 3 built-in themes
     }
     
-    // MARK: - Theme Selection
+    // MARK: - MPWGTheme Selection
     
     @Test("Set specific theme")
     func setSpecificTheme() async throws {
         let mockPreferences = MockUserPreferencesService()
-        let manager = ThemeManager(userPreferences: mockPreferences)
+        let manager = MPWGThemeManager(userPreferences: mockPreferences)
         
-        manager.setTheme(Theme.dark)
+        manager.setTheme(MPWGTheme.dark)
         
         #expect(manager.themeMode == .custom)
         #expect(manager.selectedThemeID == "dark")
@@ -164,7 +164,7 @@ struct ThemeManagerTests {
     @Test("System theme mode")
     func systemThemeMode() async throws {
         let mockPreferences = MockUserPreferencesService()
-        let manager = ThemeManager(userPreferences: mockPreferences)
+        let manager = MPWGThemeManager(userPreferences: mockPreferences)
         
         manager.themeMode = .system
         manager.selectedThemeID = nil
@@ -179,11 +179,11 @@ struct ThemeManagerTests {
     @Test("Add custom theme")
     func addCustomTheme() async throws {
         let mockPreferences = MockUserPreferencesService()
-        let manager = ThemeManager(userPreferences: mockPreferences)
+        let manager = MPWGThemeManager(userPreferences: mockPreferences)
         
-        let customTheme = Theme.light.customized(
+        let customTheme = MPWGTheme.light.customized(
             id: "my-theme",
-            name: "My Theme",
+            name: "My MPWGTheme",
             accentColor: .purple
         )
         
@@ -197,11 +197,11 @@ struct ThemeManagerTests {
     @Test("Remove custom theme")
     func removeCustomTheme() async throws {
         let mockPreferences = MockUserPreferencesService()
-        let manager = ThemeManager(userPreferences: mockPreferences)
+        let manager = MPWGThemeManager(userPreferences: mockPreferences)
         
-        let customTheme = Theme.light.customized(
+        let customTheme = MPWGTheme.light.customized(
             id: "my-theme",
-            name: "My Theme"
+            name: "My MPWGTheme"
         )
         
         manager.addCustomTheme(customTheme)
@@ -215,11 +215,11 @@ struct ThemeManagerTests {
     @Test("Update custom theme")
     func updateCustomTheme() async throws {
         let mockPreferences = MockUserPreferencesService()
-        let manager = ThemeManager(userPreferences: mockPreferences)
+        let manager = MPWGThemeManager(userPreferences: mockPreferences)
         
-        let originalTheme = Theme.light.customized(
+        let originalTheme = MPWGTheme.light.customized(
             id: "my-theme",
-            name: "My Theme",
+            name: "My MPWGTheme",
             imageBackgroundOpacity: 50
         )
         
@@ -227,27 +227,27 @@ struct ThemeManagerTests {
         
         let updatedTheme = originalTheme.customized(
             id: "my-theme",
-            name: "My Updated Theme",
+            name: "My Updated MPWGTheme",
             imageBackgroundOpacity: 75
         )
         
         manager.updateCustomTheme(updatedTheme)
         
         let found = manager.customThemes.first(where: { $0.id == "my-theme" })
-        #expect(found?.name == "My Updated Theme")
+        #expect(found?.name == "My Updated MPWGTheme")
         #expect(found?.imageBackgroundOpacity == 75)
     }
     
     // MARK: - Persistence
     
-    @Test("Theme preferences persistence")
+    @Test("MPWGTheme preferences persistence")
     func themePreferencesPersistence() async throws {
         // Clear existing
         UserDefaults.standard.removeObject(forKey: "thriftwood.themeMode")
         UserDefaults.standard.removeObject(forKey: "thriftwood.selectedThemeID")
         
         let mockPreferences = MockUserPreferencesService()
-        let manager = ThemeManager(userPreferences: mockPreferences)
+        let manager = MPWGThemeManager(userPreferences: mockPreferences)
         
         manager.themeMode = .custom
         manager.selectedThemeID = "dark"
@@ -263,9 +263,9 @@ struct ThemeManagerTests {
     @Test("Reset to default")
     func resetToDefault() async throws {
         let mockPreferences = MockUserPreferencesService()
-        let manager = ThemeManager(userPreferences: mockPreferences)
+        let manager = MPWGThemeManager(userPreferences: mockPreferences)
         
-        manager.setTheme(Theme.black)
+        manager.setTheme(MPWGTheme.black)
         #expect(manager.themeMode == .custom)
         
         manager.resetToDefault()
@@ -283,7 +283,7 @@ struct ThemeManagerTests {
         UserDefaults.standard.removeObject(forKey: "thriftwood.selectedThemeID")
         
         let mockPreferences = MockUserPreferencesService()
-        let manager = ThemeManager(userPreferences: mockPreferences)
+        let manager = MPWGThemeManager(userPreferences: mockPreferences)
         
         #expect(manager.themeMode == .system)
         #expect(manager.selectedThemeID == nil)
@@ -296,11 +296,11 @@ struct ThemeManagerTests {
         UserDefaults.standard.removeObject(forKey: "thriftwood.selectedThemeID")
         
         let mockPreferences = MockUserPreferencesService()
-        let manager1 = ThemeManager(userPreferences: mockPreferences)
+        let manager1 = MPWGThemeManager(userPreferences: mockPreferences)
         manager1.themeMode = .system
         
         // Create new instance
-        let manager2 = ThemeManager(userPreferences: mockPreferences)
+        let manager2 = MPWGThemeManager(userPreferences: mockPreferences)
         #expect(manager2.themeMode == .system)
         #expect(manager2.selectedThemeID == nil)
     }
@@ -312,11 +312,11 @@ struct ThemeManagerTests {
         UserDefaults.standard.removeObject(forKey: "thriftwood.selectedThemeID")
         
         let mockPreferences = MockUserPreferencesService()
-        let manager1 = ThemeManager(userPreferences: mockPreferences)
-        manager1.setTheme(Theme.dark)
+        let manager1 = MPWGThemeManager(userPreferences: mockPreferences)
+        manager1.setTheme(MPWGTheme.dark)
         
         // Create new instance - should load saved theme
-        let manager2 = ThemeManager(userPreferences: mockPreferences)
+        let manager2 = MPWGThemeManager(userPreferences: mockPreferences)
         #expect(manager2.themeMode == .custom)
         #expect(manager2.selectedThemeID == "dark")
         #expect(manager2.currentTheme.id == "dark")
