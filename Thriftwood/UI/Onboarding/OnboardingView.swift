@@ -24,6 +24,7 @@ import SwiftUI
 /// Welcome screen shown during first app launch
 struct OnboardingView: View {
     let coordinator: OnboardingCoordinator
+    let viewModel: OnboardingViewModel
     
     var body: some View {
         VStack(spacing: Spacing.xl) {
@@ -77,6 +78,7 @@ struct OnboardingView: View {
             // Action Buttons
             VStack(spacing: Spacing.md) {
                 Button {
+                    viewModel.prepareForProfileCreation()
                     coordinator.showCreateProfile()
                 } label: {
                     Text("Get Started")
@@ -89,6 +91,7 @@ struct OnboardingView: View {
                 }
                 
                 Button {
+                    viewModel.handleOnboardingSkipped()
                     coordinator.skipOnboarding()
                 } label: {
                     Text("Skip for Now")
@@ -138,5 +141,15 @@ private struct FeatureRow: View {
     let coordinator = OnboardingCoordinator()
     coordinator.start()
     
-    return OnboardingView(coordinator: coordinator)
+    let profileService = DIContainer.shared.resolve((any ProfileServiceProtocol).self)
+    let preferences = DIContainer.shared.resolve((any UserPreferencesServiceProtocol).self)
+    let viewModel = OnboardingViewModel(
+        profileService: profileService,
+        preferencesService: preferences
+    )
+    
+    return OnboardingView(
+        coordinator: coordinator,
+        viewModel: viewModel
+    )
 }

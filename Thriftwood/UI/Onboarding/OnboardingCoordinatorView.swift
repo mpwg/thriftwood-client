@@ -23,17 +23,30 @@ import SwiftUI
 
 /// Coordinator view that manages navigation for the onboarding flow
 struct OnboardingCoordinatorView: View {
-    let coordinator: OnboardingCoordinator
+    @Bindable var coordinator: OnboardingCoordinator
+    @State private var viewModel: OnboardingViewModel
+    
+    init(coordinator: OnboardingCoordinator) {
+        self.coordinator = coordinator
+        
+        // Initialize ViewModel from DI container
+        let profileService = DIContainer.shared.resolve((any ProfileServiceProtocol).self)
+        let preferences = DIContainer.shared.resolve((any UserPreferencesServiceProtocol).self)
+        self.viewModel = OnboardingViewModel(
+            profileService: profileService,
+            preferencesService: preferences
+        )
+    }
     
     var body: some View {
-        NavigationStack(path: Binding(
-            get: { coordinator.navigationPath },
-            set: { coordinator.navigationPath = $0 }
-        )) {
-            OnboardingView(coordinator: coordinator)
-                .navigationDestination(for: OnboardingRoute.self) { route in
-                    destinationView(for: route)
-                }
+        NavigationStack(path: $coordinator.navigationPath) {
+            OnboardingView(
+                coordinator: coordinator,
+                viewModel: viewModel
+            )
+            .navigationDestination(for: OnboardingRoute.self) { route in
+                destinationView(for: route)
+            }
         }
     }
     
@@ -41,7 +54,10 @@ struct OnboardingCoordinatorView: View {
     private func destinationView(for route: OnboardingRoute) -> some View {
         switch route {
         case .welcome:
-            OnboardingView(coordinator: coordinator)
+            OnboardingView(
+                coordinator: coordinator,
+                viewModel: viewModel
+            )
             
         case .createProfile:
             // Use SettingsCoordinator temporarily for profile creation
@@ -49,8 +65,13 @@ struct OnboardingCoordinatorView: View {
             let settingsCoordinator = SettingsCoordinator()
             AddProfileView(coordinator: settingsCoordinator)
                 .onDisappear {
-                    // Check if a profile was created
-                    checkProfileCreated()
+                    // Check if a profile was created via ViewModel
+                    Task {
+                        let hasProfile = await viewModel.checkProfileCreated()
+                        if hasProfile {
+                            coordinator.showAddFirstService()
+                        }
+                    }
                 }
             
         case .addFirstService:
@@ -70,6 +91,7 @@ struct OnboardingCoordinatorView: View {
                     .padding(.horizontal, Spacing.xl)
                 
                 Button {
+                    viewModel.handleOnboardingComplete()
                     coordinator.completeOnboarding()
                 } label: {
                     Text("Continue to App")
@@ -88,21 +110,6 @@ struct OnboardingCoordinatorView: View {
             
         case .complete:
             EmptyView()
-        }
-    }
-    
-    /// Check if at least one profile exists after profile creation
-    private func checkProfileCreated() {
-        let profileService = DIContainer.shared.resolve((any ProfileServiceProtocol).self)
-        
-        do {
-            let profiles = try profileService.fetchProfiles()
-            if !profiles.isEmpty {
-                // Profile was created, proceed to next step
-                coordinator.showAddFirstService()
-            }
-        } catch {
-            AppLogger.navigation.error("Failed to check profiles: \(error.localizedDescription)")
         }
     }
 }
