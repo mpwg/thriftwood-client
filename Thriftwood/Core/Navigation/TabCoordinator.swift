@@ -34,6 +34,9 @@ import SwiftUI
 ///
 /// This follows the pattern from the advanced tutorial where each tab
 /// has its own coordinator managing its navigation stack independently.
+///
+/// Tabs are dynamically configurable via UserPreferencesService, allowing users
+/// to enable/disable tabs and customize their order.
 @Observable
 @MainActor
 final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
@@ -45,18 +48,29 @@ final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     
     // MARK: - Properties
     
+    /// User preferences service for tab configuration
+    private let preferencesService: UserPreferencesServiceProtocol
+    
     /// The currently selected tab
     var selectedTab: TabRoute = .dashboard
     
-    /// Coordinators for each tab
-    private(set) var dashboardCoordinator: DashboardCoordinator?
-    private(set) var servicesCoordinator: ServicesCoordinator?
-    private(set) var settingsCoordinator: SettingsCoordinator?
+    /// Ordered list of enabled tabs (computed from preferences)
+    var enabledTabs: [TabRoute] {
+        TabRoute.from(ids: preferencesService.getOrderedTabIDs())
+    }
+    
+    /// Coordinators for each tab (created on demand)
+    private var dashboardCoordinator: DashboardCoordinator?
+    private var calendarCoordinator: DashboardCoordinator? // TODO: Create CalendarCoordinator
+    private var servicesCoordinator: ServicesCoordinator?
+    private var searchCoordinator: DashboardCoordinator? // TODO: Create SearchCoordinator
+    private var settingsCoordinator: SettingsCoordinator?
     
     // MARK: - Initialization
     
-    init() {
-        AppLogger.navigation.info("TabCoordinator initialized")
+    init(preferencesService: UserPreferencesServiceProtocol) {
+        self.preferencesService = preferencesService
+        AppLogger.navigation.info("TabCoordinator initialized with customizable tabs")
     }
     
     // MARK: - Coordinator Protocol Implementation
@@ -64,18 +78,42 @@ final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     func start() {
         AppLogger.navigation.info("TabCoordinator starting")
         
-        // Create coordinators for each tab
-        setupDashboardCoordinator()
-        setupServicesCoordinator()
-        setupSettingsCoordinator()
+        // Setup coordinators for enabled tabs
+        setupEnabledCoordinators()
         
-        // Start with dashboard tab
-        selectedTab = .dashboard
+        // Start with the first enabled tab (or dashboard as fallback)
+        if let firstTab = enabledTabs.first {
+            selectedTab = firstTab
+        } else {
+            selectedTab = .dashboard
+        }
     }
     
     // MARK: - Tab Setup
     
+    private func setupEnabledCoordinators() {
+        let enabled = enabledTabs
+        
+        AppLogger.navigation.debug("Setting up coordinators for enabled tabs: \(enabled.map { $0.rawValue })")
+        
+        for tab in enabled {
+            switch tab {
+            case .dashboard:
+                setupDashboardCoordinator()
+            case .calendar:
+                setupCalendarCoordinator()
+            case .services:
+                setupServicesCoordinator()
+            case .search:
+                setupSearchCoordinator()
+            case .settings:
+                setupSettingsCoordinator()
+            }
+        }
+    }
+    
     private func setupDashboardCoordinator() {
+        guard dashboardCoordinator == nil else { return }
         let coordinator = DashboardCoordinator()
         coordinator.parent = self
         childCoordinators.append(coordinator)
@@ -85,7 +123,20 @@ final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
         AppLogger.navigation.debug("Dashboard coordinator set up")
     }
     
+    private func setupCalendarCoordinator() {
+        guard calendarCoordinator == nil else { return }
+        // TODO: Create CalendarCoordinator - using DashboardCoordinator as placeholder
+        let coordinator = DashboardCoordinator()
+        coordinator.parent = self
+        childCoordinators.append(coordinator)
+        calendarCoordinator = coordinator
+        coordinator.start()
+        
+        AppLogger.navigation.debug("Calendar coordinator set up (placeholder)")
+    }
+    
     private func setupServicesCoordinator() {
+        guard servicesCoordinator == nil else { return }
         let coordinator = ServicesCoordinator()
         coordinator.parent = self
         childCoordinators.append(coordinator)
@@ -95,7 +146,20 @@ final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
         AppLogger.navigation.debug("Services coordinator set up")
     }
     
+    private func setupSearchCoordinator() {
+        guard searchCoordinator == nil else { return }
+        // TODO: Create SearchCoordinator - using DashboardCoordinator as placeholder
+        let coordinator = DashboardCoordinator()
+        coordinator.parent = self
+        childCoordinators.append(coordinator)
+        searchCoordinator = coordinator
+        coordinator.start()
+        
+        AppLogger.navigation.debug("Search coordinator set up (placeholder)")
+    }
+    
     private func setupSettingsCoordinator() {
+        guard settingsCoordinator == nil else { return }
         let coordinator = SettingsCoordinator()
         coordinator.parent = self
         childCoordinators.append(coordinator)
@@ -103,6 +167,47 @@ final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
         coordinator.start()
         
         AppLogger.navigation.debug("Settings coordinator set up")
+    }
+    
+    // MARK: - Coordinator Access
+    
+    /// Get coordinator for a specific tab (lazy-initialized if needed)
+    /// - Parameter tab: The tab to get coordinator for
+    /// - Returns: The coordinator for the tab, or nil if not enabled
+    func coordinator(for tab: TabRoute) -> (any CoordinatorProtocol)? {
+        // Check if tab is enabled
+        guard enabledTabs.contains(tab) else {
+            return nil
+        }
+        
+        // Return or create coordinator
+        switch tab {
+        case .dashboard:
+            if dashboardCoordinator == nil {
+                setupDashboardCoordinator()
+            }
+            return dashboardCoordinator
+        case .calendar:
+            if calendarCoordinator == nil {
+                setupCalendarCoordinator()
+            }
+            return calendarCoordinator
+        case .services:
+            if servicesCoordinator == nil {
+                setupServicesCoordinator()
+            }
+            return servicesCoordinator
+        case .search:
+            if searchCoordinator == nil {
+                setupSearchCoordinator()
+            }
+            return searchCoordinator
+        case .settings:
+            if settingsCoordinator == nil {
+                setupSettingsCoordinator()
+            }
+            return settingsCoordinator
+        }
     }
     
     // MARK: - Tab Selection
@@ -121,23 +226,23 @@ final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
         AppLogger.navigation.info("Handling deep link: \(url.absoluteString)")
         
         // Try to parse as dashboard route
-        if let dashboardRoute = DashboardRoute.parse(from: url) {
+        if let dashboardRoute = DashboardRoute.parse(from: url), enabledTabs.contains(.dashboard) {
             selectedTab = .dashboard
-            dashboardCoordinator?.navigate(to: dashboardRoute)
+            (coordinator(for: .dashboard) as? DashboardCoordinator)?.navigate(to: dashboardRoute)
             return true
         }
         
         // Try to parse as services route
-        if let servicesRoute = ServicesRoute.parse(from: url) {
+        if let servicesRoute = ServicesRoute.parse(from: url), enabledTabs.contains(.services) {
             selectedTab = .services
-            servicesCoordinator?.navigate(to: servicesRoute)
+            (coordinator(for: .services) as? ServicesCoordinator)?.navigate(to: servicesRoute)
             return true
         }
         
         // Try to parse as settings route
-        if let settingsRoute = SettingsRoute.parse(from: url) {
+        if let settingsRoute = SettingsRoute.parse(from: url), enabledTabs.contains(.settings) {
             selectedTab = .settings
-            settingsCoordinator?.navigate(to: settingsRoute)
+            (coordinator(for: .settings) as? SettingsCoordinator)?.navigate(to: settingsRoute)
             return true
         }
         

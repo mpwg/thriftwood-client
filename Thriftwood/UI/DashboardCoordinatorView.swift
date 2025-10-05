@@ -1,0 +1,48 @@
+//
+//  DashboardCoordinatorView.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
+//
+//  DashboardCoordinatorView.swift
+//  Thriftwood
+//
+//  View for Dashboard coordinator
+//
+
+import SwiftUI
+
+/// Dashboard coordinator view (placeholder)
+struct DashboardCoordinatorView: View {
+    @Bindable var coordinator: DashboardCoordinator
+    
+    var body: some View {
+        NavigationStack(path: $coordinator.navigationPath) {
+            VStack {
+                Image(systemName: "square.grid.2x2")
+                    .font(.system(size: 60))
+                Text("Dashboard")
+                    .font(.title)
+                Text("Module cards and overview coming soon")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .navigationTitle("Dashboard")
+        }
+    }
+}

@@ -29,15 +29,20 @@
 import Foundation
 
 /// Routes for the main tab navigation
-enum TabRoute: Hashable, CaseIterable, Sendable {
+/// Supports dynamic configuration via UserPreferencesService
+enum TabRoute: String, Hashable, CaseIterable, Sendable {
     case dashboard
+    case calendar
     case services
+    case search
     case settings
     
     var title: String {
         switch self {
         case .dashboard: return "Dashboard"
+        case .calendar: return "Calendar"
         case .services: return "Services"
+        case .search: return "Search"
         case .settings: return "Settings"
         }
     }
@@ -45,8 +50,32 @@ enum TabRoute: Hashable, CaseIterable, Sendable {
     var iconName: String {
         switch self {
         case .dashboard: return "square.grid.2x2"
+        case .calendar: return "calendar"
         case .services: return "server.rack"
+        case .search: return "magnifyingglass"
         case .settings: return "gearshape"
         }
+    }
+    
+    /// Tabs that cannot be disabled
+    static let requiredTabs: Set<TabRoute> = [.dashboard, .settings]
+    
+    /// Check if this tab can be disabled by the user
+    var canBeDisabled: Bool {
+        !Self.requiredTabs.contains(self)
+    }
+    
+    /// Create TabRoute from string identifier
+    /// - Parameter id: String identifier (rawValue)
+    /// - Returns: TabRoute if valid, nil otherwise
+    static func from(id: String) -> TabRoute? {
+        return TabRoute(rawValue: id)
+    }
+    
+    /// Get enabled tabs from array of tab IDs
+    /// - Parameter tabIDs: Array of tab ID strings
+    /// - Returns: Array of TabRoute enums
+    static func from(ids tabIDs: [String]) -> [TabRoute] {
+        return tabIDs.compactMap { TabRoute(rawValue: $0) }
     }
 }

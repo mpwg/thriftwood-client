@@ -29,52 +29,44 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
+    /// App coordinator from DI container
+    @State private var coordinator: AppCoordinator?
+    
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
+        Group {
+            if let coordinator = coordinator {
+                coordinatorView(coordinator)
+            } else {
+                ProgressView("Loading...")
             }
-#if os(macOS)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-#endif
-            .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-#endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+        }
+        .task {
+            // Initialize coordinator from DI container
+            if coordinator == nil {
+                coordinator = DIContainer.shared.resolve(AppCoordinator.self)
+                coordinator?.start()
             }
-        } detail: {
-            Text("Select an item")
         }
     }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+    
+    /// Returns the appropriate view based on coordinator state
+    @ViewBuilder
+    private func coordinatorView(_ coordinator: AppCoordinator) -> some View {
+        if let tabCoordinator = coordinator.activeCoordinator as? TabCoordinator {
+            MainTabView(coordinator: tabCoordinator)
+        } else {
+            // Onboarding or other states
+            VStack {
+                Image(systemName: "checkmark.circle")
+                    .font(.system(size: 60))
+                Text("Welcome to Thriftwood")
+                    .font(.title)
+                Button("Get Started") {
+                    // Complete onboarding
+                    UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+                    coordinator.start()
+                }
+                .buttonStyle(.borderedProminent)
             }
         }
     }

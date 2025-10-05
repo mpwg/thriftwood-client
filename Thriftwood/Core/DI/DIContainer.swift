@@ -153,9 +153,17 @@ final class DIContainer {
     /// Registers coordinators for navigation
     /// Note: Coordinators are typically created with transient scope since they manage navigation state
     private func registerCoordinators() {
-        // Note: Coordinators will be registered here when they need DI
-        // Most coordinators currently use simple init() and don't require services
-        // Future: Register coordinators that need DataService or other dependencies
+        // Register AppCoordinator (needs UserPreferencesService)
+        container.register(AppCoordinator.self) { resolver in
+            guard let preferencesService = resolver.resolve((any UserPreferencesServiceProtocol).self) else {
+                fatalError("Could not resolve UserPreferencesServiceProtocol for AppCoordinator")
+            }
+            return AppCoordinator(preferencesService: preferencesService)
+        }
+        
+        // Note: Other coordinators are created on-demand by parent coordinators
+        // TabCoordinator, DashboardCoordinator, etc. are created with simple init()
+        // or are passed dependencies from their parent coordinators
     }
     
     // MARK: - Service Resolution
