@@ -28,6 +28,8 @@ struct ProfileListView: View {
     @State private var coordinator: SettingsCoordinator
     @State private var viewModel: ProfileListViewModel
     @State private var showingAddProfile = false
+    @State private var showingEditProfile = false
+    @State private var profileToEdit: Profile?
     @State private var showingDeleteConfirmation = false
     @State private var profileToDelete: Profile?
     
@@ -77,7 +79,22 @@ struct ProfileListView: View {
             }
         }
         .sheet(isPresented: $showingAddProfile) {
+            // Reload profiles when sheet is dismissed
+            Task {
+                await viewModel.loadProfiles()
+            }
+        } content: {
             AddProfileView(coordinator: coordinator)
+        }
+        .sheet(isPresented: $showingEditProfile) {
+            // Reload profiles when sheet is dismissed
+            Task {
+                await viewModel.loadProfiles()
+            }
+        } content: {
+            if let profileToEdit = profileToEdit {
+                AddProfileView(coordinator: coordinator, profile: profileToEdit)
+            }
         }
         .alert("Delete Profile", isPresented: $showingDeleteConfirmation, presenting: profileToDelete) { profile in
             Button("Cancel", role: .cancel) { }
@@ -106,11 +123,17 @@ struct ProfileListView: View {
                             await viewModel.switchProfile(to: profile)
                         }
                     },
+                    onEdit: {
+                        profileToEdit = profile
+                        showingEditProfile = true
+                    },
                     onDelete: {
-                        if viewModel.canDeleteProfile(profile) {
-                            profileToDelete = profile
-                            showingDeleteConfirmation = true
+                        if !viewModel.canDeleteProfile(profile) {
+                            // Show why deletion is not allowed
+                            return
                         }
+                        profileToDelete = profile
+                        showingDeleteConfirmation = true
                     }
                 )
             }
@@ -127,6 +150,7 @@ private struct ProfileRow: View {
     let profile: Profile
     let isActive: Bool
     let onSwitch: () -> Void
+    let onEdit: () -> Void
     let onDelete: () -> Void
     
     var body: some View {
@@ -169,8 +193,21 @@ private struct ProfileRow: View {
             } label: {
                 Label("Delete", systemImage: "trash")
             }
+            
+            Button {
+                onEdit()
+            } label: {
+                Label("Edit", systemImage: "pencil")
+            }
+            .tint(.blue)
         }
         .contextMenu {
+            Button {
+                onEdit()
+            } label: {
+                Label("Rename Profile", systemImage: "pencil")
+            }
+            
             if !isActive {
                 Button {
                     onSwitch()
