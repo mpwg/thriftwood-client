@@ -18,18 +18,17 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-//
-//  Coordinator.swift
-//  Thriftwood
-//
-//  Created on 2025-10-04.
-//  Coordinator pattern implementation for app navigation
-//
 
 import Foundation
 import SwiftUI
 
 /// Protocol defining the core requirements for all coordinators in the app.
+///
+/// **File Naming Note**: This file is named `CoordinatorProtocol.swift` rather than
+/// `Coordinator.swift` to clearly distinguish it from concrete coordinator implementations
+/// (AppCoordinator, TabCoordinator, etc.). This naming convention helps avoid confusion
+/// when navigating the codebase and makes it immediately clear that this file contains
+/// the protocol definition.
 ///
 /// Based on the coordinator pattern from Hacking with Swift, adapted for SwiftUI.
 /// Coordinators are responsible for managing navigation flow, removing this
