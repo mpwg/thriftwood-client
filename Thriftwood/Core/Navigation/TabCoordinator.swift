@@ -60,11 +60,12 @@ final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     }
     
     /// Coordinators for each tab (created on demand)
-    private var dashboardCoordinator: DashboardCoordinator?
-    private var calendarCoordinator: DashboardCoordinator? // TODO: Create CalendarCoordinator
-    private var servicesCoordinator: ServicesCoordinator?
-    private var searchCoordinator: DashboardCoordinator? // TODO: Create SearchCoordinator
-    private var settingsCoordinator: SettingsCoordinator?
+    /// Internal for testing purposes
+    internal var dashboardCoordinator: DashboardCoordinator?
+    internal var calendarCoordinator: DashboardCoordinator? // TODO: Create CalendarCoordinator
+    internal var servicesCoordinator: ServicesCoordinator?
+    internal var searchCoordinator: DashboardCoordinator? // TODO: Create SearchCoordinator
+    internal var settingsCoordinator: SettingsCoordinator?
     
     // MARK: - Initialization
     

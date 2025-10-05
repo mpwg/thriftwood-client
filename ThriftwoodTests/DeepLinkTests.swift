@@ -221,49 +221,53 @@ struct DeepLinkTests {
     @Test("TabCoordinator handles dashboard deep link", .tags(.navigationTag))
     @MainActor
     func testTabCoordinatorHandlesDashboardDeepLink() async {
-        let coordinator = TabCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = TabCoordinator(preferencesService: mockPrefs)
         coordinator.start()
         
         let url = URL(string: "thriftwood://dashboard/service/test-service")!
         let handled = coordinator.handleDeepLink(url)
         
         #expect(handled == true)
-        #expect(coordinator.selectedTab == .dashboard)
+        #expect(coordinator.selectedTab == TabRoute.dashboard)
         #expect(coordinator.dashboardCoordinator?.navigationPath.last == .serviceDetail(serviceId: "test-service"))
     }
     
     @Test("TabCoordinator handles services deep link", .tags(.navigationTag))
     @MainActor
     func testTabCoordinatorHandlesServicesDeepLink() async {
-        let coordinator = TabCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = TabCoordinator(preferencesService: mockPrefs)
         coordinator.start()
         
         let url = URL(string: "thriftwood://services/add")!
         let handled = coordinator.handleDeepLink(url)
         
         #expect(handled == true)
-        #expect(coordinator.selectedTab == .services)
+        #expect(coordinator.selectedTab == TabRoute.services)
         #expect(coordinator.servicesCoordinator?.navigationPath.last == .addService)
     }
     
     @Test("TabCoordinator handles settings deep link", .tags(.navigationTag))
     @MainActor
     func testTabCoordinatorHandlesSettingsDeepLink() async {
-        let coordinator = TabCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = TabCoordinator(preferencesService: mockPrefs)
         coordinator.start()
         
         let url = URL(string: "thriftwood://settings/profiles")!
         let handled = coordinator.handleDeepLink(url)
         
         #expect(handled == true)
-        #expect(coordinator.selectedTab == .settings)
+        #expect(coordinator.selectedTab == TabRoute.settings)
         #expect(coordinator.settingsCoordinator?.navigationPath.last == .profiles)
     }
     
     @Test("TabCoordinator rejects invalid deep link", .tags(.navigationTag))
     @MainActor
     func testTabCoordinatorRejectsInvalidDeepLink() async {
-        let coordinator = TabCoordinator()
+        let mockPrefs = MockUserPreferencesService()
+        let coordinator = TabCoordinator(preferencesService: mockPrefs)
         coordinator.start()
         
         let url = URL(string: "thriftwood://invalid/path")!

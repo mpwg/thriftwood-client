@@ -43,6 +43,12 @@ final class MockUserPreferencesService: UserPreferencesServiceProtocol {
     var drawerAutomaticManage: Bool = true
     var drawerManualOrder: [String] = []
     
+    // MARK: - Tab Bar Configuration
+    
+    var tabAutomaticManage: Bool = true
+    var tabManualOrder: [String] = []
+    var enabledTabs: [String] = ["dashboard", "services", "settings"]
+    
     // MARK: - Networking Settings
     
     var networkingTLSValidation: Bool = false
@@ -112,6 +118,39 @@ final class MockUserPreferencesService: UserPreferencesServiceProtocol {
         resetToInitialState()
     }
     
+    // MARK: - Tab Configuration Helpers
+    
+    func getOrderedTabIDs() -> [String] {
+        if tabAutomaticManage {
+            // Return enabled tabs in alphabetical order
+            return enabledTabs.sorted()
+        } else {
+            // Return tabs in manual order, filtered by enabled status
+            return tabManualOrder.filter { enabledTabs.contains($0) }
+        }
+    }
+    
+    func toggleTabEnabled(_ tabID: String) {
+        // Dashboard and Settings tabs cannot be disabled
+        if tabID == "dashboard" || tabID == "settings" {
+            return
+        }
+        
+        if let index = enabledTabs.firstIndex(of: tabID) {
+            enabledTabs.remove(at: index)
+        } else {
+            enabledTabs.append(tabID)
+        }
+    }
+    
+    func isTabEnabled(_ tabID: String) -> Bool {
+        return enabledTabs.contains(tabID)
+    }
+    
+    func updateTabOrder(_ tabIDs: [String]) {
+        tabManualOrder = tabIDs
+    }
+    
     // MARK: - Testing Helpers
     
     /// Resets all preferences to their initial/default values
@@ -123,6 +162,9 @@ final class MockUserPreferencesService: UserPreferencesServiceProtocol {
         androidBackOpensDrawer = true
         drawerAutomaticManage = true
         drawerManualOrder = []
+        tabAutomaticManage = true
+        tabManualOrder = []
+        enabledTabs = ["dashboard", "services", "settings"]
         networkingTLSValidation = false
         quickActionsLidarr = false
         quickActionsRadarr = false

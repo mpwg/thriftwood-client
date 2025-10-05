@@ -17,16 +17,11 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-//
-//
-//  TabConfigurationTests.swift
-//  ThriftwoodTests
-//
-//  Tests for customizable tab configuration
-//
+
 
 import Testing
 import Foundation
+import SwiftData
 @testable import Thriftwood
 
 @Suite("Tab Configuration Tests")
@@ -35,6 +30,7 @@ struct TabConfigurationTests {
     // MARK: - TabConfiguration Model Tests
     
     @Test("TabConfiguration has correct default values")
+    @MainActor
     func testTabConfigurationDefaults() async throws {
         let config = TabConfiguration.dashboard
         
@@ -45,12 +41,14 @@ struct TabConfigurationTests {
     }
     
     @Test("All required tabs cannot be disabled")
+    @MainActor
     func testRequiredTabsCannotBeDisabled() async throws {
         #expect(TabConfiguration.dashboard.canBeDisabled == false)
         #expect(TabConfiguration.settings.canBeDisabled == false)
     }
     
     @Test("Optional tabs can be disabled")
+    @MainActor
     func testOptionalTabsCanBeDisabled() async throws {
         #expect(TabConfiguration.calendar.canBeDisabled == true)
         #expect(TabConfiguration.services.canBeDisabled == true)
@@ -58,6 +56,7 @@ struct TabConfigurationTests {
     }
     
     @Test("Tab configurations can be sorted alphabetically")
+    @MainActor
     func testAlphabeticalSorting() async throws {
         let tabs = TabConfiguration.allTabs
         let sorted = TabConfiguration.alphabetical(tabs)
@@ -71,6 +70,7 @@ struct TabConfigurationTests {
     }
     
     @Test("Tab configurations can be filtered to enabled only")
+    @MainActor
     func testEnabledFiltering() async throws {
         var tabs = TabConfiguration.allTabs
         tabs[1].isEnabled = false // Disable calendar
@@ -84,6 +84,7 @@ struct TabConfigurationTests {
     // MARK: - TabRoute Tests
     
     @Test("TabRoute can be created from string ID")
+    @MainActor
     func testTabRouteFromID() async throws {
         #expect(TabRoute.from(id: "dashboard") == .dashboard)
         #expect(TabRoute.from(id: "calendar") == .calendar)
@@ -94,6 +95,7 @@ struct TabConfigurationTests {
     }
     
     @Test("TabRoute array can be created from string IDs")
+    @MainActor
     func testTabRouteArrayFromIDs() async throws {
         let ids = ["dashboard", "services", "settings"]
         let routes = TabRoute.from(ids: ids)
@@ -105,6 +107,7 @@ struct TabConfigurationTests {
     }
     
     @Test("TabRoute has correct properties")
+    @MainActor
     func testTabRouteProperties() async throws {
         #expect(TabRoute.dashboard.title == "Dashboard")
         #expect(TabRoute.dashboard.iconName == "square.grid.2x2")
