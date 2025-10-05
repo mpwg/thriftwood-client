@@ -33,6 +33,7 @@ import OSLog
 /// Coordinator that manages navigation within the Settings feature.
 /// Handles navigation to various settings screens and preferences.
 @MainActor
+@Observable
 final class SettingsCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     // MARK: - Coordinator Protocol
     

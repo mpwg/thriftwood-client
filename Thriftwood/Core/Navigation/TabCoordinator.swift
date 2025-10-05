@@ -49,7 +49,7 @@ final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     // MARK: - Properties
     
     /// User preferences service for tab configuration
-    private let preferencesService: UserPreferencesServiceProtocol
+    private let preferencesService: any UserPreferencesServiceProtocol
     
     /// The currently selected tab
     var selectedTab: TabRoute = .dashboard
@@ -68,7 +68,7 @@ final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     
     // MARK: - Initialization
     
-    init(preferencesService: UserPreferencesServiceProtocol) {
+    init(preferencesService: any UserPreferencesServiceProtocol) {
         self.preferencesService = preferencesService
         AppLogger.navigation.info("TabCoordinator initialized with customizable tabs")
     }

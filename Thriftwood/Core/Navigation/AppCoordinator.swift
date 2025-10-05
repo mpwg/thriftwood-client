@@ -44,7 +44,7 @@ final class AppCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     // MARK: - Properties
     
     /// User preferences service for configuration
-    private let preferencesService: UserPreferencesServiceProtocol
+    private let preferencesService: any UserPreferencesServiceProtocol
     
     /// Whether the user has completed onboarding
     private var hasCompletedOnboarding: Bool {
@@ -56,7 +56,7 @@ final class AppCoordinator: @MainActor CoordinatorProtocol,  Sendable {
     
     // MARK: - Initialization
     
-    init(preferencesService: UserPreferencesServiceProtocol) {
+    init(preferencesService: any UserPreferencesServiceProtocol) {
         self.preferencesService = preferencesService
         AppLogger.navigation.info("AppCoordinator initialized")
     }
