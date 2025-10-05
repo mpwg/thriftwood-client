@@ -27,6 +27,7 @@ struct SettingsView: View {
     @State private var coordinator: SettingsCoordinator
     private let preferences: any UserPreferencesServiceProtocol
     private let profileService: any ProfileServiceProtocol
+    @State private var showResetConfirmation = false
     
     init(coordinator: SettingsCoordinator) {
         self.coordinator = coordinator
@@ -218,8 +219,53 @@ struct SettingsView: View {
             } header: {
                 Text("About")
             }
+            
+            // Advanced Section
+            Section {
+                Button(role: .destructive) {
+                    showResetConfirmation = true
+                } label: {
+                    HStack {
+                        Image(systemName: "arrow.counterclockwise.circle.fill")
+                            .foregroundStyle(.red)
+                            .frame(width: Sizing.iconMedium)
+                        
+                        VStack(alignment: .leading, spacing: Spacing.xxs) {
+                            Text("Reset Onboarding")
+                                .foregroundStyle(.red)
+                            Text("Return to welcome screen")
+                                .font(.caption)
+                                .foregroundStyle(Color.themeSecondaryText)
+                        }
+                        
+                        Spacer()
+                    }
+                }
+            } header: {
+                Text("Advanced")
+            } footer: {
+                Text("Reset onboarding will restart the app and show the welcome screen. Your profiles and settings will be preserved.")
+                    .font(.caption)
+            }
         }
         .navigationTitle("Settings")
+        .alert("Reset Onboarding?", isPresented: $showResetConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Reset", role: .destructive) {
+                resetOnboarding()
+            }
+        } message: {
+            Text("This will return you to the welcome screen. Your profiles and settings will not be deleted.")
+        }
+    }
+    
+    // MARK: - Actions
+    
+    /// Resets the onboarding flow and restarts the app
+    private func resetOnboarding() {
+        // Get AppCoordinator from DI container and reset
+        let appCoordinator = DIContainer.shared.resolve(AppCoordinator.self)
+        appCoordinator.resetOnboarding()
     }
 }
 

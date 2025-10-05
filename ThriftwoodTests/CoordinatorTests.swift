@@ -40,7 +40,8 @@ struct CoordinatorTests {
     @Test("AppCoordinator initializes correctly")
     func testAppCoordinatorInitialization() async {
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = AppCoordinator(preferencesService: mockPrefs)
+        let mockProfiles = MockProfileService()
+        let coordinator = AppCoordinator(preferencesService: mockPrefs, profileService: mockProfiles)
         
         #expect(coordinator.childCoordinators.isEmpty)
         #expect(coordinator.navigationPath.isEmpty)
@@ -55,7 +56,8 @@ struct CoordinatorTests {
         UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
         
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = AppCoordinator(preferencesService: mockPrefs)
+        let mockProfiles = MockProfileService()
+        let coordinator = AppCoordinator(preferencesService: mockPrefs, profileService: mockProfiles)
         coordinator.start()
         
         #expect(coordinator.navigationPath == [AppRoute.onboarding])
@@ -70,7 +72,8 @@ struct CoordinatorTests {
         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
         
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = AppCoordinator(preferencesService: mockPrefs)
+        let mockProfiles = MockProfileService()
+        let coordinator = AppCoordinator(preferencesService: mockPrefs, profileService: mockProfiles)
         coordinator.start()
         
         #expect(coordinator.navigationPath == [AppRoute.main])
@@ -88,7 +91,8 @@ struct CoordinatorTests {
         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
         
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = AppCoordinator(preferencesService: mockPrefs)
+        let mockProfiles = MockProfileService()
+        let coordinator = AppCoordinator(preferencesService: mockPrefs, profileService: mockProfiles)
         coordinator.start()
         
         // Reset onboarding
