@@ -77,7 +77,7 @@ struct MPWGTheme: Codable, Equatable, Identifiable {
         id: "light",
         name: "Light",
         isDark: false,
-        accentColor: CodableColor(red: 1.0, green: 0.647, blue: 0.0), // Orange
+        accentColor: CodableColor(red: 0.902, green: 0.494, blue: 0.133), // Thriftwood Orange (#E67E22)
         primaryBackground: CodableColor(red: 1.0, green: 1.0, blue: 1.0),
         secondaryBackground: CodableColor(red: 0.95, green: 0.95, blue: 0.97),
         tertiaryBackground: CodableColor(red: 1.0, green: 1.0, blue: 1.0),
@@ -101,7 +101,7 @@ struct MPWGTheme: Codable, Equatable, Identifiable {
         id: "dark",
         name: "Dark",
         isDark: true,
-        accentColor: CodableColor(red: 1.0, green: 0.647, blue: 0.0), // Orange
+        accentColor: CodableColor(red: 0.937, green: 0.545, blue: 0.200), // Thriftwood Orange (lighter for dark mode)
         primaryBackground: CodableColor(red: 0.0, green: 0.0, blue: 0.0),
         secondaryBackground: CodableColor(red: 0.11, green: 0.11, blue: 0.12),
         tertiaryBackground: CodableColor(red: 0.17, green: 0.17, blue: 0.18),
@@ -125,7 +125,7 @@ struct MPWGTheme: Codable, Equatable, Identifiable {
         id: "black",
         name: "Black",
         isDark: true,
-        accentColor: CodableColor(red: 1.0, green: 0.647, blue: 0.0), // Orange
+        accentColor: CodableColor(red: 0.937, green: 0.545, blue: 0.200), // Thriftwood Orange (lighter for dark mode)
         primaryBackground: CodableColor(red: 0.0, green: 0.0, blue: 0.0),
         secondaryBackground: CodableColor(red: 0.0, green: 0.0, blue: 0.0),
         tertiaryBackground: CodableColor(red: 0.05, green: 0.05, blue: 0.05),
