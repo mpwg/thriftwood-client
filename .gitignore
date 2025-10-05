@@ -165,3 +165,4 @@ legacy/.flutter-plugins-dependencies
 legacy/.packages
 
 Thriftwood.xcodeproj/project.xcworkspace/xcuserdata/*
+Thriftwood/Resources/acknowledgements.json

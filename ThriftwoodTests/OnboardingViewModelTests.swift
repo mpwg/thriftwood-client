@@ -268,6 +268,9 @@ struct OnboardingViewModelTests {
         let profileService = MockProfileService()
         let preferencesService = MockUserPreferencesService()
         
+        // Clear default profile to start with no profiles
+        profileService.profiles = []
+        
         let viewModel = OnboardingViewModel(
             profileService: profileService,
             preferencesService: preferencesService
@@ -298,6 +301,9 @@ struct OnboardingViewModelTests {
     func testSkipOnboardingFlow() {
         let profileService = MockProfileService()
         let preferencesService = MockUserPreferencesService()
+        
+        // Clear default profile to start with no profiles
+        profileService.profiles = []
         
         let viewModel = OnboardingViewModel(
             profileService: profileService,

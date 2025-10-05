@@ -23,6 +23,9 @@ import SwiftUI
 
 /// View displaying acknowledgements and credits
 struct AcknowledgementsView: View {
+    @State private var dependencies: [Dependency] = []
+    @State private var isLoadingDependencies = true
+    
     var body: some View {
         List {
             Section {
@@ -53,29 +56,21 @@ struct AcknowledgementsView: View {
             }
             
             Section {
-                AcknowledgementRow(
-                    title: "Swinject",
-                    description: "Dependency injection framework for Swift",
-                    githubURL: URL(string: "https://github.com/Swinject/Swinject")!
-                )
-                
-                AcknowledgementRow(
-                    title: "AsyncHTTPClient",
-                    description: "HTTP client library built on SwiftNIO",
-                    githubURL: URL(string: "https://github.com/swift-server/async-http-client")!
-                )
-                
-                AcknowledgementRow(
-                    title: "Valet",
-                    description: "Secure keychain wrapper for credentials storage",
-                    githubURL: URL(string: "https://github.com/square/Valet")!
-                )
-                
-                AcknowledgementRow(
-                    title: "Swift OpenAPI Generator",
-                    description: "Type-safe API client generation from OpenAPI specs",
-                    githubURL: URL(string: "https://github.com/apple/swift-openapi-generator")!
-                )
+                if isLoadingDependencies {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                } else if dependencies.isEmpty {
+                    Text("Unable to load dependencies")
+                        .font(.caption)
+                        .foregroundStyle(Color.themeSecondaryText)
+                } else {
+                    ForEach(dependencies) { dependency in
+                        DependencyRow(dependency: dependency)
+                    }
+                }
             } header: {
                 Text("Open Source Libraries")
             }
@@ -96,6 +91,89 @@ struct AcknowledgementsView: View {
             }
         }
         .navigationTitle("Acknowledgements")
+        .task {
+            await loadDependencies()
+        }
+    }
+    
+    private func loadDependencies() async {
+        guard let url = Bundle.main.url(forResource: "acknowledgements", withExtension: "json") else {
+            AppLogger.ui.error("acknowledgements.json not found in bundle")
+            isLoadingDependencies = false
+            return
+        }
+        
+        do {
+            let data = try Data(contentsOf: url)
+            let acknowledgements = try JSONDecoder().decode(AcknowledgementsData.self, from: data)
+            dependencies = acknowledgements.dependencies.sorted { $0.name.lowercased() < $1.name.lowercased() }
+            isLoadingDependencies = false
+            AppLogger.ui.info("Loaded \(dependencies.count) dependencies")
+        } catch {
+            AppLogger.ui.error("Failed to load acknowledgements: \(error.localizedDescription)")
+            isLoadingDependencies = false
+        }
+    }
+}
+
+// MARK: - Dependency Row
+
+private struct DependencyRow: View {
+    let dependency: Dependency
+    @State private var showLicense = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            HStack {
+                VStack(alignment: .leading, spacing: Spacing.xxs) {
+                    Text(dependency.name)
+                        .font(.headline)
+                        .foregroundStyle(Color.themePrimaryText)
+                    
+                    Text("Version \(dependency.version) • \(dependency.licenseType)")
+                        .font(.caption)
+                        .foregroundStyle(Color.themeSecondaryText)
+                }
+                
+                Spacer()
+                
+                if let url = dependency.repositoryURL {
+                    Link(destination: url) {
+                        Image(systemName: "link")
+                            .font(.caption)
+                            .foregroundStyle(Color.themeAccent)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            
+            Button {
+                showLicense.toggle()
+            } label: {
+                HStack {
+                    Text(showLicense ? "Hide License" : "Show License")
+                        .font(.caption)
+                    Image(systemName: showLicense ? "chevron.up" : "chevron.down")
+                        .font(.caption2)
+                }
+                .foregroundStyle(Color.themeAccent)
+            }
+            .buttonStyle(.plain)
+            
+            if showLicense {
+                ScrollView {
+                    Text(dependency.licenseText)
+                        .font(.system(.caption2, design: .monospaced))
+                        .foregroundStyle(Color.themeSecondaryText)
+                        .textSelection(.enabled)
+                }
+                .frame(maxHeight: 300)
+                .padding(Spacing.sm)
+                .background(Color.themeSecondaryBackground.opacity(0.5))
+                .cornerRadius(CornerRadius.medium)
+            }
+        }
+        .padding(.vertical, Spacing.xs)
     }
 }
 
