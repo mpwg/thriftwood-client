@@ -249,7 +249,7 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
-        .alert("Reset Onboarding?", isPresented: $showResetConfirmation) {
+        .alert("Reset Onboarding Confirmation", isPresented: $showResetConfirmation) {
             Button("Cancel", role: .cancel) {}
             Button("Reset", role: .destructive) {
                 resetOnboarding()
