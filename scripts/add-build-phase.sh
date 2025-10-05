@@ -32,6 +32,8 @@ echo -e "${YELLOW}Creating backup: $BACKUP_FILE${NC}"
 cp "$PROJECT_FILE" "$BACKUP_FILE"
 
 # Generate unique UUID (24 characters for Xcode)
+# Xcode project.pbxproj files use 24-character uppercase hexadecimal strings as object UUIDs.
+# This truncates a standard 32-character UUID to 24 characters to match Xcode's convention.
 generate_uuid() {
     uuidgen | tr '[:lower:]' '[:upper:]' | tr -d '-' | cut -c1-24
 }
