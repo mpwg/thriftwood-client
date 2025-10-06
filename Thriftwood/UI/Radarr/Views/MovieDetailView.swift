@@ -125,8 +125,10 @@ struct MovieDetailView: View {
             .frame(height: 400)
             .frame(maxWidth: .infinity)
             .clipped()
+            .accessibilityLabel("Poster for \(movie.title)")
         } else {
             posterPlaceholder
+                .accessibilityHidden(true)
         }
     }
     
@@ -352,8 +354,10 @@ struct MovieDetailView: View {
                     
                     Toggle("", isOn: monitoredBinding)
                         .labelsHidden()
+                        .accessibilityLabel(movie.monitored ? "Monitored, toggle to stop monitoring" : "Not monitored, toggle to start monitoring")
                 }
                 .padding(Spacing.md)
+                .accessibilityElement(children: .contain)
             }
         }
     }

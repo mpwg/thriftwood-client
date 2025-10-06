@@ -25,6 +25,7 @@ According to [ADR-0005: Use MVVM-C Pattern](../../architecture/decisions/0005-us
 **File**: `/Thriftwood/UI/Radarr/Views/MoviesListView.swift`
 
 **Responsibilities**:
+
 - Render UI based on ViewModel state
 - Handle user interactions (button taps, gestures)
 - Manage view-specific state (layout toggle, sheet visibility)
@@ -33,6 +34,7 @@ According to [ADR-0005: Use MVVM-C Pattern](../../architecture/decisions/0005-us
 **Compliance Check**:
 
 ✅ **No Business Logic**
+
 ```swift
 // View only renders, doesn't compute
 if viewModel.isLoading && viewModel.movies.isEmpty {
@@ -41,6 +43,7 @@ if viewModel.isLoading && viewModel.movies.isEmpty {
 ```
 
 ✅ **No Service Layer Imports**
+
 ```swift
 import SwiftUI  // ✅ Only UI framework
 // ❌ No import RadarrAPI
@@ -48,6 +51,7 @@ import SwiftUI  // ✅ Only UI framework
 ```
 
 ✅ **Uses Display Models Only**
+
 ```swift
 private var filteredMovies: [MovieDisplayModel] {  // ✅ UI model, not domain
     viewModel.movies.filter { movie in
@@ -57,6 +61,7 @@ private var filteredMovies: [MovieDisplayModel] {  // ✅ UI model, not domain
 ```
 
 ✅ **View-Specific State Only**
+
 ```swift
 @State private var layout: MovieCardLayout = .grid       // UI state
 @State private var searchText = ""                       // UI state
@@ -65,6 +70,7 @@ private var filteredMovies: [MovieDisplayModel] {  // ✅ UI model, not domain
 ```
 
 ✅ **Navigation via Closures**
+
 ```swift
 let onMovieSelected: (Int) -> Void    // Coordinator provides implementation
 let onAddMovie: () -> Void            // Coordinator provides implementation
@@ -82,6 +88,7 @@ MovieCardView(movie: movie, layout: .grid) {
 **File**: `/Thriftwood/UI/Radarr/ViewModels/MoviesListViewModel.swift`
 
 **Responsibilities**:
+
 - Manage business logic (filtering, sorting)
 - Communicate with service layer
 - Convert domain models to display models
@@ -90,11 +97,13 @@ MovieCardView(movie: movie, layout: .grid) {
 **Compliance Check**:
 
 ✅ **Proper Dependency Injection**
+
 ```swift
 @Environment(MoviesListViewModel.self) private var viewModel
 ```
 
 ✅ **Delegates Business Logic**
+
 ```swift
 // View calls ViewModel, doesn't implement logic
 await viewModel.loadMovies()
@@ -104,6 +113,7 @@ viewModel.applyFilterAndSort()
 ```
 
 ✅ **Read-Only State Access**
+
 ```swift
 viewModel.movies       // ✅ View observes, doesn't mutate
 viewModel.error        // ✅ View reads state
@@ -117,6 +127,7 @@ viewModel.isLoading    // ✅ View reacts to state changes
 **Pattern**: Views receive navigation closures from Coordinator
 
 **Example Usage** (from documentation):
+
 ```swift
 // Coordinator provides navigation implementation
 MoviesListView(
@@ -131,6 +142,7 @@ MoviesListView(
 ```
 
 **Why Closures?**
+
 - Views remain reusable (no hardcoded navigation)
 - Coordinator owns navigation logic
 - Type-safe navigation (compiler-checked)
@@ -141,23 +153,27 @@ MoviesListView(
 ## Layer Separation Verification
 
 ### Model Layer
+
 - ✅ **SwiftData Models**: `Profile`, service configurations
 - ✅ **Domain Models**: `MovieResource` (RadarrAPI)
 - ✅ **Display Models**: `MovieDisplayModel` (UI layer)
 
 ### View Layer (UI Only)
+
 - ✅ **No imports**: Only SwiftUI
 - ✅ **No logic**: Only rendering and user interaction
 - ✅ **Uses**: Display models (`MovieDisplayModel`)
 - ✅ **Navigation**: Via closures provided by Coordinator
 
 ### ViewModel Layer (Business Logic)
+
 - ✅ **Imports**: RadarrAPI (service layer), domain models
 - ✅ **Logic**: Filtering, sorting, data conversion
 - ✅ **Converts**: Domain models → Display models
 - ✅ **No navigation**: Doesn't know about routing
 
 ### Coordinator Layer (Navigation)
+
 - ✅ **Owns**: Navigation flow and routing logic
 - ✅ **Injects**: Navigation closures into views
 - ✅ **Type-safe**: Uses route enums
@@ -167,6 +183,7 @@ MoviesListView(
 ## Architecture Fix Applied
 
 ### Issue Identified
+
 ```swift
 // ❌ BEFORE - Violated MVVM-C
 import SwiftUI
@@ -178,6 +195,7 @@ import RadarrAPI  // ❌ View importing service layer!
 **Problem**: Views should never import service/domain layer modules. This violates layer separation.
 
 ### Solution Implemented
+
 ```swift
 // ✅ AFTER - Compliant with MVVM-C
 import SwiftUI  // ✅ Only UI framework
@@ -188,6 +206,7 @@ import SwiftUI  // ✅ Only UI framework
 **Created**: `/Thriftwood/UI/Radarr/Preview/PreviewRadarrService.swift`
 
 **Benefits**:
+
 - View layer no longer depends on service layer
 - Preview support isolated in separate file
 - Clear separation of concerns maintained
@@ -198,6 +217,7 @@ import SwiftUI  // ✅ Only UI framework
 ## Testing Implications
 
 ### View Testing
+
 ```swift
 // Views can be tested with any ViewModel implementation
 let viewModel = MoviesListViewModel(radarrService: MockRadarrService())
@@ -211,6 +231,7 @@ MoviesListView(
 ```
 
 ### ViewModel Testing
+
 ```swift
 // ViewModels can be tested without UI
 let mockService = MockRadarrService()
@@ -220,6 +241,7 @@ XCTAssertEqual(viewModel.movies.count, expectedCount)
 ```
 
 ### Coordinator Testing
+
 ```swift
 // Coordinators can be tested without views or ViewModels
 let coordinator = RadarrCoordinator()

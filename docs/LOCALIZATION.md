@@ -30,7 +30,7 @@ let title = String(localized: "movie.status.downloaded",
                    comment: "Movie status: file has been downloaded")
 
 // ❌ WRONG - Direct string without key
-let title = String(localized: "Downloaded", 
+let title = String(localized: "Downloaded",
                    comment: "Movie status")
 ```
 
@@ -186,6 +186,7 @@ Xcode automatically extracts strings from:
 To export for translation:
 
 1. **Xcode 15+**:
+
    - Select project → Editor → Export for Localization
    - Generates `.xcloc` bundles for translators
 

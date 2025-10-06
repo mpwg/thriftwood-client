@@ -19,7 +19,7 @@ October 6, 2025
 **Before**:
 
 ```swift
-String(localized: "\(hours)h \(minutes)m", 
+String(localized: "\(hours)h \(minutes)m",
        comment: "Runtime format: hours and minutes")
 ```
 
