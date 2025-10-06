@@ -73,23 +73,26 @@ final class MovieDetailViewModel {
         error = nil
         defer { isLoading = false }
 
+        // Store original state for rollback
+        let originalMonitoredState = updatedMovie.monitored ?? false
+
         // Toggle monitored state
-        updatedMovie.monitored = !(updatedMovie.monitored ?? false)
+        updatedMovie.monitored = !originalMonitoredState
 
         do {
             movie = try await radarrService.updateMovie(updatedMovie)
         } catch let error as ThriftwoodError {
             self.error = error
-            // Revert on error
+            // Revert to original state on error
             if var revertedMovie = movie {
-                revertedMovie.monitored = !(updatedMovie.monitored ?? false)
+                revertedMovie.monitored = originalMonitoredState
                 movie = revertedMovie
             }
         } catch {
             self.error = .unknown(error)
-            // Revert on error
+            // Revert to original state on error
             if var revertedMovie = movie {
-                revertedMovie.monitored = !(updatedMovie.monitored ?? false)
+                revertedMovie.monitored = originalMonitoredState
                 movie = revertedMovie
             }
         }
