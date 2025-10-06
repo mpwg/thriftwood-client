@@ -33,6 +33,7 @@ struct RadarrCoordinatorView: View {
                     destination(for: route)
                 }
         }
+        .logViewLifecycle(view: "RadarrCoordinatorView", metadata: ["coordinator": "RadarrCoordinator"])
     }
     
     // MARK: - Root View

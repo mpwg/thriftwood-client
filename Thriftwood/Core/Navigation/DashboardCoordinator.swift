@@ -44,14 +44,30 @@ final class DashboardCoordinator: @MainActor CoordinatorProtocol {
     // MARK: - Initialization
     
     init() {
-        AppLogger.navigation.info("DashboardCoordinator initialized")
+        AppLogger.navigation.logCoordinator(
+            event: "created",
+            coordinator: "DashboardCoordinator",
+            details: "Dashboard navigation initialized"
+        )
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        AppLogger.navigation.info("DashboardCoordinator starting")
+        AppLogger.navigation.logCoordinator(
+            event: "start",
+            coordinator: "DashboardCoordinator",
+            details: "Starting with home"
+        )
+        
         navigationPath = [.home]
+        
+        AppLogger.navigation.logStackChange(
+            action: "set",
+            coordinator: "DashboardCoordinator",
+            stackSize: 1,
+            route: "home"
+        )
     }
     
     // MARK: - Navigation Methods
@@ -59,7 +75,11 @@ final class DashboardCoordinator: @MainActor CoordinatorProtocol {
     /// Shows details for a specific service
     /// - Parameter serviceId: The ID of the service to show
     func showServiceDetail(serviceId: String) {
-        AppLogger.navigation.info("Showing service detail: \(serviceId)")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .home),
+            to: "ServiceDetail[id:\(serviceId)]",
+            coordinator: "DashboardCoordinator"
+        )
         navigate(to: .serviceDetail(serviceId: serviceId))
     }
     
@@ -68,7 +88,11 @@ final class DashboardCoordinator: @MainActor CoordinatorProtocol {
     ///   - mediaId: The ID of the media item
     ///   - serviceType: The type of service (e.g., "radarr", "sonarr")
     func showMediaDetail(mediaId: String, serviceType: String) {
-        AppLogger.navigation.info("Showing media detail: \(mediaId) from \(serviceType)")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .home),
+            to: "MediaDetail[id:\(mediaId), type:\(serviceType)]",
+            coordinator: "DashboardCoordinator"
+        )
         navigate(to: .mediaDetail(mediaId: mediaId, serviceType: serviceType))
     }
 }

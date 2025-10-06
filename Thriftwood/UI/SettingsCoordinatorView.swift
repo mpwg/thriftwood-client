@@ -31,6 +31,13 @@ struct SettingsCoordinatorView: View {
                 .navigationDestination(for: SettingsRoute.self) { route in
                     destinationView(for: route)
                 }
+                .logViewLifecycle(
+                    view: "SettingsCoordinatorView",
+                    metadata: [
+                        "coordinator_type": "SettingsCoordinator",
+                        "navigation_depth": "\(coordinator.navigationPath.count)"
+                    ]
+                )
         }
     }
     

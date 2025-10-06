@@ -78,27 +78,99 @@ protocol CoordinatorProtocol: AnyObject {
 // MARK: - Default Implementations
 
 extension CoordinatorProtocol {
-    /// Default implementation for navigating to a route
+    /// Default implementation for navigating to a route with comprehensive logging
     func navigate(to route: Route) {
+        let coordinatorName = String(describing: type(of: self))
+        let previousRoute = navigationPath.last.map { String(describing: $0) } ?? "Root"
+        let newRoute = String(describing: route)
+        
         navigationPath.append(route)
+        
+        AppLogger.navigation.logNavigation(
+            from: previousRoute,
+            to: newRoute,
+            coordinator: coordinatorName,
+            stackDepth: navigationPath.count
+        )
+        
+        AppLogger.navigation.logStackChange(
+            action: "push",
+            coordinator: coordinatorName,
+            stackSize: navigationPath.count,
+            route: newRoute
+        )
     }
     
-    /// Default implementation for popping the navigation stack
+    /// Default implementation for popping the navigation stack with logging
     func pop() {
-        guard !navigationPath.isEmpty else { return }
+        guard !navigationPath.isEmpty else {
+            AppLogger.navigation.warning("⚠️ Attempted to pop empty navigation stack in \(String(describing: type(of: self)))")
+            return
+        }
+        
+        let coordinatorName = String(describing: type(of: self))
+        let poppedRoute = String(describing: navigationPath.last!)
         navigationPath.removeLast()
+        let currentRoute = navigationPath.last.map { String(describing: $0) } ?? "Root"
+        
+        AppLogger.navigation.logNavigation(
+            from: poppedRoute,
+            to: currentRoute,
+            coordinator: coordinatorName,
+            stackDepth: navigationPath.count
+        )
+        
+        AppLogger.navigation.logStackChange(
+            action: "pop",
+            coordinator: coordinatorName,
+            stackSize: navigationPath.count,
+            route: poppedRoute
+        )
     }
     
-    /// Default implementation for popping to root
+    /// Default implementation for popping to root with logging
     func popToRoot() {
+        guard !navigationPath.isEmpty else {
+            AppLogger.navigation.debug("Navigation stack already at root in \(String(describing: type(of: self)))")
+            return
+        }
+        
+        let coordinatorName = String(describing: type(of: self))
+        let stackSize = navigationPath.count
+        let currentRoute = navigationPath.last.map { String(describing: $0) } ?? "Unknown"
+        
         navigationPath.removeAll()
+        
+        AppLogger.navigation.logNavigation(
+            from: currentRoute,
+            to: "Root",
+            coordinator: coordinatorName,
+            stackDepth: 0
+        )
+        
+        AppLogger.navigation.logStackChange(
+            action: "clear",
+            coordinator: coordinatorName,
+            stackSize: 0
+        )
+        
+        AppLogger.navigation.info("🔙 Cleared \(stackSize) routes from \(coordinatorName) navigation stack")
     }
     
-    /// Default implementation for cleaning up child coordinators.
+    /// Default implementation for cleaning up child coordinators with logging
     /// Uses identity comparison (===) to find the specific child coordinator.
     func childDidFinish(_ child: any CoordinatorProtocol) {
+        let parentName = String(describing: type(of: self))
+        let childName = String(describing: type(of: child))
+        
         for (index, coordinator) in childCoordinators.enumerated() where coordinator === child {
             childCoordinators.remove(at: index)
+            
+            AppLogger.navigation.logCoordinator(
+                event: "removed",
+                coordinator: childName,
+                details: "from parent: \(parentName), remaining children: \(childCoordinators.count)"
+            )
             break
         }
     }

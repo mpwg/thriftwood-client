@@ -50,6 +50,15 @@ struct MainTabView: View {
                     .tag(tab)
             }
         }
+        .logViewLifecycle(
+            view: "MainTabView",
+            metadata: [
+                "coordinator_type": "TabCoordinator",
+                "selected_tab": "\(coordinator.selectedTab.title)",
+                "enabled_tabs": "\(coordinator.enabledTabs.map { $0.title }.joined(separator: ", "))",
+                "tabs_count": "\(coordinator.enabledTabs.count)"
+            ]
+        )
     }
     
     /// Returns the appropriate view for each tab

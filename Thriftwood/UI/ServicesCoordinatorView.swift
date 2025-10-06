@@ -32,6 +32,14 @@ struct ServicesCoordinatorView: View {
                 .navigationDestination(for: ServicesRoute.self) { route in
                     destination(for: route)
                 }
+                .logViewLifecycle(
+                    view: "ServicesCoordinatorView",
+                    metadata: [
+                        "coordinator_type": "ServicesCoordinator",
+                        "navigation_depth": "\(coordinator.navigationPath.count)",
+                        "child_coordinators": "\(coordinator.childCoordinators.count)"
+                    ]
+                )
         }
     }
     

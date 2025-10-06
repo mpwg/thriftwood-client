@@ -115,6 +115,149 @@ struct AppLogger: Sendable {
             logger.info("API \(method) \(path, privacy: .private)")
         }
     }
+    
+    // MARK: - Navigation Tracing
+    
+    /// Log navigation event with full context
+    /// - Parameters:
+    ///   - from: Source location (route, view, or coordinator)
+    ///   - to: Destination (route or view)
+    ///   - coordinator: Coordinator handling the navigation
+    ///   - stackDepth: Current navigation stack depth (optional)
+    ///   - file: Source file (auto-populated)
+    ///   - function: Function name (auto-populated)
+    ///   - line: Line number (auto-populated)
+    nonisolated func logNavigation(
+        from: String,
+        to: String,
+        coordinator: String,
+        stackDepth: Int? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        let fileName = (file as NSString).lastPathComponent
+        let location = "[\(fileName):\(line)] \(function)"
+        
+        if let depth = stackDepth {
+            logger.info("🧭 NAVIGATE [depth:\(depth)] \(coordinator): \(from) → \(to) | \(location)")
+        } else {
+            logger.info("🧭 NAVIGATE \(coordinator): \(from) → \(to) | \(location)")
+        }
+    }
+    
+    /// Log coordinator lifecycle events
+    /// - Parameters:
+    ///   - event: Event type (start, finish, created, destroyed)
+    ///   - coordinator: Coordinator name
+    ///   - details: Additional context
+    ///   - file: Source file (auto-populated)
+    ///   - function: Function name (auto-populated)
+    ///   - line: Line number (auto-populated)
+    nonisolated func logCoordinator(
+        event: String,
+        coordinator: String,
+        details: String? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        let fileName = (file as NSString).lastPathComponent
+        let location = "[\(fileName):\(line)] \(function)"
+        
+        if let details = details {
+            logger.info("🎯 COORDINATOR \(event.uppercased()): \(coordinator) - \(details) | \(location)")
+        } else {
+            logger.info("🎯 COORDINATOR \(event.uppercased()): \(coordinator) | \(location)")
+        }
+    }
+    
+    /// Log tab switching events
+    /// - Parameters:
+    ///   - from: Previous tab
+    ///   - to: New tab
+    ///   - file: Source file (auto-populated)
+    ///   - line: Line number (auto-populated)
+    nonisolated func logTabSwitch(
+        from: String,
+        to: String,
+        file: String = #file,
+        line: Int = #line
+    ) {
+        let fileName = (file as NSString).lastPathComponent
+        logger.info("🔀 TAB SWITCH: \(from) → \(to) | [\(fileName):\(line)]")
+    }
+    
+    /// Log view lifecycle events
+    /// - Parameters:
+    ///   - event: Event type (appear, disappear)
+    ///   - view: View name
+    ///   - coordinator: Associated coordinator (optional)
+    ///   - file: Source file (auto-populated)
+    ///   - line: Line number (auto-populated)
+    nonisolated func logViewLifecycle(
+        event: String,
+        view: String,
+        coordinator: String? = nil,
+        file: String = #file,
+        line: Int = #line
+    ) {
+        let fileName = (file as NSString).lastPathComponent
+        
+        if let coordinator = coordinator {
+            logger.debug("👁️  VIEW \(event.uppercased()): \(view) [coordinator: \(coordinator)] | [\(fileName):\(line)]")
+        } else {
+            logger.debug("👁️  VIEW \(event.uppercased()): \(view) | [\(fileName):\(line)]")
+        }
+    }
+    
+    /// Log deep link handling
+    /// - Parameters:
+    ///   - url: Deep link URL
+    ///   - action: Action being performed
+    ///   - coordinator: Coordinator handling the deep link (optional)
+    ///   - file: Source file (auto-populated)
+    ///   - line: Line number (auto-populated)
+    nonisolated func logDeepLink(
+        url: String,
+        action: String,
+        coordinator: String? = nil,
+        file: String = #file,
+        line: Int = #line
+    ) {
+        let fileName = (file as NSString).lastPathComponent
+        
+        if let coordinator = coordinator {
+            logger.info("🔗 DEEP LINK: \(action) - \(url, privacy: .private) [coordinator: \(coordinator)] | [\(fileName):\(line)]")
+        } else {
+            logger.info("🔗 DEEP LINK: \(action) - \(url, privacy: .private) | [\(fileName):\(line)]")
+        }
+    }
+    
+    /// Log navigation stack changes
+    /// - Parameters:
+    ///   - action: Action performed (push, pop, clear)
+    ///   - coordinator: Coordinator managing the stack
+    ///   - stackSize: Current stack size after action
+    ///   - route: Route involved (optional)
+    ///   - file: Source file (auto-populated)
+    ///   - line: Line number (auto-populated)
+    nonisolated func logStackChange(
+        action: String,
+        coordinator: String,
+        stackSize: Int,
+        route: String? = nil,
+        file: String = #file,
+        line: Int = #line
+    ) {
+        let fileName = (file as NSString).lastPathComponent
+        
+        if let route = route {
+            logger.debug("📚 STACK \(action.uppercased()): \(coordinator) [size: \(stackSize)] route: \(route) | [\(fileName):\(line)]")
+        } else {
+            logger.debug("📚 STACK \(action.uppercased()): \(coordinator) [size: \(stackSize)] | [\(fileName):\(line)]")
+        }
+    }
 }
 
 // MARK: - Convenience Loggers

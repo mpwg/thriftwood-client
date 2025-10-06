@@ -58,40 +58,72 @@ final class ServicesCoordinator: @MainActor CoordinatorProtocol {
     ) {
         self.radarrService = radarrService
         self.dataService = dataService
-        AppLogger.navigation.info("ServicesCoordinator initialized")
+        
+        AppLogger.navigation.logCoordinator(
+            event: "created",
+            coordinator: "ServicesCoordinator",
+            details: "Initialized with service dependencies"
+        )
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        AppLogger.navigation.info("ServicesCoordinator starting")
+        AppLogger.navigation.logCoordinator(
+            event: "start",
+            coordinator: "ServicesCoordinator"
+        )
+        
         navigationPath = [.list]
+        
+        AppLogger.navigation.logStackChange(
+            action: "set",
+            coordinator: "ServicesCoordinator",
+            stackSize: 1,
+            route: "list"
+        )
     }
     
     // MARK: - Navigation Methods
     
     /// Shows the Radarr module
     func showRadarr() {
-        AppLogger.navigation.info("Showing Radarr")
+        AppLogger.navigation.logNavigation(
+            from: "ServicesList",
+            to: "Radarr",
+            coordinator: "ServicesCoordinator"
+        )
         navigate(to: .radarr)
     }
     
     /// Shows the Sonarr module
     func showSonarr() {
-        AppLogger.navigation.info("Showing Sonarr")
+        AppLogger.navigation.logNavigation(
+            from: "ServicesList",
+            to: "Sonarr (M3)",
+            coordinator: "ServicesCoordinator"
+        )
         navigate(to: .sonarr)
     }
     
     /// Shows the add service screen
     func showAddService() {
-        AppLogger.navigation.info("Showing add service screen")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .list),
+            to: "AddService",
+            coordinator: "ServicesCoordinator"
+        )
         navigate(to: .addService)
     }
     
     /// Shows configuration for a specific service
     /// - Parameter serviceId: The ID of the service to configure
     func showServiceConfiguration(serviceId: String) {
-        AppLogger.navigation.info("Showing service configuration: \(serviceId)")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .list),
+            to: "ServiceConfiguration[\(serviceId)]",
+            coordinator: "ServicesCoordinator"
+        )
         navigate(to: .serviceConfiguration(serviceId: serviceId))
     }
     

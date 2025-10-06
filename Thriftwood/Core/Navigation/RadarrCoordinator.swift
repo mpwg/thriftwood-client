@@ -53,59 +53,105 @@ final class RadarrCoordinator: @MainActor CoordinatorProtocol {
     ) {
         self.radarrService = radarrService
         self.dataService = dataService
-        AppLogger.navigation.info("RadarrCoordinator initialized")
+        
+        AppLogger.navigation.logCoordinator(
+            event: "created",
+            coordinator: "RadarrCoordinator",
+            details: "Movie management navigation initialized"
+        )
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        AppLogger.navigation.info("RadarrCoordinator starting")
+        AppLogger.navigation.logCoordinator(
+            event: "start",
+            coordinator: "RadarrCoordinator",
+            details: "Starting with movies list"
+        )
+        
         navigationPath = [.moviesList]
+        
+        AppLogger.navigation.logStackChange(
+            action: "set",
+            coordinator: "RadarrCoordinator",
+            stackSize: 1,
+            route: "moviesList"
+        )
     }
     
     // MARK: - Navigation Methods
     
     /// Shows the movies list view
     func showMoviesList() {
-        AppLogger.navigation.info("Showing movies list")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .moviesList),
+            to: "MoviesList",
+            coordinator: "RadarrCoordinator"
+        )
         navigate(to: .moviesList)
     }
     
     /// Shows movie detail view
     /// - Parameter movieId: The ID of the movie to display
     func showMovieDetail(movieId: Int) {
-        AppLogger.navigation.info("Showing movie detail: \(movieId)")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .moviesList),
+            to: "MovieDetail[id:\(movieId)]",
+            coordinator: "RadarrCoordinator"
+        )
         navigate(to: .movieDetail(movieId: movieId))
     }
     
     /// Shows add movie view
     /// - Parameter query: Optional search query to pre-fill
     func showAddMovie(query: String = "") {
-        AppLogger.navigation.info("Showing add movie with query: \(query)")
+        let queryInfo = query.isEmpty ? "" : " with query: '\(query)'"
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .moviesList),
+            to: "AddMovie\(queryInfo)",
+            coordinator: "RadarrCoordinator"
+        )
         navigate(to: .addMovie(query: query))
     }
     
     /// Shows Radarr settings/configuration
     func showSettings() {
-        AppLogger.navigation.info("Showing Radarr settings")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .moviesList),
+            to: "Settings",
+            coordinator: "RadarrCoordinator"
+        )
         navigate(to: .settings)
     }
     
     /// Shows system status view
     func showSystemStatus() {
-        AppLogger.navigation.info("Showing system status")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .moviesList),
+            to: "SystemStatus",
+            coordinator: "RadarrCoordinator"
+        )
         navigate(to: .systemStatus)
     }
     
     /// Shows queue view
     func showQueue() {
-        AppLogger.navigation.info("Showing queue")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .moviesList),
+            to: "Queue",
+            coordinator: "RadarrCoordinator"
+        )
         navigate(to: .queue)
     }
     
     /// Shows history view
     func showHistory() {
-        AppLogger.navigation.info("Showing history")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .moviesList),
+            to: "History",
+            coordinator: "RadarrCoordinator"
+        )
         navigate(to: .history)
     }
     
@@ -114,9 +160,11 @@ final class RadarrCoordinator: @MainActor CoordinatorProtocol {
     /// Gets or creates MoviesListViewModel
     func getMoviesListViewModel() -> MoviesListViewModel {
         if let existing = moviesListViewModel {
+            AppLogger.navigation.debug("Reusing existing MoviesListViewModel")
             return existing
         }
         
+        AppLogger.navigation.debug("Creating new MoviesListViewModel")
         let viewModel = MoviesListViewModel(radarrService: radarrService)
         moviesListViewModel = viewModel
         return viewModel

@@ -93,6 +93,7 @@ struct MoviesListView: View {
                 sortSheet
             }
         }
+        .logViewLifecycle(view: "MoviesListView", metadata: ["coordinator": "RadarrCoordinator"])
     }
     
     // MARK: - Movies List
