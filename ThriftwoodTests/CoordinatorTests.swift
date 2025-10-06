@@ -212,7 +212,8 @@ struct CoordinatorTests {
         if let servicesCoordinator = coordinator.servicesCoordinator {
             servicesCoordinator.navigate(to: .radarr)
             servicesCoordinator.navigate(to: .serviceConfiguration(serviceId: "test"))
-            #expect(servicesCoordinator.navigationPath.count == 2)
+            // After start() sets [.list] and two navigate() calls append, we have 3 items
+            #expect(servicesCoordinator.navigationPath.count == 3)
         }
         
         // Tap on services tab again (simulating re-selection)
