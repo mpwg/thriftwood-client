@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		403991B22E905C68001E827C /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 403991B12E905C68001E827C /* Swinject */; };
-		403991B62E905E7D001E827C /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 403991B52E905E7D001E827C /* OpenAPIRuntime */; };
 		404F89FE2E914FB0009D2DD6 /* AsyncHTTPClient in Frameworks */ = {isa = PBXBuildFile; productRef = 404F89FD2E914FB0009D2DD6 /* AsyncHTTPClient */; };
 		404F8AC62E9176B6009D2DD6 /* Valet in Frameworks */ = {isa = PBXBuildFile; productRef = 404F8AC52E9176B6009D2DD6 /* Valet */; };
+		40FDC4992E93A99200937EEE /* RadarrAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 40FDC4982E93A99200937EEE /* RadarrAPI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,10 +59,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				403991B62E905E7D001E827C /* OpenAPIRuntime in Frameworks */,
 				404F8AC62E9176B6009D2DD6 /* Valet in Frameworks */,
 				404F89FE2E914FB0009D2DD6 /* AsyncHTTPClient in Frameworks */,
 				403991B22E905C68001E827C /* Swinject in Frameworks */,
+				40FDC4992E93A99200937EEE /* RadarrAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,9 +116,9 @@
 			name = Thriftwood;
 			packageProductDependencies = (
 				403991B12E905C68001E827C /* Swinject */,
-				403991B52E905E7D001E827C /* OpenAPIRuntime */,
 				404F89FD2E914FB0009D2DD6 /* AsyncHTTPClient */,
 				404F8AC52E9176B6009D2DD6 /* Valet */,
+				40FDC4982E93A99200937EEE /* RadarrAPI */,
 			);
 			productName = Thriftwood;
 			productReference = 402888372E90441F005376F0 /* Thriftwood.app */;
@@ -178,10 +178,9 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				403991B02E905C68001E827C /* XCRemoteSwiftPackageReference "Swinject" */,
-				403991B32E905E58001E827C /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
-				403991B42E905E7D001E827C /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
 				404F89FC2E914FB0009D2DD6 /* XCRemoteSwiftPackageReference "async-http-client" */,
 				404F8AC42E9176B6009D2DD6 /* XCRemoteSwiftPackageReference "Valet" */,
+				40FDC4972E93A99200937EEE /* XCLocalSwiftPackageReference "RadarrAPI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 402888382E90441F005376F0 /* Products */;
@@ -601,6 +600,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		40FDC4972E93A99200937EEE /* XCLocalSwiftPackageReference "RadarrAPI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = RadarrAPI;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		403991B02E905C68001E827C /* XCRemoteSwiftPackageReference "Swinject" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -608,22 +614,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.10.0;
-			};
-		};
-		403991B32E905E58001E827C /* XCRemoteSwiftPackageReference "swift-openapi-generator" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-openapi-generator";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.10.3;
-			};
-		};
-		403991B42E905E7D001E827C /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-openapi-runtime";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.8.3;
 			};
 		};
 		404F89FC2E914FB0009D2DD6 /* XCRemoteSwiftPackageReference "async-http-client" */ = {
@@ -650,11 +640,6 @@
 			package = 403991B02E905C68001E827C /* XCRemoteSwiftPackageReference "Swinject" */;
 			productName = Swinject;
 		};
-		403991B52E905E7D001E827C /* OpenAPIRuntime */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 403991B42E905E7D001E827C /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */;
-			productName = OpenAPIRuntime;
-		};
 		404F89FD2E914FB0009D2DD6 /* AsyncHTTPClient */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 404F89FC2E914FB0009D2DD6 /* XCRemoteSwiftPackageReference "async-http-client" */;
@@ -664,6 +649,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 404F8AC42E9176B6009D2DD6 /* XCRemoteSwiftPackageReference "Valet" */;
 			productName = Valet;
+		};
+		40FDC4982E93A99200937EEE /* RadarrAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RadarrAPI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

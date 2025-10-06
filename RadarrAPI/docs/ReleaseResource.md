@@ -1,0 +1,53 @@
+# ReleaseResource
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**id** | **Int** |  | [optional] 
+**guid** | **String** |  | [optional] 
+**quality** | [**QualityModel**](QualityModel.md) |  | [optional] 
+**customFormats** | [CustomFormatResource] |  | [optional] 
+**customFormatScore** | **Int** |  | [optional] 
+**qualityWeight** | **Int** |  | [optional] 
+**age** | **Int** |  | [optional] 
+**ageHours** | **Double** |  | [optional] 
+**ageMinutes** | **Double** |  | [optional] 
+**size** | **Int64** |  | [optional] 
+**indexerId** | **Int** |  | [optional] 
+**indexer** | **String** |  | [optional] 
+**releaseGroup** | **String** |  | [optional] 
+**subGroup** | **String** |  | [optional] 
+**releaseHash** | **String** |  | [optional] 
+**title** | **String** |  | [optional] 
+**sceneSource** | **Bool** |  | [optional] 
+**movieTitles** | **[String]** |  | [optional] 
+**languages** | [Language] |  | [optional] 
+**mappedMovieId** | **Int** |  | [optional] 
+**approved** | **Bool** |  | [optional] 
+**temporarilyRejected** | **Bool** |  | [optional] 
+**rejected** | **Bool** |  | [optional] 
+**tmdbId** | **Int** |  | [optional] 
+**imdbId** | **Int** |  | [optional] 
+**rejections** | **[String]** |  | [optional] 
+**publishDate** | **Date** |  | [optional] 
+**commentUrl** | **String** |  | [optional] 
+**downloadUrl** | **String** |  | [optional] 
+**infoUrl** | **String** |  | [optional] 
+**movieRequested** | **Bool** |  | [optional] 
+**downloadAllowed** | **Bool** |  | [optional] 
+**releaseWeight** | **Int** |  | [optional] 
+**edition** | **String** |  | [optional] 
+**magnetUrl** | **String** |  | [optional] 
+**infoHash** | **String** |  | [optional] 
+**seeders** | **Int** |  | [optional] 
+**leechers** | **Int** |  | [optional] 
+**_protocol** | [**DownloadProtocol**](DownloadProtocol.md) |  | [optional] 
+**indexerFlags** | **JSONValue** |  | [optional] 
+**movieId** | **Int** |  | [optional] 
+**downloadClientId** | **Int** |  | [optional] 
+**downloadClient** | **String** |  | [optional] 
+**shouldOverride** | **Bool** |  | [optional] 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+

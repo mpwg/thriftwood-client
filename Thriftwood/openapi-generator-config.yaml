@@ -1,0 +1,5 @@
+# OpenAPI Generator Configuration for Radarr v3 API
+generate:
+  - types
+  - client
+accessModifier: public

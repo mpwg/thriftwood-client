@@ -24,13 +24,14 @@ Each ADR follows this structure:
 
 ## Decision Log
 
-| ADR                                                        | Title                                      | Status   | Date       |
-| ---------------------------------------------------------- | ------------------------------------------ | -------- | ---------- |
-| [0001](0001-single-navigationstack-per-coordinator.md)     | Single NavigationStack Per Coordinator     | accepted | 2025-10-05 |
-| [0002](0002-use-swiftdata-over-coredata.md)                | Use SwiftData Over CoreData                | accepted | 2025-10-04 |
-| [0003](0003-use-swinject-for-dependency-injection.md)      | Use Swinject for Dependency Injection      | accepted | 2025-10-04 |
-| [0004](0004-use-asynchttpclient-over-custom-networking.md) | Use AsyncHTTPClient Over Custom Networking | accepted | 2025-10-04 |
-| [0005](0005-use-mvvm-c-pattern.md)                         | Use MVVM-C Pattern                         | accepted | 2025-10-03 |
+| ADR                                                        | Title                                               | Status   | Date       |
+| ---------------------------------------------------------- | --------------------------------------------------- | -------- | ---------- |
+| [0001](0001-single-navigationstack-per-coordinator.md)     | Single NavigationStack Per Coordinator              | accepted | 2025-10-05 |
+| [0002](0002-use-swiftdata-over-coredata.md)                | Use SwiftData Over CoreData                         | accepted | 2025-10-04 |
+| [0003](0003-use-swinject-for-dependency-injection.md)      | Use Swinject for Dependency Injection               | accepted | 2025-10-04 |
+| [0004](0004-use-asynchttpclient-over-custom-networking.md) | Use AsyncHTTPClient Over Custom Networking          | accepted | 2025-10-04 |
+| [0005](0005-use-mvvm-c-pattern.md)                         | Use MVVM-C Pattern                                  | accepted | 2025-10-03 |
+| [0006](0006-openapi-client-generation-strategy.md)         | Use Swift OpenAPI Generator for Service API Clients | accepted | 2025-10-05 |
 
 ## Creating a New ADR
 
