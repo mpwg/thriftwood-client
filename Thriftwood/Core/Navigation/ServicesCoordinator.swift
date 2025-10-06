@@ -41,9 +41,23 @@ final class ServicesCoordinator: @MainActor CoordinatorProtocol {
     weak var parent: (any CoordinatorProtocol)?
     var navigationPath: [ServicesRoute] = []
     
+    // MARK: - Dependencies
+    
+    private let radarrService: any RadarrServiceProtocol
+    private let dataService: any DataServiceProtocol
+    
+    // MARK: - Child Coordinators
+    
+    internal var radarrCoordinator: RadarrCoordinator?
+    
     // MARK: - Initialization
     
-    init() {
+    init(
+        radarrService: any RadarrServiceProtocol,
+        dataService: any DataServiceProtocol
+    ) {
+        self.radarrService = radarrService
+        self.dataService = dataService
         AppLogger.navigation.info("ServicesCoordinator initialized")
     }
     
@@ -55,6 +69,18 @@ final class ServicesCoordinator: @MainActor CoordinatorProtocol {
     }
     
     // MARK: - Navigation Methods
+    
+    /// Shows the Radarr module
+    func showRadarr() {
+        AppLogger.navigation.info("Showing Radarr")
+        navigate(to: .radarr)
+    }
+    
+    /// Shows the Sonarr module
+    func showSonarr() {
+        AppLogger.navigation.info("Showing Sonarr")
+        navigate(to: .sonarr)
+    }
     
     /// Shows the add service screen
     func showAddService() {
@@ -74,5 +100,25 @@ final class ServicesCoordinator: @MainActor CoordinatorProtocol {
     func showTestConnection(serviceId: String) {
         AppLogger.navigation.info("Showing test connection: \(serviceId)")
         navigate(to: .testConnection(serviceId: serviceId))
+    }
+    
+    // MARK: - Child Coordinator Management
+    
+    /// Gets or creates the Radarr coordinator
+    func getRadarrCoordinator() -> RadarrCoordinator {
+        if let existing = radarrCoordinator {
+            return existing
+        }
+        
+        let coordinator = RadarrCoordinator(
+            radarrService: radarrService,
+            dataService: dataService
+        )
+        coordinator.parent = self
+        childCoordinators.append(coordinator)
+        radarrCoordinator = coordinator
+        coordinator.start()
+        
+        return coordinator
     }
 }

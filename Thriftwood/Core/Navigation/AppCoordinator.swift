@@ -49,6 +49,12 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     /// Profile service for checking if profiles exist
     private let profileService: any ProfileServiceProtocol
     
+    /// Radarr service for TabCoordinator's ServicesCoordinator
+    private let radarrService: any RadarrServiceProtocol
+    
+    /// Data service for TabCoordinator's ServicesCoordinator
+    private let dataService: any DataServiceProtocol
+    
     /// Whether the user has completed onboarding
     private var hasCompletedOnboarding: Bool {
         // Check both UserDefaults flag AND if at least one profile exists
@@ -72,9 +78,16 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     
     // MARK: - Initialization
     
-    init(preferencesService: any UserPreferencesServiceProtocol, profileService: any ProfileServiceProtocol) {
+    init(
+        preferencesService: any UserPreferencesServiceProtocol,
+        profileService: any ProfileServiceProtocol,
+        radarrService: any RadarrServiceProtocol,
+        dataService: any DataServiceProtocol
+    ) {
         self.preferencesService = preferencesService
         self.profileService = profileService
+        self.radarrService = radarrService
+        self.dataService = dataService
         AppLogger.navigation.info("AppCoordinator initialized")
     }
     
@@ -114,8 +127,12 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     func showMainApp() {
         AppLogger.navigation.info("Showing main app")
         
-        // Create and start tab coordinator with preferences service
-        let tabCoordinator = TabCoordinator(preferencesService: preferencesService)
+        // Create and start tab coordinator with dependencies
+        let tabCoordinator = TabCoordinator(
+            preferencesService: preferencesService,
+            radarrService: radarrService,
+            dataService: dataService
+        )
         tabCoordinator.parent = self
         
         childCoordinators.append(tabCoordinator)

@@ -51,6 +51,12 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     /// User preferences service for tab configuration
     private let preferencesService: any UserPreferencesServiceProtocol
     
+    /// Radarr service for services coordinator
+    private let radarrService: any RadarrServiceProtocol
+    
+    /// Data service for services coordinator
+    private let dataService: any DataServiceProtocol
+    
     /// The currently selected tab
     var selectedTab: TabRoute = .dashboard
     
@@ -69,8 +75,14 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     
     // MARK: - Initialization
     
-    init(preferencesService: any UserPreferencesServiceProtocol) {
+    init(
+        preferencesService: any UserPreferencesServiceProtocol,
+        radarrService: any RadarrServiceProtocol,
+        dataService: any DataServiceProtocol
+    ) {
         self.preferencesService = preferencesService
+        self.radarrService = radarrService
+        self.dataService = dataService
         AppLogger.navigation.info("TabCoordinator initialized with customizable tabs")
     }
     
@@ -138,7 +150,10 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     
     private func setupServicesCoordinator() {
         guard servicesCoordinator == nil else { return }
-        let coordinator = ServicesCoordinator()
+        let coordinator = ServicesCoordinator(
+            radarrService: radarrService,
+            dataService: dataService
+        )
         coordinator.parent = self
         childCoordinators.append(coordinator)
         servicesCoordinator = coordinator
