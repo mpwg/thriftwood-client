@@ -37,6 +37,13 @@ final class MovieDetailViewModel {
     var movie: MovieResource?
     var isLoading = false
     var error: ThriftwoodError?
+    
+    /// Display model for UI consumption
+    /// Converts domain model to display model following MVVM-C pattern
+    var displayMovie: MovieDisplayModel? {
+        guard let movie = movie else { return nil }
+        return convertToDisplayModel(movie)
+    }
 
     // MARK: - Initialization
 
@@ -121,5 +128,35 @@ final class MovieDetailViewModel {
             self.error = .unknown(error)
             return false
         }
+    }
+    
+    // MARK: - Private Methods
+    
+    /// Convert domain model to display model
+    /// This keeps the View layer isolated from RadarrAPI domain models
+    private func convertToDisplayModel(_ resource: MovieResource) -> MovieDisplayModel {
+        let posterURLString = resource.images?.first(where: { $0.coverType == .poster })?.remoteUrl
+        let backdropURLString = resource.images?.first(where: { $0.coverType == .fanart })?.remoteUrl
+        
+        let posterURL = posterURLString.flatMap { URL(string: $0) }
+        let backdropURL = backdropURLString.flatMap { URL(string: $0) }
+        
+        return MovieDisplayModel(
+            id: resource.id ?? 0,
+            title: resource.title ?? "Unknown",
+            year: resource.year,
+            overview: resource.overview,
+            runtime: resource.runtime,
+            posterURL: posterURL,
+            backdropURL: backdropURL,
+            monitored: resource.monitored ?? false,
+            hasFile: resource.hasFile ?? false,
+            qualityProfileId: resource.qualityProfileId,
+            qualityProfileName: nil, // TODO: Fetch quality profile names
+            rating: resource.ratings?.tmdb?.value,
+            certification: resource.certification,
+            genres: resource.genres?.compactMap { $0 } ?? [],
+            studio: resource.studio
+        )
     }
 }
