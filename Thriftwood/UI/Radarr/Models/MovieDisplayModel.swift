@@ -42,6 +42,7 @@ struct MovieDisplayModel: Identifiable, Hashable {
     let certification: String?
     let genres: [String]
     let studio: String?
+    let dateAdded: Date?
     
     // MARK: - Initialization
     
@@ -60,7 +61,8 @@ struct MovieDisplayModel: Identifiable, Hashable {
         rating: Double? = nil,
         certification: String? = nil,
         genres: [String] = [],
-        studio: String? = nil
+        studio: String? = nil,
+        dateAdded: Date? = nil
     ) {
         self.id = id
         self.title = title
@@ -77,6 +79,7 @@ struct MovieDisplayModel: Identifiable, Hashable {
         self.certification = certification
         self.genres = genres
         self.studio = studio
+        self.dateAdded = dateAdded
     }
     
     // MARK: - Computed Properties

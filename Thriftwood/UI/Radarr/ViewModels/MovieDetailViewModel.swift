@@ -164,7 +164,8 @@ final class MovieDetailViewModel {
             rating: resource.ratings?.tmdb?.value,
             certification: resource.certification,
             genres: resource.genres?.compactMap { $0 } ?? [],
-            studio: resource.studio
+            studio: resource.studio,
+            dateAdded: resource.added
         )
     }
     

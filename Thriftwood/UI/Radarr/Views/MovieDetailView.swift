@@ -55,6 +55,7 @@ struct MovieDetailView: View {
     @Environment(MovieDetailViewModel.self) private var viewModel
     @State private var showDeleteConfirmation = false
     @State private var deleteFiles = false
+    @State private var isTogglingMonitored = false
     
     let onEdit: (Int) -> Void
     let onDeleted: () -> Void
@@ -366,8 +367,13 @@ struct MovieDetailView: View {
         Binding(
             get: { viewModel.displayMovie?.monitored ?? false },
             set: { _ in
+                // Prevent multiple concurrent API calls
+                guard !isTogglingMonitored else { return }
+                
+                isTogglingMonitored = true
                 Task {
                     await viewModel.toggleMonitored()
+                    isTogglingMonitored = false
                 }
             }
         )

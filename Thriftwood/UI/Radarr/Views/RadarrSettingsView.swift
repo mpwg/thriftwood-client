@@ -61,8 +61,8 @@ struct RadarrSettingsView: View {
             enabledSection
             connectionSection
             
-            if let status = viewModel.systemStatus {
-                systemStatusSection(status)
+            if let statusDisplay = viewModel.systemStatusDisplay {
+                systemStatusSection(statusDisplay)
             }
             
             if viewModel.connectionTestResult != nil {
@@ -181,19 +181,11 @@ struct RadarrSettingsView: View {
     
     // MARK: - System Status Section
     
-    private func systemStatusSection(_ status: Any) -> some View {
+    private func systemStatusSection(_ statusDisplay: RadarrSystemStatusDisplayModel) -> some View {
         Section("System Information") {
-            // Use mirror to access SystemResource properties without importing RadarrAPI
-            let mirror = Mirror(reflecting: status)
-            
-            ForEach(Array(mirror.children.enumerated()), id: \.offset) { _, child in
-                if let label = child.label {
-                    let displayLabel = label.replacingOccurrences(of: "_", with: " ").capitalized
-                    if let value = child.value as? String, !value.isEmpty {
-                        LabeledContent(displayLabel, value: value)
-                            .font(label == "startupPath" ? .caption : .body)
-                    }
-                }
+            ForEach(statusDisplay.displayItems) { item in
+                LabeledContent(item.label, value: item.value)
+                    .font(item.isCaption ? .caption : .body)
             }
         }
     }

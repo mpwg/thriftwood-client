@@ -43,6 +43,10 @@ import SwiftUI
 /// )
 /// ```
 struct AddMovieView: View {
+    // MARK: - Constants
+    
+    private static let searchDebounceDelay: Duration = .milliseconds(500)
+    
     // MARK: - Properties
     
     @Bindable var viewModel: AddMovieViewModel
@@ -317,9 +321,9 @@ struct AddMovieView: View {
                 await viewModel.searchMovies()
             }
         } else {
-            // Debounce search by 500ms
+            // Debounce search to avoid excessive API calls
             searchTask = Task {
-                try? await Task.sleep(for: .milliseconds(500))
+                try? await Task.sleep(for: Self.searchDebounceDelay)
                 guard !Task.isCancelled else { return }
                 await viewModel.searchMovies()
             }

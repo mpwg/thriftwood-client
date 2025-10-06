@@ -150,8 +150,11 @@ final class MoviesListViewModel {
         case .title:
             return moviesList.sorted { $0.title < $1.title }
         case .dateAdded:
-            // Note: MovieDisplayModel doesn't have dateAdded yet, using title as fallback
-            return moviesList.sorted { $0.title < $1.title }
+            return moviesList.sorted {
+                let date1 = $0.dateAdded ?? .distantPast
+                let date2 = $1.dateAdded ?? .distantPast
+                return date1 > date2
+            }
         case .releaseDate:
             return moviesList.sorted {
                 guard let year1 = $0.year, let year2 = $1.year else { return false }
@@ -202,7 +205,8 @@ final class MoviesListViewModel {
             rating: resource.ratings?.imdb?.value,
             certification: resource.certification,
             genres: resource.genres?.compactMap { $0 } ?? [],
-            studio: resource.studio
+            studio: resource.studio,
+            dateAdded: resource.added
         )
     }
     
