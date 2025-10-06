@@ -220,10 +220,13 @@ extension View {
                 
                 Spacer()
                 
-                Button(action: {}) {
-                    Image(systemName: "ellipsis")
-                        .foregroundStyle(Color.themeAccent)
-                }
+                Button(
+                    action: {},
+                    label: {
+                        Image(systemName: "ellipsis")
+                            .foregroundStyle(Color.themeAccent)
+                    }
+                )
             }
             
             Divider()

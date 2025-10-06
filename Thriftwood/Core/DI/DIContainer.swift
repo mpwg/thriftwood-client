@@ -80,18 +80,21 @@ final class DIContainer {
             } catch {
                 fatalError("Could not create ModelContainer: \(error)")
             }
-        }.inObjectScope(.container)
+        }
+        .inObjectScope(.container)
         
         // Register HTTPClient (singleton)
         // Per ADR-0004, use AsyncHTTPClient for all HTTP networking
         container.register(HTTPClient.self) { _ in
             HTTPClient(eventLoopGroupProvider: .singleton)
-        }.inObjectScope(.container)
+        }
+        .inObjectScope(.container)
         
         // Register KeychainService (singleton, using protocol)
         container.register((any KeychainServiceProtocol).self) { _ in
             KeychainService()
-        }.inObjectScope(.container)
+        }
+        .inObjectScope(.container)
     }
     
     // MARK: - Core Services Registration
@@ -106,7 +109,8 @@ final class DIContainer {
                 fatalError("Could not resolve KeychainServiceProtocol")
             }
             return DataService(modelContainer: modelContainer, keychainService: keychainService)
-        }.inObjectScope(.container)
+        }
+        .inObjectScope(.container)
         
         // Register UserPreferencesService (singleton, using protocol)
         // Note: UserPreferencesService requires concrete DataService type for SwiftData operations
@@ -119,7 +123,8 @@ final class DIContainer {
             } catch {
                 fatalError("Could not create UserPreferencesService: \(error)")
             }
-        }.inObjectScope(.container)
+        }
+        .inObjectScope(.container)
         
         // Register ProfileService (singleton, using protocol)
         container.register((any ProfileServiceProtocol).self) { resolver in
@@ -127,7 +132,8 @@ final class DIContainer {
                 fatalError("Could not resolve DataServiceProtocol")
             }
             return ProfileService(dataService: dataService)
-        }.inObjectScope(.container)
+        }
+        .inObjectScope(.container)
         
         // Register MPWGThemeManager (singleton, using protocol only)
         // SwiftUI can access via protocol through environment or direct resolution
@@ -136,7 +142,8 @@ final class DIContainer {
                 fatalError("Could not resolve UserPreferencesServiceProtocol")
             }
             return MPWGThemeManager(userPreferences: userPreferences)
-        }.inObjectScope(.container)
+        }
+        .inObjectScope(.container)
     }
     
     // MARK: - Domain Services Registration
@@ -149,7 +156,8 @@ final class DIContainer {
         // Note: RadarrService now uses OpenAPI-generated client (ADR-0006), no httpClient needed
         container.register((any RadarrServiceProtocol).self) { _ in
             return RadarrService()
-        }.inObjectScope(.container)
+        }
+        .inObjectScope(.container)
         
         // Future: Register MediaService implementations (Sonarr, Lidarr)
         // Future: Register DownloadService implementations (SABnzbd, NZBGet)
