@@ -25,6 +25,12 @@ import SwiftData
 import Foundation
 @testable import Thriftwood
 
+// MARK: - Test Error
+
+enum TestError: Error {
+    case setupFailed(String)
+}
+
 @Suite("UserPreferencesService Tests")
 @MainActor
 struct UserPreferencesServiceTests {

@@ -24,6 +24,15 @@ import RadarrAPI
 @testable import Thriftwood
 
 /// Mock implementation of RadarrServiceProtocol for testing
+/// 
+/// **CRITICAL**: This class is NOT thread-safe and should NOT be shared between tests.
+/// Each test MUST create its own instance via `MockRadarrService()` or a factory method.
+/// Sharing instances between tests will cause data races and test failures.
+///
+/// The `@unchecked Sendable` conformance is used because:
+/// 1. Tests create isolated instances that are not shared
+/// 2. Swift Testing may run tests in parallel, requiring Sendable conformance
+/// 3. The responsibility for thread-safety is on the test author, not this mock
 final class MockRadarrService: RadarrServiceProtocol, @unchecked Sendable {
     
     // MARK: - Mock Configuration

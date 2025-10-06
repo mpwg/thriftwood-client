@@ -33,18 +33,17 @@ import Foundation
 @MainActor
 struct KeychainServiceTests {
     
-    /// Test keychain service instance (using mock for testing)
-    let keychainService: any KeychainServiceProtocol
-    
-    init() {
+    /// Factory method to create fresh keychain service instance for each test
+    func makeKeychainService() -> any KeychainServiceProtocol {
         // Use mock implementation to avoid keychain entitlement issues in tests
-        self.keychainService = MockKeychainService()
+        return MockKeychainService()
     }
     
     // MARK: - API Key Tests
     
     @Test("Save and retrieve API key")
     func saveAndRetrieveAPIKey() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let configId = UUID()
         let apiKey = "test-api-key-12345"
@@ -62,6 +61,7 @@ struct KeychainServiceTests {
     
     @Test("Retrieve non-existent API key returns nil")
     func retrieveNonExistentAPIKey() {
+        let keychainService = makeKeychainService()
         // Given
         let nonExistentId = UUID()
         
@@ -74,6 +74,7 @@ struct KeychainServiceTests {
     
     @Test("Update existing API key")
     func updateAPIKey() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let configId = UUID()
         let originalKey = "original-key"
@@ -93,6 +94,7 @@ struct KeychainServiceTests {
     
     @Test("Delete API key")
     func deleteAPIKey() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let configId = UUID()
         let apiKey = "test-api-key"
@@ -110,6 +112,7 @@ struct KeychainServiceTests {
     
     @Test("Save and retrieve username/password")
     func saveAndRetrieveUsernamePassword() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let configId = UUID()
         let username = "testuser"
@@ -130,6 +133,7 @@ struct KeychainServiceTests {
     
     @Test("Retrieve non-existent credentials returns nil")
     func retrieveNonExistentCredentials() {
+        let keychainService = makeKeychainService()
         // Given
         let nonExistentId = UUID()
         
@@ -142,6 +146,7 @@ struct KeychainServiceTests {
     
     @Test("Update existing username/password")
     func updateUsernamePassword() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let configId = UUID()
         let originalUsername = "user1"
@@ -172,6 +177,7 @@ struct KeychainServiceTests {
     
     @Test("Delete username/password credentials")
     func deleteUsernamePassword() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let configId = UUID()
         try keychainService.saveUsernamePassword(username: "user", password: "pass", for: configId)
@@ -188,6 +194,7 @@ struct KeychainServiceTests {
     
     @Test("Store multiple API keys for different configurations")
     func multipleAPIKeys() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let config1 = UUID()
         let config2 = UUID()
@@ -212,6 +219,7 @@ struct KeychainServiceTests {
     
     @Test("Store multiple username/password pairs for different configurations")
     func multipleUsernamePasswords() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let config1 = UUID()
         let config2 = UUID()
@@ -238,6 +246,7 @@ struct KeychainServiceTests {
     
     @Test("Delete all credentials")
     func deleteAllCredentials() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let config1 = UUID()
         let config2 = UUID()
@@ -259,6 +268,7 @@ struct KeychainServiceTests {
     
     @Test("Store empty string as API key")
     func emptyAPIKey() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let configId = UUID()
         let emptyKey = ""
@@ -276,6 +286,7 @@ struct KeychainServiceTests {
     
     @Test("Store special characters in credentials")
     func specialCharactersInCredentials() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let configId = UUID()
         let username = "user@example.com"
@@ -295,6 +306,7 @@ struct KeychainServiceTests {
     
     @Test("Store very long API key")
     func longAPIKey() async throws {
+        let keychainService = makeKeychainService()
         // Given
         let configId = UUID()
         let longKey = String(repeating: "a", count: 1000)
