@@ -1,0 +1,21 @@
+# OpenAPI Generator Configuration for Radarr Service
+# This configuration is used by Swift OpenAPI Generator to generate
+# type-safe client code from the Radarr v3 API specification.
+
+generate:
+  - types      # Generate Swift types from schemas
+  - client     # Generate API client code
+
+accessModifier: public  # Make generated code publicly accessible
+
+additionalImports:
+  - Foundation  # Required for URL, Date, Data, etc.
+
+# Filter configuration (optional - can be added later if needed)
+# filter:
+#   operations:
+#     - /api/v3/movie/*
+#     - /api/v3/qualityprofile
+#     - /api/v3/rootfolder
+#     - /api/v3/command
+#     - /api/v3/system/status
