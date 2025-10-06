@@ -144,7 +144,16 @@ final class DIContainer {
     /// Registers domain-specific services (Radarr, Sonarr, etc.)
     /// Note: These will be registered when implementations are added
     private func registerDomainServices() {
-        // Future: Register MediaService implementations (Radarr, Sonarr, Lidarr)
+        // Register RadarrService (singleton, using protocol)
+        // Per ADR-0003, services should be registered by protocol to enable dependency injection and testing
+        container.register((any RadarrServiceProtocol).self) { resolver in
+            guard let httpClient = resolver.resolve(HTTPClient.self) else {
+                fatalError("Could not resolve HTTPClient for RadarrService")
+            }
+            return RadarrService(httpClient: httpClient)
+        }.inObjectScope(.container)
+        
+        // Future: Register MediaService implementations (Sonarr, Lidarr)
         // Future: Register DownloadService implementations (SABnzbd, NZBGet)
         // Future: Register other service implementations (Tautulli, Overseerr, etc.)
     }
