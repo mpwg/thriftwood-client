@@ -39,7 +39,7 @@ import SwiftUI
 /// to enable/disable tabs and customize their order.
 @Observable
 @MainActor
-final class TabCoordinator: @MainActor CoordinatorProtocol,  Sendable {
+final class TabCoordinator: @MainActor CoordinatorProtocol {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any CoordinatorProtocol] = []

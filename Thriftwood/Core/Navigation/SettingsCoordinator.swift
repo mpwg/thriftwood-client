@@ -34,7 +34,7 @@ import OSLog
 /// Handles navigation to various settings screens and preferences.
 @MainActor
 @Observable
-final class SettingsCoordinator: @MainActor CoordinatorProtocol,  Sendable {
+final class SettingsCoordinator: @MainActor CoordinatorProtocol {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any CoordinatorProtocol] = []
