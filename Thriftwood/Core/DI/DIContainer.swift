@@ -169,7 +169,7 @@ final class DIContainer {
     /// Registers coordinators for navigation
     /// Note: Coordinators are typically created with transient scope since they manage navigation state
     private func registerCoordinators() {
-        // Register AppCoordinator (needs UserPreferencesService and ProfileService)
+        // Register AppCoordinator (needs UserPreferencesService, ProfileService, RadarrService, DataService)
         container.register(AppCoordinator.self) { resolver in
             guard let preferencesService = resolver.resolve((any UserPreferencesServiceProtocol).self) else {
                 fatalError("Could not resolve UserPreferencesServiceProtocol for AppCoordinator")
@@ -177,7 +177,18 @@ final class DIContainer {
             guard let profileService = resolver.resolve((any ProfileServiceProtocol).self) else {
                 fatalError("Could not resolve ProfileServiceProtocol for AppCoordinator")
             }
-            return AppCoordinator(preferencesService: preferencesService, profileService: profileService)
+            guard let radarrService = resolver.resolve((any RadarrServiceProtocol).self) else {
+                fatalError("Could not resolve RadarrServiceProtocol for AppCoordinator")
+            }
+            guard let dataService = resolver.resolve((any DataServiceProtocol).self) else {
+                fatalError("Could not resolve DataServiceProtocol for AppCoordinator")
+            }
+            return AppCoordinator(
+                preferencesService: preferencesService,
+                profileService: profileService,
+                radarrService: radarrService,
+                dataService: dataService
+            )
         }
         
         // Note: Other coordinators are created on-demand by parent coordinators

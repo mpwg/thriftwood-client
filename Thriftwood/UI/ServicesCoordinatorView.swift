@@ -21,22 +21,93 @@
 
 import SwiftUI
 
-/// Services coordinator view (placeholder)
+/// Services coordinator view
 struct ServicesCoordinatorView: View {
     @Bindable var coordinator: ServicesCoordinator
     
     var body: some View {
         NavigationStack(path: $coordinator.navigationPath) {
-            VStack {
-                Image(systemName: "server.rack")
-                    .font(.system(size: 60))
-                Text("Services")
-                    .font(.title)
-                Text("Radarr, Sonarr, and other services coming soon")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .navigationTitle("Services")
+            servicesListView()
+                .navigationTitle("Services")
+                .navigationDestination(for: ServicesRoute.self) { route in
+                    destination(for: route)
+                }
+                .logViewLifecycle(
+                    view: "ServicesCoordinatorView",
+                    metadata: [
+                        "coordinator_type": "ServicesCoordinator",
+                        "navigation_depth": "\(coordinator.navigationPath.count)",
+                        "child_coordinators": "\(coordinator.childCoordinators.count)"
+                    ]
+                )
         }
+    }
+    
+    // MARK: - Services List
+    
+    @ViewBuilder
+    private func servicesListView() -> some View {
+        List {
+            Section("Media Management") {
+                NavigationLink(value: ServicesRoute.radarr) {
+                    Label("Radarr", systemImage: "film")
+                }
+                
+                NavigationLink(value: ServicesRoute.sonarr) {
+                    Label("Sonarr", systemImage: "tv")
+                }
+            }
+            
+            Section {
+                Button(action: {
+                    coordinator.showAddService()
+                }) {
+                    Label("Add Service", systemImage: "plus.circle")
+                }
+            }
+        }
+    }
+    
+    // MARK: - Destination Views
+    
+    @ViewBuilder
+    private func destination(for route: ServicesRoute) -> some View {
+        switch route {
+        case .list:
+            servicesListView()
+            
+        case .radarr:
+            let radarrCoordinator = coordinator.getRadarrCoordinator()
+            RadarrCoordinatorView(coordinator: radarrCoordinator)
+            
+        case .sonarr:
+            // TODO [Milestone 3]: Implement Sonarr when ready
+            placeholderView(title: "Sonarr", icon: "tv")
+            
+        case .addService:
+            placeholderView(title: "Add Service", icon: "plus.circle")
+            
+        case .serviceConfiguration(let serviceId):
+            placeholderView(title: "Configure \(serviceId)", icon: "gearshape")
+            
+        case .testConnection(let serviceId):
+            placeholderView(title: "Test Connection \(serviceId)", icon: "network")
+        }
+    }
+    
+    // MARK: - Placeholder
+    
+    private func placeholderView(title: String, icon: String) -> some View {
+        VStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 60))
+                .foregroundColor(.secondary)
+            Text(title)
+                .font(.title)
+            Text("Coming soon...")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .navigationTitle(title)
     }
 }

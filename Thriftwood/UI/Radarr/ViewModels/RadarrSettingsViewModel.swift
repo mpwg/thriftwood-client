@@ -40,7 +40,8 @@ final class RadarrSettingsViewModel {
     var isEnabled: Bool = false
     var isLoading = false
     var error: ThriftwoodError?
-    var systemStatus: SystemResource?
+    private var rawSystemStatus: SystemResource?
+    var systemStatusDisplay: RadarrSystemStatusDisplayModel?
     var connectionTestResult: ConnectionTestResult?
 
     // MARK: - Initialization
@@ -191,7 +192,8 @@ final class RadarrSettingsViewModel {
         defer { isLoading = false }
 
         do {
-            systemStatus = try await radarrService.getSystemStatus()
+            rawSystemStatus = try await radarrService.getSystemStatus()
+            systemStatusDisplay = convertSystemStatusToDisplay(rawSystemStatus)
         } catch let error as ThriftwoodError {
             self.error = error
         } catch {
@@ -219,6 +221,26 @@ final class RadarrSettingsViewModel {
 
         error = nil
         return true
+    }
+    
+    // MARK: - Private Methods
+    
+    /// Convert SystemResource to display model
+    private func convertSystemStatusToDisplay(_ status: SystemResource?) -> RadarrSystemStatusDisplayModel? {
+        guard let status = status else { return nil }
+        
+        return RadarrSystemStatusDisplayModel(
+            version: status.version,
+            osName: status.osName,
+            osVersion: status.osVersion,
+            runtimeName: status.runtimeName,
+            runtimeVersion: status.runtimeVersion,
+            startupPath: status.startupPath,
+            appData: status.appData,
+            branch: status.branch,
+            databaseType: status.databaseType?.rawValue,
+            authentication: status.authentication?.rawValue
+        )
     }
 }
 

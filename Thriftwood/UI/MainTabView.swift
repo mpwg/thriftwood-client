@@ -31,7 +31,17 @@ struct MainTabView: View {
     @Bindable var coordinator: TabCoordinator
     
     var body: some View {
-        TabView(selection: $coordinator.selectedTab) {
+        TabView(selection: Binding(
+            get: { coordinator.selectedTab },
+            set: { newTab in
+                // If tapping the same tab, pop to root
+                if coordinator.selectedTab == newTab {
+                    coordinator.popToRoot(for: newTab)
+                } else {
+                    coordinator.selectedTab = newTab
+                }
+            }
+        )) {
             ForEach(coordinator.enabledTabs, id: \.self) { tab in
                 tabContent(for: tab)
                     .tabItem {
@@ -40,6 +50,15 @@ struct MainTabView: View {
                     .tag(tab)
             }
         }
+        .logViewLifecycle(
+            view: "MainTabView",
+            metadata: [
+                "coordinator_type": "TabCoordinator",
+                "selected_tab": "\(coordinator.selectedTab.title)",
+                "enabled_tabs": "\(coordinator.enabledTabs.map { $0.title }.joined(separator: ", "))",
+                "tabs_count": "\(coordinator.enabledTabs.count)"
+            ]
+        )
     }
     
     /// Returns the appropriate view for each tab
@@ -56,7 +75,7 @@ struct MainTabView: View {
             }
             
         case .calendar:
-            // TODO: Implement CalendarCoordinatorView when CalendarCoordinator is created
+            // TODO [Milestone 5]: Implement CalendarCoordinatorView when CalendarCoordinator is created
             placeholderView(for: tab)
             
         case .services:
@@ -67,7 +86,7 @@ struct MainTabView: View {
             }
             
         case .search:
-            // TODO: Implement SearchCoordinatorView when SearchCoordinator is created
+            // TODO [Milestone 4]: Implement SearchCoordinatorView when SearchCoordinator is created
             placeholderView(for: tab)
             
         case .settings:

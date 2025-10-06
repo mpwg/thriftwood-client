@@ -51,6 +51,12 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     /// User preferences service for tab configuration
     private let preferencesService: any UserPreferencesServiceProtocol
     
+    /// Radarr service for services coordinator
+    private let radarrService: any RadarrServiceProtocol
+    
+    /// Data service for services coordinator
+    private let dataService: any DataServiceProtocol
+    
     /// The currently selected tab
     var selectedTab: TabRoute = .dashboard
     
@@ -62,22 +68,37 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     /// Coordinators for each tab (created on demand)
     /// Internal for testing purposes
     internal var dashboardCoordinator: DashboardCoordinator?
-    internal var calendarCoordinator: DashboardCoordinator? // TODO: Create CalendarCoordinator
+    internal var calendarCoordinator: DashboardCoordinator? // TODO [Milestone 5]: Create CalendarCoordinator
     internal var servicesCoordinator: ServicesCoordinator?
-    internal var searchCoordinator: DashboardCoordinator? // TODO: Create SearchCoordinator
+    internal var searchCoordinator: DashboardCoordinator? // TODO [Milestone 4]: Create SearchCoordinator
     internal var settingsCoordinator: SettingsCoordinator?
     
     // MARK: - Initialization
     
-    init(preferencesService: any UserPreferencesServiceProtocol) {
+    init(
+        preferencesService: any UserPreferencesServiceProtocol,
+        radarrService: any RadarrServiceProtocol,
+        dataService: any DataServiceProtocol
+    ) {
         self.preferencesService = preferencesService
-        AppLogger.navigation.info("TabCoordinator initialized with customizable tabs")
+        self.radarrService = radarrService
+        self.dataService = dataService
+        
+        AppLogger.navigation.logCoordinator(
+            event: "created",
+            coordinator: "TabCoordinator",
+            details: "Initialized with dependencies for tab management"
+        )
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        AppLogger.navigation.info("TabCoordinator starting")
+        AppLogger.navigation.logCoordinator(
+            event: "start",
+            coordinator: "TabCoordinator",
+            details: "Setting up tab-based navigation"
+        )
         
         // Setup coordinators for enabled tabs
         setupEnabledCoordinators()
@@ -85,8 +106,10 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
         // Start with the first enabled tab (or dashboard as fallback)
         if let firstTab = enabledTabs.first {
             selectedTab = firstTab
+            AppLogger.navigation.info("📍 Initial tab set to: \(firstTab.rawValue)")
         } else {
             selectedTab = .dashboard
+            AppLogger.navigation.warning("⚠️ No tabs enabled, defaulting to dashboard")
         }
     }
     
@@ -95,7 +118,7 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     private func setupEnabledCoordinators() {
         let enabled = enabledTabs
         
-        AppLogger.navigation.debug("Setting up coordinators for enabled tabs: \(enabled.map { $0.rawValue })")
+        AppLogger.navigation.info("🔧 Setting up \(enabled.count) enabled tabs: [\(enabled.map { $0.rawValue }.joined(separator: ", "))]")
         
         for tab in enabled {
             switch tab {
@@ -111,63 +134,108 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
                 setupSettingsCoordinator()
             }
         }
+        
+        AppLogger.navigation.info("✅ Tab coordinator setup complete with \(childCoordinators.count) child coordinators")
     }
     
     private func setupDashboardCoordinator() {
-        guard dashboardCoordinator == nil else { return }
+        guard dashboardCoordinator == nil else {
+            AppLogger.navigation.debug("Dashboard coordinator already exists, skipping setup")
+            return
+        }
         let coordinator = DashboardCoordinator()
         coordinator.parent = self
         childCoordinators.append(coordinator)
         dashboardCoordinator = coordinator
-        coordinator.start()
         
-        AppLogger.navigation.debug("Dashboard coordinator set up")
+        AppLogger.navigation.logCoordinator(
+            event: "add_child",
+            coordinator: "DashboardCoordinator",
+            details: "Added to TabCoordinator"
+        )
+        
+        coordinator.start()
     }
     
     private func setupCalendarCoordinator() {
-        guard calendarCoordinator == nil else { return }
-        // TODO: Create CalendarCoordinator - using DashboardCoordinator as placeholder
+        guard calendarCoordinator == nil else {
+            AppLogger.navigation.debug("Calendar coordinator already exists, skipping setup")
+            return
+        }
+        // TODO [Milestone 5]: Create CalendarCoordinator - using DashboardCoordinator as placeholder
         let coordinator = DashboardCoordinator()
         coordinator.parent = self
         childCoordinators.append(coordinator)
         calendarCoordinator = coordinator
-        coordinator.start()
         
-        AppLogger.navigation.debug("Calendar coordinator set up (placeholder)")
+        AppLogger.navigation.logCoordinator(
+            event: "add_child",
+            coordinator: "CalendarCoordinator (placeholder)",
+            details: "Added to TabCoordinator"
+        )
+        
+        coordinator.start()
     }
     
     private func setupServicesCoordinator() {
-        guard servicesCoordinator == nil else { return }
-        let coordinator = ServicesCoordinator()
+        guard servicesCoordinator == nil else {
+            AppLogger.navigation.debug("Services coordinator already exists, skipping setup")
+            return
+        }
+        let coordinator = ServicesCoordinator(
+            radarrService: radarrService,
+            dataService: dataService
+        )
         coordinator.parent = self
         childCoordinators.append(coordinator)
         servicesCoordinator = coordinator
-        coordinator.start()
         
-        AppLogger.navigation.debug("Services coordinator set up")
+        AppLogger.navigation.logCoordinator(
+            event: "add_child",
+            coordinator: "ServicesCoordinator",
+            details: "Added to TabCoordinator with Radarr service"
+        )
+        
+        coordinator.start()
     }
     
     private func setupSearchCoordinator() {
-        guard searchCoordinator == nil else { return }
-        // TODO: Create SearchCoordinator - using DashboardCoordinator as placeholder
+        guard searchCoordinator == nil else {
+            AppLogger.navigation.debug("Search coordinator already exists, skipping setup")
+            return
+        }
+        // TODO [Milestone 4]: Create SearchCoordinator - using DashboardCoordinator as placeholder
         let coordinator = DashboardCoordinator()
         coordinator.parent = self
         childCoordinators.append(coordinator)
         searchCoordinator = coordinator
-        coordinator.start()
         
-        AppLogger.navigation.debug("Search coordinator set up (placeholder)")
+        AppLogger.navigation.logCoordinator(
+            event: "add_child",
+            coordinator: "SearchCoordinator (placeholder)",
+            details: "Added to TabCoordinator"
+        )
+        
+        coordinator.start()
     }
     
     private func setupSettingsCoordinator() {
-        guard settingsCoordinator == nil else { return }
+        guard settingsCoordinator == nil else {
+            AppLogger.navigation.debug("Settings coordinator already exists, skipping setup")
+            return
+        }
         let coordinator = SettingsCoordinator()
         coordinator.parent = self
         childCoordinators.append(coordinator)
         settingsCoordinator = coordinator
-        coordinator.start()
         
-        AppLogger.navigation.debug("Settings coordinator set up")
+        AppLogger.navigation.logCoordinator(
+            event: "add_child",
+            coordinator: "SettingsCoordinator",
+            details: "Added to TabCoordinator"
+        )
+        
+        coordinator.start()
     }
     
     // MARK: - Coordinator Access
@@ -178,28 +246,35 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     func coordinator(for tab: TabRoute) -> (any CoordinatorProtocol)? {
         // Check if tab is enabled
         guard enabledTabs.contains(tab) else {
+            AppLogger.navigation.warning("⚠️ Attempted to access disabled tab: \(tab.rawValue)")
             return nil
         }
+        
+        AppLogger.navigation.debug("🔍 Accessing coordinator for tab: \(tab.rawValue)")
         
         // Return or create coordinator
         switch tab {
         case .dashboard:
             if dashboardCoordinator == nil {
+                AppLogger.navigation.debug("Lazy-initializing DashboardCoordinator")
                 setupDashboardCoordinator()
             }
             return dashboardCoordinator
         case .calendar:
             if calendarCoordinator == nil {
+                AppLogger.navigation.debug("Lazy-initializing CalendarCoordinator")
                 setupCalendarCoordinator()
             }
             return calendarCoordinator
         case .services:
             if servicesCoordinator == nil {
+                AppLogger.navigation.debug("Lazy-initializing ServicesCoordinator")
                 setupServicesCoordinator()
             }
             return servicesCoordinator
         case .search:
             if searchCoordinator == nil {
+                AppLogger.navigation.debug("Lazy-initializing SearchCoordinator")
                 setupSearchCoordinator()
             }
             return searchCoordinator
@@ -216,18 +291,53 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     /// Switches to the specified tab
     /// - Parameter tab: The tab to switch to
     func select(tab: TabRoute) {
-        AppLogger.navigation.info("Switching to tab: \(String(describing: tab))")
+        let previousTab = selectedTab.rawValue
+        let newTab = tab.rawValue
+        
+        AppLogger.navigation.logTabSwitch(from: previousTab, to: newTab)
+        
         selectedTab = tab
+        
+        AppLogger.navigation.debug("✅ Tab selection updated, coordinator for '\(newTab)' will be activated")
+    }
+    
+    /// Pops the navigation stack to root for the specified tab
+    /// This is called when a user taps on an already-selected tab
+    /// - Parameter tab: The tab to pop to root
+    func popToRoot(for tab: TabRoute) {
+        AppLogger.navigation.info("🔙 User tapped active tab '\(tab.rawValue)' - popping to root")
+        
+        switch tab {
+        case .dashboard:
+            dashboardCoordinator?.popToRoot()
+        case .calendar:
+            calendarCoordinator?.popToRoot()
+        case .services:
+            servicesCoordinator?.popToRoot()
+        case .search:
+            searchCoordinator?.popToRoot()
+        case .settings:
+            settingsCoordinator?.popToRoot()
+        }
     }
     
     /// Handles deep links by routing to the appropriate tab coordinator
     /// - Parameter url: The deep link URL to handle
     /// - Returns: true if the URL was handled, false otherwise
     func handleDeepLink(_ url: URL) -> Bool {
-        AppLogger.navigation.info("Handling deep link: \(url.absoluteString)")
+        AppLogger.navigation.logDeepLink(
+            url: url.absoluteString,
+            action: "parsing",
+            coordinator: "TabCoordinator"
+        )
         
         // Try to parse as dashboard route
         if let dashboardRoute = DashboardRoute.parse(from: url), enabledTabs.contains(.dashboard) {
+            AppLogger.navigation.logDeepLink(
+                url: url.absoluteString,
+                action: "routing to Dashboard",
+                coordinator: "DashboardCoordinator"
+            )
             selectedTab = .dashboard
             (coordinator(for: .dashboard) as? DashboardCoordinator)?.navigate(to: dashboardRoute)
             return true
@@ -235,6 +345,11 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
         
         // Try to parse as services route
         if let servicesRoute = ServicesRoute.parse(from: url), enabledTabs.contains(.services) {
+            AppLogger.navigation.logDeepLink(
+                url: url.absoluteString,
+                action: "routing to Services",
+                coordinator: "ServicesCoordinator"
+            )
             selectedTab = .services
             (coordinator(for: .services) as? ServicesCoordinator)?.navigate(to: servicesRoute)
             return true
@@ -242,12 +357,22 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
         
         // Try to parse as settings route
         if let settingsRoute = SettingsRoute.parse(from: url), enabledTabs.contains(.settings) {
+            AppLogger.navigation.logDeepLink(
+                url: url.absoluteString,
+                action: "routing to Settings",
+                coordinator: "SettingsCoordinator"
+            )
             selectedTab = .settings
             (coordinator(for: .settings) as? SettingsCoordinator)?.navigate(to: settingsRoute)
             return true
         }
         
-        AppLogger.navigation.warning("Deep link could not be parsed: \(url.absoluteString)")
+        AppLogger.navigation.logDeepLink(
+            url: url.absoluteString,
+            action: "failed - no matching route",
+            coordinator: "TabCoordinator"
+        )
+        AppLogger.navigation.warning("⚠️ Deep link could not be parsed or routed: \(url.absoluteString)")
         return false
     }
 }

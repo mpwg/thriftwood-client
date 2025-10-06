@@ -41,31 +41,89 @@ final class ServicesCoordinator: @MainActor CoordinatorProtocol {
     weak var parent: (any CoordinatorProtocol)?
     var navigationPath: [ServicesRoute] = []
     
+    // MARK: - Dependencies
+    
+    private let radarrService: any RadarrServiceProtocol
+    private let dataService: any DataServiceProtocol
+    
+    // MARK: - Child Coordinators
+    
+    internal var radarrCoordinator: RadarrCoordinator?
+    
     // MARK: - Initialization
     
-    init() {
-        AppLogger.navigation.info("ServicesCoordinator initialized")
+    init(
+        radarrService: any RadarrServiceProtocol,
+        dataService: any DataServiceProtocol
+    ) {
+        self.radarrService = radarrService
+        self.dataService = dataService
+        
+        AppLogger.navigation.logCoordinator(
+            event: "created",
+            coordinator: "ServicesCoordinator",
+            details: "Initialized with service dependencies"
+        )
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        AppLogger.navigation.info("ServicesCoordinator starting")
+        AppLogger.navigation.logCoordinator(
+            event: "start",
+            coordinator: "ServicesCoordinator"
+        )
+        
         navigationPath = [.list]
+        
+        AppLogger.navigation.logStackChange(
+            action: "set",
+            coordinator: "ServicesCoordinator",
+            stackSize: 1,
+            route: "list"
+        )
     }
     
     // MARK: - Navigation Methods
     
+    /// Shows the Radarr module
+    func showRadarr() {
+        AppLogger.navigation.logNavigation(
+            from: "ServicesList",
+            to: "Radarr",
+            coordinator: "ServicesCoordinator"
+        )
+        navigate(to: .radarr)
+    }
+    
+    /// Shows the Sonarr module
+    func showSonarr() {
+        AppLogger.navigation.logNavigation(
+            from: "ServicesList",
+            to: "Sonarr (M3)",
+            coordinator: "ServicesCoordinator"
+        )
+        navigate(to: .sonarr)
+    }
+    
     /// Shows the add service screen
     func showAddService() {
-        AppLogger.navigation.info("Showing add service screen")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .list),
+            to: "AddService",
+            coordinator: "ServicesCoordinator"
+        )
         navigate(to: .addService)
     }
     
     /// Shows configuration for a specific service
     /// - Parameter serviceId: The ID of the service to configure
     func showServiceConfiguration(serviceId: String) {
-        AppLogger.navigation.info("Showing service configuration: \(serviceId)")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .list),
+            to: "ServiceConfiguration[\(serviceId)]",
+            coordinator: "ServicesCoordinator"
+        )
         navigate(to: .serviceConfiguration(serviceId: serviceId))
     }
     
@@ -74,5 +132,25 @@ final class ServicesCoordinator: @MainActor CoordinatorProtocol {
     func showTestConnection(serviceId: String) {
         AppLogger.navigation.info("Showing test connection: \(serviceId)")
         navigate(to: .testConnection(serviceId: serviceId))
+    }
+    
+    // MARK: - Child Coordinator Management
+    
+    /// Gets or creates the Radarr coordinator
+    func getRadarrCoordinator() -> RadarrCoordinator {
+        if let existing = radarrCoordinator {
+            return existing
+        }
+        
+        let coordinator = RadarrCoordinator(
+            radarrService: radarrService,
+            dataService: dataService
+        )
+        coordinator.parent = self
+        childCoordinators.append(coordinator)
+        radarrCoordinator = coordinator
+        coordinator.start()
+        
+        return coordinator
     }
 }

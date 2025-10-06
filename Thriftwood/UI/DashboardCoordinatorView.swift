@@ -37,6 +37,13 @@ struct DashboardCoordinatorView: View {
                     .foregroundColor(.secondary)
             }
             .navigationTitle("Dashboard")
+            .logViewLifecycle(
+                view: "DashboardCoordinatorView",
+                metadata: [
+                    "coordinator_type": "DashboardCoordinator",
+                    "navigation_depth": "\(coordinator.navigationPath.count)"
+                ]
+            )
         }
     }
 }

@@ -30,6 +30,8 @@ import Foundation
 /// Routes within the Services feature
 enum ServicesRoute: Hashable, Sendable {
     case list
+    case radarr
+    case sonarr
     case addService
     case serviceConfiguration(serviceId: String)
     case testConnection(serviceId: String)
@@ -47,6 +49,10 @@ extension ServicesRoute: DeepLinkable {
         guard !pathComponents.isEmpty else { return .list }
         
         switch pathComponents[0] {
+        case "radarr":
+            return .radarr
+        case "sonarr":
+            return .sonarr
         case "add":
             return .addService
         case "configure":
@@ -65,6 +71,10 @@ extension ServicesRoute: DeepLinkable {
         switch self {
         case .list:
             return URL(string: base)
+        case .radarr:
+            return URL(string: "\(base)/radarr")
+        case .sonarr:
+            return URL(string: "\(base)/sonarr")
         case .addService:
             return URL(string: "\(base)/add")
         case .serviceConfiguration(let serviceId):

@@ -44,58 +44,102 @@ final class SettingsCoordinator: @MainActor CoordinatorProtocol {
     // MARK: - Initialization
     
     init() {
-        AppLogger.navigation.info("SettingsCoordinator initialized")
+        AppLogger.navigation.logCoordinator(
+            event: "created",
+            coordinator: "SettingsCoordinator",
+            details: "Settings navigation initialized"
+        )
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        AppLogger.navigation.info("SettingsCoordinator starting")
+        AppLogger.navigation.logCoordinator(
+            event: "start",
+            coordinator: "SettingsCoordinator",
+            details: "Starting with main settings"
+        )
+        
         navigationPath = [.main]
+        
+        AppLogger.navigation.logStackChange(
+            action: "set",
+            coordinator: "SettingsCoordinator",
+            stackSize: 1,
+            route: "main"
+        )
     }
     
     // MARK: - Navigation Methods
     
     /// Shows the profiles management screen
     func showProfiles() {
-        AppLogger.navigation.info("Showing profiles")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .main),
+            to: "Profiles",
+            coordinator: "SettingsCoordinator"
+        )
         navigate(to: .profiles)
     }
     
     /// Shows the add profile screen
     func showAddProfile() {
-        AppLogger.navigation.info("Showing add profile")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .main),
+            to: "AddProfile",
+            coordinator: "SettingsCoordinator"
+        )
         navigate(to: .addProfile)
     }
     
     /// Shows the edit profile screen
     /// - Parameter profileId: The ID of the profile to edit
     func showEditProfile(profileId: String) {
-        AppLogger.navigation.info("Showing edit profile: \(profileId)")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .main),
+            to: "EditProfile[id:\(profileId)]",
+            coordinator: "SettingsCoordinator"
+        )
         navigate(to: .editProfile(profileId: profileId))
     }
     
     /// Shows the appearance settings screen
     func showAppearance() {
-        AppLogger.navigation.info("Showing appearance settings")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .main),
+            to: "Appearance",
+            coordinator: "SettingsCoordinator"
+        )
         navigate(to: .appearance)
     }
     
     /// Shows the notifications settings screen
     func showNotifications() {
-        AppLogger.navigation.info("Showing notifications settings")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .main),
+            to: "Notifications",
+            coordinator: "SettingsCoordinator"
+        )
         navigate(to: .notifications)
     }
     
     /// Shows the about screen
     func showAbout() {
-        AppLogger.navigation.info("Showing about")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .main),
+            to: "About",
+            coordinator: "SettingsCoordinator"
+        )
         navigate(to: .about)
     }
     
     /// Shows the logs screen
     func showLogs() {
-        AppLogger.navigation.info("Showing logs")
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .main),
+            to: "Logs",
+            coordinator: "SettingsCoordinator"
+        )
         navigate(to: .logs)
     }
 }

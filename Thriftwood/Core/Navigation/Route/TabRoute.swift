@@ -19,9 +19,6 @@
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 //
-//  TabRoute.swift
-//  Thriftwood
-//
 //  Created by Matthias Wallner-Géhri on 04.10.25.
 //
 

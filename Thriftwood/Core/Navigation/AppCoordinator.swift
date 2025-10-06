@@ -18,10 +18,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-//
-//  AppCoordinator.swift
-//  Thriftwood
-//
 //  Created on 2025-10-04.
 //  Root coordinator for the entire application
 //
@@ -49,6 +45,12 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     /// Profile service for checking if profiles exist
     private let profileService: any ProfileServiceProtocol
     
+    /// Radarr service for TabCoordinator's ServicesCoordinator
+    private let radarrService: any RadarrServiceProtocol
+    
+    /// Data service for TabCoordinator's ServicesCoordinator
+    private let dataService: any DataServiceProtocol
+    
     /// Whether the user has completed onboarding
     private var hasCompletedOnboarding: Bool {
         // Check both UserDefaults flag AND if at least one profile exists
@@ -72,20 +74,38 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     
     // MARK: - Initialization
     
-    init(preferencesService: any UserPreferencesServiceProtocol, profileService: any ProfileServiceProtocol) {
+    init(
+        preferencesService: any UserPreferencesServiceProtocol,
+        profileService: any ProfileServiceProtocol,
+        radarrService: any RadarrServiceProtocol,
+        dataService: any DataServiceProtocol
+    ) {
         self.preferencesService = preferencesService
         self.profileService = profileService
-        AppLogger.navigation.info("AppCoordinator initialized")
+        self.radarrService = radarrService
+        self.dataService = dataService
+        
+        AppLogger.navigation.logCoordinator(
+            event: "created",
+            coordinator: "AppCoordinator",
+            details: "Root coordinator initialized with dependencies"
+        )
     }
     
     // MARK: - Coordinator Protocol Implementation
     
     func start() {
-        AppLogger.navigation.info("AppCoordinator starting")
+        AppLogger.navigation.logCoordinator(
+            event: "start",
+            coordinator: "AppCoordinator",
+            details: "Determining initial flow (onboarding vs main app)"
+        )
         
         if hasCompletedOnboarding {
+            AppLogger.navigation.info("✅ User has completed onboarding, showing main app")
             showMainApp()
         } else {
+            AppLogger.navigation.info("🆕 First-time user detected, showing onboarding")
             showOnboarding()
         }
     }
@@ -94,7 +114,11 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     
     /// Shows the onboarding flow for first-time users
     func showOnboarding() {
-        AppLogger.navigation.info("Showing onboarding flow")
+        AppLogger.navigation.logNavigation(
+            from: "Root",
+            to: "Onboarding",
+            coordinator: "AppCoordinator"
+        )
         
         // Create and start onboarding coordinator
         let onboardingCoordinator = OnboardingCoordinator()
@@ -105,53 +129,108 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
         
         childCoordinators.append(onboardingCoordinator)
         activeCoordinator = onboardingCoordinator
+        
+        AppLogger.navigation.logCoordinator(
+            event: "add_child",
+            coordinator: "OnboardingCoordinator",
+            details: "Added to AppCoordinator, total children: \(childCoordinators.count)"
+        )
+        
         onboardingCoordinator.start()
         
         navigationPath = [.onboarding]
+        
+        AppLogger.navigation.logStackChange(
+            action: "set",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: "onboarding"
+        )
     }
     
     /// Shows the main app interface with tabs
     func showMainApp() {
-        AppLogger.navigation.info("Showing main app")
+        AppLogger.navigation.logNavigation(
+            from: activeCoordinator != nil ? "Onboarding" : "Root",
+            to: "MainApp",
+            coordinator: "AppCoordinator"
+        )
         
-        // Create and start tab coordinator with preferences service
-        let tabCoordinator = TabCoordinator(preferencesService: preferencesService)
+        // Create and start tab coordinator with dependencies
+        let tabCoordinator = TabCoordinator(
+            preferencesService: preferencesService,
+            radarrService: radarrService,
+            dataService: dataService
+        )
         tabCoordinator.parent = self
         
         childCoordinators.append(tabCoordinator)
         activeCoordinator = tabCoordinator
+        
+        AppLogger.navigation.logCoordinator(
+            event: "add_child",
+            coordinator: "TabCoordinator",
+            details: "Added to AppCoordinator, total children: \(childCoordinators.count)"
+        )
+        
         tabCoordinator.start()
         
         navigationPath = [.main]
+        
+        AppLogger.navigation.logStackChange(
+            action: "set",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: "main"
+        )
     }
     
     /// Called when onboarding is completed
     private func onboardingDidComplete() {
-        AppLogger.navigation.info("Onboarding completed")
+        AppLogger.navigation.logCoordinator(
+            event: "callback",
+            coordinator: "OnboardingCoordinator",
+            details: "onComplete callback triggered"
+        )
         
         // Mark onboarding as complete
         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        AppLogger.navigation.info("💾 Saved onboarding completion flag to UserDefaults")
         
         // Remove onboarding coordinator
         if let onboardingCoordinator = activeCoordinator {
+            AppLogger.navigation.logCoordinator(
+                event: "finish",
+                coordinator: "OnboardingCoordinator",
+                details: "Cleaning up onboarding coordinator"
+            )
             childDidFinish(onboardingCoordinator)
         }
         
         // Show main app
+        AppLogger.navigation.info("🔄 Transitioning from onboarding to main app")
         showMainApp()
     }
     
     /// Resets the app to show onboarding again (useful for testing)
     func resetOnboarding() {
-        AppLogger.navigation.info("Resetting onboarding state")
+        AppLogger.navigation.logCoordinator(
+            event: "reset",
+            coordinator: "AppCoordinator",
+            details: "Resetting onboarding state (dev/test feature)"
+        )
         
         UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
         
         // Clear all child coordinators
+        let childCount = childCoordinators.count
         childCoordinators.removeAll()
         activeCoordinator = nil
         
+        AppLogger.navigation.info("🗑️  Removed \(childCount) child coordinators")
+        
         // Restart
+        AppLogger.navigation.info("🔄 Restarting AppCoordinator flow")
         start()
     }
 }

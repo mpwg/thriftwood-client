@@ -50,11 +50,16 @@ final class MoviesListViewModel {
 
     // MARK: - Published Properties
 
-    var movies: [MovieResource] = []
+    var movies: [MovieDisplayModel] = []
     var isLoading = false
     var error: ThriftwoodError?
     var filterOption: MovieFilter = .all
     var sortOption: MovieSort = .title
+    
+    // MARK: - Private Properties
+    
+    /// Cached quality profiles for name lookup
+    private var qualityProfiles: [Int: String] = [:]
 
     // MARK: - Initialization
 
@@ -69,10 +74,13 @@ final class MoviesListViewModel {
         isLoading = true
         error = nil
         defer { isLoading = false }
+        
+        // Load quality profiles first for name lookup
+        await loadQualityProfiles()
 
         do {
             let allMovies = try await radarrService.getMovies()
-            movies = filterAndSort(allMovies)
+            movies = allMovies.map { convertToDisplayModel($0) }
         } catch let error as ThriftwoodError {
             self.error = error
         } catch {
@@ -89,11 +97,8 @@ final class MoviesListViewModel {
     /// - Parameters:
     ///   - movie: The movie to delete
     ///   - deleteFiles: Whether to delete associated files
-    func deleteMovie(_ movie: MovieResource, deleteFiles: Bool = false) async {
-        guard let movieId = movie.id else {
-            error = .validation(message: "Movie ID is missing")
-            return
-        }
+    func deleteMovie(_ movie: MovieDisplayModel, deleteFiles: Bool = false) async {
+        let movieId = movie.id
 
         isLoading = true
         error = nil
@@ -112,51 +117,118 @@ final class MoviesListViewModel {
 
     /// Apply filter and sorting to movies
     func applyFilterAndSort() {
-        movies = filterAndSort(movies)
+        // Re-apply filter and sort to existing movies array
+        let allMovies = movies
+        movies = filterAndSort(allMovies)
     }
 
     // MARK: - Private Methods
 
-    private func filterAndSort(_ moviesList: [MovieResource]) -> [MovieResource] {
+    private func filterAndSort(_ moviesList: [MovieDisplayModel]) -> [MovieDisplayModel] {
         var filtered = filterMovies(moviesList)
         filtered = sortMovies(filtered)
         return filtered
     }
 
-    private func filterMovies(_ moviesList: [MovieResource]) -> [MovieResource] {
+    private func filterMovies(_ moviesList: [MovieDisplayModel]) -> [MovieDisplayModel] {
         switch filterOption {
         case .all:
             return moviesList
         case .monitored:
-            return moviesList.filter { $0.monitored == true }
+            return moviesList.filter { $0.monitored }
         case .unmonitored:
-            return moviesList.filter { $0.monitored == false }
+            return moviesList.filter { !$0.monitored }
         case .missing:
-            return moviesList.filter { $0.hasFile == false }
+            return moviesList.filter { !$0.hasFile }
         case .downloaded:
-            return moviesList.filter { $0.hasFile == true }
+            return moviesList.filter { $0.hasFile }
         }
     }
 
-    private func sortMovies(_ moviesList: [MovieResource]) -> [MovieResource] {
+    private func sortMovies(_ moviesList: [MovieDisplayModel]) -> [MovieDisplayModel] {
         switch sortOption {
         case .title:
-            return moviesList.sorted { ($0.title ?? "") < ($1.title ?? "") }
+            return moviesList.sorted { $0.title < $1.title }
         case .dateAdded:
             return moviesList.sorted {
-                ($0.added ?? Date.distantPast) > ($1.added ?? Date.distantPast)
+                let date1 = $0.dateAdded ?? .distantPast
+                let date2 = $1.dateAdded ?? .distantPast
+                return date1 > date2
             }
         case .releaseDate:
             return moviesList.sorted {
-                ($0.physicalRelease ?? Date.distantPast) >
-                    ($1.physicalRelease ?? Date.distantPast)
+                guard let year1 = $0.year, let year2 = $1.year else { return false }
+                return year1 > year2
             }
         case .rating:
             return moviesList.sorted {
-                let rating1 = $0.ratings?.tmdb?.value ?? 0
-                let rating2 = $1.ratings?.tmdb?.value ?? 0
+                guard let rating1 = $0.rating, let rating2 = $1.rating else { return false }
                 return rating1 > rating2
             }
         }
+    }
+    
+    /// Convert MovieResource (domain model) to MovieDisplayModel (UI model)
+    private func convertToDisplayModel(_ resource: MovieResource) -> MovieDisplayModel {
+        // Extract poster URL from images array
+        let posterURL: URL? = {
+            guard let images = resource.images else { return nil }
+            let posterImage = images.first { $0.coverType == .poster }
+            if let urlString = posterImage?.url ?? posterImage?.remoteUrl {
+                return URL(string: urlString)
+            }
+            return nil
+        }()
+        
+        // Extract backdrop URL from images array
+        let backdropURL: URL? = {
+            guard let images = resource.images else { return nil }
+            let backdropImage = images.first { $0.coverType == .fanart }
+            if let urlString = backdropImage?.url ?? backdropImage?.remoteUrl {
+                return URL(string: urlString)
+            }
+            return nil
+        }()
+        
+        return MovieDisplayModel(
+            id: resource.id ?? 0,
+            title: resource.title ?? "Unknown",
+            year: resource.year,
+            overview: resource.overview,
+            runtime: resource.runtime,
+            posterURL: posterURL,
+            backdropURL: backdropURL,
+            monitored: resource.monitored ?? false,
+            hasFile: resource.hasFile ?? false,
+            qualityProfileId: resource.qualityProfileId,
+            qualityProfileName: lookupQualityProfileName(resource.qualityProfileId),
+            rating: resource.ratings?.imdb?.value,
+            certification: resource.certification,
+            genres: resource.genres?.compactMap { $0 } ?? [],
+            studio: resource.studio,
+            dateAdded: resource.added
+        )
+    }
+    
+    // MARK: - Private Methods
+    
+    /// Load quality profiles for name lookup
+    private func loadQualityProfiles() async {
+        do {
+            let profiles = try await radarrService.getQualityProfiles()
+            qualityProfiles = Dictionary(uniqueKeysWithValues: profiles.compactMap { profile in
+                guard let id = profile.id, let name = profile.name else { return nil }
+                return (id, name)
+            })
+        } catch {
+            // Log error but don't fail the whole load - quality profile names are nice-to-have
+            AppLogger.networking.warning("Failed to load quality profiles: \(error.localizedDescription)")
+        }
+    }
+    
+    /// Look up quality profile name by ID
+    private func lookupQualityProfileName(_ profileId: Int?) -> String? {
+        guard let profileId = profileId else { return nil }
+        return qualityProfiles[profileId]
     }
 }
