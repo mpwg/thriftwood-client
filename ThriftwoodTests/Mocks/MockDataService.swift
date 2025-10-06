@@ -29,7 +29,7 @@ final class MockDataService: DataServiceProtocol {
     // MARK: - Mock Storage
     
     private var profiles: [Profile] = []
-    private var appSettings: AppSettings = AppSettings.createDefault()
+    private var appSettings = AppSettings.createDefault()
     private var indexers: [Indexer] = []
     private var externalModules: [ExternalModule] = []
     private var credentials: [UUID: (apiKey: String?, username: String?, password: String?)] = [:]

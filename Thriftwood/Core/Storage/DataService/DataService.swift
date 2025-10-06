@@ -306,7 +306,6 @@ final class DataService: DataServiceProtocol {
     }
 }
 
-
 extension DataService {
     /// Returns the current schema version from the database
     func currentSchemaVersion() -> SchemaVersion {

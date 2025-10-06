@@ -315,7 +315,7 @@ final class MPWGThemeManager: MPWGThemeManagerProtocol, ObservableObject {
 // MARK: - Environment Key
 
 private struct MPWGThemeKey: EnvironmentKey {
-    static let defaultValue: MPWGTheme = MPWGTheme.light
+    static let defaultValue = MPWGTheme.light
 }
 
 private struct MPWGThemeManagerKey: EnvironmentKey {

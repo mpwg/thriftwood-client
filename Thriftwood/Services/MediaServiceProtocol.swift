@@ -25,7 +25,6 @@
 //  Created by Matthias Wallner-Géhri on 04.10.25.
 //
 
-
 import Foundation
 
 /// Base protocol for all media management services (Radarr, Sonarr, etc.)

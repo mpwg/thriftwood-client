@@ -72,7 +72,7 @@ final class MockUserPreferencesService: UserPreferencesServiceProtocol {
     // MARK: - App Metadata
     
     var changelogLastBuildVersion: Int = 0
-    var updatedAt: Date = Date()
+    var updatedAt = Date()
     
     // MARK: - Testing Support
     

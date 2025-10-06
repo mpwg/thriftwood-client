@@ -42,7 +42,7 @@ enum OnboardingRoute: Hashable, Sendable {
 /// This is a child coordinator that reports back to AppCoordinator when complete.
 @Observable
 @MainActor
-final class OnboardingCoordinator: @MainActor CoordinatorProtocol, Sendable {
+final class OnboardingCoordinator: @MainActor CoordinatorProtocol {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any CoordinatorProtocol] = []
