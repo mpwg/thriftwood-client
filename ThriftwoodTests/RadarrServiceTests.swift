@@ -27,7 +27,6 @@
 
 import Testing
 import Foundation
-import AsyncHTTPClient
 @testable import Thriftwood
 
 @Suite("Radarr Service Tests")
@@ -40,57 +39,51 @@ struct RadarrServiceTests {
     
     // MARK: - Configuration Tests
     
+    @MainActor
     @Test("Configure service with valid parameters")
     func configureServiceSuccess() async throws {
         // Given
-        let httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
-        let service = RadarrService(httpClient: httpClient)
+        let service = RadarrService()
         
         // When
         try await service.configure(baseURL: testBaseURL, apiKey: testAPIKey)
         
         // Then - no error thrown, configuration stored
         // Note: We can't directly verify internal state, but testConnection will validate
-        
-        try await httpClient.shutdown()
     }
     
+    @MainActor
     @Test("Configure service with invalid URL scheme throws error")
     func configureServiceInvalidURL() async throws {
         // Given
-        let httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
-        let service = RadarrService(httpClient: httpClient)
+        let service = RadarrService()
         let invalidURL = URL(string: "ftp://radarr.example.com")!
         
         // When/Then
         await #expect(throws: ThriftwoodError.self) {
             try await service.configure(baseURL: invalidURL, apiKey: testAPIKey)
         }
-        
-        try await httpClient.shutdown()
     }
     
+    @MainActor
     @Test("Configure service with empty API key throws error")
     func configureServiceEmptyAPIKey() async throws {
         // Given
-        let httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
-        let service = RadarrService(httpClient: httpClient)
+        let service = RadarrService()
         
         // When/Then
         await #expect(throws: ThriftwoodError.self) {
             try await service.configure(baseURL: testBaseURL, apiKey: "")
         }
-        
-        try await httpClient.shutdown()
     }
     
     // MARK: - Error Handling Tests
     
+    @MainActor
     @Test("Unconfigured service throws invalidConfiguration error")
     func unconfiguredServiceThrowsError() async throws {
         // Given
-        let httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
-        let service = RadarrService(httpClient: httpClient)
+        let service = RadarrService()
         
         // When/Then - attempt to use service without configuration
         do {
@@ -102,15 +95,13 @@ struct RadarrServiceTests {
                 return
             }
         }
-        
-        try await httpClient.shutdown()
     }
     
+    @MainActor
     @Test("Search with empty query throws validation error")
     func searchEmptyQueryThrowsError() async throws {
         // Given
-        let httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
-        let service = RadarrService(httpClient: httpClient)
+        let service = RadarrService()
         try await service.configure(baseURL: testBaseURL, apiKey: testAPIKey)
         
         // When/Then
@@ -123,12 +114,11 @@ struct RadarrServiceTests {
                 return
             }
         }
-        
-        try await httpClient.shutdown()
     }
     
     // MARK: - Model Tests
     
+    @MainActor
     @Test("Movie model initialization with all fields")
     func movieModelInitialization() {
         // Given
@@ -137,7 +127,7 @@ struct RadarrServiceTests {
         
         // When
         let movie = Movie(
-            id: "123",
+            id: 123,
             title: "Test Movie",
             overview: "A test movie overview",
             releaseDate: releaseDate,
@@ -157,7 +147,7 @@ struct RadarrServiceTests {
         )
         
         // Then
-        #expect(movie.id == "123")
+        #expect(movie.id == 123)
         #expect(movie.title == "Test Movie")
         #expect(movie.overview == "A test movie overview")
         #expect(movie.releaseDate == releaseDate)
@@ -180,7 +170,7 @@ struct RadarrServiceTests {
     func movieConformsToMediaItem() {
         // Given
         let movie = Movie(
-            id: "123",
+            id: 123,
             title: "Test Movie",
             overview: "Overview",
             releaseDate: Date(),
@@ -191,7 +181,7 @@ struct RadarrServiceTests {
         let mediaItem: any MediaItem = movie
         
         // Then
-        #expect(mediaItem.id == "123")
+        #expect(mediaItem.id == 123)
         #expect(mediaItem.title == "Test Movie")
         #expect(mediaItem.overview == "Overview")
         #expect(mediaItem.releaseDate != nil)
@@ -202,7 +192,7 @@ struct RadarrServiceTests {
     func movieSearchResultInitialization() {
         // Given/When
         let searchResult = MovieSearchResult(
-            id: "456",
+            id: 456,
             title: "Search Result Movie",
             overview: "A search result",
             year: 2024,
@@ -213,7 +203,7 @@ struct RadarrServiceTests {
         )
         
         // Then
-        #expect(searchResult.id == "456")
+        #expect(searchResult.id == 456)
         #expect(searchResult.title == "Search Result Movie")
         #expect(searchResult.overview == "A search result")
         #expect(searchResult.year == 2024)
@@ -252,14 +242,14 @@ struct RadarrServiceTests {
     func qualityProfileInitialization() {
         // Given/When
         let profile = QualityProfile(
-            id: "1",
+            id: 1,
             name: "HD-1080p",
             upgradeAllowed: true,
             cutoff: 5
         )
         
         // Then
-        #expect(profile.id == "1")
+        #expect(profile.id == 1)
         #expect(profile.name == "HD-1080p")
         #expect(profile.upgradeAllowed == true)
         #expect(profile.cutoff == 5)
@@ -269,7 +259,7 @@ struct RadarrServiceTests {
     func rootFolderInitialization() {
         // Given/When
         let rootFolder = RootFolder(
-            id: "1",
+            id: 1,
             path: "/movies",
             accessible: true,
             freeSpace: 500 * 1024 * 1024 * 1024, // 500GB
@@ -277,7 +267,7 @@ struct RadarrServiceTests {
         )
         
         // Then
-        #expect(rootFolder.id == "1")
+        #expect(rootFolder.id == 1)
         #expect(rootFolder.path == "/movies")
         #expect(rootFolder.accessible == true)
         #expect(rootFolder.freeSpace == 500 * 1024 * 1024 * 1024)
@@ -334,14 +324,14 @@ struct RadarrServiceTests {
     @Test("Movie is Sendable")
     func movieIsSendable() {
         // Verify at compile time that Movie conforms to Sendable
-        let movie = Movie(id: "1", title: "Test")
+        let movie = Movie(id: 1, title: "Test")
         let _: any Sendable = movie
     }
     
     @Test("MovieSearchResult is Sendable")
     func movieSearchResultIsSendable() {
         // Verify at compile time that MovieSearchResult conforms to Sendable
-        let result = MovieSearchResult(id: "1", title: "Test")
+        let result = MovieSearchResult(id: 1, title: "Test")
         let _: any Sendable = result
     }
     
@@ -355,10 +345,7 @@ struct RadarrServiceTests {
     @Test("RadarrServiceProtocol is Sendable")
     func radarrServiceProtocolIsSendable() async throws {
         // Verify at compile time that RadarrService conforms to Sendable
-        let httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
-        let service: any Sendable = RadarrService(httpClient: httpClient)
-        #expect(service is RadarrServiceProtocol)
-        
-        try await httpClient.shutdown()
+        let service: any Sendable = RadarrService()
+        #expect(service is any RadarrServiceProtocol)
     }
 }

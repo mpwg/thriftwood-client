@@ -31,7 +31,7 @@ import Foundation
 
 /// Represents a movie in Radarr
 struct Movie: Identifiable, Codable, Sendable {
-    let id: String
+    let id: Int  // Changed from String to match OpenAPI
     let title: String
     let overview: String?
     let releaseDate: Date?
@@ -44,6 +44,7 @@ struct Movie: Identifiable, Codable, Sendable {
     let hasFile: Bool
     let monitored: Bool
     let qualityProfileId: Int?
+    let path: String?  // File system path for the movie
     let rootFolderPath: String?
     let sizeOnDisk: Int64
     let status: MovieStatus
@@ -52,7 +53,7 @@ struct Movie: Identifiable, Codable, Sendable {
     let certification: String?
     
     init(
-        id: String,
+        id: Int,  // Changed from String
         title: String,
         overview: String? = nil,
         releaseDate: Date? = nil,
@@ -63,6 +64,7 @@ struct Movie: Identifiable, Codable, Sendable {
         hasFile: Bool = false,
         monitored: Bool = true,
         qualityProfileId: Int? = nil,
+        path: String? = nil,
         rootFolderPath: String? = nil,
         sizeOnDisk: Int64 = 0,
         status: MovieStatus = .announced,
@@ -81,6 +83,7 @@ struct Movie: Identifiable, Codable, Sendable {
         self.hasFile = hasFile
         self.monitored = monitored
         self.qualityProfileId = qualityProfileId
+        self.path = path
         self.rootFolderPath = rootFolderPath
         self.sizeOnDisk = sizeOnDisk
         self.status = status
@@ -103,7 +106,7 @@ enum MovieStatus: String, Codable, Sendable {
 
 /// Represents a movie search result from Radarr
 struct MovieSearchResult: Identifiable, Codable, Sendable {
-    let id: String
+    let id: Int  // Changed from String to match OpenAPI
     let title: String
     let overview: String?
     let year: Int?
@@ -113,7 +116,7 @@ struct MovieSearchResult: Identifiable, Codable, Sendable {
     let isExisting: Bool
     
     init(
-        id: String,
+        id: Int,  // Changed from String
         title: String,
         overview: String? = nil,
         year: Int? = nil,
@@ -145,6 +148,7 @@ struct AddMovieRequest: Sendable {
     let monitored: Bool
     let searchForMovie: Bool
     let minimumAvailability: MovieStatus
+    let tags: [Int]?
     
     init(
         tmdbId: Int,
@@ -154,7 +158,8 @@ struct AddMovieRequest: Sendable {
         rootFolderPath: String,
         monitored: Bool = true,
         searchForMovie: Bool = true,
-        minimumAvailability: MovieStatus = .announced
+        minimumAvailability: MovieStatus = .announced,
+        tags: [Int]? = nil
     ) {
         self.tmdbId = tmdbId
         self.title = title
@@ -164,6 +169,7 @@ struct AddMovieRequest: Sendable {
         self.monitored = monitored
         self.searchForMovie = searchForMovie
         self.minimumAvailability = minimumAvailability
+        self.tags = tags
     }
 }
 
@@ -171,13 +177,13 @@ struct AddMovieRequest: Sendable {
 
 /// Represents a quality profile in Radarr
 struct QualityProfile: Identifiable, Codable, Sendable {
-    let id: String
+    let id: Int  // Changed from String to match OpenAPI
     let name: String
     let upgradeAllowed: Bool
     let cutoff: Int
     
     init(
-        id: String,
+        id: Int,  // Changed from String
         name: String,
         upgradeAllowed: Bool = true,
         cutoff: Int
@@ -193,14 +199,14 @@ struct QualityProfile: Identifiable, Codable, Sendable {
 
 /// Represents a root folder in Radarr
 struct RootFolder: Identifiable, Codable, Sendable {
-    let id: String
+    let id: Int  // Changed from String to match OpenAPI
     let path: String
     let accessible: Bool
     let freeSpace: Int64
     let totalSpace: Int64
     
     init(
-        id: String,
+        id: Int,  // Changed from String
         path: String,
         accessible: Bool = true,
         freeSpace: Int64 = 0,

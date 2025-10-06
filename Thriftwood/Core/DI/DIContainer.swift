@@ -146,11 +146,9 @@ final class DIContainer {
     private func registerDomainServices() {
         // Register RadarrService (singleton, using protocol)
         // Per ADR-0003, services should be registered by protocol to enable dependency injection and testing
-        container.register((any RadarrServiceProtocol).self) { resolver in
-            guard let httpClient = resolver.resolve(HTTPClient.self) else {
-                fatalError("Could not resolve HTTPClient for RadarrService")
-            }
-            return RadarrService(httpClient: httpClient)
+        // Note: RadarrService now uses OpenAPI-generated client (ADR-0006), no httpClient needed
+        container.register((any RadarrServiceProtocol).self) { _ in
+            return RadarrService()
         }.inObjectScope(.container)
         
         // Future: Register MediaService implementations (Sonarr, Lidarr)

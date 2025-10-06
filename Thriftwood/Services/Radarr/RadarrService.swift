@@ -22,71 +22,78 @@
 //  RadarrService.swift
 //  Thriftwood
 //
-//  Implementation of RadarrServiceProtocol using AsyncHTTPClient
+//  Implementation of RadarrServiceProtocol using OpenAPI-generated client
 //
 
 import Foundation
-import AsyncHTTPClient
-import NIOCore
-import NIOHTTP1
-import NIOFoundationCompat
+import RadarrAPI
 
-/// Implementation of Radarr service using AsyncHTTPClient
+// Import generated OpenAPI client
+// Note: RadarrAPI is a local Swift Package at project root
+// Add it via Xcode: File > Add Package Dependencies > Add Local > RadarrAPI
+
+/// Implementation of Radarr service using OpenAPI-generated client
 ///
 /// Wraps Radarr API v3 endpoints with type-safe Swift models.
-/// Uses AsyncHTTPClient (per ADR-0004) for HTTP networking.
+/// Uses OpenAPITools-generated client (per ADR-0006) for type-safe API access.
 ///
 /// ## Architecture:
 /// - Follows MVVM-C pattern (ADR-0005)
 /// - Registered in DIContainer as singleton (ADR-0003)
 /// - Maps all errors to `ThriftwoodError` for consistent error handling
+/// - Uses generated RadarrAPI clients for all HTTP communication
 ///
 /// ## Configuration:
 /// Service must be configured via `configure(baseURL:apiKey:)` before use.
-/// Configuration is stored in-memory and injected per-request via headers.
+/// Configuration updates the shared RadarrAPIAPIConfiguration instance.
 ///
 /// ## Error Mapping:
-/// - HTTP 401 → `.authenticationRequired`
-/// - HTTP 404 → `.notFound`
-/// - HTTP 400 → `.apiError` with details
-/// - HTTP 500+ → `.serviceUnavailable`
+/// - ErrorResponse.error(401) → `.authenticationRequired`
+/// - ErrorResponse.error(404) → `.notFound`
+/// - ErrorResponse.error(400) → `.apiError` with details
+/// - ErrorResponse.error(500+) → `.serviceUnavailable`
 /// - Network errors → `.networkError`
-/// - JSON decoding errors → `.decodingError`
+/// - Decoding errors → `.decodingError`
 final class RadarrService: RadarrServiceProtocol, Sendable {
     
     // MARK: - Properties
     
-    /// HTTP client for API requests
-    private let httpClient: HTTPClient
-    
-    /// Current base URL (thread-safe via actor isolation)
+    /// Thread-safe configuration storage
     private let configuration: Configuration
     
     // MARK: - Configuration Actor
     
     /// Thread-safe configuration storage
     private actor Configuration {
-        var baseURL: URL?
-        var apiKey: String?
+        var apiConfiguration: RadarrAPIAPIConfiguration
+        var isConfigured: Bool = false
         
-        func set(baseURL: URL, apiKey: String) {
-            self.baseURL = baseURL
-            self.apiKey = apiKey
+        init() {
+            // Initialize with empty configuration
+            // Will be set via configure(baseURL:apiKey:)
+            self.apiConfiguration = RadarrAPIAPIConfiguration.shared
         }
         
-        func get() -> (baseURL: URL, apiKey: String)? {
-            guard let baseURL, let apiKey else { return nil }
-            return (baseURL, apiKey)
+        func configure(baseURL: URL, apiKey: String) {
+            // Create new configuration with custom headers for API key
+            let basePath = baseURL.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            apiConfiguration = RadarrAPIAPIConfiguration(
+                basePath: basePath,
+                customHeaders: ["X-Api-Key": apiKey]  // Radarr uses X-Api-Key header
+            )
+            isConfigured = true
+        }
+        
+        func getConfiguration() -> RadarrAPIAPIConfiguration? {
+            guard isConfigured else { return nil }
+            return apiConfiguration
         }
     }
     
     // MARK: - Initialization
     
     /// Creates a new Radarr service instance
-    ///
-    /// - Parameter httpClient: AsyncHTTPClient instance for HTTP requests
-    init(httpClient: HTTPClient) {
-        self.httpClient = httpClient
+    init() {
         self.configuration = Configuration()
     }
     
@@ -103,7 +110,7 @@ final class RadarrService: RadarrServiceProtocol, Sendable {
         }
         
         // Store configuration
-        await configuration.set(baseURL: baseURL, apiKey: apiKey)
+        await configuration.configure(baseURL: baseURL, apiKey: apiKey)
         
         AppLogger.networking.info("Radarr service configured for \(baseURL.absoluteString)")
     }
@@ -111,21 +118,28 @@ final class RadarrService: RadarrServiceProtocol, Sendable {
     // MARK: - Movie Management
     
     func getMovies() async throws -> [Movie] {
-        let endpoint = "/api/v3/movie"
-        let response: [RadarrMovieDTO] = try await executeRequest(
-            path: endpoint,
-            method: .GET
-        )
-        return response.map { $0.toDomain() }
+        let apiConfig = try await getAPIConfiguration()
+        
+        do {
+            let resources = try await RadarrMovieAPI.apiV3MovieGet(apiConfiguration: apiConfig)
+            return resources.compactMap { $0.toDomainModel() }
+        } catch {
+            throw mapError(error)
+        }
     }
     
     func getMovie(id: Int) async throws -> Movie {
-        let endpoint = "/api/v3/movie/\(id)"
-        let response: RadarrMovieDTO = try await executeRequest(
-            path: endpoint,
-            method: .GET
-        )
-        return response.toDomain()
+        let apiConfig = try await getAPIConfiguration()
+        
+        do {
+            let resource = try await RadarrMovieAPI.apiV3MovieIdGet(id: id, apiConfiguration: apiConfig)
+            guard let movie = resource.toDomainModel() else {
+                throw ThriftwoodError.decodingError(.dataCorrupted(.init(codingPath: [], debugDescription: "Failed to map MovieResource to domain model")))
+            }
+            return movie
+        } catch {
+            throw mapError(error)
+        }
     }
     
     func searchMovies(query: String) async throws -> [MovieSearchResult] {
@@ -133,82 +147,104 @@ final class RadarrService: RadarrServiceProtocol, Sendable {
             throw ThriftwoodError.validation(message: "Search query cannot be empty")
         }
         
-        let endpoint = "/api/v3/movie/lookup"
-        let queryItems = [URLQueryItem(name: "term", value: query)]
+        let apiConfig = try await getAPIConfiguration()
         
-        let response: [RadarrMovieLookupDTO] = try await executeRequest(
-            path: endpoint,
-            method: .GET,
-            queryItems: queryItems
-        )
-        return response.map { $0.toDomain() }
+        do {
+            let resources = try await RadarrMovieLookupAPI.apiV3MovieLookupGet(term: query, apiConfiguration: apiConfig)
+            return resources.compactMap { $0.toSearchResult() }
+        } catch {
+            throw mapError(error)
+        }
     }
     
     func addMovie(_ request: AddMovieRequest) async throws -> Movie {
-        let endpoint = "/api/v3/movie"
-        let dto = AddMovieDTO(from: request)
+        let apiConfig = try await getAPIConfiguration()
         
-        let response: RadarrMovieDTO = try await executeRequest(
-            path: endpoint,
-            method: .POST,
-            body: dto
-        )
-        return response.toDomain()
+        do {
+            let movieResource = request.toMovieResource()
+            let resource = try await RadarrMovieAPI.apiV3MoviePost(movieResource: movieResource, apiConfiguration: apiConfig)
+            guard let movie = resource.toDomainModel() else {
+                throw ThriftwoodError.decodingError(.dataCorrupted(.init(codingPath: [], debugDescription: "Failed to map added movie to domain model")))
+            }
+            return movie
+        } catch {
+            throw mapError(error)
+        }
     }
     
     func updateMovie(_ movie: Movie) async throws -> Movie {
-        let endpoint = "/api/v3/movie/\(movie.id)"
-        let dto = UpdateMovieDTO(from: movie)
+        let apiConfig = try await getAPIConfiguration()
         
-        let response: RadarrMovieDTO = try await executeRequest(
-            path: endpoint,
-            method: .PUT,
-            body: dto
-        )
-        return response.toDomain()
+        do {
+            let movieResource = movie.toMovieResource()
+            let resource = try await RadarrMovieAPI.apiV3MovieIdPut(
+                id: String(movie.id),
+                moveFiles: false,
+                movieResource: movieResource,
+                apiConfiguration: apiConfig
+            )
+            guard let updatedMovie = resource.toDomainModel() else {
+                throw ThriftwoodError.decodingError(.dataCorrupted(.init(codingPath: [], debugDescription: "Failed to map updated movie to domain model")))
+            }
+            return updatedMovie
+        } catch {
+            throw mapError(error)
+        }
     }
     
     func deleteMovie(id: Int, deleteFiles: Bool = false) async throws {
-        let endpoint = "/api/v3/movie/\(id)"
-        let queryItems = [URLQueryItem(name: "deleteFiles", value: String(deleteFiles))]
+        let apiConfig = try await getAPIConfiguration()
         
-        // DELETE returns no content (204)
-        try await executeRequestNoResponse(
-            path: endpoint,
-            method: .DELETE,
-            queryItems: queryItems
-        )
+        do {
+            try await RadarrMovieAPI.apiV3MovieIdDelete(
+                id: id,
+                deleteFiles: deleteFiles,
+                addImportExclusion: false,
+                apiConfiguration: apiConfig
+            )
+        } catch {
+            throw mapError(error)
+        }
     }
     
     // MARK: - Configuration Resources
     
     func getQualityProfiles() async throws -> [QualityProfile] {
-        let endpoint = "/api/v3/qualityprofile"
-        let response: [RadarrQualityProfileDTO] = try await executeRequest(
-            path: endpoint,
-            method: .GET
-        )
-        return response.map { $0.toDomain() }
+        let apiConfig = try await getAPIConfiguration()
+        
+        do {
+            let resources = try await RadarrQualityProfileAPI.apiV3QualityprofileGet(apiConfiguration: apiConfig)
+            return resources.compactMap { $0.toDomainModel() }
+        } catch {
+            throw mapError(error)
+        }
     }
     
     func getRootFolders() async throws -> [RootFolder] {
-        let endpoint = "/api/v3/rootfolder"
-        let response: [RadarrRootFolderDTO] = try await executeRequest(
-            path: endpoint,
-            method: .GET
-        )
-        return response.map { $0.toDomain() }
+        let apiConfig = try await getAPIConfiguration()
+        
+        do {
+            let resources = try await RadarrRootFolderAPI.apiV3RootfolderGet(apiConfiguration: apiConfig)
+            return resources.compactMap { $0.toDomainModel() }
+        } catch {
+            throw mapError(error)
+        }
     }
     
     // MARK: - System Information
     
     func getSystemStatus() async throws -> SystemStatus {
-        let endpoint = "/api/v3/system/status"
-        let response: RadarrSystemStatusDTO = try await executeRequest(
-            path: endpoint,
-            method: .GET
-        )
-        return response.toDomain()
+        let apiConfig = try await getAPIConfiguration()
+        
+        do {
+            let resource = try await RadarrSystemAPI.apiV3SystemStatusGet(apiConfiguration: apiConfig)
+            guard let status = resource.toDomainModel() else {
+                throw ThriftwoodError.decodingError(.dataCorrupted(.init(codingPath: [], debugDescription: "Failed to map system status to domain model")))
+            }
+            return status
+        } catch {
+            throw mapError(error)
+        }
     }
     
     func testConnection() async throws -> Bool {
@@ -219,362 +255,47 @@ final class RadarrService: RadarrServiceProtocol, Sendable {
     
     // MARK: - Private Helper Methods
     
-    /// Executes an HTTP request with proper error handling and authentication
-    private func executeRequest<T: Decodable>(
-        path: String,
-        method: HTTPMethod,
-        queryItems: [URLQueryItem]? = nil,
-        body: (any Encodable)? = nil,
-        expectsNoContent: Bool = false
-    ) async throws -> T {
-        // Get configuration
-        guard let config = await configuration.get() else {
+    /// Get configured API configuration or throw error
+    private func getAPIConfiguration() async throws -> RadarrAPIAPIConfiguration {
+        guard let apiConfig = await configuration.getConfiguration() else {
             throw ThriftwoodError.invalidConfiguration("Service not configured. Call configure(baseURL:apiKey:) first")
         }
-        
-        // Build URL
-        var components = URLComponents(url: config.baseURL, resolvingAgainstBaseURL: false)!
-        components.path = path
-        components.queryItems = queryItems
-        
-        guard let url = components.url else {
-            throw ThriftwoodError.invalidURL
-        }
-        
-        // Create request
-        var request = HTTPClientRequest(url: url.absoluteString)
-        request.method = method
-        
-        // Add authentication header
-        request.headers.add(name: "X-Api-Key", value: config.apiKey)
-        request.headers.add(name: "Accept", value: "application/json")
-        
-        // Add body if present
-        if let body {
-            let encoder = JSONEncoder()
-            encoder.keyEncodingStrategy = .convertToSnakeCase
-            encoder.dateEncodingStrategy = .iso8601
-            
-            let bodyData = try encoder.encode(body)
-            request.body = .bytes(ByteBuffer(data: bodyData))
-            request.headers.add(name: "Content-Type", value: "application/json")
-        }
-        
-        // Execute request
-        let response: HTTPClientResponse
-        do {
-            response = try await httpClient.execute(request, timeout: .seconds(30))
-        } catch {
-            AppLogger.networking.error("Network request failed for \(url.absoluteString)", error: error)
-            throw ThriftwoodError.networkError(error as? URLError ?? URLError(.badServerResponse))
-        }
-        
-        // Handle HTTP status codes
-        try handleHTTPStatus(response.status, url: url)
-        
-        // Handle no-content responses (DELETE operations)
-        if expectsNoContent {
-            // Return empty value for Void responses
-            return () as! T
-        }
-        
-        // Read response body
-        let bodyData = try await response.body.collect(upTo: 10 * 1024 * 1024) // 10MB max
-        let data = Data(buffer: bodyData)
-        
-        // Decode response
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        decoder.dateDecodingStrategy = .iso8601
-        
-        do {
-            return try decoder.decode(T.self, from: data)
-        } catch {
-            AppLogger.networking.error("Failed to decode response from \(url.absoluteString)", error: error)
-            throw ThriftwoodError.decodingError(error as? DecodingError ?? DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Unknown decoding error")))
-        }
+        return apiConfig
     }
     
-    /// Maps HTTP status codes to ThriftwoodError
-    private func handleHTTPStatus(_ status: HTTPResponseStatus, url: URL) throws {
-        switch status.code {
-        case 200...299:
-            return // Success
-        case 401:
-            AppLogger.networking.error("Authentication failed for \(url.absoluteString)")
-            throw ThriftwoodError.authenticationRequired
-        case 404:
-            AppLogger.networking.error("Resource not found: \(url.absoluteString)")
-            throw ThriftwoodError.notFound(message: "Resource not found")
-        case 400...499:
-            AppLogger.networking.error("Client error \(status.code) for \(url.absoluteString)")
-            throw ThriftwoodError.apiError(statusCode: Int(status.code), message: status.reasonPhrase)
-        case 500...599:
-            AppLogger.networking.error("Server error \(status.code) for \(url.absoluteString)")
-            throw ThriftwoodError.serviceUnavailable
-        default:
-            AppLogger.networking.error("Unexpected status code \(status.code) for \(url.absoluteString)")
-            throw ThriftwoodError.apiError(statusCode: Int(status.code), message: status.reasonPhrase)
-        }
-    }
-    
-    /// Executes an HTTP request that doesn't return data (e.g., DELETE)
-    private func executeRequestNoResponse(
-        path: String,
-        method: HTTPMethod,
-        queryItems: [URLQueryItem]? = nil
-    ) async throws {
-        // Get configuration
-        guard let config = await configuration.get() else {
-            throw ThriftwoodError.invalidConfiguration("Service not configured. Call configure(baseURL:apiKey:) first")
+    /// Map OpenAPI ErrorResponse to ThriftwoodError
+    private func mapError(_ error: any Error) -> ThriftwoodError {
+        if let error = error as? ThriftwoodError {
+            return error
         }
         
-        // Build URL
-        var components = URLComponents(url: config.baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)!
-        components.queryItems = queryItems
-        
-        guard let url = components.url else {
-            throw ThriftwoodError.invalidURL
+        // Handle ErrorResponse from OpenAPI generator
+        if let errorResponse = error as? ErrorResponse {
+            switch errorResponse {
+            case .error(let statusCode, let data, _, let underlyingError):
+                switch statusCode {
+                case 401:
+                    return .authenticationRequired
+                case 404:
+                    return .notFound(message: "Resource not found")
+                case 400...499:
+                    let detail = String(data: data ?? Data(), encoding: .utf8) ?? underlyingError.localizedDescription
+                    return .apiError(statusCode: statusCode, message: detail)
+                case 500...599:
+                    return .serviceUnavailable
+                default:
+                    let detail = String(data: data ?? Data(), encoding: .utf8) ?? underlyingError.localizedDescription
+                    return .apiError(statusCode: statusCode, message: detail)
+                }
+            }
         }
         
-        // Build request
-        var request = HTTPClientRequest(url: url.absoluteString)
-        request.method = method
-        request.headers.add(name: "X-Api-Key", value: config.apiKey)
-        request.headers.add(name: "Accept", value: "application/json")
-        
-        // Execute request
-        let response: HTTPClientResponse
-        do {
-            response = try await httpClient.execute(request, timeout: .seconds(30))
-        } catch {
-            AppLogger.networking.error("Network request failed for \(url.absoluteString)", error: error)
-            throw ThriftwoodError.networkError(error as? URLError ?? URLError(.badServerResponse))
+        // Handle URLError
+        if let urlError = error as? URLError {
+            return .networkError(urlError)
         }
         
-        // Handle HTTP status codes
-        try handleHTTPStatus(response.status, url: url)
-    }
-}
-
-
-// MARK: - Data Transfer Objects (DTOs)
-
-/// DTO for Radarr movie API responses
-private struct RadarrMovieDTO: Codable {
-    let id: Int
-    let title: String
-    let overview: String?
-    let year: Int?
-    let tmdbId: Int?
-    let imdbId: String?
-    let hasFile: Bool?
-    let monitored: Bool?
-    let qualityProfileId: Int?
-    let rootFolderPath: String?
-    let sizeOnDisk: Int64?
-    let status: String?
-    let genres: [String]?
-    let runtime: Int?
-    let certification: String?
-    let images: [RadarrImageDTO]?
-    let inCinemas: String?
-    let physicalRelease: String?
-    let digitalRelease: String?
-    
-    func toDomain() -> Movie {
-        // Parse release date (prefer digital, then physical, then cinemas)
-        let dateFormatter = ISO8601DateFormatter()
-        let releaseDate = [digitalRelease, physicalRelease, inCinemas]
-            .compactMap { $0 }
-            .compactMap { dateFormatter.date(from: $0) }
-            .first
-        
-        // Get poster URL
-        let posterURL = images?
-            .first(where: { $0.coverType == "poster" })
-            .flatMap { URL(string: $0.remoteUrl ?? "") }
-        
-        return Movie(
-            id: String(id),
-            title: title,
-            overview: overview,
-            releaseDate: releaseDate,
-            posterURL: posterURL,
-            year: year,
-            tmdbId: tmdbId,
-            imdbId: imdbId,
-            hasFile: hasFile ?? false,
-            monitored: monitored ?? true,
-            qualityProfileId: qualityProfileId,
-            rootFolderPath: rootFolderPath,
-            sizeOnDisk: sizeOnDisk ?? 0,
-            status: MovieStatus(rawValue: status?.lowercased() ?? "announced") ?? .announced,
-            genres: genres ?? [],
-            runtime: runtime,
-            certification: certification
-        )
-    }
-}
-
-private struct RadarrImageDTO: Codable {
-    let coverType: String?
-    let remoteUrl: String?
-    let url: String?
-}
-
-private struct RadarrMovieLookupDTO: Codable {
-    let tmdbId: Int
-    let title: String
-    let overview: String?
-    let year: Int?
-    let imdbId: String?
-    let images: [RadarrImageDTO]?
-    let isExisting: Bool?
-    
-    func toDomain() -> MovieSearchResult {
-        let posterURL = images?
-            .first(where: { $0.coverType == "poster" })
-            .flatMap { URL(string: $0.remoteUrl ?? "") }
-        
-        return MovieSearchResult(
-            id: String(tmdbId),
-            title: title,
-            overview: overview,
-            year: year,
-            tmdbId: tmdbId,
-            imdbId: imdbId,
-            posterURL: posterURL,
-            isExisting: isExisting ?? false
-        )
-    }
-}
-
-private struct AddMovieDTO: Codable {
-    let tmdbId: Int
-    let title: String
-    let year: Int?
-    let qualityProfileId: Int
-    let rootFolderPath: String
-    let monitored: Bool
-    let addOptions: AddOptionsDTO
-    let minimumAvailability: String
-    
-    init(from request: AddMovieRequest) {
-        self.tmdbId = request.tmdbId
-        self.title = request.title
-        self.year = request.year
-        self.qualityProfileId = request.qualityProfileId
-        self.rootFolderPath = request.rootFolderPath
-        self.monitored = request.monitored
-        self.addOptions = AddOptionsDTO(searchForMovie: request.searchForMovie)
-        self.minimumAvailability = request.minimumAvailability.rawValue
-    }
-}
-
-private struct AddOptionsDTO: Codable {
-    let searchForMovie: Bool
-}
-
-private struct UpdateMovieDTO: Codable {
-    let id: Int
-    let title: String
-    let monitored: Bool
-    let qualityProfileId: Int?
-    let rootFolderPath: String?
-    
-    init(from movie: Movie) {
-        self.id = Int(movie.id) ?? 0
-        self.title = movie.title
-        self.monitored = movie.monitored
-        self.qualityProfileId = movie.qualityProfileId
-        self.rootFolderPath = movie.rootFolderPath
-    }
-}
-
-private struct RadarrQualityProfileDTO: Codable {
-    let id: Int
-    let name: String
-    let upgradeAllowed: Bool?
-    let cutoff: Int?
-    
-    func toDomain() -> QualityProfile {
-        QualityProfile(
-            id: String(id),
-            name: name,
-            upgradeAllowed: upgradeAllowed ?? true,
-            cutoff: cutoff ?? 0
-        )
-    }
-}
-
-private struct RadarrRootFolderDTO: Codable {
-    let id: Int
-    let path: String
-    let accessible: Bool?
-    let freeSpace: Int64?
-    let totalSpace: Int64?
-    
-    func toDomain() -> RootFolder {
-        RootFolder(
-            id: String(id),
-            path: path,
-            accessible: accessible ?? true,
-            freeSpace: freeSpace ?? 0,
-            totalSpace: totalSpace ?? 0
-        )
-    }
-}
-
-private struct RadarrSystemStatusDTO: Codable {
-    let version: String
-    let buildTime: String?
-    let isDebug: Bool?
-    let isProduction: Bool?
-    let isAdmin: Bool?
-    let isUserInteractive: Bool?
-    let startupPath: String?
-    let appData: String?
-    let osName: String?
-    let osVersion: String?
-    let isMonoRuntime: Bool?
-    let isMono: Bool?
-    let isLinux: Bool?
-    let isOsx: Bool?
-    let isWindows: Bool?
-    let branch: String?
-    let authentication: String?
-    let sqliteVersion: String?
-    let urlBase: String?
-    let runtimeVersion: String?
-    let runtimeName: String?
-    
-    func toDomain() -> SystemStatus {
-        let dateFormatter = ISO8601DateFormatter()
-        let buildDate = buildTime.flatMap { dateFormatter.date(from: $0) }
-        
-        return SystemStatus(
-            version: version,
-            buildTime: buildDate,
-            isDebug: isDebug ?? false,
-            isProduction: isProduction ?? true,
-            isAdmin: isAdmin ?? false,
-            isUserInteractive: isUserInteractive ?? false,
-            startupPath: startupPath ?? "",
-            appData: appData ?? "",
-            osName: osName ?? "",
-            osVersion: osVersion ?? "",
-            isMonoRuntime: isMonoRuntime ?? false,
-            isMono: isMono ?? false,
-            isLinux: isLinux ?? false,
-            isOsx: isOsx ?? false,
-            isWindows: isWindows ?? false,
-            branch: branch ?? "",
-            authentication: authentication ?? "none",
-            sqliteVersion: sqliteVersion ?? "",
-            urlBase: urlBase,
-            runtimeVersion: runtimeVersion ?? "",
-            runtimeName: runtimeName ?? ""
-        )
+        // Generic network error - wrap in URLError
+        return .networkError(URLError(.unknown))
     }
 }
