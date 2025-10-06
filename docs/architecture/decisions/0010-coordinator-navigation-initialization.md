@@ -175,6 +175,9 @@ func testNavigation() {
 
 ## References
 
+- [ADR-0001: Single NavigationStack Per Coordinator](0001-single-navigationstack-per-coordinator.md) - Foundation pattern
+- [ADR-0005: MVVM-C Pattern](0005-use-mvvm-c-pattern.md) - Coordinator architecture
+- [ADR-0011: Hierarchical Navigation Pattern](0011-hierarchical-navigation-pattern.md) - Button-based navigation implementation
 - Original Bug Report: Settings navigation requiring back button
 - Related Files:
   - `/Thriftwood/Core/Navigation/*Coordinator.swift`

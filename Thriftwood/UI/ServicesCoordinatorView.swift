@@ -24,6 +24,8 @@ import SwiftUI
 /// Services coordinator view
 struct ServicesCoordinatorView: View {
     @Bindable var coordinator: ServicesCoordinator
+    @State private var showingRadarr = false
+    @State private var showingSonarr = false
     
     var body: some View {
         NavigationStack(path: $coordinator.navigationPath) {
@@ -31,6 +33,14 @@ struct ServicesCoordinatorView: View {
                 .navigationTitle("Services")
                 .navigationDestination(for: ServicesRoute.self) { route in
                     destination(for: route)
+                }
+                .fullScreenCover(isPresented: $showingRadarr) {
+                    let radarrCoordinator = coordinator.getRadarrCoordinator()
+                    RadarrCoordinatorView(coordinator: radarrCoordinator)
+                }
+                .fullScreenCover(isPresented: $showingSonarr) {
+                    // TODO [Milestone 3]: Implement Sonarr
+                    Text("Sonarr Coming Soon")
                 }
                 .logViewLifecycle(
                     view: "ServicesCoordinatorView",
@@ -49,11 +59,15 @@ struct ServicesCoordinatorView: View {
     private func servicesListView() -> some View {
         List {
             Section("Media Management") {
-                NavigationLink(value: ServicesRoute.radarr) {
+                Button(action: {
+                    showingRadarr = true
+                }) {
                     Label("Radarr", systemImage: "film")
                 }
                 
-                NavigationLink(value: ServicesRoute.sonarr) {
+                Button(action: {
+                    showingSonarr = true
+                }) {
                     Label("Sonarr", systemImage: "tv")
                 }
             }
@@ -79,12 +93,14 @@ struct ServicesCoordinatorView: View {
             EmptyView()
             
         case .radarr:
-            let radarrCoordinator = coordinator.getRadarrCoordinator()
-            RadarrCoordinatorView(coordinator: radarrCoordinator)
+            // Radarr is shown via fullScreenCover, not push navigation
+            // This case exists only for enum completeness
+            EmptyView()
             
         case .sonarr:
-            // TODO [Milestone 3]: Implement Sonarr when ready
-            placeholderView(title: "Sonarr", icon: "tv")
+            // Sonarr is shown via fullScreenCover, not push navigation
+            // This case exists only for enum completeness
+            EmptyView()
             
         case .addService:
             placeholderView(title: "Add Service", icon: "plus.circle")

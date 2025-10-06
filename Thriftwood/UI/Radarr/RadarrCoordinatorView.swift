@@ -32,8 +32,8 @@ struct RadarrCoordinatorView: View {
                 .navigationDestination(for: RadarrRoute.self) { route in
                     destination(for: route)
                 }
+                .logViewLifecycle(view: "RadarrCoordinatorView", metadata: ["coordinator": "RadarrCoordinator"])
         }
-        .logViewLifecycle(view: "RadarrCoordinatorView", metadata: ["coordinator": "RadarrCoordinator"])
     }
     
     // MARK: - Root View

@@ -175,6 +175,8 @@ Previews wrap content views in NavigationStack since they need their own context
 
 ### Navigation Hierarchy
 
+**Note**: As of ADR-0011, the app uses hierarchical button-based navigation instead of tabs.
+
 ```text
 App Root (ContentView)
 └─ Coordinator Selection
@@ -184,13 +186,19 @@ App Root (ContentView)
    │     ├─ .createProfile → AddProfileView (content)
    │     └─ .addFirstService → AddFirstServiceView (content)
    │
-   └─ MainTabView
-      └─ TabCoordinator
+   └─ AppCoordinatorView
+      └─ NavigationStack(path: $coordinator.navigationPath)  // AppRoute
+         ├─ App Home (buttons for Dashboard, Services, Settings)
          ├─ DashboardCoordinatorView
          │  └─ NavigationStack(path: $coordinator.navigationPath)  // DashboardRoute
          │
          ├─ ServicesCoordinatorView
          │  └─ NavigationStack(path: $coordinator.navigationPath)  // ServicesRoute
+         │     ├─ Services Home (buttons for Radarr, Sonarr, etc.)
+         │     ├─ RadarrCoordinatorView
+         │     │  └─ NavigationStack → Radarr Home → Movies → Details
+         │     └─ SonarrCoordinatorView
+         │        └─ NavigationStack → Sonarr Home → Series → Details
          │
          └─ SettingsCoordinatorView
             └─ NavigationStack(path: $coordinator.navigationPath)  // SettingsRoute
@@ -228,9 +236,10 @@ App Root (ContentView)
 
 ### Related Decisions
 
+- [ADR-0005: MVVM-C Pattern](0005-use-mvvm-c-pattern.md) - Coordinator pattern adoption
+- [ADR-0010: Coordinator Navigation Initialization](0010-coordinator-navigation-initialization.md) - Empty path initialization
+- [ADR-0011: Hierarchical Navigation Pattern](0011-hierarchical-navigation-pattern.md) - Replaces tab-based with hierarchical navigation
 - Migration from Flutter to Swift (see `/docs/migration/design.md`)
-- Coordinator pattern adoption (see `/docs/architecture/decisions/0002-coordinator-pattern.md` - to be created)
-- MVVM architecture (see `/docs/migration/design.md`)
 
 ### References
 
