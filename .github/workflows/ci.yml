@@ -80,36 +80,49 @@ jobs:
         run: swiftlint lint --strict --reporter github-actions-logging
         continue-on-error: true # continue on lint errors
 
+      # Cache Swift Package Manager dependencies
+      - name: Cache SPM Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', '**/*.xcodeproj/project.pbxproj') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
       # Cache derived data to speed up builds
       - name: Cache DerivedData
         uses: actions/cache@v4
         with:
           path: ~/Library/Developer/Xcode/DerivedData
-          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift') }}
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift', '**/*.xcodeproj/project.pbxproj') }}
           restore-keys: |
             ${{ runner.os }}-deriveddata-
 
       # Build the app (Mac Catalyst)
       - name: Build App
         run: |
-          xcodebuild clean build \
+          xcodebuild build-for-testing \
             -project Thriftwood.xcodeproj \
             -scheme Thriftwood \
             -destination 'platform=macOS,variant=Mac Catalyst' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
+            -parallel-testing-enabled YES \
             | xcpretty && exit ${PIPESTATUS[0]}
 
       # Run unit tests (Mac Catalyst)
       - name: Run Tests
         run: |
-          xcodebuild test \
+          xcodebuild test-without-building \
             -project Thriftwood.xcodeproj \
             -scheme Thriftwood \
             -destination 'platform=macOS,variant=Mac Catalyst' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             -enableCodeCoverage YES \
+            -parallel-testing-enabled YES \
             | xcpretty && exit ${PIPESTATUS[0]}
 
       # Archive test results (if tests fail, this helps debugging)
