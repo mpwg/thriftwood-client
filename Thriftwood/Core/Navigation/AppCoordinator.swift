@@ -148,7 +148,7 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
         )
     }
     
-    /// Shows the main app interface with tabs
+    /// Shows the main app interface with hierarchical navigation
     func showMainApp() {
         AppLogger.navigation.logNavigation(
             from: activeCoordinator != nil ? "Onboarding" : "Root",
@@ -156,32 +156,68 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
             coordinator: "AppCoordinator"
         )
         
-        // Create and start tab coordinator with dependencies
-        let tabCoordinator = TabCoordinator(
-            preferencesService: preferencesService,
-            radarrService: radarrService,
-            dataService: dataService
-        )
-        tabCoordinator.parent = self
-        
-        childCoordinators.append(tabCoordinator)
-        activeCoordinator = tabCoordinator
-        
-        AppLogger.navigation.logCoordinator(
-            event: "add_child",
-            coordinator: "TabCoordinator",
-            details: "Added to AppCoordinator, total children: \(childCoordinators.count)"
-        )
-        
-        tabCoordinator.start()
-        
-        navigationPath = [.main]
+        // Clear navigation path - main app starts at root (AppHomeView)
+        navigationPath = []
         
         AppLogger.navigation.logStackChange(
-            action: "set",
+            action: "clear",
             coordinator: "AppCoordinator",
             stackSize: navigationPath.count,
-            route: "main"
+            route: "root"
+        )
+    }
+    
+    /// Navigate to Services view
+    func navigateToServices() {
+        AppLogger.navigation.logNavigation(
+            from: "AppHome",
+            to: "Services",
+            coordinator: "AppCoordinator"
+        )
+        
+        navigationPath.append(.services)
+        
+        AppLogger.navigation.logStackChange(
+            action: "push",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: "services"
+        )
+    }
+    
+    /// Navigate to Settings view
+    func navigateToSettings() {
+        AppLogger.navigation.logNavigation(
+            from: "Current",
+            to: "Settings",
+            coordinator: "AppCoordinator"
+        )
+        
+        navigationPath.append(.settings)
+        
+        AppLogger.navigation.logStackChange(
+            action: "push",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: "settings"
+        )
+    }
+    
+    /// Pops to root (App Home)
+    func popToRoot() {
+        AppLogger.navigation.logNavigation(
+            from: "Current",
+            to: "AppHome (root)",
+            coordinator: "AppCoordinator"
+        )
+        
+        navigationPath.removeAll()
+        
+        AppLogger.navigation.logStackChange(
+            action: "pop_to_root",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: "root"
         )
     }
     

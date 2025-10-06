@@ -24,6 +24,9 @@ import Foundation
 /// Routes within the Radarr feature
 /// Based on legacy Flutter app structure: Catalogue, Upcoming, Missing, More
 enum RadarrRoute: Hashable, Sendable {
+    /// Radarr home view with button navigation
+    case home
+    
     /// Main movies list (Catalogue in legacy)
     case moviesList
     
@@ -54,10 +57,12 @@ extension RadarrRoute: DeepLinkable {
         // Path components include the leading "/", so we filter it out
         let pathComponents = url.pathComponents.filter { $0 != "/" }
         
-        // If no path components, it's the movies list route
-        guard !pathComponents.isEmpty else { return .moviesList }
+        // If no path components, default to home
+        guard !pathComponents.isEmpty else { return .home }
         
         switch pathComponents[0] {
+        case "home":
+            return .home
         case "movies":
             return .moviesList
         case "movie":
@@ -83,6 +88,8 @@ extension RadarrRoute: DeepLinkable {
     func toURL() -> URL? {
         let base = "thriftwood://radarr"
         switch self {
+        case .home:
+            return URL(string: "\(base)/home")
         case .moviesList:
             return URL(string: "\(base)/movies")
         case .movieDetail(let movieId):

@@ -57,6 +57,11 @@ struct RadarrCoordinatorView: View {
     @ViewBuilder
     private func destination(for route: RadarrRoute) -> some View {
         switch route {
+        case .home:
+            // .home should not be pushed - it's handled separately
+            // This case exists only for enum completeness
+            EmptyView()
+            
         case .moviesList:
             // .moviesList should not be pushed - it's the root moviesListView
             // This case exists only for enum completeness

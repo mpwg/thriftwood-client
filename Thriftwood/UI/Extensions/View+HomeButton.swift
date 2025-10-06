@@ -1,5 +1,5 @@
 //
-//  AppRoute.swift
+//  View+HomeButton.swift
 //  Thriftwood
 //
 //  Thriftwood - Frontend for Media Management
@@ -18,18 +18,25 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-//
-//  AppRoute.swift
-//  Thriftwood
-//
-//  Created by Matthias Wallner-Géhri on 04.10.25.
-//
 
-import Foundation
+import SwiftUI
 
-/// Root-level routes for the entire application
-enum AppRoute: Hashable, Sendable {
-    case onboarding
-    case services
-    case settings
+extension View {
+    /// Adds a home button to the navigation bar trailing position
+    /// that navigates back to the app root
+    ///
+    /// - Parameter action: The action to perform when the home button is tapped (typically `coordinator.popToRoot()`)
+    /// - Returns: A view with a home button in the navigation bar
+    func withHomeButton(action: @escaping () -> Void) -> some View {
+        toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    action()
+                } label: {
+                    Image(systemName: "house")
+                }
+                .accessibilityLabel("Return to Home")
+            }
+        }
+    }
 }

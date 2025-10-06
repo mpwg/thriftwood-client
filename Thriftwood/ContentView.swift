@@ -52,13 +52,62 @@ struct ContentView: View {
     /// Returns the appropriate view based on coordinator state
     @ViewBuilder
     private func coordinatorView(_ coordinator: AppCoordinator) -> some View {
-        if let tabCoordinator = coordinator.activeCoordinator as? TabCoordinator {
-            MainTabView(coordinator: tabCoordinator)
-        } else if let onboardingCoordinator = coordinator.activeCoordinator as? OnboardingCoordinator {
+        if let onboardingCoordinator = coordinator.activeCoordinator as? OnboardingCoordinator {
+            // Show onboarding flow
             OnboardingCoordinatorView(coordinator: onboardingCoordinator)
         } else {
-            // Fallback loading state
-            ProgressView("Loading...")
+            // Show main app with hierarchical navigation
+            MainAppNavigationView(coordinator: coordinator)
+        }
+    }
+}
+
+/// Separate view to allow @Bindable wrapper
+private struct MainAppNavigationView: View {
+    @Bindable var coordinator: AppCoordinator
+    
+    var body: some View {
+        NavigationStack(path: $coordinator.navigationPath) {
+            AppHomeView(
+                onNavigateToServices: {
+                    coordinator.navigateToServices()
+                },
+                onNavigateToSettings: {
+                    coordinator.navigateToSettings()
+                }
+            )
+            .navigationDestination(for: AppRoute.self) { route in
+                makeView(for: route)
+            }
+        }
+    }
+    
+    /// Creates views for app-level routes
+    @ViewBuilder
+    private func makeView(for route: AppRoute) -> some View {
+        switch route {
+        case .onboarding:
+            // Onboarding is handled via active coordinator, not navigation stack
+            EmptyView()
+            
+        case .services:
+            ServicesHomeView(
+                onNavigateToRadarr: {
+                    // TODO: Will be implemented when we integrate RadarrCoordinator
+                    AppLogger.navigation.info("Navigate to Radarr (not yet implemented)")
+                }
+            )
+            .navigationTitle("Services")
+            .withHomeButton {
+                coordinator.popToRoot()
+            }
+            
+        case .settings:
+            Text("Settings View")
+                .navigationTitle("Settings")
+                .withHomeButton {
+                    coordinator.popToRoot()
+                }
         }
     }
 }
