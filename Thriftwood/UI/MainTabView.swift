@@ -31,7 +31,17 @@ struct MainTabView: View {
     @Bindable var coordinator: TabCoordinator
     
     var body: some View {
-        TabView(selection: $coordinator.selectedTab) {
+        TabView(selection: Binding(
+            get: { coordinator.selectedTab },
+            set: { newTab in
+                // If tapping the same tab, pop to root
+                if coordinator.selectedTab == newTab {
+                    coordinator.popToRoot(for: newTab)
+                } else {
+                    coordinator.selectedTab = newTab
+                }
+            }
+        )) {
             ForEach(coordinator.enabledTabs, id: \.self) { tab in
                 tabContent(for: tab)
                     .tabItem {

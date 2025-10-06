@@ -235,6 +235,26 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
         selectedTab = tab
     }
     
+    /// Pops the navigation stack to root for the specified tab
+    /// This is called when a user taps on an already-selected tab
+    /// - Parameter tab: The tab to pop to root
+    func popToRoot(for tab: TabRoute) {
+        AppLogger.navigation.debug("Popping to root for tab: \(String(describing: tab))")
+        
+        switch tab {
+        case .dashboard:
+            dashboardCoordinator?.popToRoot()
+        case .calendar:
+            calendarCoordinator?.popToRoot()
+        case .services:
+            servicesCoordinator?.popToRoot()
+        case .search:
+            searchCoordinator?.popToRoot()
+        case .settings:
+            settingsCoordinator?.popToRoot()
+        }
+    }
+    
     /// Handles deep links by routing to the appropriate tab coordinator
     /// - Parameter url: The deep link URL to handle
     /// - Returns: true if the URL was handled, false otherwise
