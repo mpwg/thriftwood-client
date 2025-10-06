@@ -115,29 +115,28 @@ library: urlsession
 
 # Project Configuration
 projectName: RadarrAPI
-apiNamePrefix: Radarr              # Prefixes API classes (RadarrMovieAPI, etc.)
+apiNamePrefix: Radarr # Prefixes API classes (RadarrMovieAPI, etc.)
 useSPMFileStructure: false
 swiftPackagePath: ""
 
 # Response Handling
-responseAs: AsyncAwait             # Use Swift async/await
+responseAs: AsyncAwait # Use Swift async/await
 
 # Model Configuration
-hashableModels: true               # Models conform to Hashable
-identifiableModels: true           # Models conform to Identifiable (when ID present)
-validatable: true                  # Enable model validation
+hashableModels: true # Models conform to Hashable
+identifiableModels: true # Models conform to Identifiable (when ID present)
+validatable: true # Enable model validation
 generateModelAdditionalProperties: true
 sortModelPropertiesByRequiredFlag: true
 
 # Enum Handling
-enumUnknownDefaultCase: true       # Handle unknown enum values gracefully
+enumUnknownDefaultCase: true # Handle unknown enum values gracefully
 oneOfUnknownDefaultCase: false
 
 # Code Generation
-hideGenerationTimestamp: false     # Include timestamp in README (for tracking)
+hideGenerationTimestamp: false # Include timestamp in README (for tracking)
 ensureUniqueParams: true
 sortParamsByRequiredFlag: true
-
 # Access Control
 # nonPublicApi: false              # Use default (public APIs)
 
@@ -149,15 +148,15 @@ sortParamsByRequiredFlag: true
 
 ### Configuration Options Explained
 
-| Option | Value | Purpose |
-|--------|-------|---------|
-| `library` | `urlsession` | Use native iOS URLSession (no external dependencies) |
-| `apiNamePrefix` | `Radarr` | Prefix all API class names to distinguish services |
-| `responseAs` | `AsyncAwait` | Generate modern Swift async/await code |
-| `hashableModels` | `true` | Models can be used in Sets/Dictionaries |
-| `identifiableModels` | `true` | Models conform to Identifiable (SwiftUI friendly) |
-| `enumUnknownDefaultCase` | `true` | Gracefully handle unknown enum values from API |
-| `hideGenerationTimestamp` | `false` | Show generation timestamp in README.md |
+| Option                    | Value        | Purpose                                              |
+| ------------------------- | ------------ | ---------------------------------------------------- |
+| `library`                 | `urlsession` | Use native iOS URLSession (no external dependencies) |
+| `apiNamePrefix`           | `Radarr`     | Prefix all API class names to distinguish services   |
+| `responseAs`              | `AsyncAwait` | Generate modern Swift async/await code               |
+| `hashableModels`          | `true`       | Models can be used in Sets/Dictionaries              |
+| `identifiableModels`      | `true`       | Models conform to Identifiable (SwiftUI friendly)    |
+| `enumUnknownDefaultCase`  | `true`       | Gracefully handle unknown enum values from API       |
+| `hideGenerationTimestamp` | `false`      | Show generation timestamp in README.md               |
 
 **Full configuration reference**: Run `openapi-generator config-help -g swift6` for all options.
 
@@ -177,6 +176,7 @@ Use the provided script to generate clients for all services:
 ```
 
 **What the script does**:
+
 1. Validates OpenAPI specs exist
 2. Runs `openapi-generator` for each service
 3. Uses `--skip-validate-spec` to bypass spec validation issues
@@ -237,11 +237,13 @@ Thriftwood/Services/Radarr/Generated/
 With `apiNamePrefix: Radarr`, the generator adds prefixes to:
 
 ✅ **API classes** (service endpoints):
+
 - `AlternativeTitleAPI` → `RadarrAlternativeTitleAPI`
 - `MovieAPI` → `RadarrMovieAPI`
 - `QueueAPI` → `RadarrQueueAPI`
 
 ℹ️ **Model classes remain unprefixed**:
+
 - `MovieResource` (not `RadarrMovieResource`)
 - `QueueResource` (not `RadarrQueueResource`)
 
@@ -285,13 +287,13 @@ import Foundation
 @Observable
 final class RadarrService {
     // MARK: - Properties
-    
+
     private let configuration: RadarrAPIAPIConfiguration
     private let movieAPI: RadarrMovieAPI
     private let queueAPI: RadarrQueueAPI
-    
+
     // MARK: - Initialization
-    
+
     init(baseURL: String, apiKey: String) {
         // Configure API client
         self.configuration = RadarrAPIAPIConfiguration(
@@ -299,21 +301,21 @@ final class RadarrService {
             credential: nil,
             headerParameters: ["X-Api-Key": apiKey]
         )
-        
+
         // Initialize API clients
         self.movieAPI = RadarrMovieAPI()
         self.queueAPI = RadarrQueueAPI()
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// Fetch all movies from Radarr
     func fetchMovies() async throws -> [MovieResource] {
         try await movieAPI.apiV3MovieGet(
             apiConfiguration: configuration
         )
     }
-    
+
     /// Fetch download queue
     func fetchQueue(page: Int = 1, pageSize: Int = 20) async throws -> QueueResourcePagingResource {
         try await queueAPI.apiV3QueueGet(
@@ -322,7 +324,7 @@ final class RadarrService {
             apiConfiguration: configuration
         )
     }
-    
+
     /// Add a movie to Radarr
     func addMovie(_ movie: MovieResource) async throws -> MovieResource {
         try await movieAPI.apiV3MoviePost(
@@ -344,7 +346,7 @@ extension Container {
             // Get credentials from Keychain or profile
             let profile = resolver.resolve(ProfileService.self)!
             let radarrProfile = profile.currentProfile.radarrConfig
-            
+
             return RadarrService(
                 baseURL: radarrProfile.baseURL,
                 apiKey: radarrProfile.apiKey
@@ -363,25 +365,25 @@ extension Container {
 @Observable
 final class MovieListViewModel {
     // MARK: - Properties
-    
+
     private let radarrService: RadarrService
     var movies: [MovieResource] = []
     var isLoading = false
     var error: Error?
-    
+
     // MARK: - Initialization
-    
+
     init(radarrService: RadarrService) {
         self.radarrService = radarrService
     }
-    
+
     // MARK: - Methods
-    
+
     @MainActor
     func loadMovies() async {
         isLoading = true
         defer { isLoading = false }
-        
+
         do {
             movies = try await radarrService.fetchMovies()
         } catch {
@@ -452,11 +454,13 @@ openapi-generator generate \
 **Problem**: Compilation errors after adding generated files
 
 **Common causes**:
+
 1. Missing files (didn't add all folders)
 2. File conflicts (multiple targets)
 3. Swift version mismatch
 
 **Solution**:
+
 ```bash
 # Clean build folder
 xcodebuild clean -project Thriftwood.xcodeproj -scheme Thriftwood
@@ -533,6 +537,7 @@ git commit -m "chore(openapi): update Radarr API spec to latest version"
 To add a new service (e.g., Sonarr):
 
 1. **Obtain OpenAPI spec**:
+
    ```bash
    # Download from official repo or Sonarr instance
    curl -o openapi/sonarr-v3.yaml \
@@ -540,23 +545,27 @@ To add a new service (e.g., Sonarr):
    ```
 
 2. **Create configuration**:
+
    ```bash
    cp openapi/radarr-config.yaml openapi/sonarr-config.yaml
    # Edit: Change projectName to "SonarrAPI", apiNamePrefix to "Sonarr"
    ```
 
 3. **Update generation script**:
+
    ```bash
    # Add Sonarr to scripts/generate-openapi-clients.sh
    # Follow the existing Radarr pattern
    ```
 
 4. **Generate client**:
+
    ```bash
    ./scripts/generate-openapi-clients.sh
    ```
 
 5. **Create service wrapper**:
+
    ```bash
    # Create Thriftwood/Services/Sonarr/SonarrService.swift
    # Follow RadarrService.swift pattern
@@ -575,6 +584,7 @@ To add a new service (e.g., Sonarr):
 ## Support
 
 For issues specific to:
+
 - **OpenAPI Generator**: https://github.com/OpenAPITools/openapi-generator/issues
 - **Thriftwood Integration**: Create issue in project repository
 - **API Specs**: Check service's official documentation/repository

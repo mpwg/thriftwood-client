@@ -342,24 +342,24 @@ import Foundation
 final class RadarrService: ObservableObject {
     private let baseURL: URL
     private let apiKey: String
-    
+
     init(baseURL: URL, apiKey: String) {
         self.baseURL = baseURL
         self.apiKey = apiKey
-        
+
         // Configure DefaultAPI with base URL and API key
         DefaultAPI.basePath = baseURL.absoluteString
         DefaultAPI.customHeaders = ["X-Api-Key": apiKey]
     }
-    
+
     func getMovies() async throws -> [Movie] {
         return try await DefaultAPI.getMovies()
     }
-    
+
     func addMovie(_ request: AddMovieRequest) async throws -> Movie {
         return try await DefaultAPI.addMovie(body: request)
     }
-    
+
     func searchMovies(query: String) async throws -> [MovieResource] {
         return try await DefaultAPI.searchMovies(term: query)
     }
@@ -376,7 +376,7 @@ extension DIContainer {
         container.register(RadarrService.self) { resolver in
             let profile = resolver.resolve(Profile.self)!
             let config = profile.radarrConfig
-            
+
             return RadarrService(
                 baseURL: config.baseURL,
                 apiKey: config.apiKey
@@ -394,11 +394,11 @@ extension DIContainer {
 final class MockRadarrService: RadarrService {
     var mockMovies: [Movie] = []
     var addMovieResult: Result<Movie, Error>?
-    
+
     override func getMovies() async throws -> [Movie] {
         return mockMovies
     }
-    
+
     override func addMovie(_ request: AddMovieRequest) async throws -> Movie {
         switch addMovieResult {
         case .success(let movie): return movie
@@ -414,7 +414,7 @@ func testMovieList() async throws {
     mockService.mockMovies = [
         Movie(id: 1, title: "Test Movie")
     ]
-    
+
     let movies = try await mockService.getMovies()
     #expect(movies.count == 1)
     #expect(movies[0].title == "Test Movie")
