@@ -34,7 +34,7 @@ import OSLog
 /// Handles adding services, configuring them, testing connections, etc.
 @MainActor
 @Observable
-final class ServicesCoordinator: @MainActor CoordinatorProtocol, Sendable {
+final class ServicesCoordinator: @MainActor CoordinatorProtocol {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any CoordinatorProtocol] = []

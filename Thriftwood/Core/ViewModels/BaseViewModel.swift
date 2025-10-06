@@ -89,5 +89,3 @@ extension BaseViewModel {
         isLoading = false
     }
 }
-
-

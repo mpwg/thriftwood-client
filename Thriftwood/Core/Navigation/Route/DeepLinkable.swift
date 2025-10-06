@@ -25,7 +25,6 @@
 //  Created by Matthias Wallner-Géhri on 04.10.25.
 //
 
-
 import Foundation
 
 /// Protocol for types that can be converted to/from URLs for deep linking

@@ -34,7 +34,7 @@ import OSLog
 /// Handles showing service details, media details, and other dashboard-related screens.
 @MainActor
 @Observable
-final class DashboardCoordinator: @MainActor CoordinatorProtocol,  Sendable {
+final class DashboardCoordinator: @MainActor CoordinatorProtocol {
     // MARK: - Coordinator Protocol
     
     var childCoordinators: [any CoordinatorProtocol] = []
