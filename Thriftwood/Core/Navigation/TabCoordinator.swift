@@ -68,9 +68,9 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     /// Coordinators for each tab (created on demand)
     /// Internal for testing purposes
     internal var dashboardCoordinator: DashboardCoordinator?
-    internal var calendarCoordinator: DashboardCoordinator? // TODO: Create CalendarCoordinator
+    internal var calendarCoordinator: DashboardCoordinator? // TODO [Milestone 5]: Create CalendarCoordinator
     internal var servicesCoordinator: ServicesCoordinator?
-    internal var searchCoordinator: DashboardCoordinator? // TODO: Create SearchCoordinator
+    internal var searchCoordinator: DashboardCoordinator? // TODO [Milestone 4]: Create SearchCoordinator
     internal var settingsCoordinator: SettingsCoordinator?
     
     // MARK: - Initialization
@@ -138,7 +138,7 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     
     private func setupCalendarCoordinator() {
         guard calendarCoordinator == nil else { return }
-        // TODO: Create CalendarCoordinator - using DashboardCoordinator as placeholder
+        // TODO [Milestone 5]: Create CalendarCoordinator - using DashboardCoordinator as placeholder
         let coordinator = DashboardCoordinator()
         coordinator.parent = self
         childCoordinators.append(coordinator)
@@ -164,7 +164,7 @@ final class TabCoordinator: @MainActor CoordinatorProtocol {
     
     private func setupSearchCoordinator() {
         guard searchCoordinator == nil else { return }
-        // TODO: Create SearchCoordinator - using DashboardCoordinator as placeholder
+        // TODO [Milestone 4]: Create SearchCoordinator - using DashboardCoordinator as placeholder
         let coordinator = DashboardCoordinator()
         coordinator.parent = self
         childCoordinators.append(coordinator)

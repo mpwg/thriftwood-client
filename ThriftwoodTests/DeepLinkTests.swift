@@ -222,7 +222,13 @@ struct DeepLinkTests {
     @MainActor
     func testTabCoordinatorHandlesDashboardDeepLink() async {
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = TabCoordinator(preferencesService: mockPrefs)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = TabCoordinator(
+            preferencesService: mockPrefs,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         let url = URL(string: "thriftwood://dashboard/service/test-service")!
@@ -237,7 +243,13 @@ struct DeepLinkTests {
     @MainActor
     func testTabCoordinatorHandlesServicesDeepLink() async {
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = TabCoordinator(preferencesService: mockPrefs)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = TabCoordinator(
+            preferencesService: mockPrefs,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         let url = URL(string: "thriftwood://services/add")!
@@ -252,7 +264,13 @@ struct DeepLinkTests {
     @MainActor
     func testTabCoordinatorHandlesSettingsDeepLink() async {
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = TabCoordinator(preferencesService: mockPrefs)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = TabCoordinator(
+            preferencesService: mockPrefs,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         let url = URL(string: "thriftwood://settings/profiles")!
@@ -267,7 +285,13 @@ struct DeepLinkTests {
     @MainActor
     func testTabCoordinatorRejectsInvalidDeepLink() async {
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = TabCoordinator(preferencesService: mockPrefs)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = TabCoordinator(
+            preferencesService: mockPrefs,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         let url = URL(string: "thriftwood://invalid/path")!

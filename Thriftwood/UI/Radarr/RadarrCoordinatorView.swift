@@ -63,7 +63,7 @@ struct RadarrCoordinatorView: View {
             let viewModel = coordinator.getMovieDetailViewModel(movieId: movieId)
             MovieDetailView(
                 onEdit: { movieId in
-                    coordinator.showMovieDetail(movieId: movieId) // TODO: Navigate to edit when implemented
+                    coordinator.showMovieDetail(movieId: movieId) // TODO [M2-Future]: Navigate to edit when implemented
                 },
                 onDeleted: {
                     coordinator.pop()
@@ -114,15 +114,15 @@ struct RadarrCoordinatorView: View {
             }
             
         case .systemStatus:
-            // TODO: Implement system status view
+            // TODO [M2-Future]: Implement system status view
             placeholderView(title: "System Status", icon: "info.circle")
             
         case .queue:
-            // TODO: Implement queue view
+            // TODO [M2-Future]: Implement queue view
             placeholderView(title: "Queue", icon: "arrow.down.circle")
             
         case .history:
-            // TODO: Implement history view
+            // TODO [M2-Future]: Implement history view
             placeholderView(title: "History", icon: "clock")
         }
     }

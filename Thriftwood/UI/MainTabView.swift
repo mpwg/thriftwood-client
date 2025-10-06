@@ -66,7 +66,7 @@ struct MainTabView: View {
             }
             
         case .calendar:
-            // TODO: Implement CalendarCoordinatorView when CalendarCoordinator is created
+            // TODO [Milestone 5]: Implement CalendarCoordinatorView when CalendarCoordinator is created
             placeholderView(for: tab)
             
         case .services:
@@ -77,7 +77,7 @@ struct MainTabView: View {
             }
             
         case .search:
-            // TODO: Implement SearchCoordinatorView when SearchCoordinator is created
+            // TODO [Milestone 4]: Implement SearchCoordinatorView when SearchCoordinator is created
             placeholderView(for: tab)
             
         case .settings:

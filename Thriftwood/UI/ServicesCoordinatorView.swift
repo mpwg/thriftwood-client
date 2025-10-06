@@ -73,7 +73,7 @@ struct ServicesCoordinatorView: View {
             RadarrCoordinatorView(coordinator: radarrCoordinator)
             
         case .sonarr:
-            // TODO: Implement Sonarr when ready
+            // TODO [Milestone 3]: Implement Sonarr when ready
             placeholderView(title: "Sonarr", icon: "tv")
             
         case .addService:

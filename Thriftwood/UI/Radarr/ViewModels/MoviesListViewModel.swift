@@ -55,6 +55,11 @@ final class MoviesListViewModel {
     var error: ThriftwoodError?
     var filterOption: MovieFilter = .all
     var sortOption: MovieSort = .title
+    
+    // MARK: - Private Properties
+    
+    /// Cached quality profiles for name lookup
+    private var qualityProfiles: [Int: String] = [:]
 
     // MARK: - Initialization
 
@@ -69,6 +74,9 @@ final class MoviesListViewModel {
         isLoading = true
         error = nil
         defer { isLoading = false }
+        
+        // Load quality profiles first for name lookup
+        await loadQualityProfiles()
 
         do {
             let allMovies = try await radarrService.getMovies()
@@ -190,11 +198,33 @@ final class MoviesListViewModel {
             monitored: resource.monitored ?? false,
             hasFile: resource.hasFile ?? false,
             qualityProfileId: resource.qualityProfileId,
-            qualityProfileName: nil, // TODO: Add quality profile lookup
+            qualityProfileName: lookupQualityProfileName(resource.qualityProfileId),
             rating: resource.ratings?.imdb?.value,
             certification: resource.certification,
             genres: resource.genres?.compactMap { $0 } ?? [],
             studio: resource.studio
         )
+    }
+    
+    // MARK: - Private Methods
+    
+    /// Load quality profiles for name lookup
+    private func loadQualityProfiles() async {
+        do {
+            let profiles = try await radarrService.getQualityProfiles()
+            qualityProfiles = Dictionary(uniqueKeysWithValues: profiles.compactMap { profile in
+                guard let id = profile.id, let name = profile.name else { return nil }
+                return (id, name)
+            })
+        } catch {
+            // Log error but don't fail the whole load - quality profile names are nice-to-have
+            AppLogger.networking.warning("Failed to load quality profiles: \(error.localizedDescription)")
+        }
+    }
+    
+    /// Look up quality profile name by ID
+    private func lookupQualityProfileName(_ profileId: Int?) -> String? {
+        guard let profileId = profileId else { return nil }
+        return qualityProfiles[profileId]
     }
 }

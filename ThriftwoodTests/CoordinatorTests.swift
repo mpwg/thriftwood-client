@@ -41,7 +41,14 @@ struct CoordinatorTests {
     func testAppCoordinatorInitialization() async {
         let mockPrefs = MockUserPreferencesService()
         let mockProfiles = MockProfileService()
-        let coordinator = AppCoordinator(preferencesService: mockPrefs, profileService: mockProfiles)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = AppCoordinator(
+            preferencesService: mockPrefs,
+            profileService: mockProfiles,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         
         #expect(coordinator.childCoordinators.isEmpty)
         #expect(coordinator.navigationPath.isEmpty)
@@ -57,7 +64,14 @@ struct CoordinatorTests {
         
         let mockPrefs = MockUserPreferencesService()
         let mockProfiles = MockProfileService()
-        let coordinator = AppCoordinator(preferencesService: mockPrefs, profileService: mockProfiles)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = AppCoordinator(
+            preferencesService: mockPrefs,
+            profileService: mockProfiles,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         #expect(coordinator.navigationPath == [AppRoute.onboarding])
@@ -73,7 +87,14 @@ struct CoordinatorTests {
         
         let mockPrefs = MockUserPreferencesService()
         let mockProfiles = MockProfileService()
-        let coordinator = AppCoordinator(preferencesService: mockPrefs, profileService: mockProfiles)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = AppCoordinator(
+            preferencesService: mockPrefs,
+            profileService: mockProfiles,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         #expect(coordinator.navigationPath == [AppRoute.main])
@@ -92,7 +113,14 @@ struct CoordinatorTests {
         
         let mockPrefs = MockUserPreferencesService()
         let mockProfiles = MockProfileService()
-        let coordinator = AppCoordinator(preferencesService: mockPrefs, profileService: mockProfiles)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = AppCoordinator(
+            preferencesService: mockPrefs,
+            profileService: mockProfiles,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         // Reset onboarding
@@ -111,7 +139,13 @@ struct CoordinatorTests {
     @MainActor
     func testTabCoordinatorInitialization() async {
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = TabCoordinator(preferencesService: mockPrefs)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = TabCoordinator(
+            preferencesService: mockPrefs,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         
         #expect(coordinator.childCoordinators.isEmpty)
         #expect(coordinator.navigationPath.isEmpty)
@@ -123,7 +157,13 @@ struct CoordinatorTests {
     @MainActor
     func testTabCoordinatorStartCreatesChildren() async {
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = TabCoordinator(preferencesService: mockPrefs)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = TabCoordinator(
+            preferencesService: mockPrefs,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         #expect(coordinator.childCoordinators.count == 3)
@@ -136,7 +176,13 @@ struct CoordinatorTests {
     @MainActor
     func testTabCoordinatorSwitchTab() async {
         let mockPrefs = MockUserPreferencesService()
-        let coordinator = TabCoordinator(preferencesService: mockPrefs)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = TabCoordinator(
+            preferencesService: mockPrefs,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         coordinator.select(tab: TabRoute.services)
@@ -147,6 +193,33 @@ struct CoordinatorTests {
         
         coordinator.select(tab: .dashboard)
         #expect(coordinator.selectedTab == .dashboard)
+    }
+    
+    @Test("TabCoordinator pops to root when tab is re-selected")
+    @MainActor
+    func testTabCoordinatorPopToRootOnReselect() async {
+        let mockPrefs = MockUserPreferencesService()
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = TabCoordinator(
+            preferencesService: mockPrefs,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
+        coordinator.start()
+        
+        // Navigate deep into services
+        if let servicesCoordinator = coordinator.servicesCoordinator {
+            servicesCoordinator.navigate(to: .radarr)
+            servicesCoordinator.navigate(to: .serviceConfiguration(serviceId: "test"))
+            #expect(servicesCoordinator.navigationPath.count == 2)
+        }
+        
+        // Tap on services tab again (simulating re-selection)
+        coordinator.popToRoot(for: .services)
+        
+        // Should pop to root
+        #expect(coordinator.servicesCoordinator?.navigationPath.isEmpty == true)
     }
     
     // MARK: - DashboardCoordinator Tests
@@ -203,7 +276,12 @@ struct CoordinatorTests {
     
     @Test("ServicesCoordinator navigates to add service")
     func testServicesCoordinatorAddService() async {
-        let coordinator = ServicesCoordinator()
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = ServicesCoordinator(
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         coordinator.showAddService()
@@ -214,7 +292,12 @@ struct CoordinatorTests {
     
     @Test("ServicesCoordinator navigates to configuration")
     func testServicesCoordinatorConfiguration() async {
-        let coordinator = ServicesCoordinator()
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = ServicesCoordinator(
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         coordinator.showServiceConfiguration(serviceId: "test-service")
@@ -225,7 +308,12 @@ struct CoordinatorTests {
     
     @Test("ServicesCoordinator navigates to test connection")
     func testServicesCoordinatorTestConnection() async {
-        let coordinator = ServicesCoordinator()
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let coordinator = ServicesCoordinator(
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         coordinator.start()
         
         coordinator.showTestConnection(serviceId: "test-service")
@@ -318,7 +406,13 @@ struct CoordinatorTests {
     @MainActor
     func testParentRemovesChildCoordinator() async {
         let mockPrefs = MockUserPreferencesService()
-        let parent = TabCoordinator(preferencesService: mockPrefs)
+        let mockRadarr = MockRadarrService()
+        let mockData = MockDataService()
+        let parent = TabCoordinator(
+            preferencesService: mockPrefs,
+            radarrService: mockRadarr,
+            dataService: mockData
+        )
         parent.start()
         
         let initialCount = parent.childCoordinators.count
