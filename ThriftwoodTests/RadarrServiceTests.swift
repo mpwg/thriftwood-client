@@ -132,15 +132,22 @@ struct RadarrServiceValidationTests {
     }
 }
 
-// MARK: - Future Tests
+// MARK: - Testing Limitations
 
-// TODO: Add tests that use MockRadarrService to test ViewModels
-// Example: MovieViewModel tests that verify:
-// - ViewModel loads movies on appear using the service
-// - ViewModel handles errors from the service
-// - ViewModel filters/searches movies correctly
-// - Coordinator navigation when selecting a movie
-
-// TODO: Add tests for actual Radarr API integration
-// These should test real RadarrService with mocked HTTP layer
-// Example: Test that API requests are formed correctly, parsed correctly
+// NOTE: Additional tests for RadarrService API operations cannot be implemented
+// without either:
+// 1. HTTP mocking library (e.g., OHHTTPStubs) to intercept OpenAPI static method calls
+// 2. Integration tests against a real Radarr instance (marked as @Tag("integration"))
+// 3. Refactoring RadarrService to inject a mockable API client protocol
+//
+// The current implementation uses OpenAPI-generated static methods which cannot be
+// mocked in pure unit tests. MockRadarrService exists to test ViewModels and
+// Coordinators that depend on RadarrServiceProtocol, NOT to test RadarrService itself.
+//
+// See: .github/instructions/test-isolation.instructions.md - "Never Test Mocks"
+//
+// Current test coverage for RadarrService:
+// ✅ Configuration logic and validation (5 tests)
+// ✅ Input validation (2 tests)
+// ❌ API operations (requires HTTP mocking or integration tests)
+// ❌ Error mapping from ErrorResponse (requires HTTP mocking or integration tests)
