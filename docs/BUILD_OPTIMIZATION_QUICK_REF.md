@@ -48,8 +48,6 @@ grep 'COMPILER_INDEX_STORE_ENABLE.*NO' Thriftwood.xcodeproj/project.pbxproj
 xcodebuild -showBuildSettings -project Thriftwood.xcodeproj -scheme Thriftwood | grep COMPILER_INDEX_STORE_ENABLE
 ```
 
-```
-
 ## 📊 Performance Improvements
 
 **✅ Actual CI Results (2025-10-06):**
