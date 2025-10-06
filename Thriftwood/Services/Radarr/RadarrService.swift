@@ -117,32 +117,27 @@ final class RadarrService: RadarrServiceProtocol, Sendable {
     
     // MARK: - Movie Management
     
-    func getMovies() async throws -> [Movie] {
+    func getMovies() async throws -> [MovieResource] {
         let apiConfig = try await getAPIConfiguration()
         
         do {
-            let resources = try await RadarrMovieAPI.apiV3MovieGet(apiConfiguration: apiConfig)
-            return resources.compactMap { $0.toDomainModel() }
+            return try await RadarrMovieAPI.apiV3MovieGet(apiConfiguration: apiConfig)
         } catch {
             throw mapError(error)
         }
     }
     
-    func getMovie(id: Int) async throws -> Movie {
+    func getMovie(id: Int) async throws -> MovieResource {
         let apiConfig = try await getAPIConfiguration()
         
         do {
-            let resource = try await RadarrMovieAPI.apiV3MovieIdGet(id: id, apiConfiguration: apiConfig)
-            guard let movie = resource.toDomainModel() else {
-                throw ThriftwoodError.decodingError(.dataCorrupted(.init(codingPath: [], debugDescription: "Failed to map MovieResource to domain model")))
-            }
-            return movie
+            return try await RadarrMovieAPI.apiV3MovieIdGet(id: id, apiConfiguration: apiConfig)
         } catch {
             throw mapError(error)
         }
     }
     
-    func searchMovies(query: String) async throws -> [MovieSearchResult] {
+    func searchMovies(query: String) async throws -> [MovieResource] {
         guard !query.isEmpty else {
             throw ThriftwoodError.validation(message: "Search query cannot be empty")
         }
@@ -150,43 +145,36 @@ final class RadarrService: RadarrServiceProtocol, Sendable {
         let apiConfig = try await getAPIConfiguration()
         
         do {
-            let resources = try await RadarrMovieLookupAPI.apiV3MovieLookupGet(term: query, apiConfiguration: apiConfig)
-            return resources.compactMap { $0.toSearchResult() }
+            return try await RadarrMovieLookupAPI.apiV3MovieLookupGet(term: query, apiConfiguration: apiConfig)
         } catch {
             throw mapError(error)
         }
     }
     
-    func addMovie(_ request: AddMovieRequest) async throws -> Movie {
+    func addMovie(_ movie: MovieResource) async throws -> MovieResource {
         let apiConfig = try await getAPIConfiguration()
         
         do {
-            let movieResource = request.toMovieResource()
-            let resource = try await RadarrMovieAPI.apiV3MoviePost(movieResource: movieResource, apiConfiguration: apiConfig)
-            guard let movie = resource.toDomainModel() else {
-                throw ThriftwoodError.decodingError(.dataCorrupted(.init(codingPath: [], debugDescription: "Failed to map added movie to domain model")))
-            }
-            return movie
+            return try await RadarrMovieAPI.apiV3MoviePost(movieResource: movie, apiConfiguration: apiConfig)
         } catch {
             throw mapError(error)
         }
     }
     
-    func updateMovie(_ movie: Movie) async throws -> Movie {
+    func updateMovie(_ movie: MovieResource) async throws -> MovieResource {
         let apiConfig = try await getAPIConfiguration()
         
+        guard let id = movie.id else {
+            throw ThriftwoodError.validation(message: "Movie ID is required for update")
+        }
+        
         do {
-            let movieResource = movie.toMovieResource()
-            let resource = try await RadarrMovieAPI.apiV3MovieIdPut(
-                id: String(movie.id),
+            return try await RadarrMovieAPI.apiV3MovieIdPut(
+                id: String(id),
                 moveFiles: false,
-                movieResource: movieResource,
+                movieResource: movie,
                 apiConfiguration: apiConfig
             )
-            guard let updatedMovie = resource.toDomainModel() else {
-                throw ThriftwoodError.decodingError(.dataCorrupted(.init(codingPath: [], debugDescription: "Failed to map updated movie to domain model")))
-            }
-            return updatedMovie
         } catch {
             throw mapError(error)
         }
@@ -209,23 +197,21 @@ final class RadarrService: RadarrServiceProtocol, Sendable {
     
     // MARK: - Configuration Resources
     
-    func getQualityProfiles() async throws -> [QualityProfile] {
+    func getQualityProfiles() async throws -> [QualityProfileResource] {
         let apiConfig = try await getAPIConfiguration()
         
         do {
-            let resources = try await RadarrQualityProfileAPI.apiV3QualityprofileGet(apiConfiguration: apiConfig)
-            return resources.compactMap { $0.toDomainModel() }
+            return try await RadarrQualityProfileAPI.apiV3QualityprofileGet(apiConfiguration: apiConfig)
         } catch {
             throw mapError(error)
         }
     }
     
-    func getRootFolders() async throws -> [RootFolder] {
+    func getRootFolders() async throws -> [RootFolderResource] {
         let apiConfig = try await getAPIConfiguration()
         
         do {
-            let resources = try await RadarrRootFolderAPI.apiV3RootfolderGet(apiConfiguration: apiConfig)
-            return resources.compactMap { $0.toDomainModel() }
+            return try await RadarrRootFolderAPI.apiV3RootfolderGet(apiConfiguration: apiConfig)
         } catch {
             throw mapError(error)
         }
@@ -233,15 +219,11 @@ final class RadarrService: RadarrServiceProtocol, Sendable {
     
     // MARK: - System Information
     
-    func getSystemStatus() async throws -> SystemStatus {
+    func getSystemStatus() async throws -> SystemResource {
         let apiConfig = try await getAPIConfiguration()
         
         do {
-            let resource = try await RadarrSystemAPI.apiV3SystemStatusGet(apiConfiguration: apiConfig)
-            guard let status = resource.toDomainModel() else {
-                throw ThriftwoodError.decodingError(.dataCorrupted(.init(codingPath: [], debugDescription: "Failed to map system status to domain model")))
-            }
-            return status
+            return try await RadarrSystemAPI.apiV3SystemStatusGet(apiConfiguration: apiConfig)
         } catch {
             throw mapError(error)
         }

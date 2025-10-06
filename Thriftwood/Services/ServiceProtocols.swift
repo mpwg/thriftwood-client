@@ -36,7 +36,7 @@ import Foundation
 // MARK: - Media Item Protocols
 
 /// Base protocol for media items (movies, TV shows, music)
-protocol MediaItem: Identifiable, Codable {
+protocol MediaItem: Identifiable, Codable, Sendable {
     /// Unique identifier
     var id: String { get }
     
