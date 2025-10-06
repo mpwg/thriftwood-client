@@ -25,6 +25,12 @@ import SwiftData
 import Foundation
 @testable import Thriftwood
 
+// MARK: - Test Error
+
+enum TestError: Error {
+    case setupFailed(String)
+}
+
 @Suite("UserPreferencesService Tests")
 @MainActor
 struct UserPreferencesServiceTests {
@@ -50,7 +56,10 @@ struct UserPreferencesServiceTests {
     /// Creates a real preferences service for integration testing
     private func makeTestPreferencesService() throws -> UserPreferencesService {
         let dataService = try makeTestDataService()
-        return try UserPreferencesService(dataService: dataService as! DataService)
+        guard let concreteDataService = dataService as? DataService else {
+            throw TestError.setupFailed("DataService is not of expected concrete type")
+        }
+        return try UserPreferencesService(dataService: concreteDataService)
     }
     
     // MARK: - Initialization Tests
@@ -411,7 +420,10 @@ struct UserPreferencesServiceTests {
     @Test("Integration: Reload after external changes")
     func integrationReloadAfterExternalChanges() async throws {
         let dataService = try makeTestDataService()
-        let service = try UserPreferencesService(dataService: dataService as! DataService)
+        guard let concreteDataService = dataService as? DataService else {
+            throw TestError.setupFailed("DataService is not of expected concrete type")
+        }
+        let service = try UserPreferencesService(dataService: concreteDataService)
         
         // Change via service
         service.themeAMOLED = true

@@ -91,8 +91,8 @@ final class DataService: DataServiceProtocol {
     func switchToProfile(_ profile: Profile) throws {
         // Disable all profiles
         let allProfiles = try fetchProfiles()
-        for p in allProfiles {
-            p.isEnabled = false
+        for existingProfile in allProfiles {
+            existingProfile.isEnabled = false
         }
         
         // Enable the specified profile
@@ -254,7 +254,7 @@ final class DataService: DataServiceProtocol {
     /// Bootstraps the database with default data on first launch
     func bootstrap() throws {
         // Check if default profile already exists
-        if let _ = try fetchProfile(named: Profile.defaultProfileName) {
+        if try fetchProfile(named: Profile.defaultProfileName) != nil {
             return // Already bootstrapped
         }
         

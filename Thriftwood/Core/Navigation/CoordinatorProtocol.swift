@@ -97,11 +97,9 @@ extension CoordinatorProtocol {
     /// Default implementation for cleaning up child coordinators.
     /// Uses identity comparison (===) to find the specific child coordinator.
     func childDidFinish(_ child: any CoordinatorProtocol) {
-        for (index, coordinator) in childCoordinators.enumerated() {
-            if coordinator === child {
-                childCoordinators.remove(at: index)
-                break
-            }
+        for (index, coordinator) in childCoordinators.enumerated() where coordinator === child {
+            childCoordinators.remove(at: index)
+            break
         }
     }
 }

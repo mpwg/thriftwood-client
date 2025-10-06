@@ -62,8 +62,8 @@ final class MockDataService: DataServiceProtocol {
     }
     
     func switchToProfile(_ profile: Profile) throws {
-        for p in profiles {
-            p.isEnabled = false
+        for existingProfile in profiles {
+            existingProfile.isEnabled = false
         }
         profile.isEnabled = true
         profile.markAsUpdated()

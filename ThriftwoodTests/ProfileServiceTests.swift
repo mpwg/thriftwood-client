@@ -465,7 +465,8 @@ struct ProfileServiceTests {
     func testValidateInvalidImportData() async throws {
         let service = try makeTestService()
         
-        let invalidData = "not valid json".data(using: .utf8)!
+        // Use Data(contentsOf:) pattern preferred by SwiftLint
+        let invalidData = Data("not valid json".utf8)
         
         let validation = try service.validateImportData(invalidData)
         

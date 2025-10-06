@@ -28,11 +28,8 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES"
       codeCoverageEnabled = "YES"
-      onlyGenerateCoverageForSpecifiedTargets = "NO">
-      <TestPlans>
-      </TestPlans>
+      shouldAutocreateTestPlan = "YES">
       <Testables>
          <TestableReference
             skipped = "NO"
@@ -40,7 +37,7 @@
             testExecutionOrdering = "random">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "402888482E904420005376F0"
+               BlueprintIdentifier = "402888472E904420005376F0"
                BuildableName = "ThriftwoodTests.xctest"
                BlueprintName = "ThriftwoodTests"
                ReferencedContainer = "container:Thriftwood.xcodeproj">

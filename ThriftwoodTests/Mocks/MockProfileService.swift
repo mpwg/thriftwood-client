@@ -175,8 +175,8 @@ final class MockProfileService: ProfileServiceProtocol {
         lastSwitchedProfile = profile
         if shouldThrowError { throw errorToThrow }
         
-        for p in profiles {
-            p.isEnabled = false
+        for existingProfile in profiles {
+            existingProfile.isEnabled = false
         }
         profile.isEnabled = true
         profile.markAsUpdated()

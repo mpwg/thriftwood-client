@@ -213,7 +213,6 @@
 /* Begin PBXShellScriptBuildPhase section */
 		A9FE8A5799BE485AB488DBE5 /* Generate Acknowledgements */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
