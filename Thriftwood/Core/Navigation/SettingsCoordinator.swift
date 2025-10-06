@@ -60,13 +60,14 @@ final class SettingsCoordinator: @MainActor CoordinatorProtocol {
             details: "Starting with main settings"
         )
         
-        navigationPath = [.main]
+        // Start with empty path - SettingsView is the root/main view
+        navigationPath = []
         
         AppLogger.navigation.logStackChange(
             action: "set",
             coordinator: "SettingsCoordinator",
-            stackSize: 1,
-            route: "main"
+            stackSize: 0,
+            route: "main (root)"
         )
     }
     

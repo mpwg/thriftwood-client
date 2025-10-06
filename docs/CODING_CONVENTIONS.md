@@ -333,11 +333,42 @@ final class ProfileListViewModel: BaseViewModel {
 final class ProfileCoordinator: Coordinator {
     var path: [ProfileRoute] = []
 
+    func start() {
+        // ⚠️ IMPORTANT: Always initialize with empty path
+        // The root view represents the initial state
+        // See ADR-0010 for details
+        path = []
+    }
+
     func navigate(to route: ProfileRoute) {
         path.append(route)
     }
 }
 ```
+
+#### Coordinator Navigation Pattern
+
+**CRITICAL RULE**: Always initialize `navigationPath` with an empty array in `start()`.
+
+❌ **INCORRECT**:
+
+```swift
+func start() {
+    navigationPath = [.home]  // This creates an unwanted navigation push
+}
+```
+
+✅ **CORRECT**:
+
+```swift
+func start() {
+    navigationPath = []  // Root view represents the initial state
+}
+```
+
+**Why**: The root view in `NavigationStack` IS the initial state. Initializing the path with a route causes that route to be handled as a destination, creating an extra navigation level that users must back out of.
+
+**See**: [ADR-0010: Coordinator Navigation Initialization Pattern](architecture/decisions/0010-coordinator-navigation-initialization.md) for complete details and examples.
 
 ### Dependency Injection
 

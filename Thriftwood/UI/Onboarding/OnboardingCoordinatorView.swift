@@ -54,10 +54,9 @@ struct OnboardingCoordinatorView: View {
     private func destinationView(for route: OnboardingRoute) -> some View {
         switch route {
         case .welcome:
-            OnboardingView(
-                coordinator: coordinator,
-                viewModel: viewModel
-            )
+            // .welcome should not be pushed - it's the root OnboardingView
+            // This case exists only for enum completeness
+            EmptyView()
             
         case .createProfile:
             // Use SettingsCoordinator temporarily for profile creation

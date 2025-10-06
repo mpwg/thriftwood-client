@@ -60,13 +60,14 @@ final class DashboardCoordinator: @MainActor CoordinatorProtocol {
             details: "Starting with home"
         )
         
-        navigationPath = [.home]
+        // Start with empty path - root view represents home
+        navigationPath = []
         
         AppLogger.navigation.logStackChange(
             action: "set",
             coordinator: "DashboardCoordinator",
-            stackSize: 1,
-            route: "home"
+            stackSize: 0,
+            route: "home (root)"
         )
     }
     

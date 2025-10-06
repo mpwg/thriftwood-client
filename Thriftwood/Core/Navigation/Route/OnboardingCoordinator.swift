@@ -64,7 +64,8 @@ final class OnboardingCoordinator: @MainActor CoordinatorProtocol {
     
     func start() {
         AppLogger.navigation.info("OnboardingCoordinator starting")
-        navigationPath = [.welcome]
+        // Start with empty path - OnboardingView (welcome) is the root
+        navigationPath = []
     }
     
     // MARK: - Navigation Methods

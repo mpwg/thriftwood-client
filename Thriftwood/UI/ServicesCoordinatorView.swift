@@ -74,7 +74,9 @@ struct ServicesCoordinatorView: View {
     private func destination(for route: ServicesRoute) -> some View {
         switch route {
         case .list:
-            servicesListView()
+            // .list should not be pushed - it's the root servicesListView
+            // This case exists only for enum completeness
+            EmptyView()
             
         case .radarr:
             let radarrCoordinator = coordinator.getRadarrCoordinator()

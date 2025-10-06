@@ -74,13 +74,14 @@ final class ServicesCoordinator: @MainActor CoordinatorProtocol {
             coordinator: "ServicesCoordinator"
         )
         
-        navigationPath = [.list]
+        // Start with empty path - servicesListView is the root
+        navigationPath = []
         
         AppLogger.navigation.logStackChange(
             action: "set",
             coordinator: "ServicesCoordinator",
-            stackSize: 1,
-            route: "list"
+            stackSize: 0,
+            route: "list (root)"
         )
     }
     

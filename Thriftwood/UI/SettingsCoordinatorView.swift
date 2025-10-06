@@ -45,8 +45,9 @@ struct SettingsCoordinatorView: View {
     private func destinationView(for route: SettingsRoute) -> some View {
         switch route {
         case .main:
-            Text("General Settings")
-                .navigationTitle("General")
+            // .main should not be pushed - it's the root SettingsView
+            // This case exists only for enum completeness
+            EmptyView()
             
         case .profiles:
             ProfileListView(coordinator: coordinator)

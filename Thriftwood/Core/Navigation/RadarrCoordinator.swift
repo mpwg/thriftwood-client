@@ -70,13 +70,14 @@ final class RadarrCoordinator: @MainActor CoordinatorProtocol {
             details: "Starting with movies list"
         )
         
-        navigationPath = [.moviesList]
+        // Start with empty path - moviesListView is the root
+        navigationPath = []
         
         AppLogger.navigation.logStackChange(
             action: "set",
             coordinator: "RadarrCoordinator",
-            stackSize: 1,
-            route: "moviesList"
+            stackSize: 0,
+            route: "moviesList (root)"
         )
     }
     

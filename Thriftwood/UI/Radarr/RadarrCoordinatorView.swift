@@ -58,7 +58,9 @@ struct RadarrCoordinatorView: View {
     private func destination(for route: RadarrRoute) -> some View {
         switch route {
         case .moviesList:
-            moviesListView()
+            // .moviesList should not be pushed - it's the root moviesListView
+            // This case exists only for enum completeness
+            EmptyView()
             
         case .movieDetail(let movieId):
             let viewModel = coordinator.getMovieDetailViewModel(movieId: movieId)

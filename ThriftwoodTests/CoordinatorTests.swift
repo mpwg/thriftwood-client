@@ -212,8 +212,8 @@ struct CoordinatorTests {
         if let servicesCoordinator = coordinator.servicesCoordinator {
             servicesCoordinator.navigate(to: .radarr)
             servicesCoordinator.navigate(to: .serviceConfiguration(serviceId: "test"))
-            // After start() sets [.list] and two navigate() calls append, we have 3 items
-            #expect(servicesCoordinator.navigationPath.count == 3)
+            // After start() sets empty path and two navigate() calls append, we have 2 items
+            #expect(servicesCoordinator.navigationPath.count == 2)
         }
         
         // Tap on services tab again (simulating re-selection)
@@ -232,7 +232,7 @@ struct CoordinatorTests {
         
         coordinator.showServiceDetail(serviceId: "test-service")
         
-        #expect(coordinator.navigationPath.count == 2)
+        #expect(coordinator.navigationPath.count == 1)
         #expect(coordinator.navigationPath.last == .serviceDetail(serviceId: "test-service"))
     }
     
@@ -243,7 +243,7 @@ struct CoordinatorTests {
         
         coordinator.showMediaDetail(mediaId: "test-media", serviceType: "radarr")
         
-        #expect(coordinator.navigationPath.count == 2)
+        #expect(coordinator.navigationPath.count == 1)
         #expect(coordinator.navigationPath.last == .mediaDetail(mediaId: "test-media", serviceType: "radarr"))
     }
     
@@ -253,11 +253,11 @@ struct CoordinatorTests {
         coordinator.start()
         
         coordinator.showServiceDetail(serviceId: "test-service")
-        #expect(coordinator.navigationPath.count == 2)
+        #expect(coordinator.navigationPath.count == 1)
         
         coordinator.pop()
-        #expect(coordinator.navigationPath.count == 1)
-        #expect(coordinator.navigationPath.last == .home)
+        #expect(coordinator.navigationPath.count == 0)
+        #expect(coordinator.navigationPath.isEmpty)
     }
     
     @Test("DashboardCoordinator can pop to root")
@@ -267,7 +267,7 @@ struct CoordinatorTests {
         
         coordinator.showServiceDetail(serviceId: "test-service-1")
         coordinator.showMediaDetail(mediaId: "test-media", serviceType: "radarr")
-        #expect(coordinator.navigationPath.count == 3)
+        #expect(coordinator.navigationPath.count == 2)
         
         coordinator.popToRoot()
         #expect(coordinator.navigationPath.isEmpty)
@@ -287,7 +287,7 @@ struct CoordinatorTests {
         
         coordinator.showAddService()
         
-        #expect(coordinator.navigationPath.count == 2)
+        #expect(coordinator.navigationPath.count == 1)
         #expect(coordinator.navigationPath.last == .addService)
     }
     
@@ -303,7 +303,7 @@ struct CoordinatorTests {
         
         coordinator.showServiceConfiguration(serviceId: "test-service")
         
-        #expect(coordinator.navigationPath.count == 2)
+        #expect(coordinator.navigationPath.count == 1)
         #expect(coordinator.navigationPath.last == .serviceConfiguration(serviceId: "test-service"))
     }
     
@@ -319,7 +319,7 @@ struct CoordinatorTests {
         
         coordinator.showTestConnection(serviceId: "test-service")
         
-        #expect(coordinator.navigationPath.count == 2)
+        #expect(coordinator.navigationPath.count == 1)
         #expect(coordinator.navigationPath.last == .testConnection(serviceId: "test-service"))
     }
     
@@ -332,7 +332,7 @@ struct CoordinatorTests {
         
         coordinator.showProfiles()
         
-        #expect(coordinator.navigationPath.count == 2)
+        #expect(coordinator.navigationPath.count == 1)
         #expect(coordinator.navigationPath.last == .profiles)
     }
     
@@ -343,7 +343,7 @@ struct CoordinatorTests {
         
         coordinator.showAddProfile()
         
-        #expect(coordinator.navigationPath.count == 2)
+        #expect(coordinator.navigationPath.count == 1)
         #expect(coordinator.navigationPath.last == .addProfile)
     }
     
@@ -354,7 +354,7 @@ struct CoordinatorTests {
         
         coordinator.showEditProfile(profileId: "test-profile")
         
-        #expect(coordinator.navigationPath.count == 2)
+        #expect(coordinator.navigationPath.count == 1)
         #expect(coordinator.navigationPath.last == .editProfile(profileId: "test-profile"))
     }
     
@@ -365,7 +365,7 @@ struct CoordinatorTests {
         
         coordinator.showAppearance()
         
-        #expect(coordinator.navigationPath.count == 2)
+        #expect(coordinator.navigationPath.count == 1)
         #expect(coordinator.navigationPath.last == .appearance)
     }
     
