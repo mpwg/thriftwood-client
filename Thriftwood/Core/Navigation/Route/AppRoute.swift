@@ -31,5 +31,6 @@ import Foundation
 enum AppRoute: Hashable, Sendable {
     case onboarding
     case services
+    case radarr
     case settings
 }

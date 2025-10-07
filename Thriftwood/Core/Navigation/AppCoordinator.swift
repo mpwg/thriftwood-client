@@ -185,6 +185,24 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
         )
     }
     
+    /// Navigate to Radarr feature
+    func navigateToRadarr() {
+        AppLogger.navigation.logNavigation(
+            from: "Current",
+            to: "Radarr",
+            coordinator: "AppCoordinator"
+        )
+        
+        navigationPath.append(.radarr)
+        
+        AppLogger.navigation.logStackChange(
+            action: "push",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: "radarr"
+        )
+    }
+    
     /// Navigate to Settings view
     func navigateToSettings() {
         AppLogger.navigation.logNavigation(

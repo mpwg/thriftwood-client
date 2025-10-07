@@ -67,7 +67,6 @@ private struct MainAppNavigationView: View {
     @Bindable var coordinator: AppCoordinator
     @State private var radarrCoordinator: RadarrCoordinator?
     @State private var settingsCoordinator: SettingsCoordinator?
-    @State private var showingRadarr = false
     
     var body: some View {
         NavigationStack(path: $coordinator.navigationPath) {
@@ -81,11 +80,6 @@ private struct MainAppNavigationView: View {
             )
             .navigationDestination(for: AppRoute.self) { route in
                 makeView(for: route)
-            }
-        }
-        .fullScreenCover(isPresented: $showingRadarr) {
-            if let radarrCoordinator = radarrCoordinator {
-                RadarrCoordinatorView(coordinator: radarrCoordinator)
             }
         }
         .onAppear {
@@ -120,12 +114,23 @@ private struct MainAppNavigationView: View {
             ServicesHomeView(
                 onNavigateToRadarr: {
                     AppLogger.navigation.info("Navigating to Radarr")
-                    showingRadarr = true
+                    coordinator.navigateToRadarr()
                 }
             )
             .navigationTitle("Services")
             .withHomeButton {
                 coordinator.popToRoot()
+            }
+        
+        case .radarr:
+            if let radarrCoordinator = radarrCoordinator {
+                RadarrCoordinatorView(coordinator: radarrCoordinator)
+            } else {
+                Text("Loading Radarr...")
+                    .navigationTitle("Radarr")
+                    .withHomeButton {
+                        coordinator.popToRoot()
+                    }
             }
             
         case .settings:
