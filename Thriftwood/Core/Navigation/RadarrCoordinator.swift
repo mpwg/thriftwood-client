@@ -67,26 +67,54 @@ final class RadarrCoordinator: @MainActor CoordinatorProtocol {
         AppLogger.navigation.logCoordinator(
             event: "start",
             coordinator: "RadarrCoordinator",
-            details: "Starting with movies list"
+            details: "Starting with Radarr home"
         )
         
-        // Start with empty path - moviesListView is the root
+        // Start with empty path - home view is the root
         navigationPath = []
         
         AppLogger.navigation.logStackChange(
             action: "set",
             coordinator: "RadarrCoordinator",
             stackSize: 0,
-            route: "moviesList (root)"
+            route: "home (root)"
         )
     }
     
     // MARK: - Navigation Methods
     
+    /// Shows the Radarr home view (pops to root)
+    func showHome() {
+        AppLogger.navigation.logNavigation(
+            from: String(describing: navigationPath.last ?? .home),
+            to: "Home",
+            coordinator: "RadarrCoordinator"
+        )
+        popToRoot()
+    }
+    
+    /// Pops to root (Radarr home view)
+    func popToRoot() {
+        AppLogger.navigation.logNavigation(
+            from: "Current",
+            to: "RadarrHome (root)",
+            coordinator: "RadarrCoordinator"
+        )
+        
+        navigationPath.removeAll()
+        
+        AppLogger.navigation.logStackChange(
+            action: "pop_to_root",
+            coordinator: "RadarrCoordinator",
+            stackSize: navigationPath.count,
+            route: "home (root)"
+        )
+    }
+    
     /// Shows the movies list view
     func showMoviesList() {
         AppLogger.navigation.logNavigation(
-            from: String(describing: navigationPath.last ?? .moviesList),
+            from: String(describing: navigationPath.last ?? .home),
             to: "MoviesList",
             coordinator: "RadarrCoordinator"
         )
@@ -97,7 +125,7 @@ final class RadarrCoordinator: @MainActor CoordinatorProtocol {
     /// - Parameter movieId: The ID of the movie to display
     func showMovieDetail(movieId: Int) {
         AppLogger.navigation.logNavigation(
-            from: String(describing: navigationPath.last ?? .moviesList),
+            from: String(describing: navigationPath.last ?? .home),
             to: "MovieDetail[id:\(movieId)]",
             coordinator: "RadarrCoordinator"
         )
@@ -109,7 +137,7 @@ final class RadarrCoordinator: @MainActor CoordinatorProtocol {
     func showAddMovie(query: String = "") {
         let queryInfo = query.isEmpty ? "" : " with query: '\(query)'"
         AppLogger.navigation.logNavigation(
-            from: String(describing: navigationPath.last ?? .moviesList),
+            from: String(describing: navigationPath.last ?? .home),
             to: "AddMovie\(queryInfo)",
             coordinator: "RadarrCoordinator"
         )
@@ -119,7 +147,7 @@ final class RadarrCoordinator: @MainActor CoordinatorProtocol {
     /// Shows Radarr settings/configuration
     func showSettings() {
         AppLogger.navigation.logNavigation(
-            from: String(describing: navigationPath.last ?? .moviesList),
+            from: String(describing: navigationPath.last ?? .home),
             to: "Settings",
             coordinator: "RadarrCoordinator"
         )
@@ -129,7 +157,7 @@ final class RadarrCoordinator: @MainActor CoordinatorProtocol {
     /// Shows system status view
     func showSystemStatus() {
         AppLogger.navigation.logNavigation(
-            from: String(describing: navigationPath.last ?? .moviesList),
+            from: String(describing: navigationPath.last ?? .home),
             to: "SystemStatus",
             coordinator: "RadarrCoordinator"
         )
@@ -139,7 +167,7 @@ final class RadarrCoordinator: @MainActor CoordinatorProtocol {
     /// Shows queue view
     func showQueue() {
         AppLogger.navigation.logNavigation(
-            from: String(describing: navigationPath.last ?? .moviesList),
+            from: String(describing: navigationPath.last ?? .home),
             to: "Queue",
             coordinator: "RadarrCoordinator"
         )
@@ -149,7 +177,7 @@ final class RadarrCoordinator: @MainActor CoordinatorProtocol {
     /// Shows history view
     func showHistory() {
         AppLogger.navigation.logNavigation(
-            from: String(describing: navigationPath.last ?? .moviesList),
+            from: String(describing: navigationPath.last ?? .home),
             to: "History",
             coordinator: "RadarrCoordinator"
         )
