@@ -218,6 +218,13 @@ struct DeepLinkTests {
     
     // MARK: - TabCoordinator Deep Link Handling Tests
     
+    // MARK: - TabCoordinator Tests (Disabled - Phase 1 removed tabs)
+    
+    // TODO: Phase 2 - Update these tests for new hierarchical navigation structure
+    // These tests were written for the old TabCoordinator which was removed in Phase 1.
+    // They need to be rewritten to test the new AppCoordinator and hierarchical navigation.
+    
+    /*
     @Test("TabCoordinator handles dashboard deep link", .tags(.navigationTag))
     @MainActor
     func testTabCoordinatorHandlesDashboardDeepLink() async {
@@ -299,6 +306,7 @@ struct DeepLinkTests {
         
         #expect(handled == false)
     }
+    */
     
     // MARK: - Round-trip Tests
     
