@@ -282,19 +282,9 @@ final class ProfileService: @unchecked Sendable {
 
 ## Architecture Patterns
 
-### Pure MVVM Structure (ADR-0012)
+### MVVM-C Structure
 
-Thriftwood uses **Pure MVVM with Single NavigationStack** as defined in [ADR-0012](architecture/decisions/0012-single-navigationstack-simple-mvvm.md). This is a simplification from the previous MVVM-C pattern.
-
-**Key Principles**:
-
-- **AppCoordinator**: Sole navigation authority, manages single NavigationStack
-- **ViewModels**: Business logic (created directly by AppCoordinator or views)
-- **Services**: Data access (injected via DI)
-- **Views**: Pure presentation (navigation via callbacks)
-- **No LogicCoordinators**: Eliminated in ADR-0012 for true pure MVVM
-
-See [NAVIGATION_ARCHITECTURE.md](architecture/NAVIGATION_ARCHITECTURE.md) for comprehensive navigation documentation.
+See [ADR-0005: Use MVVM-C Pattern](architecture/decisions/0005-use-mvvm-c-pattern.md)
 
 **Model**: SwiftData models or plain structs
 
@@ -306,27 +296,22 @@ final class Profile {
 }
 ```
 
-**View**: Pure SwiftUI, no business logic, navigation via callbacks
+**View**: Pure SwiftUI, no business logic
 
 ```swift
 @MainActor
 struct ProfileListView: View {
     @State private var viewModel: ProfileListViewModel
-    let onProfileSelected: (Profile) -> Void  // Callback to AppCoordinator
 
     var body: some View {
         List(viewModel.profiles) { profile in
-            Button {
-                onProfileSelected(profile)  // Navigate via callback
-            } label: {
-                Text(profile.name)
-            }
+            Text(profile.name)
         }
     }
 }
 ```
 
-**ViewModel**: Business logic and state (no navigation)
+**ViewModel**: Business logic and state
 
 ```swift
 @MainActor
@@ -334,125 +319,69 @@ struct ProfileListView: View {
 final class ProfileListViewModel: BaseViewModel {
     var profiles: [Profile] = []
 
-    private let profileService: ProfileServiceProtocol
-
-    init(profileService: ProfileServiceProtocol) {
-        self.profileService = profileService
-    }
-
     func loadProfiles() async {
-        // Business logic only - no navigation
-        do {
-            profiles = try await profileService.fetchProfiles()
-        } catch {
-            handleError(error)
-        }
+        // Business logic here
     }
 }
 ```
 
-**AppCoordinator**: Navigation logic (creates ViewModels directly)
+**Coordinator**: Navigation logic
 
 ```swift
 @MainActor
 @Observable
-final class AppCoordinator: CoordinatorProtocol {
-    var navigationPath: [AppRoute] = []
-
-    // Services injected directly (no logic coordinators)
-    private let profileService: ProfileServiceProtocol
-
-    init(profileService: ProfileServiceProtocol) {
-        self.profileService = profileService
-    }
+final class ProfileCoordinator: Coordinator {
+    var path: [ProfileRoute] = []
 
     func start() {
-        // Root view in NavigationStack is the initial state
-        navigationPath = []
+        // ⚠️ IMPORTANT: Always initialize with empty path
+        // The root view represents the initial state
+        // See ADR-0010 for details
+        path = []
     }
 
-    func navigate(to route: AppRoute) {
-        navigationPath.append(route)
-    }
-
-    func view(for route: AppRoute) -> some View {
-        switch route {
-        case .profileList:
-            let viewModel = ProfileListViewModel(profileService: profileService)
-            return ProfileListView(
-                viewModel: viewModel,
-                onProfileSelected: { [weak self] profile in
-                    self?.navigate(to: .profileDetail(profile.id))
-                }
-            )
-        // ... other cases
-        }
+    func navigate(to route: ProfileRoute) {
+        path.append(route)
     }
 }
 ```
 
-#### Navigation Pattern
+#### Coordinator Navigation Pattern
 
-**AppCoordinator manages all navigation**. Views receive navigation callbacks:
+**CRITICAL RULE**: Always initialize `navigationPath` with an empty array in `start()`.
 
-❌ **INCORRECT** (old MVVM-C pattern):
+❌ **INCORRECT**:
 
 ```swift
-struct ProfileListView: View {
-    let coordinator: ProfileCoordinator  // ❌ Feature coordinators eliminated
-
-    Button {
-        coordinator.showProfileDetail(profile.id)  // ❌ Direct coordinator calls removed
-    }
+func start() {
+    navigationPath = [.home]  // This creates an unwanted navigation push
 }
 ```
 
-✅ **CORRECT** (pure MVVM pattern):
+✅ **CORRECT**:
 
 ```swift
-struct ProfileListView: View {
-    let onProfileSelected: (Profile) -> Void  // ✅ Callback to AppCoordinator
-
-    Button {
-        onProfileSelected(profile)  // ✅ Navigate via callback
-    }
+func start() {
+    navigationPath = []  // Root view represents the initial state
 }
 ```
 
-**Why**: AppCoordinator is the sole navigation authority. Views communicate intent via callbacks, not direct coordinator calls.
+**Why**: The root view in `NavigationStack` IS the initial state. Initializing the path with a route causes that route to be handled as a destination, creating an extra navigation level that users must back out of.
 
-**See**: [NAVIGATION_ARCHITECTURE.md](architecture/NAVIGATION_ARCHITECTURE.md) for complete navigation patterns and examples.
-
-#### OnboardingCoordinator - The Exception
-
-`OnboardingCoordinator` is the **only child coordinator** because:
-
-- Separate NavigationStack for multi-step onboarding flow
-- Self-contained route enum (`OnboardingRoute`)
-- Transitions cleanly to main app when complete
-
-All other navigation goes through AppCoordinator's single NavigationStack.
+**See**: [ADR-0010: Coordinator Navigation Initialization Pattern](architecture/decisions/0010-coordinator-navigation-initialization.md) for complete details and examples.
 
 ### Dependency Injection
 
 Use Swinject via `DIContainer`:
 
 ```swift
-// Registration (no logic coordinators)
+// Registration
 container.register(ProfileServiceProtocol.self) { resolver in
     ProfileService(dataService: resolver.resolve(DataService.self)!)
 }.inObjectScope(.container)
 
-// AppCoordinator gets services directly
-container.register(AppCoordinator.self) { resolver in
-    AppCoordinator(
-        profileService: resolver.resolve(ProfileServiceProtocol.self)!,
-        // ... other services
-    )
-}.inObjectScope(.container)
-
 // Resolution
-let appCoordinator = DIContainer.shared.resolve(AppCoordinator.self)
+let service = DIContainer.shared.resolve(ProfileServiceProtocol.self)
 ```
 
 ### Protocol-Based Services

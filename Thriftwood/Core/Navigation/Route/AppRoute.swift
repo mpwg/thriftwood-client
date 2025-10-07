@@ -147,8 +147,7 @@ extension AppRoute: DeepLinkable {
                       let movieId = Int(pathComponents[1]) else { return nil }
                 return .radarrMovieDetail(movieId: movieId)
             case "add":
-                let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-                let query = components?.queryItems?.first(where: { $0.name == "query" })?.value ?? ""
+                let query = url.query ?? ""
                 return .radarrAddMovie(query: query)
             case "settings":
                 return .radarrSettings
@@ -219,11 +218,8 @@ extension AppRoute: DeepLinkable {
         case .radarrMovieDetail(let movieId):
             urlString = "\(base)radarr/movie/\(movieId)"
         case .radarrAddMovie(let query):
-            var components = URLComponents(string: "\(base)radarr/add")
-            if !query.isEmpty {
-                components?.queryItems = [URLQueryItem(name: "query", value: query)]
-            }
-            urlString = components?.url?.absoluteString ?? "\(base)radarr/add"
+            let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+            urlString = "\(base)radarr/add?\(encodedQuery)"
         case .radarrSettings:
             urlString = "\(base)radarr/settings"
         case .radarrSystemStatus:

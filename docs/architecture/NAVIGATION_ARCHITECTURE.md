@@ -1,559 +1,552 @@
-q# Navigation Architecture - Pure MVVM (ADR-0012)
+# Navigation Architecture - Complete Guide
 
-**Version**: 3.0  
+**Version**: 2.0  
 **Last Updated**: October 7, 2025  
-**Status**: Active - Pure MVVM Implementation  
-**Related**: [ADR-0012](decisions/0012-single-navigationstack-simple-mvvm.md)
+**Status**: Active
 
 ## Executive Summary
 
-Thriftwood uses a **single NavigationStack with pure MVVM architecture** as defined in ADR-0012. This is a dramatic simplification from the previous multi-coordinator MVVM-C approach.
+Thriftwood uses a **hierarchical coordinator pattern** with SwiftUI's `NavigationStack`. Each coordinator manages its own navigation state and has **exactly one NavigationStack** at the coordinator view level.
 
 ### The Golden Rule
 
-> **AppCoordinator manages ONE NavigationStack for the entire app. All navigation goes through AppCoordinator methods. ViewModels are created directly (no logic coordinators).**
-
-## What Changed (ADR-0012 Refactoring)
-
-### Before: Multi-Coordinator MVVM-C
-
-- Multiple NavigationStacks (AppCoordinator, TabCoordinator, per-feature coordinators)
-- Separate route enums (AppRoute, ServicesRoute, SettingsRoute, RadarrRoute)
-- Logic coordinators (RadarrLogicCoordinator, SettingsLogicCoordinator)
-- Complex coordinator hierarchy
-
-### After: Single NavigationStack Pure MVVM
-
-- ✅ **One** NavigationStack in MainAppNavigationView
-- ✅ **One** unified AppRoute enum (19 routes)
-- ✅ **One** navigation authority (AppCoordinator)
-- ✅ **One** child coordinator (OnboardingCoordinator for first-run only)
-- ✅ **No** logic coordinators - ViewModels created directly
-- ✅ **~800 lines** of code removed
+> **Each coordinator view creates ONE NavigationStack bound to its coordinator's path. Content views NEVER create NavigationStacks.**
 
 ## Architecture Overview
 
-### Pure MVVM Navigation Flow
+### High-Level Navigation Hierarchy
 
+```mermaid
+graph TD
+    A[ContentView] --> B[AppCoordinator]
+    B --> C[MainAppNavigationView<br/>NavigationStack for AppRoute]
+
+    C --> D[AppHomeView<br/>Content Only]
+    C --> E[ServicesHomeView<br/>Content Only]
+    C --> F[RadarrCoordinatorView<br/>NavigationStack for RadarrRoute]
+    C --> G[SettingsCoordinatorView<br/>NavigationStack for SettingsRoute]
+
+    F --> H[RadarrHomeView<br/>Content Only]
+    F --> I[MoviesListView<br/>Content Only]
+    F --> J[MovieDetailView<br/>Content Only]
+
+    G --> K[SettingsView<br/>Content Only]
+    G --> L[ProfileListView<br/>Content Only]
+    G --> M[AddProfileView<br/>Content Only]
+
+    style C fill:#e1f5ff,stroke:#0066cc,stroke-width:3px
+    style F fill:#e1f5ff,stroke:#0066cc,stroke-width:3px
+    style G fill:#e1f5ff,stroke:#0066cc,stroke-width:3px
+    style D fill:#fff4e1,stroke:#ff9800
+    style E fill:#fff4e1,stroke:#ff9800
+    style H fill:#fff4e1,stroke:#ff9800
+    style I fill:#fff4e1,stroke:#ff9800
+    style J fill:#fff4e1,stroke:#ff9800
+    style K fill:#fff4e1,stroke:#ff9800
+    style L fill:#fff4e1,stroke:#ff9800
+    style M fill:#fff4e1,stroke:#ff9800
 ```
-ContentView
-├─> OnboardingCoordinatorView (if onboarding not complete)
-│   └─> Own NavigationStack for onboarding flow
-│
-└─> MainAppNavigationView (if onboarding complete)
-    └─> Single NavigationStack(path: $appCoordinator.navigationPath)
-        ├─> AppHomeView
-        ├─> ServicesHomeView
-        ├─> SettingsView
-        ├─> ProfileListView
-        ├─> RadarrHomeView
-        ├─> MoviesListView
-        ├─> MovieDetailView
-        └─> ... all other views (19 total routes)
-```
 
-**Key Components:**
+**Legend:**
 
-1. **AppCoordinator** - Manages navigation for entire app
-2. **AppRoute enum** - All routes in one enum
-3. **ViewModels** - Business logic (created directly)
-4. **Services** - Data access (injected via DI)
-5. **Views** - Display only (navigation via callbacks)
+- 🔵 **Blue boxes** = Views WITH NavigationStack (coordinator views only)
+- 🟡 **Yellow boxes** = Views WITHOUT NavigationStack (content views)
 
-## Core Components
+## Where NavigationStack MUST Be
 
-### 1. AppCoordinator - Sole Navigation Authority
+### ✅ Rule: NavigationStack at Coordinator View Level Only
 
-**File**: `Thriftwood/Core/Navigation/AppCoordinator.swift`
+Each coordinator view creates **exactly one** NavigationStack bound to its coordinator's `navigationPath`:
 
 ```swift
-@Observable
-@MainActor
-final class AppCoordinator: CoordinatorProtocol {
-    // MARK: - Properties
+// ✅ CORRECT: SettingsCoordinatorView.swift
+struct SettingsCoordinatorView: View {
+    @Bindable var coordinator: SettingsCoordinator
 
-    /// Single navigation path for entire app (unified AppRoute enum)
-    var navigationPath: [AppRoute] = []
-
-    /// Services injected directly (no logic coordinators)
-    private let preferencesService: any UserPreferencesServiceProtocol
-    private let profileService: any ProfileServiceProtocol
-    private let radarrService: any RadarrServiceProtocol
-    private let dataService: any DataServiceProtocol
-
-    /// Only child coordinator (for onboarding flow)
-    private(set) var activeCoordinator: (any CoordinatorProtocol)?
-
-    // MARK: - Navigation Methods
-
-    /// Navigate to a route
-    func navigate(to route: AppRoute) {
-        navigationPath.append(route)
+    var body: some View {
+        NavigationStack(path: $coordinator.navigationPath) {  // ✅ NavigationStack HERE
+            SettingsView(coordinator: coordinator)
+                .navigationDestination(for: SettingsRoute.self) { route in
+                    destinationView(for: route)
+                }
+        }
     }
 
-    /// Go back one screen
-    func navigateBack() {
-        guard !navigationPath.isEmpty else { return }
-        navigationPath.removeLast()
-    }
-
-    /// Return to root (AppHomeView)
-    func popToRoot() {
-        navigationPath.removeAll()
-    }
-
-    // MARK: - View Factory
-
-    /// Creates all views with their ViewModels
     @ViewBuilder
-    func view(for route: AppRoute) -> some View {
+    private func destinationView(for route: SettingsRoute) -> some View {
         switch route {
-        case .onboarding:
-            EmptyView()  // Handled via activeCoordinator
-
-        case .services:
-            ServicesHomeView(...)
-
-        case .radarrHome:
-            RadarrHomeView(...)
-
-        case .radarrMoviesList:
-            MoviesListView(...)
-                .environment(MoviesListViewModel(radarrService: radarrService))
-
-        case .radarrMovieDetail(let movieId):
-            MovieDetailView(...)
-                .environment(MovieDetailViewModel(movieId: movieId, radarrService: radarrService))
-
-        // ... other routes (19 total)
+        case .main:
+            EmptyView()
+        case .profiles:
+            ProfileListView(coordinator: coordinator)  // ✅ No NavigationStack
+        case .addProfile:
+            AddProfileView(coordinator: coordinator)   // ✅ No NavigationStack
+        // ... other routes
         }
     }
 }
 ```
 
-**Key Points:**
+### ✅ NavigationStack Locations
 
-- Creates ViewModels directly (no logic coordinators)
-- Injects services from DI container
-- All navigation methods centralized
-- Only child coordinator is OnboardingCoordinator
+| View Type            | Has NavigationStack? | Bound To                        | Example                                              |
+| -------------------- | -------------------- | ------------------------------- | ---------------------------------------------------- |
+| **Coordinator View** | ✅ YES               | `coordinator.navigationPath`    | `SettingsCoordinatorView`, `RadarrCoordinatorView`   |
+| **Content View**     | ❌ NO                | N/A                             | `SettingsView`, `ProfileListView`, `MovieDetailView` |
+| **Modal/Sheet**      | ✅ YES (optional)    | Own state or coordinator path   | `AddProfileView` in sheet                            |
+| **Root App View**    | ✅ YES               | `AppCoordinator.navigationPath` | `MainAppNavigationView`                              |
 
-### 2. AppRoute - Unified Route Enum
+## Where NavigationStack MUST NOT Be
 
-**File**: `Thriftwood/Core/Navigation/Route/AppRoute.swift`
+### ❌ Rule: Content Views Never Create NavigationStack
+
+Content views pushed via `navigationDestination` **must not** create their own NavigationStack:
 
 ```swift
-/// All routes in the application
-enum AppRoute: Hashable {
-    // Onboarding
-    case onboarding
+// ❌ WRONG: SettingsView.swift (content view)
+struct SettingsView: View {
+    @State private var coordinator: SettingsCoordinator
 
-    // Services
-    case services
+    var body: some View {
+        NavigationStack {  // ❌ WRONG! This creates nested NavigationStacks
+            List {
+                Button("Profiles") {
+                    coordinator.navigate(to: .profiles)
+                }
+            }
+        }
+    }
+}
 
-    // Radarr (movies)
-    case radarrHome
-    case radarrMoviesList
-    case radarrMovieDetail(movieId: Int)
-    case radarrAddMovie
-    case radarrQueue
-    case radarrHistory
-    case radarrSystemStatus
-    case radarrSettings
+// ✅ CORRECT: SettingsView.swift (content view)
+struct SettingsView: View {
+    @State private var coordinator: SettingsCoordinator
 
-    // Settings
-    case settingsMain
-    case settingsProfiles
-    case settingsAddProfile
-    case settingsEditProfile(profileId: String)
-    case settingsAppearance
-    case settingsNotifications
-    case settingsAbout
-    case settingsLogs
+    var body: some View {
+        List {  // ✅ No NavigationStack - just content
+            Button("Profiles") {
+                coordinator.navigate(to: .profiles)
+            }
+        }
+        .navigationTitle("Settings")  // ✅ Navigation modifiers OK
+        .toolbar {
+            // ✅ Toolbar OK
+        }
+    }
 }
 ```
 
-**19 total routes** - all navigation in one enum.
+### ❌ Prohibited NavigationStack Locations
 
-### 3. MainAppNavigationView - Single NavigationStack
+| Location                       | Allowed? | Reason                                        |
+| ------------------------------ | -------- | --------------------------------------------- |
+| Inside `navigationDestination` | ❌ NO    | Creates nested stacks with incompatible types |
+| Content views (pushed screens) | ❌ NO    | Already inside coordinator's NavigationStack  |
+| ViewModels                     | ❌ NO    | ViewModels don't have views                   |
+| Destination switch cases       | ❌ NO    | Already in navigation context                 |
 
-**File**: `Thriftwood/ContentView.swift`
+## Navigation Flow Diagrams
+
+### Correct Navigation Flow: Settings Example
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant AppNav as MainAppNavigationView<br/>(AppCoordinator.navigationPath)
+    participant SettingsCoord as SettingsCoordinatorView<br/>(SettingsCoordinator.navigationPath)
+    participant SettingsView as SettingsView<br/>(Content)
+    participant ProfileList as ProfileListView<br/>(Content)
+
+    User->>AppNav: Tap "Settings"
+    AppNav->>AppNav: Append .settings to AppRoute path
+    AppNav->>SettingsCoord: Push SettingsCoordinatorView
+
+    Note over SettingsCoord: Creates own NavigationStack<br/>bound to SettingsCoordinator.navigationPath
+
+    SettingsCoord->>SettingsView: Root view (no push)
+
+    User->>SettingsView: Tap "Profiles"
+    SettingsView->>SettingsCoord: coordinator.navigate(to: .profiles)
+    SettingsCoord->>SettingsCoord: Append .profiles to path
+    SettingsCoord->>ProfileList: Push via navigationDestination
+
+    Note over ProfileList: Content view only<br/>No NavigationStack
+
+    User->>ProfileList: Tap Back
+    ProfileList->>SettingsCoord: dismiss() via Environment
+    SettingsCoord->>SettingsCoord: Remove .profiles from path
+    SettingsCoord->>SettingsView: Pop to SettingsView
+```
+
+### Incorrect Navigation Flow: What Happens with Nested Stacks
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant AppNav as MainAppNavigationView<br/>(NavigationStack A: AppRoute)
+    participant SettingsView as ❌ SettingsView with NavigationStack<br/>(NavigationStack B: SettingsRoute)
+
+    User->>AppNav: Tap "Settings"
+    AppNav->>AppNav: Append .settings to path
+    AppNav->>SettingsView: Push SettingsView
+
+    Note over SettingsView: ❌ Creates NESTED NavigationStack<br/>with different route type
+
+    User->>SettingsView: Tap "Profiles"
+    SettingsView->>SettingsView: Try to append .profiles
+
+    Note over SettingsView: ❌ ERROR: "Only root-level navigation<br/>destinations are effective for a<br/>navigation stack with a<br/>homogeneous path"
+
+    SettingsView->>User: Navigation fails<br/>Button does nothing
+```
+
+## Implementation Patterns
+
+### Pattern 1: App-Level Coordinator (Root)
 
 ```swift
+// ContentView.swift
 struct MainAppNavigationView: View {
     @Bindable var coordinator: AppCoordinator
 
     var body: some View {
-        NavigationStack(path: $coordinator.navigationPath) {  // ✅ ONLY NavigationStack
+        NavigationStack(path: $coordinator.navigationPath) {  // ✅ Root NavigationStack
             AppHomeView(
-                onServicesSelected: {
-                    coordinator.navigate(to: .services)
-                },
-                onSettingsSelected: {
-                    coordinator.navigate(to: .settingsMain)
+                onNavigateToSettings: {
+                    coordinator.navigateToSettings()
                 }
             )
             .navigationDestination(for: AppRoute.self) { route in
-                coordinator.view(for: route)
-                    .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button("Home", systemImage: "house") {
-                                coordinator.popToRoot()
-                            }
-                        }
-                    }
+                makeView(for: route)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func makeView(for route: AppRoute) -> some View {
+        switch route {
+        case .settings:
+            // ✅ Push coordinator view which has its own NavigationStack
+            SettingsCoordinatorView(coordinator: settingsCoordinator)
+
+        case .radarr:
+            // ✅ Push coordinator view which has its own NavigationStack
+            RadarrCoordinatorView(coordinator: radarrCoordinator)
+
+        // ... other routes
         }
     }
 }
 ```
 
-**Key Points:**
+### Pattern 2: Feature Coordinator View
 
-- Only one NavigationStack for entire app
-- Bound to `coordinator.navigationPath`
-- All routes handled by `coordinator.view(for:)`
-- Home button in toolbar for easy navigation to root
+```swift
+// RadarrCoordinatorView.swift
+struct RadarrCoordinatorView: View {
+    @Bindable var coordinator: RadarrCoordinator
 
-## Layer Separation (Pure MVVM)
+    var body: some View {
+        NavigationStack(path: $coordinator.navigationPath) {  // ✅ Feature NavigationStack
+            RadarrHomeView(
+                onNavigateToMovies: {
+                    coordinator.showMoviesList()
+                }
+            )
+            .navigationDestination(for: RadarrRoute.self) { route in
+                destination(for: route)
+            }
+        }
+    }
 
-| Layer              | Responsibility  | Creates            | Example                            |
-| ------------------ | --------------- | ------------------ | ---------------------------------- |
-| **AppCoordinator** | Navigation only | Views & ViewModels | `navigate(to: .radarrMoviesList)`  |
-| **ViewModels**     | Business logic  | Nothing            | `MoviesListViewModel.loadMovies()` |
-| **Services**       | Data access     | Models             | `RadarrService.getMovies()`        |
-| **Views**          | Display         | Nothing            | `MoviesListView` renders data      |
+    @ViewBuilder
+    private func destination(for route: RadarrRoute) -> some View {
+        switch route {
+        case .home:
+            EmptyView()  // Root view, not pushed
 
-**Eliminated:** Logic coordinators (were just ViewModel factories)
+        case .moviesList:
+            MoviesListView(coordinator: coordinator)  // ✅ Content only
 
-## Navigation Patterns
+        case .movieDetail(let id):
+            MovieDetailView(movieId: id, coordinator: coordinator)  // ✅ Content only
+        }
+    }
+}
+```
 
-### Pattern 1: Simple Navigation
-
-View calls AppCoordinator method via callback:
+### Pattern 3: Content View (No Navigation Stack)
 
 ```swift
 // MoviesListView.swift
 struct MoviesListView: View {
-    let onMovieSelected: (Int) -> Void  // Callback from AppCoordinator
-    let onAddMovie: () -> Void
-    @Environment(MoviesListViewModel.self) private var viewModel
+    let coordinator: RadarrCoordinator
+    @Environment(\.dismiss) private var dismiss
+    @State private var viewModel: MoviesListViewModel
+
+    init(coordinator: RadarrCoordinator) {
+        self.coordinator = coordinator
+        self.viewModel = MoviesListViewModel(
+            service: DIContainer.shared.resolve((any RadarrServiceProtocol).self)
+        )
+    }
 
     var body: some View {
         List(viewModel.movies) { movie in
             Button {
-                onMovieSelected(movie.id)  // ✅ Navigate via callback
+                coordinator.showMovieDetail(movieId: movie.id)  // ✅ Coordinator handles navigation
             } label: {
                 MovieRowView(movie: movie)
             }
         }
-        .toolbar {
-            Button("Add", systemImage: "plus") {
-                onAddMovie()  // ✅ Navigate via callback
+        .navigationTitle("Movies")  // ✅ Navigation modifiers OK
+        .toolbar {  // ✅ Toolbar OK
+            ToolbarItem(placement: .primaryAction) {
+                Button("Add") {
+                    coordinator.showAddMovie()
+                }
             }
         }
-    }
-}
-
-// AppCoordinator creates view with callbacks
-case .radarrMoviesList:
-    MoviesListView(
-        onMovieSelected: { movieId in
-            navigate(to: .radarrMovieDetail(movieId: movieId))
-        },
-        onAddMovie: {
-            navigate(to: .radarrAddMovie)
+        .task {
+            await viewModel.loadMovies()
         }
-    )
-    .environment(MoviesListViewModel(radarrService: radarrService))
-```
-
-### Pattern 2: ViewModel with Navigation Callback
-
-ViewModel triggers navigation via callback:
-
-```swift
-// AddMovieViewModel.swift
-@Observable
-final class AddMovieViewModel {
-    func addMovie(_ movie: Movie) async throws {
-        try await radarrService.addMovie(movie)
-        // ViewModel doesn't navigate - it calls back
-        onMovieAdded?(movie.id)
     }
-
-    var onMovieAdded: ((Int) -> Void)?  // Set by AppCoordinator
 }
-
-// AppCoordinator creates view
-case .radarrAddMovie:
-    let viewModel = AddMovieViewModel(radarrService: radarrService)
-    viewModel.onMovieAdded = { movieId in
-        navigate(to: .radarrMovieDetail(movieId: movieId))
-    }
-    return AddMovieView(viewModel: viewModel)
 ```
 
-### Pattern 3: Back Navigation
-
-Views call `navigateBack()` or `popToRoot()`:
+### Pattern 4: Modal/Sheet with Navigation
 
 ```swift
-// MovieDetailView.swift
-struct MovieDetailView: View {
-    let onDelete: () -> Void  // Callback from AppCoordinator
+// ProfileListView.swift
+struct ProfileListView: View {
+    @State private var showAddProfile = false
 
     var body: some View {
-        // ... content
-        .toolbar {
-            Button("Delete", role: .destructive) {
-                Task {
-                    await viewModel.deleteMovie()
-                    onDelete()  // ✅ Navigate back via callback
-                }
+        List {
+            // ... list content
+        }
+        .sheet(isPresented: $showAddProfile) {
+            NavigationStack {  // ✅ OK: New presentation context
+                AddProfileView(
+                    onSave: { profile in
+                        // Handle save
+                        showAddProfile = false
+                    }
+                )
+            }
+        }
+    }
+}
+```
+
+## Common Errors and Solutions
+
+### Error 1: "Only root-level navigation destinations..."
+
+**Symptom**: Navigation buttons do nothing, error in console
+
+**Console Output**:
+
+```text
+Only root-level navigation destinations are effective for a navigation stack with a homogeneous path.
+cannot add handler to 4 from 1 - dropping
+```
+
+**Cause**: Content view creates NavigationStack when it's already inside one
+
+**Solution**: Remove NavigationStack from content view
+
+```swift
+// ❌ Before (WRONG)
+struct SettingsView: View {
+    var body: some View {
+        NavigationStack {  // ❌ Remove this
+            List {
+                // content
             }
         }
     }
 }
 
-// AppCoordinator
-case .radarrMovieDetail(let movieId):
-    MovieDetailView(
-        onDelete: {
-            navigateBack()  // Returns to previous screen
+// ✅ After (CORRECT)
+struct SettingsView: View {
+    var body: some View {
+        List {  // ✅ Just content
+            // content
         }
-    )
-    .environment(MovieDetailViewModel(movieId: movieId, radarrService: radarrService))
-```
-
-## Dependency Injection
-
-### Service Registration
-
-**File**: `Thriftwood/Core/DI/DIContainer.swift`
-
-```swift
-private func registerCoordinators() {
-    // AppCoordinator gets services directly (no logic coordinators)
-    container.register(AppCoordinator.self) { resolver in
-        AppCoordinator(
-            preferencesService: resolver.resolve(UserPreferencesServiceProtocol.self)!,
-            profileService: resolver.resolve(ProfileServiceProtocol.self)!,
-            radarrService: resolver.resolve(RadarrServiceProtocol.self)!,
-            dataService: resolver.resolve(DataServiceProtocol.self)!
-        )
+        .navigationTitle("Settings")
     }
-    .inObjectScope(.container)  // Singleton
 }
 ```
 
-### ViewModel Creation
+### Error 2: Back button not working
 
-ViewModels are created directly by:
+**Cause**: Multiple NavigationStacks interfering with each other
 
-1. **Views** (for simple cases)
-2. **AppCoordinator** (when navigation callbacks needed)
+**Solution**: Ensure only coordinator view has NavigationStack
+
+### Error 3: Navigation path not updating
+
+**Cause**: NavigationStack not bound to coordinator's path
+
+**Solution**: Use `@Bindable` and bind path correctly
 
 ```swift
-// Option 1: View creates ViewModel
-struct MoviesListView: View {
-    @State private var viewModel: MoviesListViewModel
+// ❌ Wrong
+struct MyCoordinatorView: View {
+    var coordinator: MyCoordinator  // ❌ Not @Bindable
 
-    init(...) {
-        self.viewModel = MoviesListViewModel(
-            radarrService: DIContainer.shared.resolve(RadarrServiceProtocol.self)!
-        )
+    var body: some View {
+        NavigationStack {  // ❌ Not bound to path
+            // ...
+        }
     }
 }
 
-// Option 2: AppCoordinator injects via .environment()
-case .radarrMoviesList:
-    MoviesListView(...)
-        .environment(MoviesListViewModel(radarrService: radarrService))
-```
+// ✅ Correct
+struct MyCoordinatorView: View {
+    @Bindable var coordinator: MyCoordinator  // ✅ @Bindable
 
-## Special Cases
-
-### Onboarding Flow
-
-OnboardingCoordinator is the **only child coordinator**:
-
-```swift
-// AppCoordinator.swift
-func start() {
-    if !preferencesService.onboardingCompleted {
-        showOnboarding()  // Creates OnboardingCoordinator
-    }
-}
-
-private func showOnboarding() {
-    let onboardingCoordinator = OnboardingCoordinator()
-    onboardingCoordinator.parent = self
-    onboardingCoordinator.onComplete = { [weak self] in
-        self?.completeOnboarding()
-    }
-    childCoordinators.append(onboardingCoordinator)
-    activeCoordinator = onboardingCoordinator
-    onboardingCoordinator.start()
-}
-```
-
-**Why OnboardingCoordinator exists:**
-
-- Separate navigation stack for multi-step onboarding
-- Cleanly transitions to main app when complete
-- Self-contained flow with own route enum
-
-### Sheets and Modals
-
-Sheets can use their own local navigation if needed:
-
-```swift
-.sheet(isPresented: $showAddProfile) {
-    NavigationStack {  // ✅ Local NavigationStack for sheet
-        AddProfileView(...)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { showAddProfile = false }
-                }
-            }
+    var body: some View {
+        NavigationStack(path: $coordinator.navigationPath) {  // ✅ Bound
+            // ...
+        }
     }
 }
 ```
 
 ## Testing Navigation
 
-### AppCoordinator Tests
-
-**File**: `ThriftwoodTests/CoordinatorTests.swift`
+### Test Coordinator Navigation Methods
 
 ```swift
-@Test("AppCoordinator initializes correctly")
-func testAppCoordinatorInitialization() async {
-    let coordinator = AppCoordinator(...)
+@Test("Navigate to profiles updates path")
+@MainActor
+func navigateToProfiles() {
+    let coordinator = SettingsCoordinator()
+    coordinator.start()
 
-    #expect(coordinator.navigationPath.isEmpty)
-    #expect(coordinator.childCoordinators.isEmpty)
-    #expect(coordinator.activeCoordinator == nil)
-}
+    #expect(coordinator.navigationPath.count == 0)
 
-@Test("AppCoordinator navigates to route")
-func testAppCoordinatorNavigation() async {
-    let coordinator = AppCoordinator(...)
-
-    coordinator.navigate(to: .radarrMoviesList)
+    coordinator.navigate(to: .profiles)
 
     #expect(coordinator.navigationPath.count == 1)
-    #expect(coordinator.navigationPath.last == .radarrMoviesList)
+    #expect(coordinator.navigationPath.last == .profiles)
+}
+
+@Test("Pop removes last route")
+@MainActor
+func popNavigation() {
+    let coordinator = SettingsCoordinator()
+    coordinator.start()
+    coordinator.navigate(to: .profiles)
+    coordinator.navigate(to: .addProfile)
+
+    #expect(coordinator.navigationPath.count == 2)
+
+    coordinator.pop()
+
+    #expect(coordinator.navigationPath.count == 1)
+    #expect(coordinator.navigationPath.last == .profiles)
 }
 ```
 
-## Migration Guide
+### Manual Testing Checklist
 
-### From Multi-Coordinator to Single NavigationStack
+- [ ] Navigate from home to settings
+- [ ] Tap each settings button (Profiles, Appearance, etc.)
+- [ ] Verify screens appear
+- [ ] Use back button to return
+- [ ] Navigate deep (3+ levels)
+- [ ] Pop to root works
+- [ ] Check for console errors
+- [ ] Test on both macOS and iOS
 
-If you're working on old code, here's how to migrate:
+## NavigationStack Decision Tree
 
-**1. Remove coordinator references in views:**
+```mermaid
+flowchart TD
+    Start[Need to add NavigationStack?]
+    Start --> Q1{Is this a<br/>Coordinator View?}
 
-```swift
-// OLD (MVVM-C)
-struct MoviesListView: View {
-    let coordinator: RadarrCoordinator
+    Q1 -->|Yes| Q2{Does it manage<br/>navigation state?}
+    Q2 -->|Yes| AddStack[✅ ADD NavigationStack<br/>bound to coordinator.navigationPath]
+    Q2 -->|No| NoStack1[❌ NO NavigationStack]
 
-    var body: some View {
-        List {
-            ForEach(movies) { movie in
-                Button { coordinator.showMovieDetail(movie.id) }
-            }
-        }
-    }
-}
+    Q1 -->|No| Q3{Is this a<br/>Content View?}
+    Q3 -->|Yes| Q4{Is it shown<br/>in a sheet/modal?}
+    Q4 -->|Yes| Q5{Does modal<br/>need navigation?}
+    Q5 -->|Yes| AddStack
+    Q5 -->|No| NoStack2[❌ NO NavigationStack]
+    Q4 -->|No| NoStack3[❌ NO NavigationStack<br/>Already in parent's stack]
 
-// NEW (Pure MVVM)
-struct MoviesListView: View {
-    let onMovieSelected: (Int) -> Void  // Callback
+    Q3 -->|No| Q6{Is this the<br/>root ContentView?}
+    Q6 -->|Yes| AddStack
+    Q6 -->|No| NoStack4[❌ NO NavigationStack]
 
-    var body: some View {
-        List {
-            ForEach(movies) { movie in
-                Button { onMovieSelected(movie.id) }  // ✅ Use callback
-            }
-        }
-    }
-}
+    style AddStack fill:#c8e6c9,stroke:#4caf50,stroke-width:3px
+    style NoStack1 fill:#ffcdd2,stroke:#f44336,stroke-width:2px
+    style NoStack2 fill:#ffcdd2,stroke:#f44336,stroke-width:2px
+    style NoStack3 fill:#ffcdd2,stroke:#f44336,stroke-width:2px
+    style NoStack4 fill:#ffcdd2,stroke:#f44336,stroke-width:2px
 ```
 
-**2. Update AppCoordinator view factory:**
+## Reference Implementation
 
-```swift
-// Add new route to AppRoute enum
-case .radarrMoviesList
+### Current Thriftwood Coordinators
 
-// Add case in AppCoordinator.view(for:)
-case .radarrMoviesList:
-    MoviesListView(
-        onMovieSelected: { movieId in
-            navigate(to: .radarrMovieDetail(movieId: movieId))
-        }
-    )
-    .environment(MoviesListViewModel(radarrService: radarrService))
-```
+| Coordinator             | Has NavigationStack?              | Route Type        | Notes            |
+| ----------------------- | --------------------------------- | ----------------- | ---------------- |
+| `AppCoordinator`        | ✅ YES (in MainAppNavigationView) | `AppRoute`        | Root coordinator |
+| `OnboardingCoordinator` | ✅ YES                            | `OnboardingRoute` | Separate flow    |
+| `RadarrCoordinator`     | ✅ YES                            | `RadarrRoute`     | Feature module   |
+| `SettingsCoordinator`   | ✅ YES                            | `SettingsRoute`   | Feature module   |
 
-**3. Remove logic coordinators:**
+### Current Content Views (No NavigationStack)
 
-Logic coordinators (RadarrLogicCoordinator, etc.) are **obsolete**. Delete them and inject services directly.
+- `AppHomeView`
+- `ServicesHomeView`
+- `SettingsView`
+- `ProfileListView`
+- `AddProfileView`
+- `RadarrHomeView`
+- `MoviesListView`
+- `MovieDetailView`
+- All other feature screens
 
-## Best Practices
+## Additional Resources
 
-### ✅ DO
+### Related Documentation
 
-- Create ViewModels directly (no coordinator factories)
-- Use callbacks for navigation from views
-- Keep AppCoordinator focused on navigation only
-- Use unified AppRoute enum for all routes
-- Inject services via DI container
+- [NAVIGATION_QUICK_REFERENCE.md](./NAVIGATION_QUICK_REFERENCE.md) - Quick lookup for common patterns
+- [ADR-0001: Single NavigationStack Per Coordinator](./decisions/0001-single-navigationstack-per-coordinator.md) - Architecture decision
+- [NAVIGATION_TRACING.md](../NAVIGATION_TRACING.md) - Debugging navigation issues
 
-### ❌ DON'T
+### Apple Documentation
 
-- Create logic coordinators (ViewModels handle logic)
-- Create child coordinators (except OnboardingCoordinator)
-- Create multiple NavigationStacks (only MainAppNavigationView has one)
-- Put business logic in AppCoordinator (use ViewModels)
-- Pass coordinators to views (use callbacks)
+- [NavigationStack](https://developer.apple.com/documentation/swiftui/navigationstack)
+- [NavigationPath](https://developer.apple.com/documentation/swiftui/navigationpath)
+- [navigationDestination(for:destination:)](<https://developer.apple.com/documentation/swiftui/view/navigationdestination(for:destination:)>)
 
-## Troubleshooting
+## Quick Reference Card
 
-### Navigation not working?
+### The Four Rules
 
-1. Check route is in AppRoute enum
-2. Verify AppCoordinator.view(for:) has case for route
-3. Ensure navigationDestination is bound to AppRoute
-4. Check callback is calling coordinator.navigate()
+1. **✅ One NavigationStack per coordinator view**
+2. **❌ Content views never create NavigationStack**
+3. **✅ Bind NavigationStack to coordinator.navigationPath**
+4. **✅ Use @Bindable for two-way binding**
 
-### ViewModel not updating?
+### When in Doubt
 
-1. Verify ViewModel is @Observable
-2. Check view uses @Environment(ViewModel.self)
-3. Ensure service is injected via DI
+Ask yourself:
 
-### Build errors after refactoring?
+1. Is this a coordinator view that manages navigation state? → **Add NavigationStack**
+2. Is this pushed via navigationDestination? → **No NavigationStack**
+3. Is this a modal/sheet that needs internal navigation? → **Add NavigationStack**
+4. Is this any other content view? → **No NavigationStack**
 
-1. Delete obsolete coordinator files
-2. Remove logic coordinator references
-3. Update tests to use new AppCoordinator signature
-4. Clean build folder
+---
 
-## Summary
-
-**Pure MVVM (ADR-0012) achieves:**
-
-- ✅ **Single NavigationStack** - One path for entire app
-- ✅ **Unified routing** - AppRoute enum (19 routes)
-- ✅ **Simplified architecture** - No logic coordinators
-- ✅ **Direct ViewModel creation** - No factory pattern needed
-- ✅ **~800 lines removed** - Massive code reduction
-- ✅ **Easier testing** - Simple coordinator tests
-- ✅ **Better maintainability** - Clear separation of concerns
-
-Navigation is now centralized, simple, and follows pure MVVM principles.
+**Last Fix**: October 7, 2025 - Fixed Settings and Radarr navigation by adding NavigationStack to coordinator views  
+**Status**: ✅ All navigation working correctly
