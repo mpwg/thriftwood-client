@@ -1,20 +1,3 @@
-# ==============================================
-# Thriftwood CI/CD Pipeline
-# Goal: Simple, maintainable CI for indie development
-# ==============================================
-#
-# Philosophy:
-# - Fast feedback on every push
-# - Minimal configuration overhead
-# - Easy to understand and modify
-# - Focus on critical checks only
-#
-# For indie developers:
-# - No complex matrix builds
-# - Single platform (macOS latest)
-# - Core checks: build, test, lint
-# - Quick iterations
-
 name: CI
 permissions:
   contents: read
