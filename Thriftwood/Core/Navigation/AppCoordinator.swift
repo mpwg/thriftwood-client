@@ -339,7 +339,9 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
                     self.navigate(to: .settingsAppearance)
                 },
                 onNavigateToGeneral: {
-                    self.navigate(to: .settingsMain)  // TODO: Create settingsGeneral route if needed
+                    // TODO: Implement .settingsGeneral route/view
+                    // Temporarily disabled to prevent self-pushing loop
+                    AppLogger.navigation.warning("General settings not yet implemented")
                 },
                 onNavigateToNetworking: {
                     self.navigate(to: .settingsNotifications)
