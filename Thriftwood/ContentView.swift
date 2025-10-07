@@ -66,6 +66,7 @@ struct ContentView: View {
 private struct MainAppNavigationView: View {
     @Bindable var coordinator: AppCoordinator
     @State private var radarrCoordinator: RadarrCoordinator?
+    @State private var settingsCoordinator: SettingsCoordinator?
     @State private var showingRadarr = false
     
     var body: some View {
@@ -98,6 +99,12 @@ private struct MainAppNavigationView: View {
                 )
                 radarrCoordinator?.start()
             }
+            
+            // Initialize SettingsCoordinator if needed
+            if settingsCoordinator == nil {
+                settingsCoordinator = SettingsCoordinator()
+                settingsCoordinator?.start()
+            }
         }
     }
     
@@ -122,11 +129,15 @@ private struct MainAppNavigationView: View {
             }
             
         case .settings:
-            Text("Settings View")
-                .navigationTitle("Settings")
-                .withHomeButton {
-                    coordinator.popToRoot()
-                }
+            if let settingsCoordinator = settingsCoordinator {
+                SettingsCoordinatorView(coordinator: settingsCoordinator)
+            } else {
+                Text("Loading Settings...")
+                    .navigationTitle("Settings")
+                    .withHomeButton {
+                        coordinator.popToRoot()
+                    }
+            }
         }
     }
 }
