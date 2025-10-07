@@ -21,33 +21,30 @@
 
 import SwiftUI
 
-/// Detailed view for a single movie with full metadata, images, and actions
+/// View displaying detailed information about a single movie in Radarr
 ///
-/// Based on legacy Flutter RadarrMovieDetailsRoute with modernized SwiftUI patterns.
-/// Follows MVVM-C architecture - ViewModel handles business logic, Coordinator handles navigation.
+/// Based on legacy Flutter MovieDetailsRoute with modernized SwiftUI patterns.
+/// Follows pure MVVM architecture - ViewModel handles business logic, navigation via callbacks.
 ///
 /// Features:
-/// - Large poster/backdrop display
-/// - Full metadata (title, year, runtime, rating, genres, studio)
-/// - Overview/synopsis
-/// - Monitored toggle
-/// - File information (if downloaded)
-/// - Action buttons (refresh, delete, edit)
-/// - Pull-to-refresh
+/// - Movie information (title, year, overview, ratings)
+/// - Poster image with fallback
+/// - Quality profile and monitoring status
+/// - File information (size, quality)
+/// - Actions (refresh, edit, delete)
 /// - Loading/Error states
 ///
 /// Usage:
 /// ```swift
 /// MovieDetailView(
-///     movieId: 123,
+///     viewModel: viewModel,
 ///     onEdit: { movieId in
-///         coordinator.showMovieEdit(movieId)
+///         // Navigate to edit via AppCoordinator
 ///     },
-///     onDeleted: {
-///         coordinator.popToRoot()
+///     onDelete: {
+///         // Navigate back via AppCoordinator
 ///     }
 /// )
-/// .environment(viewModel)
 /// ```
 struct MovieDetailView: View {
     // MARK: - Properties

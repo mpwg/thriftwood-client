@@ -23,24 +23,22 @@ import SwiftUI
 
 /// View for configuring Radarr service settings
 ///
-/// Based on legacy Flutter ConfigurationRadarrRoute with modernized SwiftUI patterns.
-/// Follows MVVM-C architecture - ViewModel handles business logic, Coordinator handles navigation.
+/// Based on legacy Flutter RadarrSettingsRoute with modernized SwiftUI patterns.
+/// Follows pure MVVM architecture - ViewModel handles business logic, navigation via callbacks.
 ///
 /// Features:
 /// - Server URL configuration
-/// - API key input (secure)
-/// - Test connection with status feedback
-/// - Enable/disable service toggle
-/// - System status display
-/// - Save/Cancel actions
+/// - API key management
+/// - Connection testing with loading states
+/// - Form validation
+/// - Success/Error feedback
 ///
 /// Usage:
 /// ```swift
 /// RadarrSettingsView(
 ///     viewModel: viewModel,
-///     profile: profile,
 ///     onSave: {
-///         coordinator.pop()
+///         // Navigate back via AppCoordinator
 ///     }
 /// )
 /// ```
@@ -80,7 +78,13 @@ struct RadarrSettingsView: View {
             
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
-                    saveSettings()
+                    Task {
+                        await viewModel.saveSettings(for: profile)
+                        if viewModel.error == nil {
+                            // Navigation handled by AppCoordinator via callback
+                            onSave()
+                        }
+                    }
                 }
                 .disabled(viewModel.isLoading || !isValid)
             }

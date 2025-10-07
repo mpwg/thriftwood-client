@@ -107,20 +107,5 @@ struct AddProfileView: View {
 }
 
 // MARK: - Preview
+// TODO: Update previews for ADR-0012 pure MVVM architecture
 
-#if false  // Disabled: ADR-0012 refactoring in progress
-#Preview("Add Profile") {
-    let coordinator = SettingsCoordinator()
-    return NavigationStack {
-        AddProfileView(coordinator: coordinator)
-    }
-}
-
-#Preview("Edit Profile") {
-    let coordinator = SettingsCoordinator()
-    let profile = Profile(name: "Test Profile")
-    return NavigationStack {
-        AddProfileView(coordinator: coordinator, profile: profile)
-    }
-}
-#endif

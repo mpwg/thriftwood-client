@@ -24,7 +24,7 @@ import SwiftUI
 /// Main view for displaying the movies list with filtering, sorting, and layout options
 ///
 /// Based on legacy Flutter RadarrCataloguePage with modernized SwiftUI patterns.
-/// Follows MVVM-C architecture -ViewModel handles business logic.
+/// Follows pure MVVM architecture - ViewModel handles business logic, navigation via callbacks.
 ///
 /// Features:
 /// - Grid/List layout toggle
@@ -38,10 +38,10 @@ import SwiftUI
 /// ```swift
 /// MoviesListView(
 ///     onMovieSelected: { movieId in
-///         coordinator.showMovieDetail(movieId)
+///         // Navigate to detail via AppCoordinator
 ///     },
 ///     onAddMovie: {
-///         coordinator.showAddMovie()
+///         // Navigate to add movie via AppCoordinator
 ///     }
 /// )
 /// .environment(viewModel)

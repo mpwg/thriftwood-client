@@ -21,15 +21,15 @@
 
 import Foundation
 
-/// Unified application routes for single NavigationStack pattern (ADR-0012)
+/// Unified route enum for the entire application (ADR-0012: Single NavigationStack)
 ///
-/// This enum consolidates all navigation routes from the previous AppRoute, RadarrRoute, and SettingsRoute enums.
 /// With a single NavigationStack at the window level, all routes are managed centrally by AppCoordinator.
 ///
-/// **Architecture**: Single NavigationStack with Simple MVVM (ADR-0012)
+/// **Pure MVVM Architecture (ADR-0012):**
 /// - AppCoordinator manages the single navigation path
-/// - Logic coordinators (RadarrLogicCoordinator, SettingsLogicCoordinator) handle business logic only
-/// - This enum is organized by module for clarity, but all routes live in one namespace
+/// - ViewModels handle business logic (created directly by views or AppCoordinator)
+/// - Services provide data access (injected via DI)
+/// - No logic coordinators needed - simplified from original MVVM-C approach
 ///
 /// **Benefits**:
 /// - ~70% less code compared to nested NavigationStack approach

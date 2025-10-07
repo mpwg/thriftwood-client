@@ -224,23 +224,5 @@ private struct ProfileRow: View {
 }
 
 // MARK: - Preview
+// TODO: Update previews for ADR-0012 pure MVVM architecture
 
-#if false  // Disabled: ADR-0012 refactoring in progress
-#Preview("Profile List - With Profiles") {
-    let coordinator = SettingsCoordinator()
-    coordinator.start()
-    
-    return NavigationStack {
-        ProfileListView(coordinator: coordinator)
-    }
-}
-
-#Preview("Profile List - Empty") {
-    let coordinator = SettingsCoordinator()
-    coordinator.start()
-    
-    return NavigationStack {
-        ProfileListView(coordinator: coordinator)
-    }
-}
-#endif

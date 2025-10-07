@@ -19,15 +19,22 @@
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 //  Created on 2025-10-04.
-//  Root coordinator for the entire application
+//  Root coordinator for the entire application (ADR-0012: Pure MVVM)
 //
 
 import Foundation
 import SwiftUI
 
-/// Root coordinator that manages the top-level navigation flow.
+/// Root coordinator that manages the top-level navigation flow for the entire application.
+///
+/// **Pure MVVM Architecture (ADR-0012):**
+/// - Manages single NavigationStack with unified AppRoute enum
+/// - Creates ViewModels directly (no logic coordinators)
+/// - Only child coordinator is OnboardingCoordinator (for first-run flow)
+/// - All navigation methods are centralized here
+///
 /// This is equivalent to the MainCoordinator in the Hacking with Swift tutorial,
-/// but adapted for SwiftUI's NavigationStack pattern.
+/// but adapted for SwiftUI's NavigationStack and pure MVVM pattern.
 @Observable
 @MainActor
 final class AppCoordinator: @MainActor CoordinatorProtocol {
@@ -45,11 +52,11 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     /// Profile service for checking if profiles exist
     private let profileService: any ProfileServiceProtocol
     
-    /// Radarr logic coordinator for business logic (ADR-0012)
-    private let radarrLogicCoordinator: RadarrLogicCoordinator
+    /// Radarr service for movie management (pure MVVM - no coordinator needed)
+    private let radarrService: any RadarrServiceProtocol
     
-    /// Settings logic coordinator for business logic (ADR-0012)
-    private let settingsLogicCoordinator: SettingsLogicCoordinator
+    /// Data service for persistence
+    private let dataService: any DataServiceProtocol
     
     /// Whether the user has completed onboarding
     private var hasCompletedOnboarding: Bool {
@@ -77,18 +84,18 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     init(
         preferencesService: any UserPreferencesServiceProtocol,
         profileService: any ProfileServiceProtocol,
-        radarrLogicCoordinator: RadarrLogicCoordinator,
-        settingsLogicCoordinator: SettingsLogicCoordinator
+        radarrService: any RadarrServiceProtocol,
+        dataService: any DataServiceProtocol
     ) {
         self.preferencesService = preferencesService
         self.profileService = profileService
-        self.radarrLogicCoordinator = radarrLogicCoordinator
-        self.settingsLogicCoordinator = settingsLogicCoordinator
+        self.radarrService = radarrService
+        self.dataService = dataService
         
         AppLogger.navigation.logCoordinator(
             event: "created",
             coordinator: "AppCoordinator",
-            details: "Root coordinator initialized with logic coordinators (ADR-0012)"
+            details: "Root coordinator initialized - Pure MVVM (no logic coordinators)"
         )
     }
     
@@ -281,7 +288,7 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
                     self.navigate(to: .radarrAddMovie())
                 }
             )
-            .environment(radarrLogicCoordinator.getMoviesListViewModel())
+            .environment(MoviesListViewModel(radarrService: radarrService))
             .navigationTitle("Movies")
             
         case .radarrMovieDetail(let movieId):
@@ -294,12 +301,12 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
                     self.navigateBack()
                 }
             )
-            .environment(radarrLogicCoordinator.getMovieDetailViewModel(movieId: movieId))
+            .environment(MovieDetailViewModel(movieId: movieId, radarrService: radarrService))
             .navigationTitle("Movie Details")
             
         case .radarrAddMovie:
             AddMovieView(
-                viewModel: radarrLogicCoordinator.getAddMovieViewModel(),
+                viewModel: AddMovieViewModel(radarrService: radarrService),
                 onMovieAdded: { movieId in
                     self.navigate(to: .radarrMovieDetail(movieId: movieId))
                 }
