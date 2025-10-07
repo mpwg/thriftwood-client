@@ -27,8 +27,8 @@ struct RadarrCoordinatorView: View {
     
     var body: some View {
         NavigationStack(path: $coordinator.navigationPath) {
-            // Root view is movies list
-            moviesListView()
+            // Root view is Radarr home with button navigation
+            radarrHomeView()
                 .navigationDestination(for: RadarrRoute.self) { route in
                     destination(for: route)
                 }
@@ -37,6 +37,27 @@ struct RadarrCoordinatorView: View {
     }
     
     // MARK: - Root View
+    
+    @ViewBuilder
+    private func radarrHomeView() -> some View {
+        RadarrHomeView(
+            onNavigateToMovies: {
+                coordinator.showMoviesList()
+            },
+            onNavigateToAddMovie: {
+                coordinator.showAddMovie()
+            },
+            onNavigateToQueue: {
+                coordinator.showQueue()
+            },
+            onNavigateToHistory: {
+                coordinator.showHistory()
+            },
+            onNavigateToSystemStatus: {
+                coordinator.showSystemStatus()
+            }
+        )
+    }
     
     @ViewBuilder
     private func moviesListView() -> some View {
@@ -58,14 +79,13 @@ struct RadarrCoordinatorView: View {
     private func destination(for route: RadarrRoute) -> some View {
         switch route {
         case .home:
-            // .home should not be pushed - it's handled separately
+            // .home should not be pushed - it's the root radarrHomeView
             // This case exists only for enum completeness
             EmptyView()
             
         case .moviesList:
-            // .moviesList should not be pushed - it's the root moviesListView
-            // This case exists only for enum completeness
-            EmptyView()
+            // Movies list is pushed from home
+            moviesListView()
             
         case .movieDetail(let movieId):
             let viewModel = coordinator.getMovieDetailViewModel(movieId: movieId)
