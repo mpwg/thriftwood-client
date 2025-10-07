@@ -45,11 +45,11 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     /// Profile service for checking if profiles exist
     private let profileService: any ProfileServiceProtocol
     
-    /// Radarr service for TabCoordinator's ServicesCoordinator
-    private let radarrService: any RadarrServiceProtocol
+    /// Radarr logic coordinator for business logic (ADR-0012)
+    private let radarrLogicCoordinator: RadarrLogicCoordinator
     
-    /// Data service for TabCoordinator's ServicesCoordinator
-    private let dataService: any DataServiceProtocol
+    /// Settings logic coordinator for business logic (ADR-0012)
+    private let settingsLogicCoordinator: SettingsLogicCoordinator
     
     /// Whether the user has completed onboarding
     private var hasCompletedOnboarding: Bool {
@@ -77,18 +77,18 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     init(
         preferencesService: any UserPreferencesServiceProtocol,
         profileService: any ProfileServiceProtocol,
-        radarrService: any RadarrServiceProtocol,
-        dataService: any DataServiceProtocol
+        radarrLogicCoordinator: RadarrLogicCoordinator,
+        settingsLogicCoordinator: SettingsLogicCoordinator
     ) {
         self.preferencesService = preferencesService
         self.profileService = profileService
-        self.radarrService = radarrService
-        self.dataService = dataService
+        self.radarrLogicCoordinator = radarrLogicCoordinator
+        self.settingsLogicCoordinator = settingsLogicCoordinator
         
         AppLogger.navigation.logCoordinator(
             event: "created",
             coordinator: "AppCoordinator",
-            details: "Root coordinator initialized with dependencies"
+            details: "Root coordinator initialized with logic coordinators (ADR-0012)"
         )
     }
     
@@ -111,6 +111,69 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     }
     
     // MARK: - Navigation Methods
+    
+    /// Unified navigation method for all routes (ADR-0012)
+    /// - Parameter route: The AppRoute to navigate to
+    func navigate(to route: AppRoute) {
+        AppLogger.navigation.logNavigation(
+            from: navigationPath.last.map { String(describing: $0) } ?? "Root",
+            to: String(describing: route),
+            coordinator: "AppCoordinator"
+        )
+        
+        navigationPath.append(route)
+        
+        AppLogger.navigation.logStackChange(
+            action: "push",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: String(describing: route)
+        )
+    }
+    
+    /// Navigates back one level in the stack
+    func navigateBack() {
+        guard !navigationPath.isEmpty else {
+            AppLogger.navigation.warning("Attempted to navigate back from root")
+            return
+        }
+        
+        let previous = navigationPath.last
+        navigationPath.removeLast()
+        
+        AppLogger.navigation.logNavigation(
+            from: previous.map { String(describing: $0) } ?? "Unknown",
+            to: navigationPath.last.map { String(describing: $0) } ?? "Root",
+            coordinator: "AppCoordinator"
+        )
+        
+        AppLogger.navigation.logStackChange(
+            action: "pop",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: navigationPath.last.map { String(describing: $0) } ?? "root"
+        )
+    }
+    
+    /// Pops to root (App Home)
+    func popToRoot() {
+        AppLogger.navigation.logNavigation(
+            from: "Current",
+            to: "AppHome (root)",
+            coordinator: "AppCoordinator"
+        )
+        
+        navigationPath.removeAll()
+        
+        AppLogger.navigation.logStackChange(
+            action: "pop_to_root",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: "root"
+        )
+    }
+    
+    // MARK: - Legacy Navigation Methods (Deprecated - Use navigate(to:) instead)
     
     /// Shows the onboarding flow for first-time users
     func showOnboarding() {
@@ -167,77 +230,153 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
         )
     }
     
-    /// Navigate to Services view
-    func navigateToServices() {
-        AppLogger.navigation.logNavigation(
-            from: "AppHome",
-            to: "Services",
-            coordinator: "AppCoordinator"
-        )
-        
-        navigationPath.append(.services)
-        
-        AppLogger.navigation.logStackChange(
-            action: "push",
-            coordinator: "AppCoordinator",
-            stackSize: navigationPath.count,
-            route: "services"
-        )
+    // MARK: - View Factory
+    
+    /// Creates the appropriate view for a given route (ADR-0012: Single NavigationStack)
+    /// This is the central view resolution for the entire app.
+    @MainActor
+    @ViewBuilder
+    func view(for route: AppRoute) -> some View {
+        switch route {
+        // MARK: - App Level Routes
+        case .onboarding:
+            // Onboarding is handled via activeCoordinator, not navigation stack
+            EmptyView()
+            
+        case .services:
+            ServicesHomeView(
+                onNavigateToRadarr: {
+                    self.navigate(to: .radarrHome)
+                }
+            )
+            .navigationTitle("Services")
+            
+        // MARK: - Radarr Routes
+        case .radarrHome:
+            RadarrHomeView(
+                onNavigateToMovies: {
+                    self.navigate(to: .radarrMoviesList)
+                },
+                onNavigateToAddMovie: {
+                    self.navigate(to: .radarrAddMovie())
+                },
+                onNavigateToQueue: {
+                    self.navigate(to: .radarrQueue)
+                },
+                onNavigateToHistory: {
+                    self.navigate(to: .radarrHistory)
+                },
+                onNavigateToSystemStatus: {
+                    self.navigate(to: .radarrSystemStatus)
+                }
+            )
+            .navigationTitle("Radarr")
+            
+        case .radarrMoviesList:
+            MoviesListView(
+                onMovieSelected: { movieId in
+                    self.navigate(to: .radarrMovieDetail(movieId: movieId))
+                },
+                onAddMovie: {
+                    self.navigate(to: .radarrAddMovie())
+                }
+            )
+            .environment(radarrLogicCoordinator.getMoviesListViewModel())
+            .navigationTitle("Movies")
+            
+        case .radarrMovieDetail(let movieId):
+            MovieDetailView(
+                onEdit: { movieId in
+                    // TODO: Implement movie editing
+                    self.navigateBack()
+                },
+                onDeleted: {
+                    self.navigateBack()
+                }
+            )
+            .environment(radarrLogicCoordinator.getMovieDetailViewModel(movieId: movieId))
+            .navigationTitle("Movie Details")
+            
+        case .radarrAddMovie:
+            AddMovieView(
+                viewModel: radarrLogicCoordinator.getAddMovieViewModel(),
+                onMovieAdded: { movieId in
+                    self.navigate(to: .radarrMovieDetail(movieId: movieId))
+                }
+            )
+            .navigationTitle("Add Movie")
+            
+        case .radarrSettings:
+            Text("Radarr Settings")
+                .navigationTitle("Radarr Settings")
+            
+        case .radarrSystemStatus:
+            Text("System Status")
+                .navigationTitle("System Status")
+            
+        case .radarrQueue:
+            Text("Queue")
+                .navigationTitle("Queue")
+            
+        case .radarrHistory:
+            Text("History")
+                .navigationTitle("History")
+            
+        // MARK: - Settings Routes
+        case .settingsMain:
+            SettingsView(
+                onNavigateToProfiles: {
+                    self.navigate(to: .settingsProfiles)
+                },
+                onNavigateToAppearance: {
+                    self.navigate(to: .settingsAppearance)
+                },
+                onNavigateToGeneral: {
+                    self.navigate(to: .settingsMain)  // TODO: Create settingsGeneral route if needed
+                },
+                onNavigateToNetworking: {
+                    self.navigate(to: .settingsNotifications)
+                },
+                onNavigateToAbout: {
+                    self.navigate(to: .settingsAbout)
+                },
+                onNavigateToAcknowledgements: {
+                    self.navigate(to: .settingsLogs)
+                }
+            )
+            .navigationTitle("Settings")
+            
+        case .settingsProfiles:
+            Text("Profiles Management")
+                .navigationTitle("Profiles")
+            
+        case .settingsAddProfile:
+            Text("Add Profile")
+                .navigationTitle("Add Profile")
+            
+        case .settingsEditProfile(let profileId):
+            Text("Edit Profile: \(profileId)")
+                .navigationTitle("Edit Profile")
+            
+        case .settingsAppearance:
+            Text("Appearance Settings")
+                .navigationTitle("Appearance")
+            
+        case .settingsNotifications:
+            Text("Notifications Settings")
+                .navigationTitle("Notifications")
+            
+        case .settingsAbout:
+            Text("About Thriftwood")
+                .navigationTitle("About")
+            
+        case .settingsLogs:
+            Text("Logs")
+                .navigationTitle("Logs")
+        }
     }
     
-    /// Navigate to Radarr feature
-    func navigateToRadarr() {
-        AppLogger.navigation.logNavigation(
-            from: "Current",
-            to: "Radarr",
-            coordinator: "AppCoordinator"
-        )
-        
-        navigationPath.append(.radarr)
-        
-        AppLogger.navigation.logStackChange(
-            action: "push",
-            coordinator: "AppCoordinator",
-            stackSize: navigationPath.count,
-            route: "radarr"
-        )
-    }
-    
-    /// Navigate to Settings view
-    func navigateToSettings() {
-        AppLogger.navigation.logNavigation(
-            from: "Current",
-            to: "Settings",
-            coordinator: "AppCoordinator"
-        )
-        
-        navigationPath.append(.settings)
-        
-        AppLogger.navigation.logStackChange(
-            action: "push",
-            coordinator: "AppCoordinator",
-            stackSize: navigationPath.count,
-            route: "settings"
-        )
-    }
-    
-    /// Pops to root (App Home)
-    func popToRoot() {
-        AppLogger.navigation.logNavigation(
-            from: "Current",
-            to: "AppHome (root)",
-            coordinator: "AppCoordinator"
-        )
-        
-        navigationPath.removeAll()
-        
-        AppLogger.navigation.logStackChange(
-            action: "pop_to_root",
-            coordinator: "AppCoordinator",
-            stackSize: navigationPath.count,
-            route: "root"
-        )
-    }
+    // MARK: - Coordinator Lifecycle
     
     /// Called when onboarding is completed
     private func onboardingDidComplete() {

@@ -1,4 +1,5 @@
 # Navigation Architecture Audit
+
 **Date**: October 7, 2025  
 **Branch**: feature/phase-1-hierarchical-navigation  
 **Auditor**: GitHub Copilot
@@ -16,17 +17,20 @@
 ### ✅ Strengths
 
 1. **Proper Coordinator Usage**
+
    - All navigation logic is in Coordinators
    - Views are dumb and use closures for actions
    - No direct NavigationLink usage in views
    - Clear separation of concerns
 
 2. **View Layer**
+
    - All views use closure-based navigation (e.g., `onNavigateToServices: () -> Void`)
    - No direct access to coordinators from views (proper encapsulation)
    - No direct manipulation of navigation state
 
 3. **Coordinator Hierarchy**
+
    - Clear parent-child relationships
    - Proper lifecycle management (start, childDidFinish)
    - Observable pattern for reactive updates
@@ -49,6 +53,7 @@ ContentView
 ```
 
 **Status**: ✅ Working correctly
+
 - Proper coordinator initialization
 - Correct onboarding vs main app logic
 - Fixed: activeCoordinator clearing on onboarding complete
@@ -56,10 +61,12 @@ ContentView
 ### 2. App Home Navigation ✅
 
 **AppHomeView** (root of NavigationStack)
+
 - **Services Button** → `coordinator.navigateToServices()` → pushes `.services` route
 - **Settings Button** → `coordinator.navigateToSettings()` → pushes `.settings` route
 
 **Status**: ✅ MVVM-C compliant
+
 - Closures used for navigation
 - Coordinator handles all logic
 - Proper NavigationStack usage
@@ -67,6 +74,7 @@ ContentView
 ### 3. Services Navigation ✅
 
 **ServicesHomeView** (pushed destination)
+
 - **Radarr Button** → `onNavigateToRadarr()` → `showingRadarr = true` (fullScreenCover)
 
 **Status**: ⚠️ Works but architecturally inconsistent (see Critical Issue #1)
@@ -74,6 +82,7 @@ ContentView
 ### 4. Radarr Navigation ✅
 
 **RadarrHomeView** (root of separate NavigationStack)
+
 - **Movies** → `coordinator.showMoviesList()` → pushes `.moviesList`
 - **Add Movie** → `coordinator.showAddMovie()` → pushes `.addMovie`
 - **Queue** → `coordinator.showQueue()` → pushes `.queue`
@@ -81,6 +90,7 @@ ContentView
 - **System Status** → `coordinator.showSystemStatus()` → pushes `.systemStatus`
 
 **Status**: ✅ MVVM-C compliant within its own stack
+
 - Proper coordinator methods
 - Hierarchical navigation working
 - All buttons use coordinator closures
@@ -88,11 +98,13 @@ ContentView
 ### 5. Settings Navigation ✅
 
 **SettingsView** (pushed destination with own NavigationStack)
+
 - **Profiles** → `coordinator.navigate(to: .profiles)` → pushes `.profiles`
 - **Add Profile** → navigation via ProfileListView
 - etc.
 
 **Status**: ✅ MVVM-C compliant
+
 - SettingsCoordinator properly initialized
 - Hierarchical navigation working
 
@@ -101,6 +113,7 @@ ContentView
 All pushed destinations have home buttons that call `coordinator.popToRoot()`
 
 **Status**: ✅ Working correctly
+
 - Proper coordinator method calls
 - Consistent across all views
 
@@ -121,6 +134,7 @@ All pushed destinations have home buttons that call `coordinator.popToRoot()`
 ```
 
 **Problems**:
+
 1. **Breaks Hierarchical Pattern**: Radarr appears as modal, not pushed view
 2. **No Navigation Bar Back Button**: Users can't use standard back gesture/button
 3. **Separate Navigation Stack**: Radarr has its own NavigationStack, isolated from app stack
@@ -163,6 +177,7 @@ case .radarr:
 ### High Priority
 
 1. **✅ Fix Radarr Navigation**
+
    - Change from fullScreenCover to NavigationStack push
    - Add `.radarr` case to `AppRoute` enum
    - Add `navigateToRadarr()` method to `AppCoordinator`
@@ -177,6 +192,7 @@ case .radarr:
 ### Medium Priority
 
 3. **Document Navigation Pattern**
+
    - Add comments explaining the hierarchical pattern
    - Document why certain coordinators are separate (e.g., Radarr, Settings)
    - Create navigation flow diagrams
@@ -232,6 +248,7 @@ AppHomeView (root)
 ```
 
 **Legend**:
+
 - **push**: Proper hierarchical navigation
 - **fullScreenCover**: Modal presentation (⚠️ architectural inconsistency)
 
@@ -240,12 +257,14 @@ AppHomeView (root)
 ## Testing Recommendations
 
 1. **Test Navigation Flows**
+
    - Manually test all button interactions
    - Verify back button behavior
    - Verify home button behavior
    - Test deep navigation paths
 
 2. **Update Coordinator Tests**
+
    - Phase 2 task to rewrite disabled tests
    - Test new hierarchical navigation patterns
    - Verify coordinator lifecycle

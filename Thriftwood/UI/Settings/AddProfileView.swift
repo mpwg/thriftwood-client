@@ -26,11 +26,9 @@ import SwiftData
 @MainActor
 struct AddProfileView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var coordinator: SettingsCoordinator
     @State private var viewModel: AddProfileViewModel
     
-    init(coordinator: SettingsCoordinator, profile: Profile? = nil) {
-        self.coordinator = coordinator
+    init(profile: Profile? = nil) {
         // Initialize ViewModel from DI container
         let profileService = DIContainer.shared.resolve((any ProfileServiceProtocol).self)
         self.viewModel = AddProfileViewModel(
@@ -110,6 +108,7 @@ struct AddProfileView: View {
 
 // MARK: - Preview
 
+#if false  // Disabled: ADR-0012 refactoring in progress
 #Preview("Add Profile") {
     let coordinator = SettingsCoordinator()
     return NavigationStack {
@@ -124,3 +123,4 @@ struct AddProfileView: View {
         AddProfileView(coordinator: coordinator, profile: profile)
     }
 }
+#endif

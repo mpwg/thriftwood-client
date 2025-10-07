@@ -25,7 +25,11 @@
 //  Created on 2025-10-04.
 //  Coordinator for the services feature
 //
+//  ⚠️ OBSOLETE: This file is deprecated as part of ADR-0012 refactoring
+//  AppCoordinator now handles all navigation. This file kept temporarily for reference.
+//
 
+#if false
 import Foundation
 import SwiftUI
 import OSLog
@@ -155,3 +159,4 @@ final class ServicesCoordinator: @MainActor CoordinatorProtocol {
         return coordinator
     }
 }
+#endif  // Obsolete: ADR-0012

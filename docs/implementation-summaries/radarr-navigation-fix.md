@@ -150,7 +150,7 @@ From `NAVIGATION_AUDIT.md`:
 All navigation now follows the hierarchical pattern:
 
 - ✅ Services → Push navigation
-- ✅ Settings → Push navigation  
+- ✅ Settings → Push navigation
 - ✅ Radarr → Push navigation (fixed)
 
 ## References

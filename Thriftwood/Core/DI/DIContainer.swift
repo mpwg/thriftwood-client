@@ -166,10 +166,31 @@ final class DIContainer {
     
     // MARK: - Coordinators Registration
     
-    /// Registers coordinators for navigation
-    /// Note: Coordinators are typically created with transient scope since they manage navigation state
+    /// Registers coordinators for navigation (ADR-0012: Logic Coordinators)
     private func registerCoordinators() {
-        // Register AppCoordinator (needs UserPreferencesService, ProfileService, RadarrService, DataService)
+        // Register RadarrLogicCoordinator (singleton - manages ViewModels)
+        container.register(RadarrLogicCoordinator.self) { resolver in
+            guard let radarrService = resolver.resolve((any RadarrServiceProtocol).self) else {
+                fatalError("Could not resolve RadarrServiceProtocol for RadarrLogicCoordinator")
+            }
+            guard let dataService = resolver.resolve((any DataServiceProtocol).self) else {
+                fatalError("Could not resolve DataServiceProtocol for RadarrLogicCoordinator")
+            }
+            return RadarrLogicCoordinator(
+                radarrService: radarrService,
+                dataService: dataService
+            )
+        }
+        .inObjectScope(.container)
+        
+        // Register SettingsLogicCoordinator (singleton)
+        container.register(SettingsLogicCoordinator.self) { _ in
+            return SettingsLogicCoordinator()
+        }
+        .inObjectScope(.container)
+        
+        // Register AppCoordinator (ADR-0012: Single NavigationStack pattern)
+        // AppCoordinator is the sole navigation authority, logic coordinators handle business logic
         container.register(AppCoordinator.self) { resolver in
             guard let preferencesService = resolver.resolve((any UserPreferencesServiceProtocol).self) else {
                 fatalError("Could not resolve UserPreferencesServiceProtocol for AppCoordinator")
@@ -177,23 +198,20 @@ final class DIContainer {
             guard let profileService = resolver.resolve((any ProfileServiceProtocol).self) else {
                 fatalError("Could not resolve ProfileServiceProtocol for AppCoordinator")
             }
-            guard let radarrService = resolver.resolve((any RadarrServiceProtocol).self) else {
-                fatalError("Could not resolve RadarrServiceProtocol for AppCoordinator")
+            guard let radarrLogicCoordinator = resolver.resolve(RadarrLogicCoordinator.self) else {
+                fatalError("Could not resolve RadarrLogicCoordinator for AppCoordinator")
             }
-            guard let dataService = resolver.resolve((any DataServiceProtocol).self) else {
-                fatalError("Could not resolve DataServiceProtocol for AppCoordinator")
+            guard let settingsLogicCoordinator = resolver.resolve(SettingsLogicCoordinator.self) else {
+                fatalError("Could not resolve SettingsLogicCoordinator for AppCoordinator")
             }
             return AppCoordinator(
                 preferencesService: preferencesService,
                 profileService: profileService,
-                radarrService: radarrService,
-                dataService: dataService
+                radarrLogicCoordinator: radarrLogicCoordinator,
+                settingsLogicCoordinator: settingsLogicCoordinator
             )
         }
-        
-        // Note: Other coordinators are created on-demand by parent coordinators
-        // TabCoordinator, DashboardCoordinator, etc. are created with simple init()
-        // or are passed dependencies from their parent coordinators
+        .inObjectScope(.container)
     }
     
     // MARK: - Service Resolution

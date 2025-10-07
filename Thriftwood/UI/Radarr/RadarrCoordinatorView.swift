@@ -18,7 +18,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
+//  ⚠️ OBSOLETE: This file is deprecated as part of ADR-0012 refactoring
+//  AppCoordinator now handles all navigation with single NavigationStack.
+//
 
+#if false
 import SwiftUI
 
 /// Radarr coordinator view that handles navigation within the Radarr module
@@ -26,12 +30,14 @@ struct RadarrCoordinatorView: View {
     @Bindable var coordinator: RadarrCoordinator
     
     var body: some View {
-        // Root view is Radarr home with button navigation
-        radarrHomeView()
-            .navigationDestination(for: RadarrRoute.self) { route in
-                destination(for: route)
-            }
-            .logViewLifecycle(view: "RadarrCoordinatorView", metadata: ["coordinator": "RadarrCoordinator"])
+        NavigationStack(path: $coordinator.navigationPath) {
+            // Root view is Radarr home with button navigation
+            radarrHomeView()
+                .navigationDestination(for: RadarrRoute.self) { route in
+                    destination(for: route)
+                }
+                .logViewLifecycle(view: "RadarrCoordinatorView", metadata: ["coordinator": "RadarrCoordinator"])
+        }
     }
     
     // MARK: - Root View
@@ -181,3 +187,4 @@ struct RadarrCoordinatorView: View {
     
     return RadarrCoordinatorView(coordinator: coordinator)
 }
+#endif  // Obsolete: ADR-0012

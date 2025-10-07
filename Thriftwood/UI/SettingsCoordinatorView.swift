@@ -18,7 +18,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
+//  ⚠️ OBSOLETE: This file is deprecated as part of ADR-0012 refactoring
+//  AppCoordinator now handles all navigation with single NavigationStack.
+//
 
+#if false
 import SwiftUI
 
 /// Settings coordinator view
@@ -26,17 +30,19 @@ struct SettingsCoordinatorView: View {
     @Bindable var coordinator: SettingsCoordinator
     
     var body: some View {
-        SettingsView(coordinator: coordinator)
-            .navigationDestination(for: SettingsRoute.self) { route in
-                destinationView(for: route)
-            }
-            .logViewLifecycle(
-                view: "SettingsCoordinatorView",
-                metadata: [
-                    "coordinator_type": "SettingsCoordinator",
-                    "navigation_depth": "\(coordinator.navigationPath.count)"
-                ]
-            )
+        NavigationStack(path: $coordinator.navigationPath) {
+            SettingsView(coordinator: coordinator)
+                .navigationDestination(for: SettingsRoute.self) { route in
+                    destinationView(for: route)
+                }
+                .logViewLifecycle(
+                    view: "SettingsCoordinatorView",
+                    metadata: [
+                        "coordinator_type": "SettingsCoordinator",
+                        "navigation_depth": "\(coordinator.navigationPath.count)"
+                    ]
+                )
+        }
     }
     
     @ViewBuilder
@@ -74,3 +80,4 @@ struct SettingsCoordinatorView: View {
         }
     }
 }
+#endif  // Obsolete: ADR-0012

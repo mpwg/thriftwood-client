@@ -18,7 +18,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
+//  ⚠️ OBSOLETE: This file is deprecated as part of ADR-0012 refactoring
+//  AppCoordinator now handles all navigation with single NavigationStack.
+//
 
+#if false
 import SwiftUI
 
 /// Services coordinator view
@@ -129,3 +133,4 @@ struct ServicesCoordinatorView: View {
         .navigationTitle(title)
     }
 }
+#endif  // Obsolete: ADR-0012

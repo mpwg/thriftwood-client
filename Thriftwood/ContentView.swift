@@ -62,83 +62,22 @@ struct ContentView: View {
     }
 }
 
-/// Separate view to allow @Bindable wrapper
+/// Separate view to allow @Bindable wrapper (ADR-0012: Single NavigationStack)
 private struct MainAppNavigationView: View {
     @Bindable var coordinator: AppCoordinator
-    @State private var radarrCoordinator: RadarrCoordinator?
-    @State private var settingsCoordinator: SettingsCoordinator?
     
     var body: some View {
         NavigationStack(path: $coordinator.navigationPath) {
             AppHomeView(
                 onNavigateToServices: {
-                    coordinator.navigateToServices()
+                    coordinator.navigate(to: .services)
                 },
                 onNavigateToSettings: {
-                    coordinator.navigateToSettings()
+                    coordinator.navigate(to: .settingsMain)
                 }
             )
             .navigationDestination(for: AppRoute.self) { route in
-                makeView(for: route)
-            }
-        }
-        .onAppear {
-            // Initialize RadarrCoordinator if needed
-            if radarrCoordinator == nil {
-                let radarrService = DIContainer.shared.resolve((any RadarrServiceProtocol).self)
-                let dataService = DIContainer.shared.resolve((any DataServiceProtocol).self)
-                radarrCoordinator = RadarrCoordinator(
-                    radarrService: radarrService,
-                    dataService: dataService
-                )
-                radarrCoordinator?.start()
-            }
-            
-            // Initialize SettingsCoordinator if needed
-            if settingsCoordinator == nil {
-                settingsCoordinator = SettingsCoordinator()
-                settingsCoordinator?.start()
-            }
-        }
-    }
-    
-    /// Creates views for app-level routes
-    @ViewBuilder
-    private func makeView(for route: AppRoute) -> some View {
-        switch route {
-        case .onboarding:
-            // Onboarding is handled via active coordinator, not navigation stack
-            EmptyView()
-            
-        case .services:
-            ServicesHomeView(
-                onNavigateToRadarr: {
-                    AppLogger.navigation.info("Navigating to Radarr")
-                    coordinator.navigateToRadarr()
-                }
-            )
-            .navigationTitle("Services")
-            .withHomeButton {
-                coordinator.popToRoot()
-            }
-        
-        case .radarr:
-            if let radarrCoordinator = radarrCoordinator {
-                RadarrCoordinatorView(coordinator: radarrCoordinator)
-            } else {
-                Text("Loading Radarr...")
-                    .navigationTitle("Radarr")
-                    .withHomeButton {
-                        coordinator.popToRoot()
-                    }
-            }
-            
-        case .settings:
-            if let settingsCoordinator = settingsCoordinator {
-                SettingsCoordinatorView(coordinator: settingsCoordinator)
-            } else {
-                Text("Loading Settings...")
-                    .navigationTitle("Settings")
+                coordinator.view(for: route)
                     .withHomeButton {
                         coordinator.popToRoot()
                     }
