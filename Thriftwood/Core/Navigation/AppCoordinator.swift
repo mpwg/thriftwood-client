@@ -241,6 +241,7 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
                 details: "Cleaning up onboarding coordinator"
             )
             childDidFinish(onboardingCoordinator)
+            activeCoordinator = nil  // Clear active coordinator to trigger view update
         }
         
         // Show main app
