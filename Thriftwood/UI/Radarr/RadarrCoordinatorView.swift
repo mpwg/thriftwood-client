@@ -26,14 +26,12 @@ struct RadarrCoordinatorView: View {
     @Bindable var coordinator: RadarrCoordinator
     
     var body: some View {
-        NavigationStack(path: $coordinator.navigationPath) {
-            // Root view is Radarr home with button navigation
-            radarrHomeView()
-                .navigationDestination(for: RadarrRoute.self) { route in
-                    destination(for: route)
-                }
-                .logViewLifecycle(view: "RadarrCoordinatorView", metadata: ["coordinator": "RadarrCoordinator"])
-        }
+        // Root view is Radarr home with button navigation
+        radarrHomeView()
+            .navigationDestination(for: RadarrRoute.self) { route in
+                destination(for: route)
+            }
+            .logViewLifecycle(view: "RadarrCoordinatorView", metadata: ["coordinator": "RadarrCoordinator"])
     }
     
     // MARK: - Root View

@@ -26,19 +26,17 @@ struct SettingsCoordinatorView: View {
     @Bindable var coordinator: SettingsCoordinator
     
     var body: some View {
-        NavigationStack(path: $coordinator.navigationPath) {
-            SettingsView(coordinator: coordinator)
-                .navigationDestination(for: SettingsRoute.self) { route in
-                    destinationView(for: route)
-                }
-                .logViewLifecycle(
-                    view: "SettingsCoordinatorView",
-                    metadata: [
-                        "coordinator_type": "SettingsCoordinator",
-                        "navigation_depth": "\(coordinator.navigationPath.count)"
-                    ]
-                )
-        }
+        SettingsView(coordinator: coordinator)
+            .navigationDestination(for: SettingsRoute.self) { route in
+                destinationView(for: route)
+            }
+            .logViewLifecycle(
+                view: "SettingsCoordinatorView",
+                metadata: [
+                    "coordinator_type": "SettingsCoordinator",
+                    "navigation_depth": "\(coordinator.navigationPath.count)"
+                ]
+            )
     }
     
     @ViewBuilder
