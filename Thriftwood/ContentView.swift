@@ -65,6 +65,8 @@ struct ContentView: View {
 /// Separate view to allow @Bindable wrapper
 private struct MainAppNavigationView: View {
     @Bindable var coordinator: AppCoordinator
+    @State private var radarrCoordinator: RadarrCoordinator?
+    @State private var showingRadarr = false
     
     var body: some View {
         NavigationStack(path: $coordinator.navigationPath) {
@@ -80,6 +82,23 @@ private struct MainAppNavigationView: View {
                 makeView(for: route)
             }
         }
+        .fullScreenCover(isPresented: $showingRadarr) {
+            if let radarrCoordinator = radarrCoordinator {
+                RadarrCoordinatorView(coordinator: radarrCoordinator)
+            }
+        }
+        .onAppear {
+            // Initialize RadarrCoordinator if needed
+            if radarrCoordinator == nil {
+                let radarrService = DIContainer.shared.resolve((any RadarrServiceProtocol).self)
+                let dataService = DIContainer.shared.resolve((any DataServiceProtocol).self)
+                radarrCoordinator = RadarrCoordinator(
+                    radarrService: radarrService,
+                    dataService: dataService
+                )
+                radarrCoordinator?.start()
+            }
+        }
     }
     
     /// Creates views for app-level routes
@@ -93,8 +112,8 @@ private struct MainAppNavigationView: View {
         case .services:
             ServicesHomeView(
                 onNavigateToRadarr: {
-                    // TODO: Will be implemented when we integrate RadarrCoordinator
-                    AppLogger.navigation.info("Navigate to Radarr (not yet implemented)")
+                    AppLogger.navigation.info("Navigating to Radarr")
+                    showingRadarr = true
                 }
             )
             .navigationTitle("Services")
