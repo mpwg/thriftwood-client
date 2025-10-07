@@ -1,240 +1,327 @@
 # Navigation Architecture Quick Reference
 
-**For comprehensive guide with diagrams, see [NAVIGATION_ARCHITECTURE.md](./NAVIGATION_ARCHITECTURE.md)**
+**For comprehensive guide, see [NAVIGATION_ARCHITECTURE.md](./NAVIGATION_ARCHITECTURE.md)** | **Architecture: [ADR-0012](decisions/0012-single-navigationstack-simple-mvvm.md)**
 
-Quick reference for implementing navigation in Thriftwood following our architectural decisions.
+Quick reference for implementing navigation in Thriftwood following Pure MVVM architecture.
 
-## Core Rule
+## Core Principle
 
-**One NavigationStack per coordinator, content-only child views.**
+**Single NavigationStack managed by AppCoordinator. Views use callbacks for navigation.**
 
-> **🔵 Coordinator Views = NavigationStack**  
-> **🟡 Content Views = No NavigationStack**
+> **🔵 AppCoordinator = ONE NavigationStack for entire app**  
+> **🟡 Views = Navigation via callbacks (no direct coordinator access)**  
+> **🟢 OnboardingCoordinator = Only child coordinator (separate flow)**
+
+## Architecture Overview
+
+```
+AppCoordinator (sole navigation authority)
+  └─> Single NavigationStack(path: $appCoordinator.navigationPath)
+      ├─> Dashboard Tab
+      ├─> Services Tab
+      ├─> Settings Tab
+      └─> All feature screens (19 AppRoute cases)
+```
+
+**Eliminated**: Feature coordinators (RadarrCoordinator, SettingsCoordinator, etc.) - all deleted in ADR-0012
 
 ## Checklist for New Views
 
 ### ✅ DO
 
-- **Content views**: Don't create NavigationStack in the view body
-- **Navigation modifiers**: Apply `.navigationTitle()`, `.toolbar()` directly to content
-- **Coordinator views**: Create one NavigationStack bound to coordinator's path
-- **Previews**: Wrap content views in NavigationStack
-- **Sheets**: Can have their own NavigationStack (new presentation context)
-- **Test back button**: Verify navigation works after changes
+- **Views**: Use callbacks for navigation: `let onItemSelected: (Int) -> Void`
+- **ViewModels**: Business logic only, no navigation concerns
+- **AppCoordinator**: Add new routes to AppRoute enum and view(for:) switch
+- **Navigation**: Call AppCoordinator methods: `navigate(to:)`, `navigateBack()`, `popToRoot()`
+- **Sheets/Modals**: Can have their own NavigationStack (new presentation context)
+- **Test navigation**: Verify callbacks work in CoordinatorTests
 
 ### ❌ DON'T
 
-- **Nested stacks**: Never create NavigationStack inside navigationDestination views
-- **Direct navigation**: Don't call `navigationPath.append()` from views
-- **Hard-coded routes**: Use coordinator methods instead
-- **Tight coupling**: Views shouldn't know about other coordinators' routes
+- **Direct navigation**: Never use NavigationStack in feature views
+- **Feature coordinators**: Don't create per-feature coordinators (all deleted)
+- **Logic coordinators**: Don't create ViewModel factories (eliminated in ADR-0012)
+- **Hard-coded routes**: Don't bypass AppCoordinator navigation methods
+- **Tight coupling**: Views shouldn't reference specific routes directly
 
 ## Code Templates
 
-### Coordinator View
+### View with Navigation (Pure MVVM)
+
+### View with Navigation (Pure MVVM)
 
 ```swift
-struct MyFeatureCoordinatorView: View {
-    @Bindable var coordinator: MyFeatureCoordinator
+struct MoviesListView: View {
+    @State private var viewModel: MoviesListViewModel
+    let onMovieSelected: (Int) -> Void  // ✅ Callback to AppCoordinator
 
-    var body: some View {
-        NavigationStack(path: $coordinator.navigationPath) {
-            MyFeatureHomeView(coordinator: coordinator)
-                .navigationDestination(for: MyFeatureRoute.self) { route in
-                    destinationView(for: route)
-                }
-        }
-    }
-
-    @ViewBuilder
-    private func destinationView(for route: MyFeatureRoute) -> some View {
-        switch route {
-        case .home:
-            MyFeatureHomeView(coordinator: coordinator)
-        case .detail(let id):
-            MyFeatureDetailView(id: id, coordinator: coordinator)
-        case .edit(let item):
-            MyFeatureEditView(item: item, coordinator: coordinator)
-        }
-    }
-}
-```
-
-### Content View (with navigation)
-
-```swift
-struct MyContentView: View {
-    @Environment(\.dismiss) private var dismiss
-    let coordinator: MyFeatureCoordinator
-    @State private var viewModel: MyContentViewModel
-
-    init(coordinator: MyFeatureCoordinator) {
-        self.coordinator = coordinator
-        // Initialize ViewModel
-        self.viewModel = MyContentViewModel(
-            service: DIContainer.shared.resolve((any MyServiceProtocol).self)
-        )
+    init(viewModel: MoviesListViewModel, onMovieSelected: @escaping (Int) -> Void) {
+        self._viewModel = State(initialValue: viewModel)
+        self.onMovieSelected = onMovieSelected
     }
 
     var body: some View {
-        ScrollView {
-            // Content here
+        List(viewModel.movies) { movie in
+            Button {
+                onMovieSelected(movie.id)  // ✅ Navigate via callback
+            } label: {
+                Text(movie.title)
+            }
         }
-        .navigationTitle("My Screen")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Movies")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Action") {
-                    coordinator.navigateToDetail()
+                Button("Add") {
+                    // Navigate to add movie screen
+                    onMovieSelected(-1)  // Use special ID or separate callback
                 }
             }
+        }
+        .task {
+            await viewModel.loadMovies()
         }
     }
 }
 
 // Preview
 #Preview {
-    let coordinator = MyFeatureCoordinator()
-    return NavigationStack {
-        MyContentView(coordinator: coordinator)
+    NavigationStack {
+        MoviesListView(
+            viewModel: MoviesListViewModel(radarrService: MockRadarrService()),
+            onMovieSelected: { _ in }
+        )
     }
 }
 ```
 
-### Content View (modal/sheet)
+### ViewModel (Business Logic Only)
 
 ```swift
-struct MyModalView: View {
-    @Environment(\.dismiss) private var dismiss
-    @State private var viewModel: MyModalViewModel
-
-    var body: some View {
-        NavigationStack {  // ✅ OK in modal context
-            Form {
-                // Content
-            }
-            .navigationTitle("Modal Screen")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        Task { await saveAndDismiss() }
-                    }
-                }
-            }
-        }
-    }
-}
-```
-
-### Coordinator
-
-```swift
-@Observable
 @MainActor
-final class MyFeatureCoordinator: CoordinatorProtocol {
-    var childCoordinators: [any CoordinatorProtocol] = []
-    weak var parent: (any CoordinatorProtocol)?
-    var navigationPath: [MyFeatureRoute] = []
+@Observable
+final class MoviesListViewModel: BaseViewModel {
+    var movies: [Movie] = []
+    var isLoading = false
 
-    init() {
-        AppLogger.navigation.info("MyFeatureCoordinator initialized")
+    private let radarrService: RadarrServiceProtocol
+
+    init(radarrService: RadarrServiceProtocol) {
+        self.radarrService = radarrService
+        super.init()
     }
 
-    func start() {
-        AppLogger.navigation.info("MyFeatureCoordinator starting")
-        navigationPath = [.home]
-    }
+    func loadMovies() async {
+        isLoading = true
+        defer { isLoading = false }
 
-    // Navigation methods
-    func navigateToDetail(id: String) {
-        AppLogger.navigation.info("Navigating to detail: \(id)")
-        navigate(to: .detail(id: id))
-    }
-
-    func navigateToEdit(item: MyItem) {
-        AppLogger.navigation.info("Navigating to edit")
-        navigate(to: .edit(item: item))
-    }
-}
-
-// Route enum
-enum MyFeatureRoute: Hashable, Sendable {
-    case home
-    case detail(id: String)
-    case edit(item: MyItem)
-}
+        do {
+            movies = try await radarrService.fetchMovies()
+        } catch {
+            handleError(error)
 ```
 
-## Common Patterns
+## Common Navigation Patterns
 
-### Navigation from View
+### 1. Navigate Forward
 
 ```swift
-// ✅ Correct: Use coordinator method
-Button("Go to Detail") {
-    coordinator.navigateToDetail(id: item.id)
-}
+// AppCoordinator provides navigation method
+appCoordinator.navigate(to: .radarrMovieDetail(123))
 
-// ❌ Wrong: Direct path manipulation
-Button("Go to Detail") {
-    coordinator.navigationPath.append(.detail(id: item.id))
-}
+// View uses callback
+onMovieSelected(123)
 ```
 
-### Back Navigation
+### 2. Navigate Back
 
 ```swift
-// ✅ Correct: Use environment dismiss or coordinator
+// Option 1: Environment dismiss (preferred for most cases)
 @Environment(\.dismiss) private var dismiss
+Button("Back") { dismiss() }
 
-Button("Back") {
-    dismiss()
-}
+// Option 2: AppCoordinator programmatic back
+appCoordinator.navigateBack()
 
-// OR use coordinator for programmatic back
-Button("Cancel") {
-    coordinator.pop()
-}
+// Option 3: Pop to root
+appCoordinator.popToRoot()
 ```
 
-### Sheet with Navigation
+### 3. Sheet/Modal with Navigation
 
 ```swift
 .sheet(isPresented: $showingModal) {
     NavigationStack {  // ✅ OK: New presentation context
-        MyModalView()
+        AddMovieView(onMovieAdded: { id in
+            // Handle completion
+        })
     }
 }
 ```
 
-### Navigation from ViewModel
+### 4. ViewModel Communication (NO Navigation)
+
+ViewModels should **never** navigate. Instead, use callbacks:
 
 ```swift
-// ViewModels should not navigate directly
-// Instead, use callbacks or published state
-
-@Observable
+// ❌ WRONG: ViewModel navigating
 class MyViewModel {
-    var shouldNavigateToDetail: Bool = false
-    var detailId: String?
-
-    func handleItemSelection(id: String) {
-        self.detailId = id
-        self.shouldNavigateToDetail = true
+    func onItemSelected(id: Int) {
+        coordinator.navigate(to: .detail(id))  // ❌ NO!
     }
 }
 
-// In the view:
-.onChange(of: viewModel.shouldNavigateToDetail) { _, shouldNavigate in
-    if shouldNavigate, let id = viewModel.detailId {
-        coordinator.navigateToDetail(id: id)
-        viewModel.shouldNavigateToDetail = false
+// ✅ CORRECT: ViewModel uses callback
+class MyViewModel {
+    var onItemSelected: ((Int) -> Void)?
+
+    func handleItemSelection(id: Int) {
+        onItemSelected?(id)  // ✅ Let AppCoordinator navigate
     }
 }
 ```
+
+## Testing Navigation
+
+### Test AppCoordinator Navigation
+
+```swift
+@Test("AppCoordinator navigates to route")
+func testNavigation() async {
+    let coordinator = AppCoordinator(...)
+
+    coordinator.navigate(to: .radarrMoviesList)
+
+    #expect(coordinator.navigationPath.count == 1)
+    #expect(coordinator.navigationPath.last == .radarrMoviesList)
+}
+
+@Test("AppCoordinator navigates back")
+func testNavigateBack() async {
+    let coordinator = AppCoordinator(...)
+
+    coordinator.navigate(to: .radarrMoviesList)
+    coordinator.navigate(to: .radarrMovieDetail(123))
+    #expect(coordinator.navigationPath.count == 2)
+
+    coordinator.navigateBack()
+    #expect(coordinator.navigationPath.count == 1)
+    #expect(coordinator.navigationPath.last == .radarrMoviesList)
+}
+```
+
+### Test View Callbacks
+
+```swift
+@Test("View calls navigation callback")
+func testViewNavigationCallback() async {
+    var selectedId: Int?
+
+    let view = MoviesListView(
+        viewModel: MoviesListViewModel(radarrService: MockRadarrService()),
+        onMovieSelected: { id in selectedId = id }
+    )
+
+    // Simulate button tap
+    view.onMovieSelected(123)
+
+    #expect(selectedId == 123)
+}
+```
+
+## Architecture Decision Records
+
+- **[ADR-0012: Single NavigationStack with Simple MVVM](decisions/0012-single-navigationstack-simple-mvvm.md)** - Current architecture
+- **[ADR-0011: Hierarchical Navigation](decisions/0011-hierarchical-navigation-pattern.md)** - Superseded (nested NavigationStacks)
+- **[ADR-0010: Coordinator Navigation Initialization](decisions/0010-coordinator-navigation-initialization.md)** - Empty path initialization
+- **[ADR-0001: Single NavigationStack Per Coordinator](decisions/0001-single-navigationstack-per-coordinator.md)** - Superseded
+
+## Migration Guide
+
+### From Old MVVM-C Pattern
+
+**1. Remove coordinator references from views:**
+
+```diff
+// OLD
+struct MoviesListView: View {
+-   let coordinator: RadarrCoordinator
++   let onMovieSelected: (Int) -> Void
+
+    Button {
+-       coordinator.showMovieDetail(movie.id)
++       onMovieSelected(movie.id)
+    }
+}
+```
+
+**2. Remove logic coordinators:**
+
+Logic coordinators (RadarrLogicCoordinator, etc.) are obsolete. Delete them completely.
+
+**3. Update AppCoordinator to create ViewModels directly:**
+
+```diff
+// AppCoordinator.swift
+func view(for route: AppRoute) -> some View {
+    switch route {
+    case .radarrMoviesList:
+-       let coordinator = radarrLogicCoordinator  // ❌ Deleted
+-       let viewModel = coordinator.makeMoviesListViewModel()
++       let viewModel = MoviesListViewModel(radarrService: radarrService)  // ✅ Direct creation
+        return MoviesListView(
+            viewModel: viewModel,
++           onMovieSelected: { [weak self] id in
++               self?.navigate(to: .radarrMovieDetail(id))
++           }
+        )
+    }
+}
+```
+
+## Key Principles Summary
+
+1. **AppCoordinator is sole navigation authority** - manages single NavigationStack
+2. **Views use callbacks** - no direct coordinator references except environment
+3. **ViewModels are business logic only** - zero navigation concerns
+4. **OnboardingCoordinator is the exception** - only child coordinator (separate flow)
+5. **No logic coordinators** - AppCoordinator creates ViewModels directly
+6. **Services injected via DI** - Swinject container manages dependencies
+
+## Quick Troubleshooting
+
+**Problem**: View needs to navigate
+**Solution**: Add callback parameter and pass from AppCoordinator
+
+**Problem**: ViewModel needs to trigger navigation
+**Solution**: ViewModel uses callback, AppCoordinator handles navigation
+
+**Problem**: Creating new feature screen
+**Solution**:
+
+1. Add case to AppRoute enum
+2. Add case to AppCoordinator.view(for:) switch
+3. Create view with callback parameters
+
+**Problem**: Tests failing after navigation changes
+**Solution**: Update tests to use callbacks instead of coordinator methods
+
+## See Also
+
+- **[NAVIGATION_ARCHITECTURE.md](./NAVIGATION_ARCHITECTURE.md)** - Comprehensive navigation guide with diagrams
+- **[NAVIGATION_TRACING.md](../NAVIGATION_TRACING.md)** - Debug navigation issues
+- **[CODING_CONVENTIONS.md](../CODING_CONVENTIONS.md)** - Architecture patterns section
+- **[ADR-0012](decisions/0012-single-navigationstack-simple-mvvm.md)** - Architecture decision record
+  }
+
+// In the view:
+.onChange(of: viewModel.shouldNavigateToDetail) { \_, shouldNavigate in
+if shouldNavigate, let id = viewModel.detailId {
+coordinator.navigateToDetail(id: id)
+viewModel.shouldNavigateToDetail = false
+}
+}
+
+````
 
 ## Testing Navigation
 
@@ -268,7 +355,7 @@ func popNavigation() {
 
     #expect(coordinator.navigationPath.count == 1)
 }
-```
+````
 
 ## Troubleshooting
 

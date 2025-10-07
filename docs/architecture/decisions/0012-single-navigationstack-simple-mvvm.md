@@ -334,6 +334,142 @@ struct ContentView: View {
 - [ ] Close issues #208-212 (superseded)
 - [ ] Create new implementation issue
 
+## Decision Refinement: LogicCoordinator Elimination (2025-01-06)
+
+### Context
+
+During Phase 3 implementation of this ADR, a critical question arose: **"Why do we have coordinator classes in pure MVVM?"**
+
+Upon review, the "LogicCoordinators" (RadarrLogicCoordinator, SettingsLogicCoordinator, etc.) were essentially:
+
+- ViewModel factories that created ViewModels with service dependencies
+- Service holders that passed services to ViewModels
+- **Zero navigation logic** (navigation delegated to AppCoordinator)
+
+### Analysis
+
+**What LogicCoordinators Actually Did**:
+
+```swift
+// RadarrLogicCoordinator - just a ViewModel factory
+func makeMoviesListViewModel() -> MoviesListViewModel {
+    MoviesListViewModel(radarrService: radarrService)
+}
+```
+
+**What AppCoordinator Already Did**:
+
+```swift
+// AppCoordinator - already has services and creates ViewModels
+private let radarrService: RadarrServiceProtocol
+// ...
+func navigate(to route: AppRoute) {
+    let viewModel = MoviesListViewModel(radarrService: radarrService)
+    navigationPath.append(route)
+}
+```
+
+**Conclusion**: LogicCoordinators were redundant. AppCoordinator already has DI container access and can create ViewModels directly.
+
+### Decision
+
+**Eliminate LogicCoordinators completely** for true pure MVVM:
+
+- ✅ **AppCoordinator**: Creates ViewModels directly using injected services
+- ✅ **ViewModels**: Handle business logic (no coordinators needed)
+- ✅ **Services**: Provide data access (injected via DI)
+- ✅ **Views**: Pure presentation (navigation via callbacks)
+- ❌ **No LogicCoordinators**: Not needed in pure MVVM
+
+### Impact
+
+**Code Reduction** (~800 lines removed):
+
+- Deleted RadarrLogicCoordinator.swift (120 lines)
+- Deleted SettingsLogicCoordinator.swift (80 lines)
+- Deleted 6 obsolete coordinator files (DashboardCoordinator, ServicesCoordinator, etc.) (500+ lines)
+- Removed all `#if false` disabled code blocks
+- Simplified AppCoordinator implementation
+
+**Architecture Simplification**:
+
+- One coordinator (AppCoordinator) instead of 1+N pattern
+- Direct ViewModel creation (no factory pattern needed)
+- Clearer responsibility boundaries
+- True pure MVVM (not MVVM-C)
+
+**Developer Experience**:
+
+- Fewer files to understand
+- Direct service-to-ViewModel flow
+- No "coordinator" vs "logic coordinator" confusion
+- Faster feature development
+
+### Rationale
+
+**Why This Is Better Than Original Plan**:
+
+1. **Original Plan** (ADR-0012 v1):
+
+   - AppCoordinator handles navigation
+   - LogicCoordinators create ViewModels
+   - Result: Two coordinator types with unclear boundaries
+
+2. **Actual Implementation** (ADR-0012 final):
+   - AppCoordinator handles navigation AND creates ViewModels
+   - No intermediary needed
+   - Result: Simpler, more maintainable architecture
+
+**Trade-offs**:
+
+- ✅ Simpler architecture (fewer concepts)
+- ✅ Less code to maintain
+- ✅ Clearer separation of concerns
+- ❌ AppCoordinator has more responsibilities (acceptable for app size)
+- ❌ Less granular testability (mitigated by testing ViewModels directly)
+
+### Implementation Results
+
+**What Changed from Original ADR**:
+
+```diff
+- Option A: Single NavigationStack with Logic Coordinators (Chosen)
++ Implemented: Single NavigationStack with Pure MVVM (No Logic Coordinators)
+```
+
+**Final Architecture**:
+
+- **AppCoordinator**: Sole navigation authority, creates ViewModels directly
+- **OnboardingCoordinator**: Only child coordinator (separate first-run flow)
+- **ViewModels**: Business logic (created by AppCoordinator or views)
+- **Services**: Data access (injected via DI)
+- **Views**: Presentation only
+
+**Validation**:
+
+- ✅ All tests pass (100%)
+- ✅ BUILD SUCCEEDED
+- ✅ ~800 lines of code removed
+- ✅ All comments updated to reflect pure MVVM
+- ✅ Comprehensive documentation rewritten
+
+### Lessons Learned
+
+1. **Challenge assumptions during implementation**: "Why do we need this?" led to better architecture
+2. **Pure MVVM doesn't need coordinators**: Coordinators are for MVVM-C navigation, not business logic
+3. **Simpler is better for solo development**: Fewer abstractions = faster iteration
+4. **Document architectural evolution**: Capture why decisions changed during implementation
+
+### Review Conditions
+
+Re-evaluate this decision if:
+
+- App grows to 50+ screens (may need feature coordinators)
+- Multiple developers join (may benefit from stricter separation)
+- Complex multi-step flows emerge (may need specialized coordinators)
+
+**Current Assessment** (110 screens planned): Pure MVVM is sufficient.
+
 ## References
 
 - `docs/architecture/decisions/MVVM-C-ANALYSIS.md` - Critical analysis
@@ -341,11 +477,14 @@ struct ContentView: View {
 - ADR-0005: MVVM-C Pattern (simplified to MVVM)
 - ADR-0011: Hierarchical Navigation Pattern (superseded)
 - `docs/implementation-summaries/fix-settings-radarr-navigation.md` - Bug fix that revealed issue
+- `docs/architecture/NAVIGATION_ARCHITECTURE.md` - Pure MVVM implementation guide (Version 3.0)
 
 ## Notes
 
 This decision supersedes ADR-0011 which prescribed nested NavigationStacks with hierarchical button navigation. That approach was found to be over-engineering after implementation and critical analysis.
 
-The new approach maintains the benefits of separation of concerns (business logic in coordinators) while eliminating unnecessary navigation complexity.
+**Implementation Evolution**: The original ADR-0012 plan included "LogicCoordinators" for business logic separation. During implementation (Phase 3), it became clear these were unnecessary abstractions. The final implementation eliminates LogicCoordinators for a true pure MVVM architecture, achieving even greater simplification than originally planned.
 
-**Migration Timeline**: Estimated 15-20 hours over 1-2 weeks for full refactoring.
+**Final Architecture**: True pure MVVM with single NavigationStack, ~800 lines of code removed beyond original estimates.
+
+**Migration Timeline**: Completed in ~20 hours over 6 phases (ANALYZE, DESIGN, IMPLEMENT, VALIDATE, REFLECT, HANDOFF).
