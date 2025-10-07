@@ -84,140 +84,18 @@ struct DeepLinkTests {
         #expect(url?.absoluteString == "thriftwood://dashboard/media/67890/sonarr")
     }
     
-    // MARK: - ServicesRoute Deep Link Tests
+    // MARK: - Obsolete Route Tests Removed
+    // ServicesRoute and SettingsRoute were consolidated into AppRoute (ADR-0012)
+    // Deep link tests for those routes have been removed
+    // TODO: Add AppRoute deep link tests when deep linking is implemented
     
-    @MainActor @Test("Parse services list URL")
-    func testParseServicesListURL() {
-        let url = URL(string: "thriftwood://services")!
-        let route = ServicesRoute.parse(from: url)
-        
-        #expect(route == .list)
-    }
+    // MARK: - TabCoordinator Tests (Disabled - Phase 1 removed tabs)
     
-    @MainActor @Test("Parse services add URL")
-    func testParseServicesAddURL() {
-        let url = URL(string: "thriftwood://services/add")!
-        let route = ServicesRoute.parse(from: url)
-        
-        #expect(route == .addService)
-    }
+    // TODO: Phase 2 - Update these tests for new hierarchical navigation structure
+    // These tests were written for the old TabCoordinator which was removed in Phase 1.
+    // They need to be rewritten to test the new AppCoordinator and hierarchical navigation.
     
-    @MainActor @Test("Parse services configure URL")
-    func testParseServicesConfigureURL() {
-        let url = URL(string: "thriftwood://services/configure/radarr-1")!
-        let route = ServicesRoute.parse(from: url)
-        
-        #expect(route == .serviceConfiguration(serviceId: "radarr-1"))
-    }
-    
-    @MainActor @Test("Parse services test URL")
-    func testParseServicesTestURL() {
-        let url = URL(string: "thriftwood://services/test/radarr-1")!
-        let route = ServicesRoute.parse(from: url)
-        
-        #expect(route == .testConnection(serviceId: "radarr-1"))
-    }
-    
-    @MainActor @Test("Generate services list URL")
-    func testGenerateServicesListURL() {
-        let route = ServicesRoute.list
-        let url = route.toURL()
-        
-        #expect(url?.absoluteString == "thriftwood://services")
-    }
-    
-    @MainActor @Test("Generate services add URL")
-    func testGenerateServicesAddURL() {
-        let route = ServicesRoute.addService
-        let url = route.toURL()
-        
-        #expect(url?.absoluteString == "thriftwood://services/add")
-    }
-    
-    // MARK: - SettingsRoute Deep Link Tests
-    
-    @MainActor @Test("Parse settings main URL")
-    func testParseSettingsMainURL() {
-        let url = URL(string: "thriftwood://settings")!
-        let route = SettingsRoute.parse(from: url)
-        
-        #expect(route == .main)
-    }
-    
-    @MainActor @Test("Parse settings profiles URL")
-    func testParseSettingsProfilesURL() {
-        let url = URL(string: "thriftwood://settings/profiles")!
-        let route = SettingsRoute.parse(from: url)
-        
-        #expect(route == .profiles)
-    }
-    
-    @MainActor @Test("Parse settings add profile URL")
-    func testParseSettingsAddProfileURL() {
-        let url = URL(string: "thriftwood://settings/profiles/add")!
-        let route = SettingsRoute.parse(from: url)
-        
-        #expect(route == .addProfile)
-    }
-    
-    @MainActor @Test("Parse settings edit profile URL")
-    func testParseSettingsEditProfileURL() {
-        let url = URL(string: "thriftwood://settings/profiles/edit/profile-123")!
-        let route = SettingsRoute.parse(from: url)
-        
-        #expect(route == .editProfile(profileId: "profile-123"))
-    }
-    
-    @MainActor @Test("Parse settings appearance URL")
-    func testParseSettingsAppearanceURL() {
-        let url = URL(string: "thriftwood://settings/appearance")!
-        let route = SettingsRoute.parse(from: url)
-        
-        #expect(route == .appearance)
-    }
-    
-    @MainActor @Test("Parse settings notifications URL")
-    func testParseSettingsNotificationsURL() {
-        let url = URL(string: "thriftwood://settings/notifications")!
-        let route = SettingsRoute.parse(from: url)
-        
-        #expect(route == .notifications)
-    }
-    
-    @MainActor @Test("Parse settings about URL")
-    func testParseSettingsAboutURL() {
-        let url = URL(string: "thriftwood://settings/about")!
-        let route = SettingsRoute.parse(from: url)
-        
-        #expect(route == .about)
-    }
-    
-    @MainActor @Test("Parse settings logs URL")
-    func testParseSettingsLogsURL() {
-        let url = URL(string: "thriftwood://settings/logs")!
-        let route = SettingsRoute.parse(from: url)
-        
-        #expect(route == .logs)
-    }
-    
-    @MainActor @Test("Generate settings main URL")
-    func testGenerateSettingsMainURL() {
-        let route = SettingsRoute.main
-        let url = route.toURL()
-        
-        #expect(url?.absoluteString == "thriftwood://settings")
-    }
-    
-    @MainActor @Test("Generate settings profiles URL")
-    func testGenerateSettingsProfilesURL() {
-        let route = SettingsRoute.profiles
-        let url = route.toURL()
-        
-        #expect(url?.absoluteString == "thriftwood://settings/profiles")
-    }
-    
-    // MARK: - TabCoordinator Deep Link Handling Tests
-    
+    /*
     @Test("TabCoordinator handles dashboard deep link", .tags(.navigationTag))
     @MainActor
     func testTabCoordinatorHandlesDashboardDeepLink() async {
@@ -299,6 +177,7 @@ struct DeepLinkTests {
         
         #expect(handled == false)
     }
+    */
     
     // MARK: - Round-trip Tests
     
@@ -311,23 +190,7 @@ struct DeepLinkTests {
         #expect(parsedRoute == originalRoute)
     }
     
-    @MainActor @Test("Services route round-trip conversion")
-    func testServicesRouteRoundTrip() {
-        let originalRoute = ServicesRoute.serviceConfiguration(serviceId: "test-123")
-        let url = originalRoute.toURL()!
-        let parsedRoute = ServicesRoute.parse(from: url)
-        
-        #expect(parsedRoute == originalRoute)
-    }
-    
-    @MainActor @Test("Settings route round-trip conversion")
-    func testSettingsRouteRoundTrip() {
-        let originalRoute = SettingsRoute.editProfile(profileId: "profile-456")
-        let url = originalRoute.toURL()!
-        let parsedRoute = SettingsRoute.parse(from: url)
-        
-        #expect(parsedRoute == originalRoute)
-    }
+    // ServicesRoute and SettingsRoute round-trip tests removed (routes consolidated into AppRoute)
 }
 
 // MARK: - Test Tags

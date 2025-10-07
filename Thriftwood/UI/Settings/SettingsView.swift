@@ -21,20 +21,42 @@
 
 import SwiftUI
 
-/// Main settings view with navigation to all settings screens
+/// Main settings view with navigation to all settings screens (ADR-0012: Simple MVVM)
+/// Navigation is handled by AppCoordinator, this view just displays settings options
 @MainActor
 struct SettingsView: View {
-    @State private var coordinator: SettingsCoordinator
     private let preferences: any UserPreferencesServiceProtocol
     private let profileService: any ProfileServiceProtocol
     @State private var showResetConfirmation = false
     
-    init(coordinator: SettingsCoordinator) {
-        self.coordinator = coordinator
+    // Navigation callbacks (provided by AppCoordinator)
+    let onNavigateToProfiles: () -> Void
+    let onNavigateToAppearance: () -> Void
+    let onNavigateToGeneral: () -> Void
+    let onNavigateToNetworking: () -> Void
+    let onNavigateToAbout: () -> Void
+    let onNavigateToAcknowledgements: () -> Void
+    
+    init(
+        onNavigateToProfiles: @escaping () -> Void,
+        onNavigateToAppearance: @escaping () -> Void,
+        onNavigateToGeneral: @escaping () -> Void,
+        onNavigateToNetworking: @escaping () -> Void,
+        onNavigateToAbout: @escaping () -> Void,
+        onNavigateToAcknowledgements: @escaping () -> Void
+    ) {
         // Resolve services from DI container
         let container = DIContainer.shared
         self.preferences = container.resolve((any UserPreferencesServiceProtocol).self)
         self.profileService = container.resolve((any ProfileServiceProtocol).self)
+        
+        // Store navigation callbacks
+        self.onNavigateToProfiles = onNavigateToProfiles
+        self.onNavigateToAppearance = onNavigateToAppearance
+        self.onNavigateToGeneral = onNavigateToGeneral
+        self.onNavigateToNetworking = onNavigateToNetworking
+        self.onNavigateToAbout = onNavigateToAbout
+        self.onNavigateToAcknowledgements = onNavigateToAcknowledgements
     }
     
     var body: some View {
@@ -42,7 +64,7 @@ struct SettingsView: View {
             // Profile Section
             Section {
                 Button {
-                    coordinator.navigate(to: .profiles)
+                    onNavigateToProfiles()
                 } label: {
                     HStack {
                         Image(systemName: "person.2.fill")
@@ -88,7 +110,7 @@ struct SettingsView: View {
             // Appearance Section
             Section {
                 Button {
-                    coordinator.navigate(to: .appearance)
+                    onNavigateToAppearance()
                 } label: {
                     HStack {
                         Image(systemName: "paintbrush.fill")
@@ -117,7 +139,7 @@ struct SettingsView: View {
             // General Section
             Section {
                 Button {
-                    coordinator.navigate(to: .main)
+                    onNavigateToGeneral()
                 } label: {
                     HStack {
                         Image(systemName: "slider.horizontal.3")
@@ -141,7 +163,7 @@ struct SettingsView: View {
                 }
                 
                 Button {
-                    coordinator.navigate(to: .notifications)
+                    onNavigateToNetworking()
                 } label: {
                     HStack {
                         Image(systemName: "network")
@@ -170,7 +192,7 @@ struct SettingsView: View {
             // About Section
             Section {
                 Button {
-                    coordinator.navigate(to: .about)
+                    onNavigateToAbout()
                 } label: {
                     HStack {
                         Image(systemName: "info.circle.fill")
@@ -194,7 +216,7 @@ struct SettingsView: View {
                 }
                 
                 Button {
-                    coordinator.navigate(to: .logs)
+                    onNavigateToAcknowledgements()
                 } label: {
                     HStack {
                         Image(systemName: "heart.fill")
@@ -272,10 +294,14 @@ struct SettingsView: View {
 // MARK: - Preview
 
 #Preview("Settings View") {
-    let coordinator = SettingsCoordinator()
-    coordinator.start()
-    
-    return NavigationStack {
-        SettingsView(coordinator: coordinator)
+    NavigationStack {
+        SettingsView(
+            onNavigateToProfiles: {},
+            onNavigateToAppearance: {},
+            onNavigateToGeneral: {},
+            onNavigateToNetworking: {},
+            onNavigateToAbout: {},
+            onNavigateToAcknowledgements: {}
+        )
     }
 }

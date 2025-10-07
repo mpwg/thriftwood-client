@@ -166,10 +166,11 @@ final class DIContainer {
     
     // MARK: - Coordinators Registration
     
-    /// Registers coordinators for navigation
-    /// Note: Coordinators are typically created with transient scope since they manage navigation state
+    /// Registers coordinators for navigation (ADR-0012: Pure MVVM - AppCoordinator only)
     private func registerCoordinators() {
-        // Register AppCoordinator (needs UserPreferencesService, ProfileService, RadarrService, DataService)
+        // Register AppCoordinator (ADR-0012: Single NavigationStack, Pure MVVM)
+        // AppCoordinator is the sole navigation authority
+        // ViewModels are created directly in views or by AppCoordinator when needed
         container.register(AppCoordinator.self) { resolver in
             guard let preferencesService = resolver.resolve((any UserPreferencesServiceProtocol).self) else {
                 fatalError("Could not resolve UserPreferencesServiceProtocol for AppCoordinator")
@@ -190,10 +191,7 @@ final class DIContainer {
                 dataService: dataService
             )
         }
-        
-        // Note: Other coordinators are created on-demand by parent coordinators
-        // TabCoordinator, DashboardCoordinator, etc. are created with simple init()
-        // or are passed dependencies from their parent coordinators
+        .inObjectScope(.container)
     }
     
     // MARK: - Service Resolution

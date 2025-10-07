@@ -1,10 +1,15 @@
 # Navigation Architecture Quick Reference
 
+**For comprehensive guide with diagrams, see [NAVIGATION_ARCHITECTURE.md](./NAVIGATION_ARCHITECTURE.md)**
+
 Quick reference for implementing navigation in Thriftwood following our architectural decisions.
 
 ## Core Rule
 
 **One NavigationStack per coordinator, content-only child views.**
+
+> **🔵 Coordinator Views = NavigationStack**  
+> **🟡 Content Views = No NavigationStack**
 
 ## Checklist for New Views
 
@@ -293,6 +298,7 @@ func popNavigation() {
 
 ## Resources
 
+- **[NAVIGATION_ARCHITECTURE.md](./NAVIGATION_ARCHITECTURE.md)** - Comprehensive guide with Mermaid diagrams
 - [ADR-0001: Single NavigationStack Per Coordinator](/docs/architecture/decisions/0001-single-navigationstack-per-coordinator.md)
 - [Architecture Overview](/docs/architecture/README.md)
 - [Implementation Fix Documentation](/docs/implementation-summaries/fix-nested-navigation-stack.md)

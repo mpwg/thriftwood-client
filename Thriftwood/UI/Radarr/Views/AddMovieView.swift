@@ -24,7 +24,7 @@ import SwiftUI
 /// View for searching and adding new movies to Radarr
 ///
 /// Based on legacy Flutter AddMovieRoute with modernized SwiftUI patterns.
-/// Follows MVVM-C architecture - ViewModel handles business logic, Coordinator handles navigation.
+/// Follows pure MVVM architecture - ViewModel handles business logic, navigation via callbacks.
 ///
 /// Features:
 /// - Movie search with debouncing
@@ -38,7 +38,7 @@ import SwiftUI
 /// AddMovieView(
 ///     viewModel: viewModel,
 ///     onMovieAdded: { movieId in
-///         coordinator.showMovieDetail(movieId)
+///         // Navigate to movie detail via AppCoordinator
 ///     }
 /// )
 /// ```

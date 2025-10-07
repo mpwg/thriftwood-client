@@ -54,16 +54,13 @@ struct OnboardingCoordinatorView: View {
     private func destinationView(for route: OnboardingRoute) -> some View {
         switch route {
         case .welcome:
-            OnboardingView(
-                coordinator: coordinator,
-                viewModel: viewModel
-            )
+            // .welcome should not be pushed - it's the root OnboardingView
+            // This case exists only for enum completeness
+            EmptyView()
             
         case .createProfile:
-            // Use SettingsCoordinator temporarily for profile creation
-            // In a real app, this might be a dedicated onboarding profile view
-            let settingsCoordinator = SettingsCoordinator()
-            AddProfileView(coordinator: settingsCoordinator)
+            // Direct profile creation view (no coordinator needed in ADR-0012)
+            AddProfileView()
                 .onDisappear {
                     // Check if a profile was created via ViewModel
                     Task {

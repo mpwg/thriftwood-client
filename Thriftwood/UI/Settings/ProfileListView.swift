@@ -25,7 +25,6 @@ import SwiftData
 /// View displaying list of profiles with management capabilities
 @MainActor
 struct ProfileListView: View {
-    @State private var coordinator: SettingsCoordinator
     @State private var viewModel: ProfileListViewModel
     @State private var showingAddProfile = false
     @State private var showingEditProfile = false
@@ -33,8 +32,7 @@ struct ProfileListView: View {
     @State private var showingDeleteConfirmation = false
     @State private var profileToDelete: Profile?
     
-    init(coordinator: SettingsCoordinator) {
-        self.coordinator = coordinator
+    init() {
         // Initialize ViewModel from DI container
         let profileService = DIContainer.shared.resolve((any ProfileServiceProtocol).self)
         let preferences = DIContainer.shared.resolve((any UserPreferencesServiceProtocol).self)
@@ -84,7 +82,7 @@ struct ProfileListView: View {
                 await viewModel.loadProfiles()
             }
         } content: {
-            AddProfileView(coordinator: coordinator)
+            AddProfileView()
         }
         .sheet(isPresented: $showingEditProfile) {
             // Reload profiles when sheet is dismissed
@@ -93,7 +91,7 @@ struct ProfileListView: View {
             }
         } content: {
             if let profileToEdit = profileToEdit {
-                AddProfileView(coordinator: coordinator, profile: profileToEdit)
+                AddProfileView(profile: profileToEdit)
             }
         }
         .alert("Delete Profile", isPresented: $showingDeleteConfirmation, presenting: profileToDelete) { profile in
@@ -226,21 +224,5 @@ private struct ProfileRow: View {
 }
 
 // MARK: - Preview
+// TODO: Update previews for ADR-0012 pure MVVM architecture
 
-#Preview("Profile List - With Profiles") {
-    let coordinator = SettingsCoordinator()
-    coordinator.start()
-    
-    return NavigationStack {
-        ProfileListView(coordinator: coordinator)
-    }
-}
-
-#Preview("Profile List - Empty") {
-    let coordinator = SettingsCoordinator()
-    coordinator.start()
-    
-    return NavigationStack {
-        ProfileListView(coordinator: coordinator)
-    }
-}

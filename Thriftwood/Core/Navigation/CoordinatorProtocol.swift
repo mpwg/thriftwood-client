@@ -24,13 +24,16 @@ import SwiftUI
 
 /// Protocol defining the core requirements for all coordinators in the app.
 ///
-/// **File Naming Note**: This file is named `CoordinatorProtocol.swift` rather than
-/// `Coordinator.swift` to clearly distinguish it from concrete coordinator implementations
-/// (AppCoordinator, TabCoordinator, etc.). This naming convention helps avoid confusion
-/// when navigating the codebase and makes it immediately clear that this file contains
-/// the protocol definition.
+/// **Current Usage (ADR-0012 - Pure MVVM):**
+/// - `AppCoordinator`: Sole navigation authority, manages unified AppRoute enum
+/// - `OnboardingCoordinator`: Child coordinator for onboarding flow only
+/// - All other navigation handled directly by AppCoordinator without child coordinators
 ///
-/// Based on the coordinator pattern from Hacking with Swift, adapted for SwiftUI.
+/// **File Naming Note**: This file is named `CoordinatorProtocol.swift` rather than
+/// `Coordinator.swift` to clearly distinguish it from concrete coordinator implementations.
+/// This naming convention helps avoid confusion when navigating the codebase.
+///
+/// Based on the coordinator pattern from Hacking with Swift, adapted for SwiftUI and pure MVVM.
 /// Coordinators are responsible for managing navigation flow, removing this
 /// responsibility from views and view models.
 ///

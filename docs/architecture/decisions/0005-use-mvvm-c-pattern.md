@@ -260,9 +260,11 @@ func testNavigateToProfile() {
 
 ## Related Decisions
 
-- [0001: Single NavigationStack Per Coordinator](0001-single-navigationstack-per-coordinator.md) - Defines coordinator navigation pattern
-- 0002: Use SwiftData Over CoreData - Models are SwiftData @Model objects
-- 0003: Use Swinject for DI - Services injected into ViewModels
+- [ADR-0001: Single NavigationStack Per Coordinator](0001-single-navigationstack-per-coordinator.md) - Defines coordinator navigation pattern
+- [ADR-0002: Use SwiftData Over CoreData](0002-use-swiftdata-over-coredata.md) - Models are SwiftData @Model objects
+- [ADR-0003: Use Swinject for DI](0003-use-swinject-for-dependency-injection.md) - Services injected into ViewModels
+- [ADR-0010: Coordinator Navigation Initialization](0010-coordinator-navigation-initialization.md) - Empty path initialization
+- [ADR-0011: Hierarchical Navigation Pattern](0011-hierarchical-navigation-pattern.md) - Button-based hierarchical navigation
 
 ## References
 

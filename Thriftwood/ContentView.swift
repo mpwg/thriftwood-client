@@ -52,13 +52,36 @@ struct ContentView: View {
     /// Returns the appropriate view based on coordinator state
     @ViewBuilder
     private func coordinatorView(_ coordinator: AppCoordinator) -> some View {
-        if let tabCoordinator = coordinator.activeCoordinator as? TabCoordinator {
-            MainTabView(coordinator: tabCoordinator)
-        } else if let onboardingCoordinator = coordinator.activeCoordinator as? OnboardingCoordinator {
+        if let onboardingCoordinator = coordinator.activeCoordinator as? OnboardingCoordinator {
+            // Show onboarding flow
             OnboardingCoordinatorView(coordinator: onboardingCoordinator)
         } else {
-            // Fallback loading state
-            ProgressView("Loading...")
+            // Show main app with hierarchical navigation
+            MainAppNavigationView(coordinator: coordinator)
+        }
+    }
+}
+
+/// Separate view to allow @Bindable wrapper (ADR-0012: Single NavigationStack)
+private struct MainAppNavigationView: View {
+    @Bindable var coordinator: AppCoordinator
+    
+    var body: some View {
+        NavigationStack(path: $coordinator.navigationPath) {
+            AppHomeView(
+                onNavigateToServices: {
+                    coordinator.navigate(to: .services)
+                },
+                onNavigateToSettings: {
+                    coordinator.navigate(to: .settingsMain)
+                }
+            )
+            .navigationDestination(for: AppRoute.self) { route in
+                coordinator.view(for: route)
+                    .withHomeButton {
+                        coordinator.popToRoot()
+                    }
+            }
         }
     }
 }

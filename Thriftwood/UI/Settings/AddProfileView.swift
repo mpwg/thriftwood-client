@@ -26,11 +26,9 @@ import SwiftData
 @MainActor
 struct AddProfileView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var coordinator: SettingsCoordinator
     @State private var viewModel: AddProfileViewModel
     
-    init(coordinator: SettingsCoordinator, profile: Profile? = nil) {
-        self.coordinator = coordinator
+    init(profile: Profile? = nil) {
         // Initialize ViewModel from DI container
         let profileService = DIContainer.shared.resolve((any ProfileServiceProtocol).self)
         self.viewModel = AddProfileViewModel(
@@ -109,18 +107,5 @@ struct AddProfileView: View {
 }
 
 // MARK: - Preview
+// TODO: Update previews for ADR-0012 pure MVVM architecture
 
-#Preview("Add Profile") {
-    let coordinator = SettingsCoordinator()
-    return NavigationStack {
-        AddProfileView(coordinator: coordinator)
-    }
-}
-
-#Preview("Edit Profile") {
-    let coordinator = SettingsCoordinator()
-    let profile = Profile(name: "Test Profile")
-    return NavigationStack {
-        AddProfileView(coordinator: coordinator, profile: profile)
-    }
-}

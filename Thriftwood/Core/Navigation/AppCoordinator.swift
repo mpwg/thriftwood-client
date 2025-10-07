@@ -19,15 +19,22 @@
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 //  Created on 2025-10-04.
-//  Root coordinator for the entire application
+//  Root coordinator for the entire application (ADR-0012: Pure MVVM)
 //
 
 import Foundation
 import SwiftUI
 
-/// Root coordinator that manages the top-level navigation flow.
+/// Root coordinator that manages the top-level navigation flow for the entire application.
+///
+/// **Pure MVVM Architecture (ADR-0012):**
+/// - Manages single NavigationStack with unified AppRoute enum
+/// - Creates ViewModels directly (no logic coordinators)
+/// - Only child coordinator is OnboardingCoordinator (for first-run flow)
+/// - All navigation methods are centralized here
+///
 /// This is equivalent to the MainCoordinator in the Hacking with Swift tutorial,
-/// but adapted for SwiftUI's NavigationStack pattern.
+/// but adapted for SwiftUI's NavigationStack and pure MVVM pattern.
 @Observable
 @MainActor
 final class AppCoordinator: @MainActor CoordinatorProtocol {
@@ -45,10 +52,10 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     /// Profile service for checking if profiles exist
     private let profileService: any ProfileServiceProtocol
     
-    /// Radarr service for TabCoordinator's ServicesCoordinator
+    /// Radarr service for movie management (pure MVVM - no coordinator needed)
     private let radarrService: any RadarrServiceProtocol
     
-    /// Data service for TabCoordinator's ServicesCoordinator
+    /// Data service for persistence
     private let dataService: any DataServiceProtocol
     
     /// Whether the user has completed onboarding
@@ -88,7 +95,7 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
         AppLogger.navigation.logCoordinator(
             event: "created",
             coordinator: "AppCoordinator",
-            details: "Root coordinator initialized with dependencies"
+            details: "Root coordinator initialized - Pure MVVM (no logic coordinators)"
         )
     }
     
@@ -111,6 +118,69 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
     }
     
     // MARK: - Navigation Methods
+    
+    /// Unified navigation method for all routes (ADR-0012)
+    /// - Parameter route: The AppRoute to navigate to
+    func navigate(to route: AppRoute) {
+        AppLogger.navigation.logNavigation(
+            from: navigationPath.last.map { String(describing: $0) } ?? "Root",
+            to: String(describing: route),
+            coordinator: "AppCoordinator"
+        )
+        
+        navigationPath.append(route)
+        
+        AppLogger.navigation.logStackChange(
+            action: "push",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: String(describing: route)
+        )
+    }
+    
+    /// Navigates back one level in the stack
+    func navigateBack() {
+        guard !navigationPath.isEmpty else {
+            AppLogger.navigation.warning("Attempted to navigate back from root")
+            return
+        }
+        
+        let previous = navigationPath.last
+        navigationPath.removeLast()
+        
+        AppLogger.navigation.logNavigation(
+            from: previous.map { String(describing: $0) } ?? "Unknown",
+            to: navigationPath.last.map { String(describing: $0) } ?? "Root",
+            coordinator: "AppCoordinator"
+        )
+        
+        AppLogger.navigation.logStackChange(
+            action: "pop",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: navigationPath.last.map { String(describing: $0) } ?? "root"
+        )
+    }
+    
+    /// Pops to root (App Home)
+    func popToRoot() {
+        AppLogger.navigation.logNavigation(
+            from: "Current",
+            to: "AppHome (root)",
+            coordinator: "AppCoordinator"
+        )
+        
+        navigationPath.removeAll()
+        
+        AppLogger.navigation.logStackChange(
+            action: "pop_to_root",
+            coordinator: "AppCoordinator",
+            stackSize: navigationPath.count,
+            route: "root"
+        )
+    }
+    
+    // MARK: - Legacy Navigation Methods (Deprecated - Use navigate(to:) instead)
     
     /// Shows the onboarding flow for first-time users
     func showOnboarding() {
@@ -148,7 +218,7 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
         )
     }
     
-    /// Shows the main app interface with tabs
+    /// Shows the main app interface with hierarchical navigation
     func showMainApp() {
         AppLogger.navigation.logNavigation(
             from: activeCoordinator != nil ? "Onboarding" : "Root",
@@ -156,34 +226,164 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
             coordinator: "AppCoordinator"
         )
         
-        // Create and start tab coordinator with dependencies
-        let tabCoordinator = TabCoordinator(
-            preferencesService: preferencesService,
-            radarrService: radarrService,
-            dataService: dataService
-        )
-        tabCoordinator.parent = self
-        
-        childCoordinators.append(tabCoordinator)
-        activeCoordinator = tabCoordinator
-        
-        AppLogger.navigation.logCoordinator(
-            event: "add_child",
-            coordinator: "TabCoordinator",
-            details: "Added to AppCoordinator, total children: \(childCoordinators.count)"
-        )
-        
-        tabCoordinator.start()
-        
-        navigationPath = [.main]
+        // Clear navigation path - main app starts at root (AppHomeView)
+        navigationPath = []
         
         AppLogger.navigation.logStackChange(
-            action: "set",
+            action: "clear",
             coordinator: "AppCoordinator",
             stackSize: navigationPath.count,
-            route: "main"
+            route: "root"
         )
     }
+    
+    // MARK: - View Factory
+    
+    /// Creates the appropriate view for a given route (ADR-0012: Single NavigationStack)
+    /// This is the central view resolution for the entire app.
+    @MainActor
+    @ViewBuilder
+    func view(for route: AppRoute) -> some View {
+        switch route {
+        // MARK: - App Level Routes
+        case .onboarding:
+            // Onboarding is handled via activeCoordinator, not navigation stack
+            EmptyView()
+            
+        case .services:
+            ServicesHomeView(
+                onNavigateToRadarr: {
+                    self.navigate(to: .radarrHome)
+                }
+            )
+            .navigationTitle("Services")
+            
+        // MARK: - Radarr Routes
+        case .radarrHome:
+            RadarrHomeView(
+                onNavigateToMovies: {
+                    self.navigate(to: .radarrMoviesList)
+                },
+                onNavigateToAddMovie: {
+                    self.navigate(to: .radarrAddMovie())
+                },
+                onNavigateToQueue: {
+                    self.navigate(to: .radarrQueue)
+                },
+                onNavigateToHistory: {
+                    self.navigate(to: .radarrHistory)
+                },
+                onNavigateToSystemStatus: {
+                    self.navigate(to: .radarrSystemStatus)
+                }
+            )
+            .navigationTitle("Radarr")
+            
+        case .radarrMoviesList:
+            MoviesListView(
+                onMovieSelected: { movieId in
+                    self.navigate(to: .radarrMovieDetail(movieId: movieId))
+                },
+                onAddMovie: {
+                    self.navigate(to: .radarrAddMovie())
+                }
+            )
+            .environment(MoviesListViewModel(radarrService: radarrService))
+            .navigationTitle("Movies")
+            
+        case .radarrMovieDetail(let movieId):
+            MovieDetailView(
+                onEdit: { movieId in
+                    // TODO: Implement movie editing
+                    self.navigateBack()
+                },
+                onDeleted: {
+                    self.navigateBack()
+                }
+            )
+            .environment(MovieDetailViewModel(movieId: movieId, radarrService: radarrService))
+            .navigationTitle("Movie Details")
+            
+        case .radarrAddMovie:
+            AddMovieView(
+                viewModel: AddMovieViewModel(radarrService: radarrService),
+                onMovieAdded: { movieId in
+                    self.navigate(to: .radarrMovieDetail(movieId: movieId))
+                }
+            )
+            .navigationTitle("Add Movie")
+            
+        case .radarrSettings:
+            Text("Radarr Settings")
+                .navigationTitle("Radarr Settings")
+            
+        case .radarrSystemStatus:
+            Text("System Status")
+                .navigationTitle("System Status")
+            
+        case .radarrQueue:
+            Text("Queue")
+                .navigationTitle("Queue")
+            
+        case .radarrHistory:
+            Text("History")
+                .navigationTitle("History")
+            
+        // MARK: - Settings Routes
+        case .settingsMain:
+            SettingsView(
+                onNavigateToProfiles: {
+                    self.navigate(to: .settingsProfiles)
+                },
+                onNavigateToAppearance: {
+                    self.navigate(to: .settingsAppearance)
+                },
+                onNavigateToGeneral: {
+                    self.navigate(to: .settingsMain)  // TODO: Create settingsGeneral route if needed
+                },
+                onNavigateToNetworking: {
+                    self.navigate(to: .settingsNotifications)
+                },
+                onNavigateToAbout: {
+                    self.navigate(to: .settingsAbout)
+                },
+                onNavigateToAcknowledgements: {
+                    self.navigate(to: .settingsLogs)
+                }
+            )
+            .navigationTitle("Settings")
+            
+        case .settingsProfiles:
+            Text("Profiles Management")
+                .navigationTitle("Profiles")
+            
+        case .settingsAddProfile:
+            Text("Add Profile")
+                .navigationTitle("Add Profile")
+            
+        case .settingsEditProfile(let profileId):
+            Text("Edit Profile: \(profileId)")
+                .navigationTitle("Edit Profile")
+            
+        case .settingsAppearance:
+            Text("Appearance Settings")
+                .navigationTitle("Appearance")
+            
+        case .settingsNotifications:
+            Text("Notifications Settings")
+                .navigationTitle("Notifications")
+            
+        case .settingsAbout:
+            Text("About Thriftwood")
+                .navigationTitle("About")
+            
+        case .settingsLogs:
+            Text("Logs")
+                .navigationTitle("Logs")
+        }
+    }
+    
+    // MARK: - Coordinator Lifecycle
     
     /// Called when onboarding is completed
     private func onboardingDidComplete() {
@@ -205,6 +405,7 @@ final class AppCoordinator: @MainActor CoordinatorProtocol {
                 details: "Cleaning up onboarding coordinator"
             )
             childDidFinish(onboardingCoordinator)
+            activeCoordinator = nil  // Clear active coordinator to trigger view update
         }
         
         // Show main app
