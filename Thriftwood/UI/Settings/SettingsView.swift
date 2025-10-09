@@ -21,51 +21,25 @@
 
 import SwiftUI
 
-/// Main settings view with navigation to all settings screens (ADR-0012: Simple MVVM)
-/// Navigation is handled by AppCoordinator, this view just displays settings options
+/// Main settings view with navigation to all settings screens
 @MainActor
 struct SettingsView: View {
     private let preferences: any UserPreferencesServiceProtocol
     private let profileService: any ProfileServiceProtocol
     @State private var showResetConfirmation = false
     
-    // Navigation callbacks (provided by AppCoordinator)
-    let onNavigateToProfiles: () -> Void
-    let onNavigateToAppearance: () -> Void
-    let onNavigateToGeneral: () -> Void
-    let onNavigateToNetworking: () -> Void
-    let onNavigateToAbout: () -> Void
-    let onNavigateToAcknowledgements: () -> Void
-    
-    init(
-        onNavigateToProfiles: @escaping () -> Void,
-        onNavigateToAppearance: @escaping () -> Void,
-        onNavigateToGeneral: @escaping () -> Void,
-        onNavigateToNetworking: @escaping () -> Void,
-        onNavigateToAbout: @escaping () -> Void,
-        onNavigateToAcknowledgements: @escaping () -> Void
-    ) {
+    init() {
         // Resolve services from DI container
         let container = DIContainer.shared
         self.preferences = container.resolve((any UserPreferencesServiceProtocol).self)
         self.profileService = container.resolve((any ProfileServiceProtocol).self)
-        
-        // Store navigation callbacks
-        self.onNavigateToProfiles = onNavigateToProfiles
-        self.onNavigateToAppearance = onNavigateToAppearance
-        self.onNavigateToGeneral = onNavigateToGeneral
-        self.onNavigateToNetworking = onNavigateToNetworking
-        self.onNavigateToAbout = onNavigateToAbout
-        self.onNavigateToAcknowledgements = onNavigateToAcknowledgements
     }
     
     var body: some View {
         List {
             // Profile Section
             Section {
-                Button {
-                    onNavigateToProfiles()
-                } label: {
+                NavigationLink(value: AppRoute.settingsProfiles) {
                     HStack {
                         Image(systemName: "person.2.fill")
                             .foregroundStyle(Color.themeAccent)
@@ -78,12 +52,6 @@ struct SettingsView: View {
                                 .font(.caption)
                                 .foregroundStyle(Color.themeSecondaryText)
                         }
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(Color.themeSecondaryText)
                     }
                 }
                 
@@ -107,39 +75,10 @@ struct SettingsView: View {
                 Text("Profiles")
             }
             
-            // Appearance Section
-            Section {
-                Button {
-                    onNavigateToAppearance()
-                } label: {
-                    HStack {
-                        Image(systemName: "paintbrush.fill")
-                            .foregroundStyle(Color.themeAccent)
-                            .frame(width: Sizing.iconMedium)
-                        
-                        VStack(alignment: .leading, spacing: Spacing.xxs) {
-                            Text("Appearance")
-                                .foregroundStyle(Color.themePrimaryText)
-                            Text("Theme and display settings")
-                                .font(.caption)
-                                .foregroundStyle(Color.themeSecondaryText)
-                        }
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(Color.themeSecondaryText)
-                    }
-                }
-            } header: {
-                Text("Appearance")
-            }
-            
             // General Section
             Section {
                 Button {
-                    onNavigateToGeneral()
+                    // TODO: Navigate to services management
                 } label: {
                     HStack {
                         Image(systemName: "slider.horizontal.3")
@@ -147,9 +86,9 @@ struct SettingsView: View {
                             .frame(width: Sizing.iconMedium)
                         
                         VStack(alignment: .leading, spacing: Spacing.xxs) {
-                            Text("General")
+                            Text("Services")
                                 .foregroundStyle(Color.themePrimaryText)
-                            Text("App preferences and behavior")
+                            Text("Manage Services")
                                 .font(.caption)
                                 .foregroundStyle(Color.themeSecondaryText)
                         }
@@ -163,7 +102,7 @@ struct SettingsView: View {
                 }
                 
                 Button {
-                    onNavigateToNetworking()
+                    // TODO: Navigate to networking settings
                 } label: {
                     HStack {
                         Image(systemName: "network")
@@ -191,9 +130,7 @@ struct SettingsView: View {
             
             // About Section
             Section {
-                Button {
-                    onNavigateToAbout()
-                } label: {
+                NavigationLink(value: AppRoute.settingsAbout) {
                     HStack {
                         Image(systemName: "info.circle.fill")
                             .foregroundStyle(Color.themeAccent)
@@ -206,17 +143,11 @@ struct SettingsView: View {
                                 .font(.caption)
                                 .foregroundStyle(Color.themeSecondaryText)
                         }
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(Color.themeSecondaryText)
                     }
                 }
                 
                 Button {
-                    onNavigateToAcknowledgements()
+                    // TODO: Navigate to acknowledgements
                 } label: {
                     HStack {
                         Image(systemName: "heart.fill")
@@ -241,7 +172,28 @@ struct SettingsView: View {
             } header: {
                 Text("About")
             }
-            
+
+            // Appearance Section
+            Section {
+                NavigationLink(value: AppRoute.settingsAppearance) {
+                    HStack {
+                        Image(systemName: "paintbrush.fill")
+                            .foregroundStyle(Color.themeAccent)
+                            .frame(width: Sizing.iconMedium)
+
+                        VStack(alignment: .leading, spacing: Spacing.xxs) {
+                            Text("Appearance")
+                                .foregroundStyle(Color.themePrimaryText)
+                            Text("Theme and display settings")
+                                .font(.caption)
+                                .foregroundStyle(Color.themeSecondaryText)
+                        }
+                    }
+                }
+            } header: {
+                Text("Appearance")
+            }
+
             // Advanced Section
             Section {
                 Button(role: .destructive) {
@@ -285,9 +237,12 @@ struct SettingsView: View {
     
     /// Resets the onboarding flow and restarts the app
     private func resetOnboarding() {
-        // Get AppCoordinator from DI container and reset
-        let appCoordinator = DIContainer.shared.resolve(AppCoordinator.self)
-        appCoordinator.resetOnboarding()
+        // Reset onboarding flag
+        UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
+        
+        // TODO: Navigate to onboarding when it's implemented
+        // For now, just log the action
+        AppLogger.general.info("Onboarding reset - restart app to see onboarding flow")
     }
 }
 
@@ -295,13 +250,6 @@ struct SettingsView: View {
 
 #Preview("Settings View") {
     NavigationStack {
-        SettingsView(
-            onNavigateToProfiles: {},
-            onNavigateToAppearance: {},
-            onNavigateToGeneral: {},
-            onNavigateToNetworking: {},
-            onNavigateToAbout: {},
-            onNavigateToAcknowledgements: {}
-        )
+        SettingsView()
     }
 }

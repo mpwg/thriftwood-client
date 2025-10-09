@@ -21,25 +21,25 @@
 
 import Foundation
 
-/// Unified route enum for the entire application (ADR-0012: Single NavigationStack)
+/// Unified route enum for the entire application using standard SwiftUI navigation
 ///
-/// With a single NavigationStack at the window level, all routes are managed centrally by AppCoordinator.
+/// All routes are managed via NavigationStack with NavigationPath in ContentView.
 ///
-/// **Pure MVVM Architecture (ADR-0012):**
-/// - AppCoordinator manages the single navigation path
-/// - ViewModels handle business logic (created directly by views or AppCoordinator)
+/// **Standard SwiftUI Navigation:**
+/// - ContentView manages the single navigation path using @State
+/// - ViewModels handle business logic (created directly by views)
 /// - Services provide data access (injected via DI)
-/// - No logic coordinators needed - simplified from original MVVM-C approach
+/// - Navigation is handled via standard NavigationLink and navigationDestination
 ///
 /// **Benefits**:
-/// - ~70% less code compared to nested NavigationStack approach
-/// - Centralized navigation makes deep linking simpler
-/// - Easier to understand and maintain
+/// - Uses standard SwiftUI patterns
+/// - Simple and maintainable
+/// - Centralized route definitions
 /// - Better SwiftUI integration (single homogeneous path type)
 enum AppRoute: Hashable, Sendable {
     // MARK: - App Level Routes
     
-    /// Initial onboarding flow
+    /// Initial onboarding flow (to be implemented later)
     case onboarding
     
     /// Services home view (Radarr, Sonarr, Lidarr, etc.)

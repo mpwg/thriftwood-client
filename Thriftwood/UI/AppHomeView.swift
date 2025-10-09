@@ -22,9 +22,6 @@
 import SwiftUI
 
 struct AppHomeView: View {
-    let onNavigateToServices: () -> Void
-    let onNavigateToSettings: () -> Void
-    
     var body: some View {
         VStack(spacing: 32) {
             VStack(spacing: 16) {
@@ -41,18 +38,14 @@ struct AppHomeView: View {
             }
             
             VStack(spacing: 16) {
-                Button {
-                    onNavigateToServices()
-                } label: {
+                NavigationLink(value: AppRoute.services) {
                     Label("Services", systemImage: "server.rack")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
                 
-                Button {
-                    onNavigateToSettings()
-                } label: {
+                NavigationLink(value: AppRoute.settingsMain) {
                     Label("Settings", systemImage: "gearshape")
                         .frame(maxWidth: .infinity)
                 }
@@ -67,9 +60,6 @@ struct AppHomeView: View {
 
 #Preview {
     NavigationStack {
-        AppHomeView(
-            onNavigateToServices: {},
-            onNavigateToSettings: {}
-        )
+        AppHomeView()
     }
 }

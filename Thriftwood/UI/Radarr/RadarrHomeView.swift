@@ -22,53 +22,77 @@
 import SwiftUI
 
 struct RadarrHomeView: View {
-    let onNavigateToMovies: () -> Void
-    let onNavigateToAddMovie: () -> Void
-    let onNavigateToQueue: () -> Void
-    let onNavigateToHistory: () -> Void
-    let onNavigateToSystemStatus: () -> Void
-    
     var body: some View {
         List {
             Section("Media Management") {
-                NavigationButton(
-                    title: "Movies",
-                    subtitle: "Browse your movie library",
-                    icon: "film",
-                    action: onNavigateToMovies
-                )
+                NavigationLink(value: AppRoute.radarrMoviesList) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Movies")
+                            Text("Browse your movie library")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "film")
+                    }
+                }
                 
-                NavigationButton(
-                    title: "Add Movie",
-                    subtitle: "Search and add new movies",
-                    icon: "plus.circle",
-                    action: onNavigateToAddMovie
-                )
+                NavigationLink(value: AppRoute.radarrAddMovie()) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Add Movie")
+                            Text("Search and add new movies")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "plus.circle")
+                    }
+                }
             }
             
             Section("Monitoring") {
-                NavigationButton(
-                    title: "Queue",
-                    subtitle: "Active downloads",
-                    icon: "arrow.down.circle",
-                    action: onNavigateToQueue
-                )
+                NavigationLink(value: AppRoute.radarrQueue) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Queue")
+                            Text("Active downloads")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "arrow.down.circle")
+                    }
+                }
                 
-                NavigationButton(
-                    title: "History",
-                    subtitle: "Past activity",
-                    icon: "clock",
-                    action: onNavigateToHistory
-                )
+                NavigationLink(value: AppRoute.radarrHistory) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("History")
+                            Text("Past activity")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "clock")
+                    }
+                }
             }
             
             Section("System") {
-                NavigationButton(
-                    title: "System Status",
-                    subtitle: "View system information",
-                    icon: "info.circle",
-                    action: onNavigateToSystemStatus
-                )
+                NavigationLink(value: AppRoute.radarrSystemStatus) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("System Status")
+                            Text("View system information")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "info.circle")
+                    }
+                }
             }
         }
         .navigationTitle("Radarr")
@@ -77,12 +101,6 @@ struct RadarrHomeView: View {
 
 #Preview {
     NavigationStack {
-        RadarrHomeView(
-            onNavigateToMovies: {},
-            onNavigateToAddMovie: {},
-            onNavigateToQueue: {},
-            onNavigateToHistory: {},
-            onNavigateToSystemStatus: {}
-        )
+        RadarrHomeView()
     }
 }

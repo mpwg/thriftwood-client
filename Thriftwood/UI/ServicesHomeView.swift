@@ -22,72 +22,44 @@
 import SwiftUI
 
 struct ServicesHomeView: View {
-    let onNavigateToRadarr: () -> Void
-    // Future: let onNavigateToSonarr: () -> Void
-    
     var body: some View {
         List {
             Section("Media Management") {
-                NavigationButton(
-                    title: "Radarr",
-                    subtitle: "Movie management",
-                    icon: "film",
-                    action: onNavigateToRadarr
-                )
+                NavigationLink(value: AppRoute.radarrHome) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Radarr")
+                                .font(.body)
+                            Text("Movie management")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "film")
+                    }
+                }
                 
                 // Future services
-                // NavigationButton(
-                //     title: "Sonarr",
-                //     subtitle: "TV show management",
-                //     icon: "tv",
-                //     action: onNavigateToSonarr
-                // )
+                // NavigationLink(value: AppRoute.sonarrHome) {
+                //     Label {
+                //         VStack(alignment: .leading, spacing: 2) {
+                //             Text("Sonarr")
+                //             Text("TV show management")
+                //                 .font(.caption)
+                //                 .foregroundStyle(.secondary)
+                //         }
+                //     } icon: {
+                //         Image(systemName: "tv")
+                //     }
+                // }
             }
         }
         .navigationTitle("Services")
     }
 }
 
-/// Helper component for consistent button styling in hierarchical navigation
-struct NavigationButton: View {
-    let title: String
-    var subtitle: String?
-    let icon: String
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                Image(systemName: icon)
-                    .foregroundStyle(.tint)
-                    .frame(width: 24)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.body)
-                    
-                    if let subtitle {
-                        Text(subtitle)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-}
-
 #Preview {
     NavigationStack {
-        ServicesHomeView(
-            onNavigateToRadarr: {}
-        )
+        ServicesHomeView()
     }
 }
