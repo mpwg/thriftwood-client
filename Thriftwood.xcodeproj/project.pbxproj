@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 90;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		403991B22E905C68001E827C /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 403991B12E905C68001E827C /* Swinject */; };
 		404F89FE2E914FB0009D2DD6 /* AsyncHTTPClient in Frameworks */ = {isa = PBXBuildFile; productRef = 404F89FD2E914FB0009D2DD6 /* AsyncHTTPClient */; };
 		404F8AC62E9176B6009D2DD6 /* Valet in Frameworks */ = {isa = PBXBuildFile; productRef = 404F8AC52E9176B6009D2DD6 /* Valet */; };
+		409824A22E9833FB007AAA3B /* RadarrAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 409824A12E9833FB007AAA3B /* RadarrAPI */; };
 		40FDC4992E93A99200937EEE /* RadarrAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 40FDC4982E93A99200937EEE /* RadarrAPI */; };
 /* End PBXBuildFile section */
 
@@ -57,21 +58,18 @@
 /* Begin PBXFrameworksBuildPhase section */
 		402888342E90441F005376F0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
+				409824A22E9833FB007AAA3B /* RadarrAPI in Frameworks */,
 				404F8AC62E9176B6009D2DD6 /* Valet in Frameworks */,
 				404F89FE2E914FB0009D2DD6 /* AsyncHTTPClient in Frameworks */,
 				403991B22E905C68001E827C /* Swinject in Frameworks */,
 				40FDC4992E93A99200937EEE /* RadarrAPI in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		402888452E904420005376F0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -108,8 +106,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				402888392E90441F005376F0 /* Thriftwood */,
 			);
@@ -119,6 +115,7 @@
 				404F89FD2E914FB0009D2DD6 /* AsyncHTTPClient */,
 				404F8AC52E9176B6009D2DD6 /* Valet */,
 				40FDC4982E93A99200937EEE /* RadarrAPI */,
+				409824A12E9833FB007AAA3B /* RadarrAPI */,
 			);
 			productName = Thriftwood;
 			productReference = 402888372E90441F005376F0 /* Thriftwood.app */;
@@ -141,8 +138,6 @@
 				4028884B2E904420005376F0 /* ThriftwoodTests */,
 			);
 			name = ThriftwoodTests;
-			packageProductDependencies = (
-			);
 			productName = ThriftwoodTests;
 			productReference = 402888482E904420005376F0 /* ThriftwoodTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -180,9 +175,9 @@
 				403991B02E905C68001E827C /* XCRemoteSwiftPackageReference "Swinject" */,
 				404F89FC2E914FB0009D2DD6 /* XCRemoteSwiftPackageReference "async-http-client" */,
 				404F8AC42E9176B6009D2DD6 /* XCRemoteSwiftPackageReference "Valet" */,
-				40FDC4972E93A99200937EEE /* XCLocalSwiftPackageReference "RadarrAPI" */,
+				409824A02E9833FB007AAA3B /* XCRemoteSwiftPackageReference "RadarrAPI" */,
 			);
-			preferredProjectObjectVersion = 77;
+			preferredProjectObjectVersion = 90;
 			productRefGroup = 402888382E90441F005376F0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -196,41 +191,38 @@
 /* Begin PBXResourcesBuildPhase section */
 		402888352E90441F005376F0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		402888462E904420005376F0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		A9FE8A5799BE485AB488DBE5 /* Generate Acknowledgements */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 				"$(SRCROOT)/scripts/generate-acknowledgements.sh",
 				"$(SRCROOT)/Thriftwood.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
 			);
 			name = "Generate Acknowledgements";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"$(SRCROOT)/Thriftwood/Resources/acknowledgements.json",
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Generate acknowledgements.json from SPM dependencies\nif [ -f \"${SRCROOT}/scripts/generate-acknowledgements.sh\" ]; then\n    echo \"Generating acknowledgements from SPM dependencies...\"\n    \"${SRCROOT}/scripts/generate-acknowledgements.sh\"\nelse\n    echo \"Warning: generate-acknowledgements.sh not found at ${SRCROOT}/scripts/\"\nfi\n";
+			shellScript = (
+				"# Generate acknowledgements.json from SPM dependencies",
+				"if [ -f \"${SRCROOT}/scripts/generate-acknowledgements.sh\" ]; then",
+				"    echo \"Generating acknowledgements from SPM dependencies...\"",
+				"    \"${SRCROOT}/scripts/generate-acknowledgements.sh\"",
+				"else",
+				"    echo \"Warning: generate-acknowledgements.sh not found at ${SRCROOT}/scripts/\"",
+				"fi",
+				"",
+			);
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -238,17 +230,13 @@
 /* Begin PBXSourcesBuildPhase section */
 		402888332E90441F005376F0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		402888442E904420005376F0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -261,7 +249,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		4028885C2E904420005376F0 /* Debug */ = {
+		4028885C2E904420005376F0 /* Debug configuration for PBXNativeTarget "Thriftwood" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -313,7 +301,7 @@
 			};
 			name = Debug;
 		};
-		4028885D2E904420005376F0 /* Release */ = {
+		4028885D2E904420005376F0 /* Release configuration for PBXNativeTarget "Thriftwood" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -365,7 +353,7 @@
 			};
 			name = Release;
 		};
-		4028885E2E904420005376F0 /* Debug */ = {
+		4028885E2E904420005376F0 /* Debug configuration for PBXProject "Thriftwood" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -446,7 +434,7 @@
 			};
 			name = Debug;
 		};
-		4028885F2E904420005376F0 /* Release */ = {
+		4028885F2E904420005376F0 /* Release configuration for PBXProject "Thriftwood" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -519,7 +507,7 @@
 			};
 			name = Release;
 		};
-		402888612E904420005376F0 /* Debug */ = {
+		402888612E904420005376F0 /* Debug configuration for PBXNativeTarget "ThriftwoodTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -549,7 +537,7 @@
 			};
 			name = Debug;
 		};
-		402888622E904420005376F0 /* Release */ = {
+		402888622E904420005376F0 /* Release configuration for PBXNativeTarget "ThriftwoodTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -585,38 +573,28 @@
 		402888322E90441F005376F0 /* Build configuration list for PBXProject "Thriftwood" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4028885E2E904420005376F0 /* Debug */,
-				4028885F2E904420005376F0 /* Release */,
+				4028885E2E904420005376F0 /* Debug configuration for PBXProject "Thriftwood" */,
+				4028885F2E904420005376F0 /* Release configuration for PBXProject "Thriftwood" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		4028885B2E904420005376F0 /* Build configuration list for PBXNativeTarget "Thriftwood" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4028885C2E904420005376F0 /* Debug */,
-				4028885D2E904420005376F0 /* Release */,
+				4028885C2E904420005376F0 /* Debug configuration for PBXNativeTarget "Thriftwood" */,
+				4028885D2E904420005376F0 /* Release configuration for PBXNativeTarget "Thriftwood" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		402888602E904420005376F0 /* Build configuration list for PBXNativeTarget "ThriftwoodTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				402888612E904420005376F0 /* Debug */,
-				402888622E904420005376F0 /* Release */,
+				402888612E904420005376F0 /* Debug configuration for PBXNativeTarget "ThriftwoodTests" */,
+				402888622E904420005376F0 /* Release configuration for PBXNativeTarget "ThriftwoodTests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCLocalSwiftPackageReference section */
-		40FDC4972E93A99200937EEE /* XCLocalSwiftPackageReference "RadarrAPI" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = RadarrAPI;
-		};
-/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		403991B02E905C68001E827C /* XCRemoteSwiftPackageReference "Swinject" */ = {
@@ -643,6 +621,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		409824A02E9833FB007AAA3B /* XCRemoteSwiftPackageReference "RadarrAPI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mpwg/RadarrAPI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -660,6 +646,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 404F8AC42E9176B6009D2DD6 /* XCRemoteSwiftPackageReference "Valet" */;
 			productName = Valet;
+		};
+		409824A12E9833FB007AAA3B /* RadarrAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 409824A02E9833FB007AAA3B /* XCRemoteSwiftPackageReference "RadarrAPI" */;
+			productName = RadarrAPI;
 		};
 		40FDC4982E93A99200937EEE /* RadarrAPI */ = {
 			isa = XCSwiftPackageProductDependency;
