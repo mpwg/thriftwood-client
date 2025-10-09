@@ -1,106 +1,116 @@
+//
+//  RadarrView.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
 import SwiftUI
 
 // Platform-aware semantic colors to keep the view compilable on macOS and iOS
- 
 
 struct RadarrView: View {
     private let movies: [Movie] = Movie.sample
 
     var body: some View {
-    NavigationStack {
-                ZStack {
-                Color.platformGroupedBackground
-                    .ignoresSafeArea()
+        ZStack {
+            Color.platformGroupedBackground
+                .ignoresSafeArea()
 
-                VStack(spacing: 12) {
-                    // Top toolbar moved into the NavigationStack's toolbar modifier below.
-
-                    ScrollView {
-                        VStack(spacing: 14) {
-                            ForEach(movies) { movie in
-                                NavigationLink {
-                                    MovieDetailView(movie: movie)
-                                } label: {
-                                    MovieRow(movie: movie)
-                                        .padding(.horizontal)
-                                }
-                            }
-                        }
-                        .padding(.top, 8)
-                        .padding(.bottom, 120)
-                    }
-                    .navigationTitle("Radarr")
-#if os(iOS)
-                    .navigationBarTitleDisplayMode(.large)
-#endif
-
-                    Spacer()
-                }
-                .toolbar {
-                    // Leading: search field style
-                    ToolbarItem(placement: .navigation) {
-                        // Standard label-only search affordance
-                        Label("Search...", systemImage: "magnifyingglass")
-                    }
-
-                    // Trailing group: filter/grid/plus/ellipsis
-                    ToolbarItemGroup(placement: .automatic) {
-                        // Standard toolbar buttons (image + text)
-                        Button(action: { /* filter action */ }) {
-                            Label("Filter", systemImage: "line.3.horizontal.decrease")
-                        }
-
-                        Button(action: { /* secondary filter action */ }) {
-                            Label("More Filters", systemImage: "line.horizontal.3.decrease.circle")
-                        }
-
-                        Button(action: { /* toggle grid action */ }) {
-                            Label("Grid", systemImage: "square.grid.2x2")
-                        }
-
-                        NavigationLink(destination: AddMovieView()) {
-                            Label("Add", systemImage: "plus")
-                        }
-
-                        Button(action: { /* more */ }) {
-                            Label("More", systemImage: "ellipsis")
+            ScrollView {
+                VStack(spacing: UIConstants.Spacing.medium) {
+                    ForEach(movies) { movie in
+                        NavigationLink {
+                            MovieDetailView(movie: movie)
+                        } label: {
+                            MovieRow(movie: movie)
+                                .padding(.horizontal, UIConstants.Padding.screen)
                         }
                     }
                 }
+                .padding(.top, UIConstants.Spacing.small)
+                .padding(.bottom, UIConstants.Padding.bottomToolbarSpacer)
+            }
+        }
+        .navigationTitle("Radarr")
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.large)
+        #endif
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Button(action: { /* search action */ }, label: {
+                    Label("Search", systemImage: SystemIcon.search)
+                })
+            }
 
-                // Bottom pill toolbar
-                VStack {
-                    Spacer()
-                    HStack {
-                            Button(action: {}) {
-                                Label("Movies", systemImage: "film.fill")
-                                    .background(.regularMaterial)
-                                    .clipShape(.capsule)
-                            }
+            ToolbarItemGroup(placement: .automatic) {
+                Menu(content: {
+                    Button(action: { /* filter by */ }, label: {
+                        Label("Filter By", systemImage: SystemIcon.filter)
+                    })
+                    Button(action: { /* sort by */ }, label: {
+                        Label("Sort By", systemImage: SystemIcon.sort)
+                    })
+                }, label: {
+                    Label("Filter", systemImage: SystemIcon.filter)
+                })
 
+                Button(action: { /* toggle grid */ }, label: {
+                    Label("Grid", systemImage: SystemIcon.grid)
+                })
 
-                            Spacer()
+                NavigationLink(destination: AddMovieView(), label: {
+                    Label("Add", systemImage: SystemIcon.add)
+                })
 
-                            HStack(spacing: 20) {
-                                Button(action: {}) {
-                                    Label("Calendar", systemImage: "calendar")
-                                        .background(.regularMaterial)
-                                        .clipShape(.capsule)
-                                }
-                                Button(action: {}) { Label("Grid", systemImage: "square.grid.3x2.fill")
-                                        .background(.regularMaterial)
-                                        .clipShape(.capsule)}
-                            }
-                        }
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
+                Menu(content: {
+                    Button(action: { /* action 1 */ }, label: {
+                        Label("Refresh", systemImage: SystemIcon.refresh)
+                    })
+                    Button(action: { /* action 2 */ }, label: {
+                        Label("Settings", systemImage: SystemIcon.settings)
+                    })
+                }, label: {
+                    Label("More", systemImage: SystemIcon.more)
+                })
+            }
+
+            ToolbarItemGroup(placement: .platformBottom) {
+                Button(action: {}, label: {
+                    Label("Movies", systemImage: SystemIcon.moviesFilled)
+                })
+                .pillStyle(prominent: true)
+
+                Spacer()
+
+                HStack(spacing: UIConstants.Spacing.large) {
+                    Button(action: {}, label: {
+                        Label("Calendar", systemImage: SystemIcon.calendar)
+                    })
+                    .cardStyle()
+
+                    Button(action: {}, label: {
+                        Label("Grid", systemImage: SystemIcon.grid3x2)
+                    })
+                    .cardStyle()
                 }
             }
         }
     }
 }
-
-
 
 // MARK: - Previews
 
@@ -109,4 +119,3 @@ struct RadarrView: View {
         RadarrView()
     }
 }
-

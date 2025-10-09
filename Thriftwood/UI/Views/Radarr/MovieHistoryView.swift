@@ -1,5 +1,25 @@
 //
 //  MovieHistoryView.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
+//
+//  MovieHistoryView.swift
 //  PrototypeGUI
 //
 
@@ -33,10 +53,10 @@ struct MovieHistoryView: View {
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
-            VStack(spacing: 16) {
-                ForEach(Array(entries.enumerated()), id: \ .1.id) { index, entry in
+            VStack(spacing: UIConstants.Spacing.large) {
+                ForEach(Array(entries.enumerated()), id: \.1.id) { index, entry in
                     MovieHistoryRow(entry: entry, initiallyExpanded: index == 0)
-                        .padding(.horizontal)
+                        .padding(.horizontal, UIConstants.Padding.screen)
                 }
             }
             .padding(.vertical)
@@ -47,9 +67,7 @@ struct MovieHistoryView: View {
     // MARK: - Subviews to simplify type-checking
 
 }
-
 #Preview(traits: .sizeThatFitsLayout) {
     MovieHistoryView(movie: Movie.sample[0])
         .padding()
 }
-

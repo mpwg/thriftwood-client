@@ -1,10 +1,29 @@
 //
 //  MovieRow.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
+//
+//  MovieRow.swift
 //  PrototypeGUI
 //
 //  Created by Matthias Wallner-Géhri on 07.10.25.
 //
-
 
 import SwiftUI
 
@@ -12,13 +31,16 @@ struct MovieRow: View {
     let movie: Movie
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: UIConstants.Spacing.medium) {
             (movie.poster ?? Image(systemName: "photo"))
                 .resizable()
-                .frame(width: 64, height: 96)
-                .cornerRadius(8)
+                .frame(
+                    width: UIConstants.ImageSize.posterThumbnail.width,
+                    height: UIConstants.ImageSize.posterThumbnail.height
+                )
+                .cornerRadius(UIConstants.CornerRadius.small)
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: UIConstants.Spacing.small) {
                 Text(movie.title)
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -33,12 +55,12 @@ struct MovieRow: View {
                     .foregroundColor(.secondary)
                     .lineLimit(1)
 
-                HStack(spacing: 8) {
-                    Image(systemName: "video.fill")
+                HStack(spacing: UIConstants.Spacing.small) {
+                    Image(systemName: SystemIcon.video)
                         .foregroundColor(.orange)
-                    Image(systemName: "record.circle")
+                    Image(systemName: SystemIcon.record)
                         .foregroundColor(.blue)
-                    Image(systemName: "checkmark.circle")
+                    Image(systemName: SystemIcon.checkmarkCircle)
                         .foregroundColor(.gray)
                     Text(movie.size)
                         .foregroundColor(.mint)
@@ -49,8 +71,11 @@ struct MovieRow: View {
 
             Spacer()
         }
-    .padding()
-    .background(RoundedRectangle(cornerRadius: 12).fill(Color.platformSecondaryGroupedBackground))
+        .padding(UIConstants.Padding.card)
+        .background(
+            RoundedRectangle(cornerRadius: UIConstants.CornerRadius.card)
+                .fill(Color.platformSecondaryGroupedBackground)
+        )
     }
 }
 

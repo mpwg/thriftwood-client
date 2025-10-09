@@ -1,5 +1,25 @@
 //
 //  MovieOverviewView.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
+//
+//  MovieOverviewView.swift
 //  PrototypeGUI
 //
 
@@ -10,30 +30,29 @@ struct MovieOverviewView: View {
     
     var body: some View {
         
-        ScrollView{
-            HStack(alignment: .top, spacing: 12) {
+        ScrollView {
+            HStack(alignment: .top, spacing: UIConstants.Spacing.medium) {
                 (movie.poster ?? Image(systemName: "photo"))
                     .resizable()
-                    .frame(width: 72, height: 108)
-                    .cornerRadius(8)
+                    .frame(
+                        width: UIConstants.ImageSize.posterSmall.width,
+                        height: UIConstants.ImageSize.posterSmall.height
+                    )
+                    .cornerRadius(UIConstants.CornerRadius.small)
 
-//                VStack(alignment: .leading, spacing: 8) {
-//                    Text(movie.title)
-//                        .font(.title3)
-//                        .fontWeight(.semibold)
-//                        .foregroundColor(.primary)
-
-                    if let overview = movie.overview {
-                        Text(overview)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .lineLimit(3)
-                    }
-//                }
+                if let overview = movie.overview {
+                    Text(overview)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(3)
+                }
             }
-            .padding()
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color.platformSecondaryGroupedBackground))
-            VStack(spacing: 18) {
+            .padding(UIConstants.Padding.card)
+            .background(
+                RoundedRectangle(cornerRadius: UIConstants.CornerRadius.card)
+                    .fill(Color.platformSecondaryGroupedBackground)
+            )
+            VStack(spacing: UIConstants.Spacing.extraLarge) {
                 if let monitoring = movie.monitoring {
                     HStack {
                         Text("MONITORING")
@@ -162,18 +181,22 @@ struct MovieOverviewView: View {
             }
         }
         // Bottom toolbar mimicking screenshot
-        HStack(spacing: 18) {
-            Button(action: {}) { Label("Automatic", systemImage: "magnifyingglass") }
+        HStack(spacing: UIConstants.Spacing.extraLarge) {
+            Button(action: {}, label: {
+                Label("Automatic", systemImage: SystemIcon.search)
+            })
 
             Spacer()
 
-            Button(action: {}) { Label("Interactive", systemImage: "person.fill") }
+            Button(action: {}, label: {
+                Label("Interactive", systemImage: SystemIcon.person)
+            })
         }
-        
-        
-        
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color.platformSecondaryGroupedBackground))
+        .padding(UIConstants.Padding.card)
+        .background(
+            RoundedRectangle(cornerRadius: UIConstants.CornerRadius.card)
+                .fill(Color.platformSecondaryGroupedBackground)
+        )
     }
 }
 

@@ -1,3 +1,23 @@
+//
+//  AddSingleMovieView.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
 import SwiftUI
 
 struct AddSingleMovieView: View {
@@ -32,19 +52,22 @@ struct AddSingleMovieView: View {
     }
 
     var body: some View {
-        @State var StartSearch: Bool = true
+        @State var startSearch: Bool = true
 
         ZStack(alignment: .bottom) {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(spacing: UIConstants.Spacing.large) {
                     // Header card
-                    HStack(spacing: 12) {
+                    HStack(spacing: UIConstants.Spacing.medium) {
                         (movie.poster ?? Image(systemName: "photo"))
                             .resizable()
-                            .frame(width: 64, height: 96)
-                            .cornerRadius(8)
+                            .frame(
+                                width: UIConstants.ImageSize.posterThumbnail.width,
+                                height: UIConstants.ImageSize.posterThumbnail.height
+                            )
+                            .cornerRadius(UIConstants.CornerRadius.small)
 
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: UIConstants.Spacing.small) {
                             Text(movie.title)
                                 .font(.headline)
                                 .fontWeight(.semibold)
@@ -65,11 +88,14 @@ struct AddSingleMovieView: View {
 
                         Spacer()
                     }
-                    .padding(12)
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color.platformSecondaryGroupedBackground))
+                    .padding(UIConstants.Padding.card)
+                    .background(
+                        RoundedRectangle(cornerRadius: UIConstants.CornerRadius.card)
+                            .fill(Color.platformSecondaryGroupedBackground)
+                    )
 
                     // Settings list
-                    VStack(spacing: 12) {
+                    VStack(spacing: UIConstants.Spacing.medium) {
                         SettingRow(title: "Root Folder", subtitle: selectedRoot, showsChevron: true) {
                             showingRootPicker = true
                         }
@@ -89,31 +115,24 @@ struct AddSingleMovieView: View {
                         }
                     }
 
-                    Spacer(minLength: 120)
+                    Spacer(minLength: UIConstants.Padding.bottomToolbarSpacer)
                 }
-                .padding()
+                .padding(UIConstants.Padding.screen)
             }
 
             // Bottom action bar (floating at bottom)
-            HStack(spacing: 12) {
-
-                Toggle("Search on add", isOn: $StartSearch)
+            HStack(spacing: UIConstants.Spacing.medium) {
+                Toggle("Search on add", isOn: $startSearch)
                 Spacer()
-                Button(action: {}) {
-                    HStack {
-                        Image(systemName: "plus")
-                            .foregroundColor(.mint)
-                        Text("Add")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                    }
-                    .frame(minWidth: 80)
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color.platformSecondaryGroupedBackground))
-                }
+                Button(action: {}, label: {
+                    Label("Add", systemImage: SystemIcon.add)
+                        .font(.headline)
+                        .frame(minWidth: 80)
+                })
+                .pillStyle(prominent: true)
             }
-            .padding(.horizontal)
-            .padding(.vertical, 10)
+            .padding(.horizontal, UIConstants.Padding.screen)
+            .padding(.vertical, UIConstants.Padding.compact)
             .background(Color.platformGroupedBackground.ignoresSafeArea(edges: .bottom))
         }
         .navigationTitle("Add Movie")
@@ -137,16 +156,16 @@ struct AddSingleMovieView: View {
 
 // MARK: - Row components
 
-fileprivate struct SettingRow: View {
+private struct SettingRow: View {
     let title: String
     let subtitle: String?
     var showsChevron: Bool = false
-    var action: (() -> Void)? = nil
+    var action: (() -> Void)?
 
     var body: some View {
-        Button(action: { action?() }) {
+        Button(action: { action?() }, label: {
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: UIConstants.Spacing.tiny) {
                     Text(title)
                         .font(.headline)
                         .foregroundColor(.primary)
@@ -158,18 +177,21 @@ fileprivate struct SettingRow: View {
                 }
                 Spacer()
                 if showsChevron {
-                    Image(systemName: "chevron.right")
+                    Image(systemName: SystemIcon.disclosure)
                         .foregroundColor(.secondary)
                 }
             }
-            .padding()
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color.platformSecondaryGroupedBackground))
-        }
+            .padding(UIConstants.Padding.card)
+            .background(
+                RoundedRectangle(cornerRadius: UIConstants.CornerRadius.card)
+                    .fill(Color.platformSecondaryGroupedBackground)
+            )
+        })
         .buttonStyle(PlainButtonStyle())
     }
 }
 
-fileprivate struct SettingToggleRow: View {
+private struct SettingToggleRow: View {
     let title: String
     @Binding var isOn: Bool
 
@@ -188,8 +210,11 @@ fileprivate struct SettingToggleRow: View {
                 .labelsHidden()
                 .toggleStyle(SwitchToggleStyle(tint: .mint))
         }
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color.platformSecondaryGroupedBackground))
+        .padding(UIConstants.Padding.card)
+        .background(
+            RoundedRectangle(cornerRadius: UIConstants.CornerRadius.card)
+                .fill(Color.platformSecondaryGroupedBackground)
+        )
     }
 }
 
@@ -210,18 +235,26 @@ extension AddSingleMovieView {
                 ForEach(rootOptions, id: \.self) { r in
                     Button(action: {
                         selectedRoot = r
-                    }) {
+                    }, label: {
                         HStack {
                             Text(r)
                             Spacer()
-                            if r == selectedRoot { Image(systemName: "checkmark") }
+                            if r == selectedRoot {
+                                Image(systemName: SystemIcon.checkmark)
+                            }
                         }
-                    }
+                    })
                     .buttonStyle(PlainButtonStyle())
                 }
             }
             .navigationTitle("Root Folder")
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button(action: { showingRootPicker = false }) { Label("Done", systemImage: "checkmark") } } }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: { showingRootPicker = false }, label: {
+                        Label("Done", systemImage: SystemIcon.checkmark)
+                    })
+                }
+            }
         }
     }
 
@@ -231,61 +264,84 @@ extension AddSingleMovieView {
                 ForEach(availabilityOptions, id: \.self) { a in
                     Button(action: {
                         selectedAvailability = a
-                    }) {
+                    }, label: {
                         HStack {
                             Text(a)
                             Spacer()
-                            if a == selectedAvailability { Image(systemName: "checkmark") }
+                            if a == selectedAvailability {
+                                Image(systemName: SystemIcon.checkmark)
+                            }
                         }
-                    }
+                    })
                     .buttonStyle(PlainButtonStyle())
                 }
             }
             .navigationTitle("Minimum Availability")
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button(action: { showingAvailabilityPicker = false }) { Label("Done", systemImage: "checkmark") } } }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: { showingAvailabilityPicker = false }, label: {
+                        Label("Done", systemImage: SystemIcon.checkmark)
+                    })
+                }
+            }
         }
     }
 
     func qualityPickerSheet() -> some View {
         NavigationStack {
             List {
-                ForEach(qualityOptions, id: \.self) { q in
+                ForEach(qualityOptions, id: \.self) { quality in
                     Button(action: {
-                        selectedQuality = q
-                    }) {
+                        selectedQuality = quality
+                    }, label: {
                         HStack {
-                            Text(q)
+                            Text(quality)
                             Spacer()
-                            if q == selectedQuality { Image(systemName: "checkmark") }
+                            if quality == selectedQuality {
+                                Image(systemName: SystemIcon.checkmark)
+                            }
                         }
-                    }
+                    })
                     .buttonStyle(PlainButtonStyle())
                 }
             }
             .navigationTitle("Quality Profile")
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button(action: { showingQualityPicker = false }) { Label("Done", systemImage: "checkmark") } } }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: { showingQualityPicker = false }, label: {
+                        Label("Done", systemImage: SystemIcon.checkmark)
+                    })
+                }
+            }
         }
     }
 
     func tagsPickerSheet() -> some View {
         NavigationStack {
             List {
-                ForEach(tagOptions, id: \.self) { t in
+                ForEach(tagOptions, id: \.self) { tag in
                     Button(action: {
-                        if selectedTags.contains(t) { selectedTags.removeAll { $0 == t } }
-                        else { selectedTags.append(t) }
-                    }) {
+                        if selectedTags.contains(tag) { selectedTags.removeAll { $0 == tag } } else { selectedTags.append(tag) }
+                    }, label: {
                         HStack {
-                            Text(t)
+                            Text(tag)
                             Spacer()
-                            if selectedTags.contains(t) { Image(systemName: "checkmark") }
+                            if selectedTags.contains(tag) {
+                                Image(systemName: SystemIcon.checkmark)
+                            }
                         }
-                    }
+                    })
                     .buttonStyle(PlainButtonStyle())
                 }
             }
             .navigationTitle("Tags")
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button(action: { showingTagsPicker = false }) { Label("Done", systemImage: "checkmark") } } }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: { showingTagsPicker = false }, label: {
+                        Label("Done", systemImage: SystemIcon.checkmark)
+                    })
+                }
+            }
         }
     }
 }

@@ -1,14 +1,34 @@
+//
+//  DashboardView.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
 import SwiftUI
 
 struct DashboardView: View {
     private let modules: [Module] = [
-        .init(id: "lidarr", title: "Lidarr", subtitle: "Manage Music", systemIcon: "bolt.circle", tint: .green),
-        .init(id: "radarr", title: "Radarr", subtitle: "Manage Movies", systemIcon: "popcorn.circle", tint: .yellow),
-        .init(id: "sabnzbd", title: "SABnzbd", subtitle: "Manage Usenet Downloads", systemIcon: "tray.full", tint: .yellow),
-        .init(id: "search", title: "Search", subtitle: "Search Newznab Indexers", systemIcon: "magnifyingglass.circle", tint: .mint),
-        .init(id: "sonarr", title: "Sonarr", subtitle: "Manage Television Series", systemIcon: "sparkles", tint: .blue),
-        .init(id: "tautulli", title: "Tautulli", subtitle: "View Plex Activity", systemIcon: "network", tint: .orange),
-        .init(id: "settings", title: "Settings", subtitle: "Configure LunaSea", systemIcon: "gearshape.fill", tint: .teal),
+        .init(id: "lidarr", title: "Lidarr", subtitle: "Manage Music", systemIcon: SystemIcon.music, tint: .green),
+        .init(id: "radarr", title: "Radarr", subtitle: "Manage Movies", systemIcon: SystemIcon.movies, tint: .yellow),
+        .init(id: "sabnzbd", title: "SABnzbd", subtitle: "Manage Usenet Downloads", systemIcon: SystemIcon.downloadsFilled, tint: .yellow),
+        .init(id: "search", title: "Search", subtitle: "Search Newznab Indexers", systemIcon: SystemIcon.searchCircle, tint: .mint),
+        .init(id: "sonarr", title: "Sonarr", subtitle: "Manage Television Series", systemIcon: SystemIcon.tv, tint: .blue),
+        .init(id: "tautulli", title: "Tautulli", subtitle: "View Plex Activity", systemIcon: SystemIcon.monitoring, tint: .orange),
+        .init(id: "settings", title: "Settings", subtitle: "Configure LunaSea", systemIcon: SystemIcon.settingsFilled, tint: .teal)
     ]
 
     var body: some View {
@@ -18,76 +38,43 @@ struct DashboardView: View {
                 Color.platformGroupedBackground
                     .ignoresSafeArea()
 
-                VStack(spacing: 0) {
-                    // Top bar
-                    HStack(spacing: 12) {
-                        Button(action: {}) {
-                            Image(systemName: "line.horizontal.3")
-                                .font(.title2)
-                                .foregroundColor(.primary)
-                        }
-
-                        Text("LunaSea")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
-
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 14)
-
-                    ScrollView {
-                        VStack(spacing: 14) {
-                            ForEach(modules) { module in
-                                NavigationLink {
-                                    destinationView(for: module)
-                                } label: {
-                                    ModuleCard(module: module)
-                                        .padding(.horizontal)
-                                }
+                ScrollView {
+                    VStack(spacing: UIConstants.Spacing.medium) {
+                        ForEach(modules) { module in
+                            NavigationLink {
+                                destinationView(for: module)
+                            } label: {
+                                ModuleCard(module: module)
+                                    .padding(.horizontal, UIConstants.Padding.screen)
                             }
                         }
-                        .padding(.top, 18)
-                        .padding(.bottom, 120) // leave space for toolbar
                     }
-                }
-
-                // Bottom pill toolbar
-                VStack {
-                    Spacer()
-                    HStack {
-                        Button(action: {}) {
-                            HStack(spacing: 10) {
-                                Image(systemName: "circle.grid.3x3.fill")
-                                    .font(.title3)
-                                    .foregroundColor(.accentColor)
-                                Text("Modules")
-                                    .font(.headline)
-                                    .foregroundColor(.primary)
-                            }
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 16)
-                            .background(Color.platformSecondaryGroupedBackground.opacity(0.9))
-                            .clipShape(Capsule())
-                        }
-
-                        Spacer()
-
-                        Button(action: {}) {
-                            Image(systemName: "calendar")
-                                .font(.title2)
-                                .foregroundColor(.primary)
-                                .padding(10)
-                                .background(Color.platformSecondaryGroupedBackground.opacity(0.9))
-                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
+                    .padding(.top, UIConstants.Spacing.extraLarge)
+                    .padding(.bottom, UIConstants.Padding.bottomToolbarSpacer)
                 }
             }
-            
+            .navigationTitle("LunaSea")
+            .toolbar {
+                ToolbarItem(placement: .navigation) {
+                    Button(action: {}, label: {
+                        Label("Menu", systemImage: SystemIcon.menu)
+                    })
+                }
+
+                ToolbarItemGroup(placement: .platformBottom) {
+                    Button(action: {}, label: {
+                        Label("Modules", systemImage: SystemIcon.grid3x3)
+                    })
+                    .pillStyle(prominent: true)
+
+                    Spacer()
+
+                    Button(action: {}, label: {
+                        Label("Calendar", systemImage: SystemIcon.calendar)
+                    })
+                    .cardStyle()
+                }
+            }
         }
     }
 }
@@ -111,7 +98,7 @@ struct ModuleCard: View {
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: UIConstants.Spacing.small) {
                 Text(module.title)
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -126,14 +113,19 @@ struct ModuleCard: View {
             Image(systemName: module.systemIcon)
                 .font(.title2)
                 .foregroundColor(module.tint)
-                .padding(.leading, 8)
+                .padding(.leading, UIConstants.Spacing.small)
         }
-        .padding()
+        .padding(UIConstants.Padding.card)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: UIConstants.CornerRadius.card, style: .continuous)
                 .fill(Color.platformSecondaryGroupedBackground)
         )
-        .shadow(color: Color.primary.opacity(0.02), radius: 1, x: 0, y: 1)
+        .shadow(
+            color: UIConstants.Shadow.cardColor,
+            radius: UIConstants.Shadow.cardRadius,
+            x: UIConstants.Shadow.cardX,
+            y: UIConstants.Shadow.cardY
+        )
     }
 }
 
@@ -160,4 +152,3 @@ extension DashboardView {
         DashboardView()
     }
 }
-

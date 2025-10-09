@@ -1,3 +1,23 @@
+//
+//  ConfigurationView.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
 import SwiftUI
 
 struct ConfigurationView: View {
@@ -8,7 +28,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("General")
                         Spacer()
-                        Image(systemName: "paintbrush")
+                        Image(systemName: SystemIcon.paintbrush)
                     }
                 }
 
@@ -16,7 +36,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("Drawer")
                         Spacer()
-                        Image(systemName: "line.3.horizontal")
+                        Image(systemName: SystemIcon.menu)
                     }
                 }
 
@@ -24,7 +44,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("Quick Actions")
                         Spacer()
-                        Image(systemName: "square.dashed")
+                        Image(systemName: SystemIcon.quickActions)
                     }
                 }
             }
@@ -34,7 +54,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("Dashboard")
                         Spacer()
-                        Image(systemName: "house.fill")
+                        Image(systemName: SystemIcon.dashboard)
                     }
                 }
 
@@ -42,7 +62,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("External Modules")
                         Spacer()
-                        Image(systemName: "chevron.left.slash.chevron.right")
+                        Image(systemName: SystemIcon.externalModules)
                     }
                 }
 
@@ -50,7 +70,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("Lidarr")
                         Spacer()
-                        Image(systemName: "bolt.circle")
+                        Image(systemName: SystemIcon.music)
                     }
                 }
 
@@ -58,7 +78,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("NZBGet")
                         Spacer()
-                        Image(systemName: "arrow.down.circle")
+                        Image(systemName: SystemIcon.downloads)
                     }
                 }
 
@@ -66,7 +86,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("Radarr")
                         Spacer()
-                        Image(systemName: "play.circle")
+                        Image(systemName: SystemIcon.movies)
                     }
                 }
 
@@ -74,7 +94,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("SABnzbd")
                         Spacer()
-                        Image(systemName: "printer.fill")
+                        Image(systemName: SystemIcon.printer)
                     }
                 }
 
@@ -82,7 +102,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("Search")
                         Spacer()
-                        Image(systemName: "magnifyingglass")
+                        Image(systemName: SystemIcon.search)
                     }
                 }
 
@@ -90,7 +110,7 @@ struct ConfigurationView: View {
                     HStack {
                         Text("Sonarr")
                         Spacer()
-                        Image(systemName: "staroflife.fill")
+                        Image(systemName: SystemIcon.tv)
                     }
                 }
             }

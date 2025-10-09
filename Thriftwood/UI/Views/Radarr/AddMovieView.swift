@@ -1,3 +1,23 @@
+//
+//  AddMovieView.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
 import SwiftUI
 
 struct AddMovieView: View {
@@ -13,16 +33,19 @@ struct AddMovieView: View {
             VStack(spacing: 0) {
                 // Search field header (matches the screenshot layout)
                 HStack {
-                    Image(systemName: "magnifyingglass")
+                    Image(systemName: SystemIcon.search)
                         .foregroundColor(.mint)
                     Text("Search...")
                         .foregroundColor(.secondary)
                         .font(.subheadline)
                     Spacer()
                 }
-                .padding(12)
-                .background(RoundedRectangle(cornerRadius: 12).fill(Color.platformSecondaryGroupedBackground))
-                .padding()
+                .padding(UIConstants.Padding.card)
+                .background(
+                    RoundedRectangle(cornerRadius: UIConstants.CornerRadius.card)
+                        .fill(Color.platformSecondaryGroupedBackground)
+                )
+                .padding(UIConstants.Padding.screen)
 
                 // Tabs
                 Picker("Tab", selection: Binding(get: { selection }, set: { selection = $0 })) {
@@ -54,10 +77,10 @@ struct AddMovieView: View {
 }
 
 // Simple placeholder views for each tab — keep minimal so they compile and match prototype style.
-fileprivate struct SearchTabView: View {
+private struct SearchTabView: View {
     var body: some View {
         ScrollView {
-            VStack(spacing: 12) {
+            VStack(spacing: UIConstants.Spacing.medium) {
                 ForEach(Movie.sample) { movie in
                     NavigationLink(destination: AddSingleMovieView(movie: movie)) {
                         MovieRow(movie: movie)
@@ -66,12 +89,12 @@ fileprivate struct SearchTabView: View {
                 }
             }
             .padding(.top)
-            .padding(.bottom, 80)
+            .padding(.bottom, UIConstants.Padding.bottomToolbarSpacerCompact)
         }
     }
 }
 
-fileprivate struct DiscoverTabView: View {
+private struct DiscoverTabView: View {
     var body: some View {
         VStack {
             Text("Discover content goes here")
@@ -82,7 +105,6 @@ fileprivate struct DiscoverTabView: View {
         }
     }
 }
-
 
 // MARK: - Preview
 

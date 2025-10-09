@@ -1,13 +1,33 @@
+//
+//  MovieFileDetail.swift
+//  Thriftwood
+//
+//  Thriftwood - Frontend for Media Management
+//  Copyright (C) 2025 Matthias Wallner Géhri
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
 import SwiftUI
 
 struct MovieFileDetail: View {
     let file: MovieFile
 
     var body: some View {
-        VStack(spacing: 12) {
-            VStack(alignment: .center, spacing: 12) {
+        VStack(spacing: UIConstants.Spacing.medium) {
+            VStack(alignment: .center, spacing: UIConstants.Spacing.medium) {
                 // center-aligned details like the screenshot
-                VStack(alignment: .center, spacing: 6) {
+                VStack(alignment: .center, spacing: UIConstants.Spacing.small) {
                     HStack(alignment: .top) {
                         Text("RELATIVE PATH")
                             .font(.caption)
@@ -52,31 +72,28 @@ struct MovieFileDetail: View {
                     }
                 }
 
-                HStack(spacing: 12) {
-                    Button(action: {}) {
-                        HStack {
-                            Image(systemName: "info.circle")
-                            Text("Media Info")
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
+                HStack(spacing: UIConstants.Spacing.medium) {
+                    Button(action: {}, label: {
+                        Label("Media Info", systemImage: SystemIcon.info)
+                            .frame(maxWidth: .infinity)
+                    })
                     .buttonStyle(.borderedProminent)
                     .tint(.mint)
 
-                    Button(role: .destructive, action: {}) {
-                        HStack {
-                            Image(systemName: "trash")
-                            Text("Delete")
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
+                    Button(role: .destructive, action: {}, label: {
+                        Label("Delete", systemImage: SystemIcon.delete)
+                            .frame(maxWidth: .infinity)
+                    })
                     .buttonStyle(.bordered)
                 }
             }
-            .padding(16)
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color.platformSecondaryGroupedBackground))
+            .padding(UIConstants.Padding.screen)
+            .background(
+                RoundedRectangle(cornerRadius: UIConstants.CornerRadius.card)
+                    .fill(Color.platformSecondaryGroupedBackground)
+            )
         }
-        .padding(.horizontal)
+        .padding(.horizontal, UIConstants.Padding.screen)
     }
 
     @ViewBuilder
@@ -102,8 +119,8 @@ struct MovieFileDetail: View {
                 .frame(width: 96, alignment: .leading)
 
             VStack(alignment: .leading, spacing: 2) {
-                ForEach(values, id: \.self) { v in
-                    Text(v)
+                ForEach(values, id: \.self) { value in
+                    Text(value)
                         .font(.subheadline)
                         .foregroundColor(.primary)
                 }
