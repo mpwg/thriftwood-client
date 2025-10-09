@@ -18,85 +18,65 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-//
-//  ContentView.swift
-//  Thriftwood
-//
-//  Created by Matthias Wallner-Géhri on 03.10.25.
-//
 
 import SwiftUI
 import SwiftData
 
-struct ContentView: View {
-    @State private var navigationPath: [AppRoute] = []
+enum SidebarItem: String, CaseIterable, Identifiable {
+    case dashboard = "Dashboard"
+    case lidarr = "Lidarr"
+    case radarr = "Radarr"
+    case sabnzbd = "SABnzbd"
+    case search = "Search"
+    case sonarr = "Sonarr"
+    case tautulli = "Tautulli"
+    case settings = "Settings"
+
+    var id: String { rawValue }
     
-    var body: some View {
-        NavigationStack(path: $navigationPath) {
-            AppHomeView()
-                .navigationDestination(for: AppRoute.self) { route in
-                    destinationView(for: route)
-                }
+    var systemImage: String {
+        switch self {
+        case .dashboard: return "house"
+        case .lidarr: return "bolt.circle"
+        case .radarr: return "play.circle"
+        case .sabnzbd: return "tray.and.arrow.down"
+        case .search: return "magnifyingglass"
+        case .sonarr: return "sparkles"
+        case .tautulli: return "network"
+        case .settings: return "gearshape"
         }
     }
-    
-    @ViewBuilder
-    private func destinationView(for route: AppRoute) -> some View {
-        switch route {
-        case .services:
-            ServicesHomeView()
-            
-        case .radarrHome:
-            RadarrHomeView()
-            
-        case .radarrMoviesList:
-            PlaceholderView(title: "Movies List", icon: "film")
-            
-        case .radarrMovieDetail(let movieId):
-            PlaceholderView(title: "Movie Detail", icon: "film", subtitle: "ID: \(movieId)")
-            
-        case .radarrAddMovie(let query):
-            PlaceholderView(title: "Add Movie", icon: "plus.circle", subtitle: query.isEmpty ? nil : "Query: \(query)")
-            
-        case .radarrSettings:
-            PlaceholderView(title: "Radarr Settings", icon: "gearshape")
-            
-        case .radarrSystemStatus:
-            PlaceholderView(title: "System Status", icon: "info.circle")
-            
-        case .radarrQueue:
-            PlaceholderView(title: "Queue", icon: "arrow.down.circle")
-            
-        case .radarrHistory:
-            PlaceholderView(title: "History", icon: "clock")
-            
-        case .settingsMain:
-            SettingsView()
-            
-        case .settingsProfiles:
-            ProfileListView()
-            
-        case .settingsAddProfile:
-            AddProfileView()
-            
-        case .settingsEditProfile(let profileId):
-            PlaceholderView(title: "Edit Profile", icon: "person.circle", subtitle: "ID: \(profileId)")
-            
-        case .settingsAppearance:
-            PlaceholderView(title: "Appearance", icon: "paintbrush")
-            
-        case .settingsNotifications:
-            PlaceholderView(title: "Notifications", icon: "bell")
-            
-        case .settingsAbout:
-            PlaceholderView(title: "About", icon: "info.circle")
-            
-        case .settingsLogs:
-            PlaceholderView(title: "Logs", icon: "doc.text")
-            
-        case .onboarding:
-            // Onboarding removed for now
-            PlaceholderView(title: "Onboarding", icon: "hand.wave", subtitle: "Coming soon")
+}
+
+struct ContentView: View {
+    @State private var selection: SidebarItem? = .dashboard
+
+    var body: some View {
+        NavigationSplitView {
+            List(selection: $selection) {
+                ForEach(SidebarItem.allCases) { item in
+                    NavigationLink(value: item) {
+                        Label(item.rawValue, systemImage: item.systemImage)
+                            .font(.headline)
+                    }
+                }
+            }
+            .navigationTitle("Thriftwood")
+        } detail: {
+            Group {
+                switch selection {
+                case .dashboard: DashboardView()
+                case .lidarr: LidarrView()
+                case .radarr: RadarrView()
+                case .sabnzbd: SABnzbdView()
+                case .search: SearchView()
+                case .sonarr: SonarrView()
+                case .tautulli: TautulliView()
+                case .settings: SettingsView()
+                case .none: PlaceholderEmptyView()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
