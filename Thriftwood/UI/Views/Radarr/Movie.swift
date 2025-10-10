@@ -27,7 +27,7 @@
 
 import SwiftUI
 
-struct Movie: Identifiable {
+struct Movie: Identifiable, Equatable {
     let id = UUID()
     let title: String
     let year: String
@@ -103,6 +103,16 @@ struct Movie: Identifiable {
         self.alternateTitles = alternateTitles
         self.files = files
         self.cast = cast
+    }
+    
+    // MARK: - Equatable
+    static func == (lhs: Movie, rhs: Movie) -> Bool {
+        // Compare by title and year as primary identifiers
+        // Note: id is UUID and will always be different, so we use title+year
+        return lhs.title == rhs.title && 
+               lhs.year == rhs.year &&
+               lhs.runtime == rhs.runtime &&
+               lhs.studio == rhs.studio
     }
 
     // Lightweight Person model for cast/crew

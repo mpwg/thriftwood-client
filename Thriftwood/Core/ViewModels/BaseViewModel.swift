@@ -18,74 +18,99 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-//
-//  BaseViewModel.swift
-//  Thriftwood
-//
-//  Base protocol and implementation for ViewModels using Swift 6 @Observable
-//
 
 import Foundation
 import SwiftUI
 
-/// Protocol defining common ViewModel behavior
+// MARK: - BaseViewModel Protocol
 
-protocol BaseViewModel: AnyObject, Observable {
-    /// Current loading state
-    @MainActor var isLoading: Bool { get set }
+/// Base protocol for all ViewModels in the MVVM-C architecture
+/// Provides common state management and lifecycle methods
+@MainActor
+protocol BaseViewModel: Observable {
+    /// Loading state indicator
+    var isLoading: Bool { get set }
     
     /// Current error state
-    @MainActor var error: ThriftwoodError? { get set }
-    
-    /// Whether the view model has data loaded
-    @MainActor var hasData: Bool { get }
+    var error: (any Error)? { get set }
     
     /// Load initial data
-    @MainActor func load() async
+    func load() async
     
     /// Reload data (refresh)
-    @MainActor func reload() async
+    func reload() async
     
-    /// Handle error with optional custom action
-    /// - Parameters:
-    ///   - error: The error to handle
-    ///   - customMessage: Optional custom error message
-    @MainActor func handleError(_ error: any Error, customMessage: String?)
+    /// Cleanup resources when view disappears
+    func cleanup()
 }
 
-/// Default implementations for BaseViewModel
+// MARK: - Default Implementation
+
 extension BaseViewModel {
-    /// Default error handling implementation
-    /// - Parameters:
-    ///   - error: The error to handle
-    ///   - customMessage: Optional custom message to override default
-    func handleError(_ error: any Error, customMessage: String? = nil) {
-        let thriftwoodError = ThriftwoodError.from(error)
-        self.error = thriftwoodError
-        
-        AppLogger.general.error(
-            customMessage ?? "Error in \(String(describing: type(of: self)))",
-            error: thriftwoodError
-        )
+    /// Default reload implementation calls load()
+    func reload() async {
+        await load()
     }
     
-    /// Clear current error state
-    func clearError() {
-        self.error = nil
+    /// Default cleanup implementation (override if needed)
+    func cleanup() {
+        // Override in concrete implementations if cleanup is needed
+    }
+}
+
+
+
+// MARK: - Base Implementation Class
+
+/// Concrete base class providing common ViewModel functionality
+/// Inherit from this class for ViewModels that need default implementations
+@MainActor
+@Observable
+class BaseViewModelImpl: BaseViewModel {
+    var isLoading: Bool = false
+    var error: (any Error)? = nil
+    
+    init() {}
+    
+    func load() async {
+        // Override in subclasses
     }
     
-    /// Execute an async task with loading state management
-    /// - Parameter task: The async task to execute
-    func withLoading(_ task: @escaping () async throws -> Void) async {
-        isLoading = true
-        clearError()
-        
+    func reload() async {
+        await load()
+    }
+    
+    func cleanup() {
+        // Override in subclasses if needed
+    }
+    
+    // MARK: - Error Handling Helpers
+    
+    /// Helper to safely execute async operations with error handling
+    func safeAsync<T>(_ operation: @escaping () async throws -> T) async -> T? {
         do {
-            try await task()
+            isLoading = true
+            error = nil
+            let result = try await operation()
+            isLoading = false
+            return result
         } catch {
-            handleError(error, customMessage: nil)
+            self.error = error
+            isLoading = false
+            return nil
         }
-        
-        isLoading = false
+    }
+    
+    /// Helper to execute operations without return value
+    func safeAsyncVoid(_ operation: @escaping () async throws -> Void) async {
+        do {
+            isLoading = true
+            error = nil
+            try await operation()
+            isLoading = false
+        } catch {
+            self.error = error
+            isLoading = false
+        }
     }
 }

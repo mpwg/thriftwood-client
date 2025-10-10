@@ -1,5 +1,5 @@
 //
-//  DefaultViewModel.swift
+//  LoadingView.swift
 //  Thriftwood
 //
 //  Thriftwood - Frontend for Media Management
@@ -18,34 +18,26 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-//
-//  DefaultViewModel.swift
-//  Thriftwood
-//
-//  Created by Matthias Wallner-Géhri on 04.10.25.
-//
 
-import Foundation
 import SwiftUI
 
-/// Base implementation of a ViewModel with common state management
-@MainActor
-@Observable
-class DefaultViewModel: BaseViewModel {
-    var isLoading: Bool = false
-    var error: ThriftwoodError?
+struct LoadingView: View {
+    let message: String
     
-    var hasData: Bool {
-        // Override in subclasses
-        false
+    var body: some View {
+        VStack(spacing: 16) {
+            ProgressView()
+                .scaleEffect(1.2)
+            
+            Text(message)
+                .font(.headline)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.platformGroupedBackground)
     }
-    
-    func load() async {
-        // Override in subclasses
-        AppLogger.general.warning("load() not implemented in \(String(describing: type(of: self)))")
-    }
-    
-    func reload() async {
-        await load()
-    }
+}
+
+#Preview {
+    LoadingView(message: "Loading...")
 }

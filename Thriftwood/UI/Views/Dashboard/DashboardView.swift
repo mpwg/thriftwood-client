@@ -21,15 +21,7 @@
 import SwiftUI
 
 struct DashboardView: View {
-    private let modules: [Module] = [
-        .init(id: "lidarr", title: "Lidarr", subtitle: "Manage Music", systemIcon: SystemIcon.music, tint: .green),
-        .init(id: "radarr", title: "Radarr", subtitle: "Manage Movies", systemIcon: SystemIcon.movies, tint: .yellow),
-        .init(id: "sabnzbd", title: "SABnzbd", subtitle: "Manage Usenet Downloads", systemIcon: SystemIcon.downloadsFilled, tint: .yellow),
-        .init(id: "search", title: "Search", subtitle: "Search Newznab Indexers", systemIcon: SystemIcon.searchCircle, tint: .mint),
-        .init(id: "sonarr", title: "Sonarr", subtitle: "Manage Television Series", systemIcon: SystemIcon.tv, tint: .blue),
-        .init(id: "tautulli", title: "Tautulli", subtitle: "View Plex Activity", systemIcon: SystemIcon.monitoring, tint: .orange),
-        .init(id: "settings", title: "Settings", subtitle: "Configure LunaSea", systemIcon: SystemIcon.settingsFilled, tint: .teal)
-    ]
+    @State private var viewModel = DashboardViewModel()
 
     var body: some View {
         NavigationStack {
@@ -38,19 +30,35 @@ struct DashboardView: View {
                 Color.platformGroupedBackground
                     .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: UIConstants.Spacing.medium) {
-                        ForEach(modules) { module in
-                            NavigationLink {
-                                destinationView(for: module)
-                            } label: {
-                                ModuleCard(module: module)
-                                    .padding(.horizontal, UIConstants.Padding.screen)
+                if viewModel.isLoading {
+                    LoadingView(message: "Loading modules...")
+                } else if let error = viewModel.error {
+                    ErrorView(
+                        error: error,
+                        onRetry: {
+                            Task {
+                                await viewModel.reload()
                             }
                         }
+                    )
+                } else {
+                    ScrollView {
+                        VStack(spacing: UIConstants.Spacing.medium) {
+                            ForEach(viewModel.availableModules) { module in
+                                NavigationLink {
+                                    destinationView(for: module)
+                                } label: {
+                                    ModuleCard(module: module)
+                                        .padding(.horizontal, UIConstants.Padding.screen)
+                                }
+                            }
+                        }
+                        .padding(.top, UIConstants.Spacing.extraLarge)
+                        .padding(.bottom, UIConstants.Padding.bottomToolbarSpacer)
                     }
-                    .padding(.top, UIConstants.Spacing.extraLarge)
-                    .padding(.bottom, UIConstants.Padding.bottomToolbarSpacer)
+                    .refreshable {
+                        await viewModel.reload()
+                    }
                 }
             }
             .navigationTitle("LunaSea")
@@ -79,19 +87,7 @@ struct DashboardView: View {
     }
 }
 
-// MARK: - Module model and Card view
-
-struct Module: Identifiable, Hashable, Comparable {
-    var id: String
-    var title: String
-    var subtitle: String
-    var systemIcon: String
-    var tint: Color
-
-    static func < (lhs: Module, rhs: Module) -> Bool {
-        lhs.title < rhs.title
-    }
-}
+// MARK: - Module Card View
 
 struct ModuleCard: View {
     let module: Module

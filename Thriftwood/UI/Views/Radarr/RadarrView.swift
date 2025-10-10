@@ -23,37 +23,92 @@ import SwiftUI
 // Platform-aware semantic colors to keep the view compilable on macOS and iOS
 
 struct RadarrView: View {
-    private let movies: [Movie] = Movie.sample
+    @State private var viewModel = RadarrViewModel()
 
     var body: some View {
         ZStack {
             Color.platformGroupedBackground
                 .ignoresSafeArea()
 
-            ScrollView {
-                VStack(spacing: UIConstants.Spacing.medium) {
-                    ForEach(movies) { movie in
-                        NavigationLink {
-                            MovieDetailView(movie: movie)
-                        } label: {
-                            MovieRow(movie: movie)
-                                .padding(.horizontal, UIConstants.Padding.screen)
+            if viewModel.isLoading && viewModel.movies.isEmpty {
+                LoadingView(message: "Loading movies...")
+            } else if let error = viewModel.error {
+                ErrorView(
+                    error: error,
+                    onRetry: {
+                        Task {
+                            await viewModel.reload()
                         }
                     }
+                )
+            } else if viewModel.movies.isEmpty {
+                EmptyStateView(
+                    title: "No Movies Found",
+                    message: "Add movies to your Radarr library to see them here.",
+                    systemIcon: SystemIcon.movies
+                )
+            } else {
+                ScrollView {
+                    VStack(spacing: UIConstants.Spacing.medium) {
+                        ForEach(viewModel.movies) { movie in
+                            NavigationLink {
+                                MovieDetailView(movie: movie)
+                            } label: {
+                                MovieRow(movie: movie)
+                                    .padding(.horizontal, UIConstants.Padding.screen)
+                            }
+                        }
+                    }
+                    .padding(.top, UIConstants.Spacing.small)
+                    .padding(.bottom, UIConstants.Padding.bottomToolbarSpacer)
                 }
-                .padding(.top, UIConstants.Spacing.small)
-                .padding(.bottom, UIConstants.Padding.bottomToolbarSpacer)
+                .refreshable {
+                    await viewModel.refresh()
+                }
             }
         }
         .navigationTitle("Radarr")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
         #endif
+        .searchable(text: $viewModel.searchText, prompt: "Search movies...")
         .toolbar {
             ToolbarItem(placement: .automatic) {
-                Button(action: { /* search action */ }, label: {
-                    Label("Search", systemImage: SystemIcon.search)
+                Menu {
+                    Picker("Filter", selection: $viewModel.filterOption) {
+                        ForEach(MovieFilterOption.allCases) { filter in
+                            Text(filter.rawValue).tag(filter)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    
+                    Divider()
+                    
+                    Picker("Sort", selection: $viewModel.sortOption) {
+                        ForEach(MovieSortOption.allCases) { sort in
+                            Text(sort.rawValue).tag(sort)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                } label: {
+                    Label("Filter & Sort", systemImage: SystemIcon.filterCircle)
+                }
+            }
+
+            ToolbarItem(placement: .automatic) {
+                Button(action: {
+                    Task {
+                        await viewModel.refresh()
+                    }
+                }, label: {
+                    if viewModel.isRefreshing {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                    } else {
+                        Label("Refresh", systemImage: SystemIcon.refresh)
+                    }
                 })
+                .disabled(viewModel.isRefreshing)
             }
 
             ToolbarItemGroup(placement: .automatic) {

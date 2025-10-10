@@ -65,6 +65,9 @@ enum SystemIcon {
     static let disclosure = "chevron.right"
     static let checkmark = "checkmark"
     static let checkmarkCircle = "checkmark.circle"
+    static let checkmarkCircleFill = "checkmark.circle.fill"
+    static let magnifyingGlass = "magnifyingglass"
+    static let plus = "plus"
     
     // MARK: - Media Info
     static let file = "doc.on.doc"
