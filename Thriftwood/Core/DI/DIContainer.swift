@@ -61,7 +61,6 @@ final class DIContainer {
         registerInfrastructure()
         registerCoreServices()
         registerDomainServices()
-        registerCoordinators()
     }
     
     // MARK: - Infrastructure Registration
@@ -162,36 +161,6 @@ final class DIContainer {
         // Future: Register MediaService implementations (Sonarr, Lidarr)
         // Future: Register DownloadService implementations (SABnzbd, NZBGet)
         // Future: Register other service implementations (Tautulli, Overseerr, etc.)
-    }
-    
-    // MARK: - Coordinators Registration
-    
-    /// Registers coordinators for navigation (ADR-0012: Pure MVVM - AppCoordinator only)
-    private func registerCoordinators() {
-        // Register AppCoordinator (ADR-0012: Single NavigationStack, Pure MVVM)
-        // AppCoordinator is the sole navigation authority
-        // ViewModels are created directly in views or by AppCoordinator when needed
-        container.register(AppCoordinator.self) { resolver in
-            guard let preferencesService = resolver.resolve((any UserPreferencesServiceProtocol).self) else {
-                fatalError("Could not resolve UserPreferencesServiceProtocol for AppCoordinator")
-            }
-            guard let profileService = resolver.resolve((any ProfileServiceProtocol).self) else {
-                fatalError("Could not resolve ProfileServiceProtocol for AppCoordinator")
-            }
-            guard let radarrService = resolver.resolve((any RadarrServiceProtocol).self) else {
-                fatalError("Could not resolve RadarrServiceProtocol for AppCoordinator")
-            }
-            guard let dataService = resolver.resolve((any DataServiceProtocol).self) else {
-                fatalError("Could not resolve DataServiceProtocol for AppCoordinator")
-            }
-            return AppCoordinator(
-                preferencesService: preferencesService,
-                profileService: profileService,
-                radarrService: radarrService,
-                dataService: dataService
-            )
-        }
-        .inObjectScope(.container)
     }
     
     // MARK: - Service Resolution

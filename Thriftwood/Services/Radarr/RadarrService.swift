@@ -65,26 +65,26 @@ final class RadarrService: RadarrServiceProtocol, Sendable {
     
     /// Thread-safe configuration storage
     private actor Configuration {
-        var apiConfiguration: RadarrAPIAPIConfiguration
+        var apiConfiguration: RadarrAPIConfiguration
         var isConfigured: Bool = false
         
         init() {
             // Initialize with empty configuration
             // Will be set via configure(baseURL:apiKey:)
-            self.apiConfiguration = RadarrAPIAPIConfiguration.shared
+            self.apiConfiguration = RadarrAPIConfiguration.shared
         }
         
         func configure(baseURL: URL, apiKey: String) {
             // Create new configuration with custom headers for API key
             let basePath = baseURL.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-            apiConfiguration = RadarrAPIAPIConfiguration(
+            apiConfiguration = RadarrAPIConfiguration(
                 basePath: basePath,
                 customHeaders: ["X-Api-Key": apiKey]  // Radarr uses X-Api-Key header
             )
             isConfigured = true
         }
         
-        func getConfiguration() -> RadarrAPIAPIConfiguration? {
+        func getConfiguration() -> RadarrAPIConfiguration? {
             guard isConfigured else { return nil }
             return apiConfiguration
         }
@@ -238,7 +238,7 @@ final class RadarrService: RadarrServiceProtocol, Sendable {
     // MARK: - Private Helper Methods
     
     /// Get configured API configuration or throw error
-    private func getAPIConfiguration() async throws -> RadarrAPIAPIConfiguration {
+    private func getAPIConfiguration() async throws -> RadarrAPIConfiguration {
         guard let apiConfig = await configuration.getConfiguration() else {
             throw ThriftwoodError.invalidConfiguration("Service not configured. Call configure(baseURL:apiKey:) first")
         }
