@@ -34,7 +34,7 @@ jobs:
     steps:
       # Checkout code
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # Setup Xcode version using official action
       - name: Setup Xcode
@@ -65,7 +65,7 @@ jobs:
 
       # Cache Swift Package Manager dependencies
       - name: Cache SPM Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             .build
@@ -76,7 +76,7 @@ jobs:
 
       # Cache derived data to speed up builds
       - name: Cache DerivedData
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/Library/Developer/Xcode/DerivedData
           key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift', '**/*.xcodeproj/project.pbxproj') }}
@@ -111,7 +111,7 @@ jobs:
       # Archive test results (if tests fail, this helps debugging)
       - name: Upload Test Results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: test-results
           path: |
@@ -129,7 +129,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install SwiftLint
         run: brew install swiftlint
